@@ -1,0 +1,30 @@
+{
+	"name": "inpsyde/paypal-plus-plugin",
+	"description": "Official WordPress plugin for PayPal Plus",
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"license": "MIT",
+	"type": "wordpress-plugin",
+	"authors": [
+		{
+			"name": "Inpsyde GmbH",
+			"homepage": "http://inpsyde.com/",
+			"email": "hallo@inpsyde.com",
+			"role": "Company"
+		},
+		{
+			"name": "Moritz Meißelbach",
+			"email": "m.meisselbach@inpsyde.com",
+			"role": "Developer"
+		}
+	],
+	"require": {
+	},
+	"require-dev": {
+	},
+	"autoload": {
+		"psr-4": {
+			"PayPalPlusPlugin\\": "src/"
+		}
+	}
+}

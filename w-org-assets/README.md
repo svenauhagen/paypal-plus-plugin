@@ -1,0 +1,1 @@
+# PayPal Plus Plugin assets for the wordpress.org repository
