@@ -14,22 +14,21 @@ use PayPal\Api\Payment;
 use PayPal\Exception\PayPalConnectionException;
 use PayPal\Rest\ApiContext;
 
-class WCPaymentPatch extends WCPayPalPayment {
+class WCPaymentPatch {
 
 	/**
-	 * @var \WC_Order
+	 * @var PaymentPatchData
 	 */
-	private $order;
+	private $patch_data;
+
 	/**
-	 * @var ApiContext
+	 * WCPaymentPatch constructor.
+	 *
+	 * @param PaymentPatchData $patch_data
 	 */
-	private $context;
+	public function __construct( PaymentPatchData $patch_data ) {
 
-	public function __construct( \WC_Order $order, ApiContext $context, array $config ) {
-
-		$this->order = $order;
-		parent::__construct( $config, $order );
-		$this->context = $context;
+		$this->patch_data = $patch_data;
 	}
 
 	/**
@@ -44,16 +43,19 @@ class WCPaymentPatch extends WCPayPalPayment {
 		return $payment;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function execute() {
 
 		try {
-			$payment = Payment::get( $this->config['payment_id'], $this->context );
-			$result  = $payment->update( $this->get_patch_request(), $this->context );
+			$payment = Payment::get( $this->patch_data->get_payment_id(), $this->patch_data->get_api_context() );
+			$result  = $payment->update( $this->get_patch_request(), $this->patch_data->get_api_context() );
 			if ( $result == TRUE ) {
 				return TRUE;
 			}
 		} catch ( PayPalConnectionException $ex ) {
-			do_action( 'paypal-plus-plugin.log', 'payment_exception', $ex );
+			do_action( 'paypal-plus-plugin.log', 'payment_patch_exception', $ex );
 
 			return FALSE;
 		}
@@ -61,17 +63,22 @@ class WCPaymentPatch extends WCPayPalPayment {
 		return FALSE;
 	}
 
+	/**
+	 * @return array
+	 */
 	private function get_patches() {
 
+		$order        = $this->patch_data->get_order();
 		$patchReplace = new Patch();
 
 		$payment_data = [
-			'total'    => $this->order->get_total(),
+			'total'    => $order
+				->get_total(),
 			'currency' => get_woocommerce_currency(),
 			'details'  => [
-				'subtotal' => $this->order->get_subtotal(),
-				'shipping' => $this->order->get_total_shipping(),
-				'tax'      => $this->order->get_total_tax(),
+				'subtotal' => $order->get_subtotal(),
+				'shipping' => $order->get_total_shipping(),
+				'tax'      => $order->get_total_tax(),
 			],
 		];
 
@@ -79,44 +86,39 @@ class WCPaymentPatch extends WCPayPalPayment {
 		             ->setPath( '/transactions/0/amount' )
 		             ->setValue( $payment_data );
 
-		$invoice_number  = preg_replace( "/[^a-zA-Z0-9]/", "", $this->order->id );
+		$invoice_number  = preg_replace( "/[^a-zA-Z0-9]/", "", $order->id );
 		$patchAdd_custom = new Patch();
 		$patchAdd_custom->setOp( 'add' )
 		                ->setPath( '/transactions/0/custom' )
 		                ->setValue( json_encode( [
-			                'order_id'  => $this->order->id,
-			                'order_key' => $this->order->order_key,
+			                'order_id'  => $order->id,
+			                'order_key' => $order->order_key,
 		                ] ) );
-		$patches = [ $patchReplace, $patchAdd_custom ];
-		if ( ! empty( $this->order->shipping_country ) ) {
+		$patches  = [ $patchReplace, $patchAdd_custom ];
+
+		$patchAdd = new Patch();
+		$patchAdd->setOp( 'add' )
+		         ->setPath( '/transactions/0/invoice_number' )
+		         ->setValue( $this->patch_data->get_invoice_prefix() . $invoice_number );
+		$patches [] = $patchAdd;
+
+		if ( ! empty( $order->shipping_country ) ) {
 
 			$billing_data = [
-				'recipient_name' => $this->order->shipping_first_name . ' ' . $this->order->shipping_last_name,
-				'line1'          => $this->order->shipping_address_1,
-				'line2'          => $this->order->shipping_address_2,
-				'city'           => $this->order->shipping_city,
-				'state'          => $this->order->shipping_state,
-				'postal_code'    => $this->order->shipping_postcode,
-				'country_code'   => $this->order->shipping_country,
+				'recipient_name' => $order->shipping_first_name . ' ' . $order->shipping_last_name,
+				'line1'          => $order->shipping_address_1,
+				'line2'          => $order->shipping_address_2,
+				'city'           => $order->shipping_city,
+				'state'          => $order->shipping_state,
+				'postal_code'    => $order->shipping_postcode,
+				'country_code'   => $order->shipping_country,
 			];
 
-			$patchAdd = new Patch();
-			$patchAdd->setOp( 'add' )
-			         ->setPath( '/transactions/0/item_list/shipping_address' )
-			         ->setValue( $billing_data );
-			$patchAddone = new Patch();
-			$patchAddone->setOp( 'add' )
-			            ->setPath( '/transactions/0/invoice_number' )
-			            ->setValue( $this->config['invoice_prefix'] . $invoice_number );
-			$patches [] = $patchAdd;
-			$patches [] = $patchAddone;
-
-		} else {
-			$patchAdd = new Patch();
-			$patchAdd->setOp( 'add' )
-			         ->setPath( '/transactions/0/invoice_number' )
-			         ->setValue( $this->config['invoice_prefix'] . $invoice_number );
-			$patches [] = $patchAdd;
+			$patchBilling = new Patch();
+			$patchBilling->setOp( 'add' )
+			             ->setPath( '/transactions/0/item_list/shipping_address' )
+			             ->setValue( $billing_data );
+			$patches [] = $patchBilling;
 		}
 
 		return $patches;

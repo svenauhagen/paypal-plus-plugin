@@ -43,11 +43,17 @@ class WCPaymentExecution {
 
 		$execution = new PaymentExecution();
 		$execution->setPayerId( WC()->session->PayerID );
+		try {
 
-		$payment = Payment::get( $this->payment_id, $this->context );
-		$payment->execute( $execution, $this->context );
+			$this->payment = Payment::get( $this->payment_id, $this->context );
+			$this->payment->execute( $execution, $this->context );
+		} catch ( PayPalConnectionException $ex ) {
+			do_action( 'paypal-plus-plugin.log', 'payment_execution_exception', $ex );
 
-		return $payment;
+			return FALSE;
+		}
+
+		return TRUE;
 	}
 
 	public function is_PUI() {
@@ -80,15 +86,13 @@ class WCPaymentExecution {
 
 		$sale             = $this->get_sale();
 		$sale_id          = $sale->getId();
-		$instruction_type = $this->get_payment_instruction()
-		                         ->getInstructionType();
 
 		if ( $sale->getState() == 'pending' ) {
 			$order->add_order_note( sprintf( __( 'PayPal Reason code: %s.', 'woo-paypal-plus' ),
 				$sale->getReasonCode() ) );
 			$order->update_status( 'on-hold' );
 
-		} elseif ( $sale->getState() == 'completed' && empty ( $instruction_type ) ) {
+		} elseif ( $sale->getState() == 'completed' && !$this->is_PUI() ) {
 			$order->add_order_note( __( 'PayPal Plus payment completed', 'woo-paypal-plus' ) );
 			$order->payment_complete( $sale_id );
 			$order->add_order_note( sprintf( __( 'PayPal Plus payment approved! Transaction ID: %s',
@@ -161,6 +165,7 @@ class WCPaymentExecution {
 
 	/**
 	 * Returns the sale object of the payment
+	 *
 	 * @return \PayPal\Api\Sale
 	 */
 	public function get_sale() {
@@ -183,7 +188,7 @@ class WCPaymentExecution {
 	public function get_payment() {
 
 		if ( is_null( $this->payment ) ) {
-			$this->payment = $this->execute();
+			$this->execute();
 		}
 
 		return $this->payment;

@@ -7,6 +7,7 @@ use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Exception\PayPalConnectionException;
 use PayPal\Rest\ApiContext;
 use PayPalPlusPlugin\WC\Payment\PaymentData;
+use PayPalPlusPlugin\WC\Payment\PaymentPatchData;
 use PayPalPlusPlugin\WC\Payment\WCPaymentExecution;
 use PayPalPlusPlugin\WC\Payment\WCPaymentPatch;
 use PayPalPlusPlugin\WC\Payment\WCPayPalPayment;
@@ -185,12 +186,17 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		WC()->session->ppp_order_id = $order_id;
 		$order                      = wc_get_order( $order_id );
-		$config                     = [
-			'api_context'    => $this->get_api_context(),
-			'invoice_prefix' => $this->get_option( 'invoice_prefix' ),
-			'payment_id'     => WC()->session->paymentId,
-		];
-		$payment                    = new WCPaymentPatch( $order, $this->get_api_context(), $config );
+		$payment_id                 = WC()->session->paymentId;
+		$invoice_prefix             = $this->get_option( 'invoice_prefix' );
+		$api_context                = $this->get_api_context();
+
+		$patch_data = new PaymentPatchData(
+			$order,
+			$payment_id,
+			$invoice_prefix,
+			$api_context
+		);
+		$payment    = new WCPaymentPatch( $patch_data );
 		if ( $payment->execute() ) {
 			$view = new ReceiptPageView();
 			$view->render();
@@ -299,18 +305,23 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$order                      = new \WC_Order( $order_id );
 			WC()->session->ppp_order_id = $order_id;
 		}
+
+		$payment                   = ( new WCPayPalPayment( $this->get_payment_data(), $order ) )->create();
+		WC()->session->paymentId   = $payment->id;
+		WC()->session->approvalurl = isset( $payment->links[1]->href ) ? $payment->links[1]->href : FALSE;
+
+		return $payment->getApprovalLink();
+	}
+
+	private function get_payment_data() {
+
 		$return_url     = WC()->api_request_url( $this->id );
 		$cancel_url     = wc_get_cart_url();
 		$notify_url     = $this->ipn->get_notify_url();
 		$web_profile_id = $this->get_option( $this->get_experience_profile_option_key() );
 		$api_context    = $this->get_api_context();
-		$config         = [
-			'api_context'           => $api_context,
-			'return_url'            => $return_url,
-			'notify_url'            => $notify_url,
-			'experience_profile_id' => $web_profile_id,
-		];
-		$payment_data   = new PaymentData(
+
+		return new PaymentData(
 			$return_url,
 			$cancel_url,
 			$notify_url,
@@ -318,12 +329,6 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$api_context
 
 		);
-
-		$payment                   = ( new WCPayPalPayment( $payment_data, $order ) )->create();
-		WC()->session->paymentId   = $payment->id;
-		WC()->session->approvalurl = isset( $payment->links[1]->href ) ? $payment->links[1]->href : FALSE;
-
-		return $payment->getApprovalLink();
 	}
 
 	/**
