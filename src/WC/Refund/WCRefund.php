@@ -22,6 +22,12 @@ class WCRefund {
 	 */
 	private $refundData;
 
+	/**
+	 * WCRefund constructor.
+	 *
+	 * @param RefundData $refundData
+	 * @param ApiContext $context
+	 */
 	public function __construct( RefundData $refundData, ApiContext $context ) {
 
 		$this->context = $context;

@@ -28,7 +28,7 @@ class RefundDataTest extends BrainMonkeyWpTestCase {
 
 		$testee = new RefundData( $order, $amount, $reason, $context );
 		$result = $testee->get_amount();
-		$this->assertSame( $result, $amount );
+		$this->assertSame( $result, floatval( $amount ) );
 	}
 
 	/**
@@ -109,7 +109,7 @@ class RefundDataTest extends BrainMonkeyWpTestCase {
 
 		$testee = new RefundData( $order, $amount, $reason, $context );
 
-		$result = $testee->get_success_handler($transaction_id);
+		$result = $testee->get_success_handler( $transaction_id );
 
 		$this->assertInstanceOf( RequestSuccessHandler::class, $result );
 	}
@@ -124,6 +124,20 @@ class RefundDataTest extends BrainMonkeyWpTestCase {
 			\Mockery::mock( 'WC_Order' ),
 			10,
 			'For Testing',
+			\Mockery::mock( ApiContext::class ),
+		];
+
+		$data['test_2'] = [
+			\Mockery::mock( 'WC_Order' ),
+			99.9967,
+			'',
+			\Mockery::mock( ApiContext::class ),
+		];
+
+		$data['test_3'] = [
+			\Mockery::mock( 'WC_Order' ),
+			"99.9967",
+			'',
 			\Mockery::mock( ApiContext::class ),
 		];
 

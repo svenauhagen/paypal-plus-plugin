@@ -29,7 +29,7 @@ class RefundData {
 	private $order;
 
 	/**
-	 * @var int
+	 * @var float
 	 */
 	private $amount;
 	/**
@@ -41,18 +41,23 @@ class RefundData {
 	public function __construct( \WC_Order $order, $amount, $reason, ApiContext $context ) {
 
 		$this->order   = $order;
-		$this->amount  = intval( $amount );
+		$this->amount  = floatval( $amount );
 		$this->context = $context;
-		$this->amount  = $amount;
 		$this->reason  = $reason;
 	}
 
+	/**
+	 * @return float
+	 */
 	public function get_amount() {
 
 		return $this->amount;
 
 	}
 
+	/**
+	 * @return string
+	 */
 	public function get_reason() {
 
 		return $this->reason;
