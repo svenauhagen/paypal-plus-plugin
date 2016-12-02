@@ -20,7 +20,14 @@ $ composer require inpsyde/paypal-plus-plugin
 
 ## Usage
 
-`// Todo`
+* Activate Plugin
+* Go to WooCommcerce -> Settings -> Checkout
+* Select "PayPal Plus
+* Configure with your PayPal App credentials
+
+## Development Setup
+
+Don't forget to run `composer install` after cloning the repository
 
 ## Crafted by Inpsyde
 
