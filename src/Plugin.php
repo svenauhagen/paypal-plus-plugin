@@ -24,18 +24,10 @@ class Plugin {
 	 */
 	public function __construct( $file ) {
 
-		$this->gateway =
+		$this->gateway = $this->get_gateway();
 		$this->gateway->register();
 
 		$this->file = $file;
-	}
-
-	private function get_gateway(  ) {
-
-		return new PayPalPlusGateway(
-			'paypal_plus',
-			__( 'PayPal Plus', 'paypal-plus-plugin' )
-		);
 	}
 
 	/**
@@ -57,6 +49,14 @@ class Plugin {
 
 		return new Common( $this->gateway );
 
+	}
+
+	private function get_gateway() {
+
+		return new PayPalPlusGateway(
+			'paypal_plus',
+			__( 'PayPal Plus', 'paypal-plus-plugin' )
+		);
 	}
 
 	/**
