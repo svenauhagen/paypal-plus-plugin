@@ -6,7 +6,9 @@
  * Time: 10:54
  */
 
-namespace PayPalPlusPlugin\WC;
+namespace PayPalPlusPlugin\WC\Refund;
+
+use PayPalPlusPlugin\WC\RequestSuccessHandler;
 
 class RefundSuccess implements RequestSuccessHandler {
 

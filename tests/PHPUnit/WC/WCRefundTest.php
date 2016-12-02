@@ -6,7 +6,7 @@
  * Time: 14:22
  */
 
-namespace PayPalPlusPlugin\WC;
+namespace PayPalPlusPlugin\WC\Refund;
 
 use Brain\Monkey\WP\Actions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;

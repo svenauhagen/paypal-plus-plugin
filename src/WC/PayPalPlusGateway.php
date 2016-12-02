@@ -6,6 +6,8 @@ use PayPal\Api\Payment;
 use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Exception\PayPalConnectionException;
 use PayPal\Rest\ApiContext;
+use PayPalPlusPlugin\WC\Refund\RefundData;
+use PayPalPlusPlugin\WC\Refund\WCRefund;
 
 /**
  * Class PayPalPlusGateway

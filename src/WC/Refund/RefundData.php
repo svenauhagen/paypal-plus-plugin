@@ -6,7 +6,7 @@
  * Time: 10:23
  */
 
-namespace PayPalPlusPlugin\WC;
+namespace PayPalPlusPlugin\WC\Refund;
 
 use PayPal\Api\Amount;
 use PayPal\Api\RefundRequest;
