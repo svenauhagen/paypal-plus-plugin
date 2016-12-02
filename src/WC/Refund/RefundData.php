@@ -74,7 +74,7 @@ class RefundData {
 
 		$amt = new Amount();
 		$amt->setCurrency( $this->order->get_order_currency() );
-		$amt->setTotal( paypal_plus_number_format( $this->amount ) );
+		$amt->setTotal( $this->number_format( $this->amount ) );
 		$refund = new RefundRequest();
 		$refund->setAmount( $amt );
 
@@ -84,6 +84,18 @@ class RefundData {
 	public function get_success_handler( $transaction_id ) {
 
 		return new RefundSuccess( $this->order, $transaction_id, $this->reason );
+
+	}
+
+	private function number_format( $price ) {
+
+		$decimals = 2;
+
+		if ( in_array( get_woocommerce_currency(), array( 'HUF', 'JPY', 'TWD' ) ) ) {
+			$decimals = 0;
+		}
+
+		return number_format( $price, $decimals, '.', '' );
 
 	}
 }
