@@ -43,14 +43,20 @@ class WCRefund {
 			$refundedSale = $sale->refundSale( $refund, $this->context );
 			if ( $refundedSale->state == 'completed' ) {
 				$this->factory->get_success_handler( $refundedSale->getId() )
-				              ->execute();
+					->execute();
+			} else {
+				// Todo: handle this properly
+				return FALSE;
 			}
 		} catch ( PayPalConnectionException $ex ) {
+			// Todo: Replace with do_action(...)
 			error_log( $ex->getMessage() );
 			error_log( $ex->getData() );
+			do_action( 'foo', $ex );
 
 			return FALSE;
 		} catch ( Exception $ex ) {
+			// Todo: Consider to NOT handle generic exceptions here
 			error_log( $ex->getMessage() );
 
 			return FALSE;
