@@ -6,6 +6,10 @@ use PayPal\Api\Payment;
 use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Exception\PayPalConnectionException;
 use PayPal\Rest\ApiContext;
+use PayPalPlusPlugin\WC\Payment\PaymentData;
+use PayPalPlusPlugin\WC\Payment\WCPaymentExecution;
+use PayPalPlusPlugin\WC\Payment\WCPaymentPatch;
+use PayPalPlusPlugin\WC\Payment\WCPayPalPayment;
 use PayPalPlusPlugin\WC\Refund\RefundData;
 use PayPalPlusPlugin\WC\Refund\WCRefund;
 
@@ -96,7 +100,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			return FALSE;
 		}
 		$refundData = new RefundData( $order, $amount, $reason, $this->get_api_context() );
-		$refund  = new WCRefund( $refundData, $this->get_api_context() );
+		$refund     = new WCRefund( $refundData, $this->get_api_context() );
 
 		return $refund->execute();
 
@@ -295,15 +299,27 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$order                      = new \WC_Order( $order_id );
 			WC()->session->ppp_order_id = $order_id;
 		}
-
-		$config = [
-			'api_context'           => $this->get_api_context(),
-			'return_url'            => WC()->api_request_url( $this->id ),
-			'notify_url'            => $this->ipn->get_notify_url(),
-			'experience_profile_id' => $this->get_option( $this->get_experience_profile_option_key() ),
+		$return_url     = WC()->api_request_url( $this->id );
+		$cancel_url     = wc_get_cart_url();
+		$notify_url     = $this->ipn->get_notify_url();
+		$web_profile_id = $this->get_option( $this->get_experience_profile_option_key() );
+		$api_context    = $this->get_api_context();
+		$config         = [
+			'api_context'           => $api_context,
+			'return_url'            => $return_url,
+			'notify_url'            => $notify_url,
+			'experience_profile_id' => $web_profile_id,
 		];
+		$payment_data   = new PaymentData(
+			$return_url,
+			$cancel_url,
+			$notify_url,
+			$web_profile_id,
+			$api_context
 
-		$payment                   = ( new WCPayPalPayment( $config, $order ) )->create();
+		);
+
+		$payment                   = ( new WCPayPalPayment( $payment_data, $order ) )->create();
 		WC()->session->paymentId   = $payment->id;
 		WC()->session->approvalurl = isset( $payment->links[1]->href ) ? $payment->links[1]->href : FALSE;
 

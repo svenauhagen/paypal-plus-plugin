@@ -6,7 +6,7 @@
  * Time: 12:55
  */
 
-namespace PayPalPlusPlugin\WC;
+namespace PayPalPlusPlugin\WC\Payment;
 
 use PayPal\Api\Payment;
 use PayPal\Api\PaymentExecution;

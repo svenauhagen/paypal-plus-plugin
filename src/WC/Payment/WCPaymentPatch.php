@@ -6,7 +6,7 @@
  * Time: 18:17
  */
 
-namespace PayPalPlusPlugin\WC;
+namespace PayPalPlusPlugin\WC\Payment;
 
 use PayPal\Api\Patch;
 use PayPal\Api\PatchRequest;
@@ -48,20 +48,17 @@ class WCPaymentPatch extends WCPayPalPayment {
 
 		try {
 			$payment = Payment::get( $this->config['payment_id'], $this->context );
-			$result = $payment->update( $this->get_patch_request(), $this->context );
+			$result  = $payment->update( $this->get_patch_request(), $this->context );
 			if ( $result == TRUE ) {
 				return TRUE;
 			}
 		} catch ( PayPalConnectionException $ex ) {
-			error_log( $ex->getMessage() );
-			error_log( $ex->getData() );
-
-			return FALSE;
-		} catch ( \Exception $ex ) {
-			error_log( $ex->getMessage() );
+			do_action( 'paypal-plus-plugin.log', 'payment_exception', $ex );
 
 			return FALSE;
 		}
+
+		return FALSE;
 	}
 
 	private function get_patches() {
