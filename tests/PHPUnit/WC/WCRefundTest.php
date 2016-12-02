@@ -8,7 +8,7 @@
 
 namespace PayPalPlusPlugin\WC;
 
-use Brain\Monkey\Functions;
+use Brain\Monkey\WP\Actions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
 use PayPal\Api\DetailedRefund;
 use PayPal\Api\RefundRequest;
@@ -21,11 +21,9 @@ class WCRefundTest extends BrainMonkeyWpTestCase {
 	/**
 	 * @dataProvider default_test_data
 	 *
-	 * @param $amount
-	 * @param $reason
 	 * @param $refundState
 	 */
-	public function test_execute( $amount, $reason, $refundState ) {
+	public function test_execute( $refundState ) {
 
 		$refundId = 42;
 
@@ -48,15 +46,15 @@ class WCRefundTest extends BrainMonkeyWpTestCase {
 			->with( $refundRequest, $context )
 			->andReturn( $refundResult );
 
-		$success = \Mockery::mock( RefundSuccess::class );
+		$refundSuccess = \Mockery::mock( RefundSuccess::class );
 		if ( $refundState === 'completed' ) {
-			$success->shouldReceive( 'execute' )
-			        ->once();
+			$refundSuccess->shouldReceive( 'execute' )
+			              ->once();
 		} else {
-			$success->shouldNotReceive( 'execute' );
+			$refundSuccess->shouldNotReceive( 'execute' );
 
 		}
-		$factory = \Mockery::mock( RefundData::class )->makePartial();
+		$factory = \Mockery::mock( RefundData::class );
 		$factory->shouldReceive( 'get_sale' )
 		        ->andReturn( $sale );
 		$factory
@@ -68,19 +66,42 @@ class WCRefundTest extends BrainMonkeyWpTestCase {
 				->shouldReceive( 'get_success_handler' )
 				->once()
 				->with( $refundId )
-				->andReturn( $success );
+				->andReturn( $refundSuccess );
 		}
 
-		$testee  = new WCRefund( $factory, $context );
+		$testee = new WCRefund( $factory, $context );
+		$result = $testee->execute();
+		$this->assertTrue( $result );
 
+	}
+
+	public function test_execute_exception() {
+
+		$context = \Mockery::mock( ApiContext::class );
+
+		$refundRequest = \Mockery::mock( RefundRequest::class );
+
+		$exception = \Mockery::mock( PayPalConnectionException::class );
+
+		$sale = \Mockery::mock( Sale::class );
+		$sale->shouldReceive( 'refundSale' )
+		     ->andThrow( $exception );
+
+		$factory = \Mockery::mock( RefundData::class );
+		$factory->shouldReceive( 'get_sale' )
+		        ->andReturn( $sale );
+		$factory
+			->shouldReceive( 'get_refund' )
+			->andReturn( $refundRequest );
+
+		Actions::expectFired( 'paypal-plus-plugin.log' )
+		       ->once()
+		       ->with( 'refund_exception', $exception );
+
+		$testee = new WCRefund( $factory, $context );
 		$result = $testee->execute();
 
-		if ( $refundState === 'completed' ) {
-			$this->assertTrue( $result );
-		} else {
-			$this->assertFalse( $result );
-		}
-
+		$this->assertFalse( $result );
 	}
 
 	/**
@@ -92,20 +113,12 @@ class WCRefundTest extends BrainMonkeyWpTestCase {
 
 		# 1. Testrun
 		$data['test_1'] = [
-			#param $amount
-			20,
-			#param $reason
-			'For Testing',
 			#param $refundState
 			'completed',
 		];
 
 		# 2. Testrun
 		$data['test_2'] = [
-			#param $amount
-			FALSE,
-			#param $reason
-			FALSE,
 			#param $refundState
 			'bogus',
 		];
