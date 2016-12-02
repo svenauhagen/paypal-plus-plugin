@@ -95,8 +95,8 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		if ( ! $order || ! $order->get_transaction_id() ) {
 			return FALSE;
 		}
-		$factory = new RefundData( $order, $amount, $reason, $this->get_api_context() );
-		$refund  = new WCRefund( $factory, $this->get_api_context() );
+		$refundData = new RefundData( $order, $amount, $reason, $this->get_api_context() );
+		$refund  = new WCRefund( $refundData, $this->get_api_context() );
 
 		return $refund->execute();
 

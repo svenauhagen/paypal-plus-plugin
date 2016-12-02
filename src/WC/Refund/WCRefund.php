@@ -20,12 +20,12 @@ class WCRefund {
 	/**
 	 * @var RefundData
 	 */
-	private $factory;
+	private $refundData;
 
-	public function __construct( RefundData $factory, ApiContext $context ) {
+	public function __construct( RefundData $refundData, ApiContext $context ) {
 
 		$this->context = $context;
-		$this->factory = $factory;
+		$this->refundData = $refundData;
 	}
 
 	/**
@@ -35,14 +35,14 @@ class WCRefund {
 	 */
 	public function execute() {
 
-		$sale   = $this->factory->get_sale();
-		$refund = $this->factory->get_refund();
+		$sale   = $this->refundData->get_sale();
+		$refund = $this->refundData->get_refund();
 
 		try {
 			$refundedSale = $sale->refundSale( $refund, $this->context );
 			if ( $refundedSale->state == 'completed' ) {
-				$this->factory->get_success_handler( $refundedSale->getId() )
-				              ->execute();
+				$this->refundData->get_success_handler( $refundedSale->getId() )
+				                 ->execute();
 			} else {
 				// Todo: handle this properly
 			}
