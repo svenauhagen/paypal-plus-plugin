@@ -7,6 +7,8 @@ use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Exception\PayPalConnectionException;
 use PayPal\Rest\ApiContext;
 use PayPalPlusPlugin\WC\Payment\PaymentData;
+use PayPalPlusPlugin\WC\Payment\PaymentExecutionData;
+use PayPalPlusPlugin\WC\Payment\PaymentExecutionSuccess;
 use PayPalPlusPlugin\WC\Payment\PaymentPatchData;
 use PayPalPlusPlugin\WC\Payment\WCPaymentExecution;
 use PayPalPlusPlugin\WC\Payment\WCPaymentPatch;
@@ -72,26 +74,17 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		$payment_id          = WC()->session->paymentId;
 
 		WC()->session->PayerID = $_GET["PayerID"];
-		$payment               = new WCPaymentExecution(
+		$order                 = new \WC_Order( WC()->session->ppp_order_id );
+
+		$data    = new PaymentExecutionData( $order,
 			WC()->session->PayerID,
 			$payment_id,
 			$this->get_api_context() );
 
-		if ( $payment->is_approved() ) {
-			$order = new \WC_Order( WC()->session->ppp_order_id );
+		$success = new PaymentExecutionSuccess( $data );
+		$payment = new WCPaymentExecution( $data, $success );
+		$payment->execute();
 
-			$payment->update_order( $order );
-
-			WC()->cart->empty_cart();
-			$redirect_url = $order->get_checkout_order_received_url();
-
-		} else {
-			wc_add_notice( __( 'Error Payment state:' . $payment->get_payment_state(), 'woo-paypal-plus' ),
-				'error' );
-			$redirect_url = wc_get_cart_url();
-		}
-		wp_redirect( $redirect_url );
-		exit;
 	}
 
 	public function process_refund( $order_id, $amount = NULL, $reason = '' ) {

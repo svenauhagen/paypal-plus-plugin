@@ -9,9 +9,10 @@
 namespace PayPalPlusPlugin\WC\Payment;
 
 use Brain\Monkey\Functions;
+use MonkeryTestCase\BrainMonkeyWpTestCase;
 use PayPal\Api\Patch;
 
-class PatchProviderTest extends \PHPUnit_Framework_TestCase {
+class PatchProviderTest extends BrainMonkeyWpTestCase {
 
 	/**
 	 * @dataProvider default_test_data
