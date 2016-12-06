@@ -8,8 +8,6 @@
 
 namespace PayPalPlusPlugin\WC\Payment;
 
-use PayPal\Api\Payment;
-use PayPal\Api\PaymentInstruction;
 use PayPalPlusPlugin\WC\RequestSuccessHandler;
 
 class PaymentExecutionSuccess implements RequestSuccessHandler {
@@ -39,11 +37,12 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 				'error' );
 			$redirect_url = wc_get_cart_url();
 		}
+		//Todo: Refactor so that we can properly test this class
 		wp_redirect( $redirect_url );
 		exit;
 	}
 
-	public function update_order() {
+	private function update_order() {
 
 		$sale    = $this->data->get_sale();
 		$sale_id = $sale->getId();
@@ -69,18 +68,23 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 			$instruction      = $this->data->get_payment_instruction();
 			$instruction_type = $instruction->getInstructionType();
 			if ( $instruction_type == 'PAY_UPON_INVOICE' ) {
-				$this->update_payment_data( $order, $instruction );
+				$this->update_payment_data();
 			}
 		}
 
-		$this->update_billing_address( $order, $this->data->get_payment() );
+		if ( $this->should_update_address() ) {
+			$this->update_billing_address();
+
+		}
 
 	}
 
-	public function update_payment_data( \WC_Order $order, PaymentInstruction $payment_instruction ) {
+	private function update_payment_data() {
 
-		$reference_number = $payment_instruction->getReferenceNumber();
-		$payment_due_date = $payment_instruction->getPaymentDueDate();
+		$order               = $this->data->get_order();
+		$payment_instruction = $this->data->get_payment_instruction();
+		$reference_number    = $payment_instruction->getReferenceNumber();
+		$payment_due_date    = $payment_instruction->getPaymentDueDate();
 
 		$RecipientBankingInstruction       = $payment_instruction->getRecipientBankingInstruction();
 		$bank_name                         = $RecipientBankingInstruction->getBankName();
@@ -108,20 +112,26 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 
 	}
 
-	public function update_billing_address( \WC_Order $order, Payment $payment = NULL ) {
+	private function update_billing_address() {
 
-		if ( ! empty( $payment->payer->payer_info->billing_address->line1 ) ) {
-			$billing_address = array(
-				'first_name' => $payment->payer->payer_info->first_name,
-				'last_name'  => $payment->payer->payer_info->last_name,
-				'address_1'  => $payment->payer->payer_info->billing_address->line1,
-				'address_2'  => $payment->payer->payer_info->billing_address->line2,
-				'city'       => $payment->payer->payer_info->billing_address->city,
-				'state'      => $payment->payer->payer_info->billing_address->state,
-				'postcode'   => $payment->payer->payer_info->billing_address->postal_code,
-				'country'    => $payment->payer->payer_info->billing_address->country_code,
-			);
-			$order->set_address( $billing_address, $type = 'billing' );
-		}
+		$payment         = $this->data->get_payment();
+		$order           = $this->data->get_order();
+		$billing_address = array(
+			'first_name' => $payment->payer->payer_info->first_name,
+			'last_name'  => $payment->payer->payer_info->last_name,
+			'address_1'  => $payment->payer->payer_info->billing_address->line1,
+			'address_2'  => $payment->payer->payer_info->billing_address->line2,
+			'city'       => $payment->payer->payer_info->billing_address->city,
+			'state'      => $payment->payer->payer_info->billing_address->state,
+			'postcode'   => $payment->payer->payer_info->billing_address->postal_code,
+			'country'    => $payment->payer->payer_info->billing_address->country_code,
+		);
+		$order->set_address( $billing_address, $type = 'billing' );
+	}
+
+	private function should_update_address() {
+
+		return ! empty( $this->data->get_payment()->payer->payer_info->billing_address->line1 );
+
 	}
 }
