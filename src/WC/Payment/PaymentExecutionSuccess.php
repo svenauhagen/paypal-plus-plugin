@@ -17,11 +17,19 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 	 */
 	private $data;
 
+	/**
+	 * PaymentExecutionSuccess constructor.
+	 *
+	 * @param PaymentExecutionData $data
+	 */
 	public function __construct( PaymentExecutionData $data ) {
 
 		$this->data = $data;
 	}
 
+	/**
+	 *
+	 */
 	public function execute() {
 
 		$order = $this->data->get_order();

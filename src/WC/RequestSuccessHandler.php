@@ -10,5 +10,10 @@ namespace PayPalPlusPlugin\WC;
 
 interface RequestSuccessHandler {
 
+	/**
+	 * Handles a successful REST call
+	 *
+	 * @return bool
+	 */
 	public function execute();
 }

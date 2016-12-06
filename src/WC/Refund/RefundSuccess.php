@@ -21,12 +21,22 @@ class RefundSuccess implements RequestSuccessHandler {
 	 */
 	private $transaction_id;
 
+	/**
+	 * RefundSuccess constructor.
+	 *
+	 * @param \WC_Order $order
+	 * @param           $transaction_id
+	 * @param           $reason
+	 */
 	public function __construct( \WC_Order $order, $transaction_id, $reason ) {
 
 		$this->order          = $order;
 		$this->transaction_id = $transaction_id;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function execute() {
 
 		$this->order->add_order_note( 'Refund Transaction ID:' . $this->transaction_id );
@@ -38,5 +48,6 @@ class RefundSuccess implements RequestSuccessHandler {
 			$this->order->update_status( 'refunded' );
 		}
 
+		return TRUE;
 	}
 }

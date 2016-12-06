@@ -8,11 +8,7 @@
 
 namespace PayPalPlusPlugin\WC\Payment;
 
-use PayPal\Api\Payment;
-use PayPal\Api\PaymentExecution;
-use PayPal\Api\PaymentInstruction;
 use PayPal\Exception\PayPalConnectionException;
-use PayPal\Rest\ApiContext;
 use PayPalPlusPlugin\WC\RequestSuccessHandler;
 
 class WCPaymentExecution {
@@ -26,6 +22,12 @@ class WCPaymentExecution {
 	 */
 	private $success_handler;
 
+	/**
+	 * WCPaymentExecution constructor.
+	 *
+	 * @param PaymentExecutionData  $data
+	 * @param RequestSuccessHandler $success_handler
+	 */
 	public function __construct( PaymentExecutionData $data, RequestSuccessHandler $success_handler ) {
 
 		$this->data            = $data;
