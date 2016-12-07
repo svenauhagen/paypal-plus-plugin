@@ -118,8 +118,8 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		// Call regular saving method
 		$this->process_admin_options();
-
-		if ( $this->check_api_credentials() ) {
+		$verification = new CredentialVerification( $this->get_api_context() );
+		if ( $verification->verify() ) {
 			$option_key = $this->get_experience_profile_option_key();
 			$config     = [
 				'checkout_logo' => $this->get_option( 'checkout_logo' ),
@@ -133,7 +133,10 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$_POST[ $this->get_field_key( $option_key ) ] = $web_profile->save_profile();
 
 		} else {
-			$this->add_error( __( 'Your API credentials are either missing or invalid.', 'woo-paypal-plus' ) );
+			unset( $_POST[ $this->get_field_key( 'enabled' ) ] );
+			$this->enabled = 'no';
+			$this->add_error( __( 'Your API credentials are either missing or invalid: ' . $verification->get_error_message(),
+				'woo-paypal-plus' ) );
 		}
 
 		//Save again to catch all values we've updated
@@ -272,30 +275,6 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		return $order && $order->get_transaction_id();
 	}
 
-	/**
-	 *
-	 * Make a bogus API call to test if we have corrent API credentials
-	 *
-	 * @return bool
-	 */
-	private function check_api_credentials() {
-
-		$api_context = $this->get_api_context();
-		if ( is_null( $api_context ) ) {
-			return FALSE;
-		}
-		try {
-			$params = array( 'count' => 1 );
-			Payment::all( $params, $api_context );
-		} catch ( PayPalConnectionException $e ) {
-			return FALSE;
-		} catch ( Exception $e ) {
-			return FALSE;
-		}
-
-		return TRUE;
-	}
-
 	private function get_locale() {
 
 		$locale = FALSE;
@@ -363,9 +342,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		//static $auth;
 		//if ( is_null( $auth ) ) {
 		$creds = $this->get_api_credentials();
-		if ( empty( $creds['client_id'] ) || empty( $creds['client_secret'] ) ) {
-			return NULL;
-		}
+		//if ( empty( $creds['client_id'] ) || empty( $creds['client_secret'] ) ) {
+		//	return NULL;
+		//}
 		$auth = new ApiContext( new OAuthTokenCredential( $creds['client_id'], $creds['client_secret'] ) );
 		$auth->setConfig( array(
 			'mode'           => ( $this->is_sandbox() ) ? 'SANDBOX' : 'LIVE',
