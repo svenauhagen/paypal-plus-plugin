@@ -86,12 +86,22 @@ class RefundData {
 		return $refund;
 	}
 
+	/**
+	 * @param $transaction_id
+	 *
+	 * @return RefundSuccess
+	 */
 	public function get_success_handler( $transaction_id ) {
 
 		return new RefundSuccess( $this->order, $transaction_id, $this->reason );
 
 	}
 
+	/**
+	 * @param $price
+	 *
+	 * @return string
+	 */
 	private function number_format( $price ) {
 
 		$decimals = 2;

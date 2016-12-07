@@ -48,6 +48,10 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		$this->title        = $method_title;
 		$this->method_title = $method_title;
 		$this->has_fields   = TRUE;
+		$this->supports     = [
+			'products',
+			'refunds',
+		];
 		$this->ipn          = new IPN( $this->id, $this->is_sandbox() );
 		$this->ipn->register();
 		$this->init_form_fields();
@@ -76,7 +80,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		WC()->session->PayerID = $_GET["PayerID"];
 		$order                 = new \WC_Order( WC()->session->ppp_order_id );
 
-		$data    = new PaymentExecutionData( $order,
+		$data = new PaymentExecutionData( $order,
 			WC()->session->PayerID,
 			$payment_id,
 			$this->get_api_context() );
@@ -87,10 +91,17 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 	}
 
+	/**
+	 * @param int    $order_id
+	 * @param null   $amount
+	 * @param string $reason
+	 *
+	 * @return bool
+	 */
 	public function process_refund( $order_id, $amount = NULL, $reason = '' ) {
 
 		$order = wc_get_order( $order_id );
-		if ( ! $order || ! $order->get_transaction_id() ) {
+		if ( ! $this->can_refund_order( $order ) ) {
 			return FALSE;
 		}
 		$refundData = new RefundData( $order, $amount, $reason, $this->get_api_context() );
@@ -100,6 +111,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 	}
 
+	/**
+	 *
+	 */
 	public function on_save() {
 
 		// Call regular saving method
@@ -122,10 +136,10 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$this->add_error( __( 'Your API credentials are either missing or invalid.', 'woo-paypal-plus' ) );
 		}
 
-		//Save again to catch all vlues we've updated
+		//Save again to catch all values we've updated
 		$this->process_admin_options();
 
-	}/** @noinspection PhpInconsistentReturnPointsInspection */
+	}
 
 	/**
 	 * Generate Settings HTML.
@@ -152,7 +166,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			return ob_get_clean() . parent::generate_settings_html( $form_fields, $echo );
 		}
 
-	}
+	}/** @noinspection PhpInconsistentReturnPointsInspection */
 
 	/**
 	 * Process the payment
@@ -244,6 +258,18 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		];
 		( new PayPalIframeView( $data ) )->render();
 
+	}
+
+	/**
+	 * Can the order be refunded via PayPal?
+	 *
+	 * @param  \WC_Order $order
+	 *
+	 * @return bool
+	 */
+	private function can_refund_order( \WC_Order $order ) {
+
+		return $order && $order->get_transaction_id();
 	}
 
 	/**
