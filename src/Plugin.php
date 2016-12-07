@@ -1,6 +1,7 @@
 <?php
 namespace PayPalPlusPlugin;
 
+use PayPalPlusPlugin\WC\IPN;
 use PayPalPlusPlugin\WC\PayPalPlusGateway;
 
 /**
@@ -11,7 +12,14 @@ use PayPalPlusPlugin\WC\PayPalPlusGateway;
  */
 class Plugin {
 
+	/**
+	 * @var string
+	 */
 	private $file;
+	/**
+	 * @var string
+	 */
+	private $gateway_id = 'paypal_plus';
 	/**
 	 * @var PayPalPlusGateway
 	 */
@@ -24,7 +32,10 @@ class Plugin {
 	 */
 	public function __construct( $file ) {
 
-		$this->gateway = $this->get_gateway();
+		$this->gateway = new PayPalPlusGateway(
+			$this->gateway_id,
+			__( 'PayPal Plus', 'paypal-plus-plugin' )
+		);
 		$this->gateway->register();
 
 		$this->file = $file;
@@ -49,14 +60,6 @@ class Plugin {
 
 		return new Common( $this->gateway );
 
-	}
-
-	private function get_gateway() {
-
-		return new PayPalPlusGateway(
-			'paypal_plus',
-			__( 'PayPal Plus', 'paypal-plus-plugin' )
-		);
 	}
 
 	/**

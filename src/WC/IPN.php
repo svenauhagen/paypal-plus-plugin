@@ -21,6 +21,10 @@ class IPN {
 	 * @var bool
 	 */
 	private $sandbox;
+	/**
+	 * @var string
+	 */
+	private $paypal_url;
 
 	/**
 	 * Constructor.
@@ -34,7 +38,9 @@ class IPN {
 	public function __construct( $gateway_id, $sandbox = TRUE ) {
 
 		$this->gateway_id = $gateway_id;
-		$this->sandbox = $sandbox;
+		$this->sandbox    = $sandbox;
+		$this->paypal_url = $sandbox ? 'https://www.sandbox.paypal.com/cgi-bin/webscr'
+			: 'https://www.paypal.com/cgi-bin/webscr';
 	}
 
 	public function register() {
@@ -88,17 +94,15 @@ class IPN {
 
 		$validate_ipn = array( 'cmd' => '_notify-validate' );
 		$validate_ipn += wp_unslash( $_POST );
-		$params   = array(
+		$params   = [
 			'body'        => $validate_ipn,
 			'timeout'     => 60,
 			'httpversion' => '1.1',
 			'compress'    => FALSE,
 			'decompress'  => FALSE,
 			'user-agent'  => 'WooCommerce/' . WC()->version,
-		);
-		$url      = $this->sandbox ? 'https://www.sandbox.paypal.com/cgi-bin/webscr'
-			: 'https://www.paypal.com/cgi-bin/webscr';
-		$response = wp_safe_remote_post( $url, $params );
+		];
+		$response = wp_safe_remote_post( $this->paypal_url, $params );
 		if ( ! is_wp_error( $response ) && $response['response']['code'] >= 200 && $response['response']['code'] < 300
 		     && strstr( $response['body'], 'VERIFIED' )
 		) {
@@ -117,7 +121,7 @@ class IPN {
 	 */
 	protected function validate_transaction_type( $txn_type ) {
 
-		$accepted_types = array( 'cart', 'instant', 'express_checkout', 'web_accept', 'masspay', 'send_money' );
+		$accepted_types = [ 'cart', 'instant', 'express_checkout', 'web_accept', 'masspay', 'send_money' ];
 		if ( ! in_array( strtolower( $txn_type ), $accepted_types ) ) {
 			exit;
 		}

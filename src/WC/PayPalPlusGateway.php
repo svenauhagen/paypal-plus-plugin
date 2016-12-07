@@ -39,10 +39,11 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	/**
 	 * PayPalPlusGateway constructor.
 	 *
-	 * @param $id
-	 * @param $method_title
+	 * @param     $id
+	 * @param     $method_title
+	 * @param IPN $ipn
 	 */
-	public function __construct( $id, $method_title ) {
+	public function __construct( $id, $method_title, IPN $ipn = NULL ) {
 
 		$this->id           = $id;
 		$this->title        = $method_title;
@@ -52,7 +53,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			'products',
 			'refunds',
 		];
-		$this->ipn          = new IPN( $this->id, $this->is_sandbox() );
+		$this->ipn          = $ipn ?: new IPN( $this->id, $this->is_sandbox() );
 		$this->ipn->register();
 		$this->init_form_fields();
 		$this->init_settings();
