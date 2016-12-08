@@ -28,6 +28,9 @@ $ composer require inpsyde/paypal-plus-plugin
 ## Development Setup
 
 Don't forget to run `composer install` after cloning the repository
+Then, run `npm install` to set up the asset and release taskrunners.
+
+To create a release, run `grunt compress`. The release will be a timestamped zip file in the `dist/` folder
 
 ## Crafted by Inpsyde
 
