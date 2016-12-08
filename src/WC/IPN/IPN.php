@@ -44,7 +44,13 @@ class IPN {
 
 		$this->gateway_id = $gateway_id;
 		$this->data       = $data ?: new IPNData( $_POST );
-		$this->validator  = $validator ?: new IPNValidator( $this->data );
+
+		$this->validator = $validator
+			?: new IPNValidator(
+				$this->data->get_all(),
+				$this->data->get_paypal_url(),
+				$this->data->get_user_agent()
+			);
 
 	}
 

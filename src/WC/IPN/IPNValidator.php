@@ -14,32 +14,47 @@ class IPNValidator {
 	 * @var IPNData
 	 */
 	private $data;
+	/**
+	 * @var array
+	 */
+	private $request_data;
+	private $paypal_url;
+	private $user_agent;
 
 	/**
 	 * IPNValidator constructor.
 	 *
-	 * @param IPNData $data
+	 * @param array  $request_data
+	 * @param string $paypal_url
+	 * @param string $user_agent
 	 */
-	public function __construct( IPNData $data ) {
+	public function __construct( array $request_data, $paypal_url, $user_agent ) {
 
-		$this->data = $data;
+		$this->request_data = [ 'cmd' => '_notify-validate' ] + $request_data;
+		$this->paypal_url   = $paypal_url;
+		$this->user_agent   = $user_agent;
 	}
 
 	public function validate() {
 
-		$data = [ 'cmd' => '_notify-validate' ] + $this->data->get_all();
-
 		$params = [
-			'body'        => $data,
+			'body'        => $this->request_data,
 			'timeout'     => 60,
 			'httpversion' => '1.1',
 			'compress'    => FALSE,
 			'decompress'  => FALSE,
-			'user-agent'  => $this->data->get_user_agent(),
+			'user-agent'  => $this->user_agent,
 		];
 
-		$response = wp_safe_remote_post( $this->data->get_paypal_url(), $params );
-		if ( ! ( $response instanceof \WP_Error ) && $response['response']['code'] >= 200 && $response['response']['code'] < 300
+		$response = wp_safe_remote_post( $this->paypal_url, $params );
+
+		if ( $response instanceof \WP_Error ) {
+			return FALSE;
+		}
+		if ( ! isset( $response['response']['code'] ) ) {
+			return FALSE;
+		}
+		if ( $response['response']['code'] >= 200 && $response['response']['code'] < 300
 		     && strstr( $response['body'], 'VERIFIED' )
 		) {
 			return TRUE;
