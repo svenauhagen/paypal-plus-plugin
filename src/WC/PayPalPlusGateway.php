@@ -1,11 +1,10 @@
 <?php
 namespace PayPalPlusPlugin\WC;
 
-use Mockery\CountValidator\Exception;
-use PayPal\Api\Payment;
 use PayPal\Auth\OAuthTokenCredential;
-use PayPal\Exception\PayPalConnectionException;
 use PayPal\Rest\ApiContext;
+use PayPalPlusPlugin\WC\IPN\IPN;
+use PayPalPlusPlugin\WC\IPN\IPNData;
 use PayPalPlusPlugin\WC\Payment\PaymentData;
 use PayPalPlusPlugin\WC\Payment\PaymentExecutionData;
 use PayPalPlusPlugin\WC\Payment\PaymentExecutionSuccess;
@@ -53,7 +52,12 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			'products',
 			'refunds',
 		];
-		$this->ipn          = $ipn ?: new IPN( $this->id, $this->is_sandbox() );
+		$ipn_data           = new IPNData(
+			$_POST,
+			$this->is_sandbox()
+		);
+		$this->ipn          = $ipn ?: new IPN( $this->id, $ipn_data );
+
 		$this->ipn->register();
 		$this->init_form_fields();
 		$this->init_settings();
