@@ -38,7 +38,7 @@ class OrderUpdater {
 
 		$this->order     = $order;
 		$this->data      = $data;
-		$this->validator = $validator ?: new PaymentValidator();
+		$this->validator = $validator ?: new PaymentValidator( $order );
 	}
 
 	/**
@@ -54,6 +54,8 @@ class OrderUpdater {
 		     || $this->validator->validate_currency( $this->order, $this->data->get( 'mc_currency' ) )
 		     || $this->validator->validate_amount( $this->order, $this->data->get( 'mc_gross' ) )
 		) {
+			$this->order->update_status( 'on-hold', $this->validator->get_last_error() );
+
 			return;
 		}
 		$this->save_paypal_meta_data( $this->order, $posted );

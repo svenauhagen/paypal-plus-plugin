@@ -30,9 +30,7 @@ class IPNValidatorTest extends BrainMonkeyWpTestCase {
 
 		if ( $response instanceof \WP_Error ) {
 			$this->assertFalse( $result );
-		}
-
-		if ( ! isset( $response['response']['code'] ) ) {
+		} elseif ( ! isset( $response['response']['code'] ) ) {
 			$this->assertFalse( $result );
 		} else {
 			$this->assertTrue( $result );
