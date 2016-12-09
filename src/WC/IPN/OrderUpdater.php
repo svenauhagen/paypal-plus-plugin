@@ -138,12 +138,7 @@ class OrderUpdater {
 		if ( $this->order->get_total() == ( $posted['mc_gross'] * - 1 ) ) {
 			$this->order->update_status( 'refunded',
 				sprintf( __( 'Payment %s via IPN.', 'woo-paypal-plus' ), strtolower( $posted['payment_status'] ) ) );
-			$this->send_ipn_email_notification(
-				sprintf( __( 'Payment for order %s refunded', 'woo-paypal-plus' ),
-					'<a class="link" href="' . esc_url( admin_url( 'post.php?post=' . $this->order->id . '&action=edit' ) ) . '">' . $this->order->get_order_number() . '</a>' ),
-				sprintf( __( 'Order #%s has been marked as refunded - PayPal reason code: %s', 'woo-paypal-plus' ),
-					$this->order->get_order_number(), $posted['reason_code'] )
-			);
+			do_action( 'paypal-plus-plugin.ipn-payment-update', 'refunded', $this->data );
 		}
 	}
 
@@ -156,12 +151,9 @@ class OrderUpdater {
 
 		$this->order->update_status( 'on-hold',
 			sprintf( __( 'Payment %s via IPN.', 'woo-paypal-plus' ), wc_clean( $posted['payment_status'] ) ) );
-		$this->send_ipn_email_notification(
-			sprintf( __( 'Payment for order %s reversed', 'woo-paypal-plus' ),
-				'<a class="link" href="' . esc_url( admin_url( 'post.php?post=' . $this->order->id . '&action=edit' ) ) . '">' . $this->order->get_order_number() . '</a>' ),
-			sprintf( __( 'Order #%s has been marked on-hold due to a reversal - PayPal reason code: %s',
-				'woo-paypal-plus' ), $this->order->get_order_number(), wc_clean( $posted['reason_code'] ) )
-		);
+
+		do_action( 'paypal-plus-plugin.ipn-payment-update', 'reversed', $this->data );
+
 	}
 
 	/**
@@ -171,12 +163,8 @@ class OrderUpdater {
 	 */
 	public function payment_status_canceled_reversal( $posted ) {
 
-		$this->send_ipn_email_notification(
-			sprintf( __( 'Reversal cancelled for order #%s', 'woo-paypal-plus' ), $this->order->get_order_number() ),
-			sprintf( __( 'Order #%s has had a reversal cancelled. Please check the status of payment and update the order status accordingly here: %s',
-				'woo-paypal-plus' ), $this->order->get_order_number(),
-				esc_url( admin_url( 'post.php?post=' . $this->order->id . '&action=edit' ) ) )
-		);
+		do_action( 'paypal-plus-plugin.ipn-payment-update', 'canceled_reversal', $this->data );
+
 	}
 
 	/**

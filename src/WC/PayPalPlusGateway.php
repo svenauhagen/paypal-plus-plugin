@@ -36,6 +36,11 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	private $ipn;
 
 	/**
+	 * @var ApiContext
+	 */
+	private $auth;
+
+	/**
 	 * PayPalPlusGateway constructor.
 	 *
 	 * @param     $id
@@ -344,24 +349,21 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		/**
 		 * @var $auth ApiContext
 		 */
-		//static $auth;
-		//if ( is_null( $auth ) ) {
-		$creds = $this->get_api_credentials();
-		//if ( empty( $creds['client_id'] ) || empty( $creds['client_secret'] ) ) {
-		//	return NULL;
-		//}
-		$auth = new ApiContext( new OAuthTokenCredential( $creds['client_id'], $creds['client_secret'] ) );
-		$auth->setConfig( array(
-			'mode'           => ( $this->is_sandbox() ) ? 'SANDBOX' : 'LIVE',
-			'log.LogEnabled' => TRUE,
-			'log.LogLevel'   => ( $this->is_sandbox() ) ? 'DEBUG' : 'INFO',
-			'log.FileName'   => wc_get_log_file_path( 'paypal_plus' ),
-			'cache.enabled'  => TRUE,
-			'cache.FileName' => wc_get_log_file_path( 'paypal_plus_cache' ),
-		) );
-		//} else {
-		//	$auth->resetRequestId();
-		//}
+		if ( is_null( $this->auth ) ) {
+			$creds = $this->get_api_credentials();
+			$auth = new ApiContext( new OAuthTokenCredential( $creds['client_id'], $creds['client_secret'] ) );
+
+			$auth->setConfig( array(
+				'mode'           => ( $this->is_sandbox() ) ? 'SANDBOX' : 'LIVE',
+				'log.LogEnabled' => TRUE,
+				'log.LogLevel'   => ( $this->is_sandbox() ) ? 'DEBUG' : 'INFO',
+				'log.FileName'   => wc_get_log_file_path( 'paypal_plus' ),
+				'cache.enabled'  => TRUE,
+				'cache.FileName' => wc_get_log_file_path( 'paypal_plus_cache' ),
+			) );
+		} else {
+			$this->auth->resetRequestId();
+		}
 
 		return $auth;
 	}

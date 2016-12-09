@@ -101,19 +101,4 @@ class IPN {
 		return FALSE;
 	}
 
-	/**
-	 * Send a notification to the user handling orders.
-	 *
-	 * @param string $subject
-	 * @param string $message
-	 */
-	protected function send_ipn_email_notification( $subject, $message ) {
-
-		$new_order_settings = get_option( 'woocommerce_new_order_settings', [] );
-		$mailer             = WC()->mailer();
-		$message            = $mailer->wrap_message( $subject, $message );
-		$mailer->send( ! empty( $new_order_settings['recipient'] ) ? $new_order_settings['recipient']
-			: get_option( 'admin_email' ), strip_tags( $subject ), $message );
-	}
-
 }
