@@ -8,6 +8,11 @@
 
 namespace PayPalPlusPlugin\WC;
 
+/**
+ * Class GatewaySettingsModel
+ *
+ * @package PayPalPlusPlugin\WC
+ */
 class GatewaySettingsModel {
 
 	/**
@@ -15,123 +20,32 @@ class GatewaySettingsModel {
 	 */
 	public function get_settings() {
 
-		$settings = [
-			'enabled'                          => [
+		$settings = [];
+
+		//General
+		$settings += [
+			'enabled'     => [
 				'title'   => __( 'Enable/Disable', 'woo-paypal-plus' ),
 				'type'    => 'checkbox',
 				'label'   => __( 'Enable PayPal Plus', 'woo-paypal-plus' ),
 				'default' => 'no',
 			],
-			'title'                            => [
+			'title'       => [
 				'title'       => __( 'Title', 'woo-paypal-plus' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the name of the payment gateway the user sees during checkout.',
 					'woo-paypal-plus' ),
 				'default'     => __( 'PayPal Plus', 'woo-paypal-plus' ),
 			],
-			'description'                      => [
+			'description' => [
 				'title'       => __( 'Description', 'woo-paypal-plus' ),
 				'type'        => 'text',
 				'description' => __( 'This controls the payment gateway description the user sees during checkout.',
 					'woo-paypal-plus' ),
 				'default'     => __( 'PayPal Plus', 'woo-paypal-plus' ),
 			],
-			'country'                          => [
-				'title'       => __( 'PayPal Account Country', 'woo-paypal-plus' ),
-				'type'        => 'select',
-				'description' => __( 'Set this to the country your PayPal account is based in.', 'woo-paypal-plus' ),
-				'default'     => 'DE',
-				'options'     => [
-					'BR' => 'Brazil',
-					'MX' => 'Mexico',
-					'DE' => 'Germany',
-				],
-			],
-			'invoice_prefix'                   => [
-				'title'       => __( 'Invoice Prefix', 'woo-paypal-plus' ),
-				'type'        => 'text',
-				'description' => __( 'Please enter a prefix for your invoice numbers. If you use your PayPal account for multiple stores ensure this prefix is unique as PayPal will not allow orders with the same invoice number.',
-					'woo-paypal-plus' ),
-				'default'     => 'WC-PP-PLUS-',
-				'desc_tip'    => TRUE,
-			],
-			'cancel_url'                       => [
-				'title'       => __( 'Cancel Page', 'woo-paypal-plus' ),
-				'description' => __( 'Sets the page users will be returned to if they click the Cancel link on the PayPal checkout pages.',
-					'woo-paypal-plus' ),
-				'type'        => 'select',
-				'options'     => $this->get_cancel_page_urls(),
-				'default'     => wc_get_page_id( 'checkout' ),
-			],
-			'disable_shipping'                 => [
-				'title'       => __( 'Disable Shipping Requirements', 'woo-paypal-plus' ),
-				'type'        => 'checkbox',
-				'label'       => __( 'Disable Shipping Requirements', 'woo-paypal-plus' ),
-				'default'     => 'no',
-				'description' => __( 'Check this option to remove shipping options during checkout. This is typically used when selling digital goods that do not require shipping',
-					'woo-paypal-plus' ),
-			],
-			'order_cancellations'              => [
-				'title'       => __( 'Auto Cancel / Refund Orders ', 'woo-paypal-plus' ),
-				'label'       => '',
-				'description' => __( 'Allows you to cancel and refund orders that do not meet PayPal\'s Seller Protection criteria.',
-					'woo-paypal-plus' ),
-				'type'        => 'select',
-				'class'       => 'paypal_plus_order_cancellations',
-				'options'     => [
-					'no_seller_protection'               => __( 'Do *not* have PayPal Seller Protection',
-						'woo-paypal-plus' ),
-					'no_unauthorized_payment_protection' => __( 'Do *not* have PayPal Unauthorized Payment Protection',
-						'woo-paypal-plus' ),
-					'disabled'                           => __( 'Do not cancel any orders', 'woo-paypal-plus' ),
-				],
-				'default'     => 'disabled',
-			],
-			'email_notify_order_cancellations' => [
-				'title'       => __( 'Order Canceled/Refunded Email Notifications', 'woo-paypal-plus' ),
-				'label'       => __( 'Enable buyer email notifications for Order canceled/refunded',
-					'woo-paypal-plus' ),
-				'type'        => 'checkbox',
-				'description' => __( 'This will send buyer email notifications for Order canceled/refunded when Auto Cancel / Refund Orders option is selected.',
-					'woo-paypal-plus' ),
-				'default'     => 'no',
-				'class'       => 'paypal_plus_email_notify_order_cancellations',
-			],
-			'legal_note'                       => [
-				'title'       => __( 'Legal Note for PAY UPON INVOICE Payment', 'woo-paypal-plus' ),
-				'type'        => 'textarea',
-				'description' => __( 'legal note that will be added to the thank you page and emails.',
-					'woo-paypal-plus' ),
-				'default'     => __( 'Händler hat die Forderung gegen Sie im Rahmen eines laufenden Factoringvertrages an die PayPal (Europe) S.àr.l. et Cie, S.C.A. abgetreten. Zahlungen mit schuldbefreiender Wirkung können nur an die PayPal (Europe) S.àr.l. et Cie, S.C.A. geleistet werden.',
-					'woo-paypal-plus' ),
-				'desc_tip'    => FALSE,
-			],
-			//            'ratenzahlung' => array(
-			//                'title' => __('Ratenzahlung', 'woo-paypal-plus'),
-			//                'type' => 'checkbox',
-			//                'label' => __('Enable Ratenzahlung', 'woo-paypal-plus'),
-			//                'default' => 'no',
-			//                'description' => sprintf(__('Ratenzahlung Powered by PayPal. If this is active on your PayPal Plus account you can enable it here to include it during checkout.  More information available <a target="_blank" href="%s">here</a>.', 'woo-paypal-plus'), 'https://www.paypal.com/de/webapps/mpp/installments'),
-			//            ),
-			'thirdPartyPaymentMethods'         => [
-				'title'       => __( 'Checkout Page Display', 'woo-paypal-plus' ),
-				'type'        => 'checkbox',
-				'label'       => __( 'Replace checkout page payment gateways with PayPal Plus iFrame.',
-					'woo-paypal-plus' ),
-				'default'     => 'no',
-				'description' => __( 'Enable this option to replace the WooCommerce payment gateways with the PayPal Plus iFrame and then add additional gateways to the iFrame as 3rd party options.  Leave disabled to keep the WooCommerce payment gateways intact and simply add PayPal Plus to the list.',
-					'woo-paypal-plus' ),
-			],
-			'pay_upon_invoice_instructions'    => [
-				'title'       => __( 'Pay upon Invoice Instructions', 'woo-paypal-plus' ),
-				'type'        => 'textarea',
-				'description' => __( 'Pay upon Invoice Instructions that will be added to the thank you page and emails.',
-					'woo-paypal-plus' ),
-				'default'     => __( 'Please transfer the complete amount to the bank account provided below.',
-					'woo-paypal-plus' ),
-				'desc_tip'    => FALSE,
-			],
 		];
+
 		//Credentials
 		$settings += [
 			'credentials_section'           => [
@@ -215,9 +129,84 @@ class GatewaySettingsModel {
 			],
 		];
 
+		//Settings
+		$settings += [
+			'settings_section'                 => [
+				'title' => __( 'Settings', 'woo-paypal-plus' ),
+				'type'  => 'title',
+				'desc'  => '',
+			],
+			'country'                          => [
+				'title'       => __( 'PayPal Account Country', 'woo-paypal-plus' ),
+				'type'        => 'select',
+				'description' => __( 'Set this to the country your PayPal account is based in.', 'woo-paypal-plus' ),
+				'default'     => 'DE',
+				'options'     => [
+					'BR' => 'Brazil',
+					'MX' => 'Mexico',
+					'DE' => 'Germany',
+				],
+			],
+			'invoice_prefix'                   => [
+				'title'       => __( 'Invoice Prefix', 'woo-paypal-plus' ),
+				'type'        => 'text',
+				'description' => __( 'Please enter a prefix for your invoice numbers. If you use your PayPal account for multiple stores ensure this prefix is unique as PayPal will not allow orders with the same invoice number.',
+					'woo-paypal-plus' ),
+				'default'     => 'WC-PP-PLUS-',
+				'desc_tip'    => TRUE,
+			],
+			'cancel_url'                       => [
+				'title'       => __( 'Cancel Page', 'woo-paypal-plus' ),
+				'description' => __( 'Sets the page users will be returned to if they click the Cancel link on the PayPal checkout pages.',
+					'woo-paypal-plus' ),
+				'type'        => 'select',
+				'options'     => $this->get_cancel_page_urls(),
+				'default'     => wc_get_page_id( 'checkout' ),
+			],
+			//'disable_shipping'                 => [
+			//	'title'       => __( 'Disable Shipping Requirements', 'woo-paypal-plus' ),
+			//	'type'        => 'checkbox',
+			//	'label'       => __( 'Disable Shipping Requirements', 'woo-paypal-plus' ),
+			//	'default'     => 'no',
+			//	'description' => __( 'Check this option to remove shipping options during checkout. This is typically used when selling digital goods that do not require shipping',
+			//		'woo-paypal-plus' ),
+			//],
+			'email_notify_order_cancellations' => [
+				'title'       => __( 'Order Canceled/Refunded Email Notifications', 'woo-paypal-plus' ),
+				'label'       => __( 'Enable buyer email notifications for Order canceled/refunded',
+					'woo-paypal-plus' ),
+				'type'        => 'checkbox',
+				'description' => __( 'This will send buyer email notifications for Order canceled/refunded when Auto Cancel / Refund Orders option is selected.',
+					'woo-paypal-plus' ),
+				'default'     => 'no',
+				'class'       => 'paypal_plus_email_notify_order_cancellations',
+			],
+			'legal_note'                       => [
+				'title'       => __( 'Legal Note for PAY UPON INVOICE Payment', 'woo-paypal-plus' ),
+				'type'        => 'textarea',
+				'description' => __( 'legal note that will be added to the thank you page and emails.',
+					'woo-paypal-plus' ),
+				'default'     => __( 'Händler hat die Forderung gegen Sie im Rahmen eines laufenden Factoringvertrages an die PayPal (Europe) S.àr.l. et Cie, S.C.A. abgetreten. Zahlungen mit schuldbefreiender Wirkung können nur an die PayPal (Europe) S.àr.l. et Cie, S.C.A. geleistet werden.',
+					'woo-paypal-plus' ),
+				'desc_tip'    => FALSE,
+			],
+			'pay_upon_invoice_instructions'    => [
+				'title'       => __( 'Pay upon Invoice Instructions', 'woo-paypal-plus' ),
+				'type'        => 'textarea',
+				'description' => __( 'Pay upon Invoice Instructions that will be added to the thank you page and emails.',
+					'woo-paypal-plus' ),
+				'default'     => __( 'Please transfer the complete amount to the bank account provided below.',
+					'woo-paypal-plus' ),
+				'desc_tip'    => FALSE,
+			],
+		];
+
 		return $settings;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function get_cancel_page_urls() {
 
 		$args        = array(
@@ -244,9 +233,5 @@ class GatewaySettingsModel {
 		}
 
 		return $cancel_page;
-	}
-
-	private function get_credentials_section() {
-
 	}
 }
