@@ -87,8 +87,12 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 	public function test_get_user_agent( $request, $sandbox ) {
 
 		Functions::expect( 'wp_unslash' );
-		Functions::expect( 'get_wc_version' )
-		         ->once();
+		$wc          = \Mockery::mock( \WooCommerce::class );
+		$wc->version = 'foo';
+		Functions::expect( 'WC' )
+		         ->once()
+		         ->andReturn( $wc );
+
 		$testee = new IPNData( $request, $sandbox );
 
 		$result = $testee->get_user_agent();

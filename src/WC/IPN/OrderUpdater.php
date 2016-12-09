@@ -50,25 +50,31 @@ class OrderUpdater {
 		if ( $this->order->has_status( 'completed' ) ) {
 			exit;
 		}
+
 		if ( ! $this->validator->validate_transaction_type( $this->data->get( 'txn_type' ) )
-		     || $this->validator->validate_currency( $this->order, $this->data->get( 'mc_currency' ) )
-		     || $this->validator->validate_amount( $this->order, $this->data->get( 'mc_gross' ) )
+		     || $this->validator->validate_currency( $this->data->get( 'mc_currency' ) )
+		     || $this->validator->validate_amount( $this->data->get( 'mc_gross' ) )
 		) {
 			$this->order->update_status( 'on-hold', $this->validator->get_last_error() );
 
 			return;
 		}
-		$this->save_paypal_meta_data( $this->order, $posted );
-		if ( 'completed' === $posted['payment_status'] ) {
-			$this->payment_complete( $this->order,
-				( ! empty( $posted['txn_id'] ) ? wc_clean( $posted['txn_id'] ) : '' ),
-				__( 'IPN payment completed', 'woo-paypal-plus' ) );
-			if ( ! empty( $posted['mc_fee'] ) ) {
-				update_post_meta( $this->order->id, 'PayPal Transaction Fee', wc_clean( $posted['mc_fee'] ) );
+
+		$this->save_paypal_meta_data();
+
+		if ( 'completed' === $this->data->get( 'payment_status' ) ) {
+
+			$transaction_id = wc_clean( $this->data->get( 'txn_id' ) );
+			$note           = __( 'IPN payment completed', 'woo-paypal-plus' );
+
+			$this->payment_complete( $transaction_id, $note );
+
+			if ( ! empty( $fee = $this->data->get( 'mc_fee' ) ) ) {
+				update_post_meta( $this->order->id, 'PayPal Transaction Fee', wc_clean( $fee ) );
 			}
 		} else {
 			$this->payment_on_hold( $this->order,
-				sprintf( __( 'Payment pending: %s', 'woo-paypal-plus' ), $posted['pending_reason'] ) );
+				sprintf( __( 'Payment pending: %s', 'woo-paypal-plus' ), $this->data->get( 'pending_reason' ) ) );
 		}
 	}
 
@@ -176,14 +182,13 @@ class OrderUpdater {
 	/**
 	 * Complete order, add transaction ID and note.
 	 *
-	 * @param  \WC_Order $order
-	 * @param  string    $txn_id
-	 * @param  string    $note
+	 * @param  string $transaction_id
+	 * @param  string $note
 	 */
-	private function payment_complete( $order, $txn_id = '', $note = '' ) {
+	private function payment_complete( $transaction_id = '', $note = '' ) {
 
-		$order->add_order_note( $note );
-		$order->payment_complete( $txn_id );
+		$this->order->add_order_note( $note );
+		$this->order->payment_complete( $transaction_id );
 	}
 
 	/**
@@ -200,25 +205,24 @@ class OrderUpdater {
 	}
 
 	/**
-	 * Save important data from the IPN to the order.
-	 *
-	 * @param \WC_Order $order
-	 * @param array     $posted
+	 * Save relevant data from the IPN to the order.
 	 */
-	private function save_paypal_meta_data( $order, $posted ) {
+	private function save_paypal_meta_data() {
 
-		if ( ! empty( $posted['payer_email'] ) ) {
-			update_post_meta( $order->id, 'Payer PayPal address', wc_clean( $posted['payer_email'] ) );
+		foreach (
+			[
+				'payer_email',
+				'first_name',
+				'last_name',
+				'payment_type',
+			]
+			as $key
+		) {
+			if ( ! empty( $value = $this->data->get( $key ) ) ) {
+				update_post_meta( $this->order->id, 'Payer PayPal address', wc_clean( $value ) );
+			}
 		}
-		if ( ! empty( $posted['first_name'] ) ) {
-			update_post_meta( $order->id, 'Payer first name', wc_clean( $posted['first_name'] ) );
-		}
-		if ( ! empty( $posted['last_name'] ) ) {
-			update_post_meta( $order->id, 'Payer last name', wc_clean( $posted['last_name'] ) );
-		}
-		if ( ! empty( $posted['payment_type'] ) ) {
-			update_post_meta( $order->id, 'Payment type', wc_clean( $posted['payment_type'] ) );
-		}
+
 	}
 
 }

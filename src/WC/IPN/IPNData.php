@@ -87,7 +87,7 @@ class IPNData {
 	 */
 	public function get_user_agent() {
 
-		return 'WooCommerce/' . get_wc_version();
+		return 'WooCommerce/' . WC()->version;
 	}
 
 	/**

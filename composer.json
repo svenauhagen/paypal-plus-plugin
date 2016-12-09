@@ -30,5 +30,8 @@
     "psr-4": {
       "PayPalPlusPlugin\\": "src/"
     }
+  },
+  "config":{
+    "optimize-autoloader": true
   }
 }
