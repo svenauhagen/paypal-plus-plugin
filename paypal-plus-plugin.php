@@ -42,7 +42,7 @@ add_action( 'plugins_loaded', function () {
 	 * Check if WooCommerce is active. Bail if it's not.
 	 */
 	if ( ! class_exists( 'WooCommerce' ) ) {
-		
+
 		add_action( 'admin_notices', function () {
 
 			$class   = 'notice notice-error';

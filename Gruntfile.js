@@ -94,9 +94,7 @@ module.exports = function( grunt ) {
 						src   : [
 							'./assets/**/*',
 							'./src/**/*',
-							'./vendor/composer/**/*',
-							'./vendor/autoload.php',
-							'./vendor/paypal/**/*',
+							'./vendor/**/*',
 							'./CHANGELOG.md',
 							'./LICENSE',
 							'./paypal-plus-plugin.php',
