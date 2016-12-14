@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/inpsyde/paypal-plus-plugin.git"
+    "url": "git+ssh://git@bitbucket.org/inpsyde/paypal_plus_plugin_git"
   },
   "scripts": {
     "postinstall": "bower install"

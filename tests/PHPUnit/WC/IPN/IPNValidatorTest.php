@@ -11,10 +11,19 @@ namespace PayPalPlusPlugin\WC\IPN;
 use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
 
+/**
+ * Class IPNValidatorTest
+ *
+ * @package PayPalPlusPlugin\WC\IPN
+ */
 class IPNValidatorTest extends BrainMonkeyWpTestCase {
 
 	/**
+	 * Tests the validate method
+	 *
 	 * @dataProvider default_test_data
+	 *
+	 * @param array $response Request response dummy.
 	 */
 	public function test_validate( $response ) {
 
@@ -39,28 +48,30 @@ class IPNValidatorTest extends BrainMonkeyWpTestCase {
 	}
 
 	/**
+	 * Provide test data
+	 *
 	 * @return array
 	 */
 	public function default_test_data() {
 
 		$data = [];
 
-		# 1. Testrun
+		// 1. Testrun.
 		$data['test_1'] = [
-			#param $response
+			// param $response.
 			\Mockery::mock( \WP_Error::class ),
 
 		];
 
-		# 2. Testrun
+		// 2. Testrun.
 		$data['test_2'] = [
-			#param $response
+			// param $response.
 			[ 'foo' => 'bar' ],
 		];
 
-		# 2. Testrun
+		// 2. Testrun
 		$data['test_2'] = [
-			#param $response
+			// param $response.
 			[
 				'response' => [
 					'code' => 200,

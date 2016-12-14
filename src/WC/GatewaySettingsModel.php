@@ -16,13 +16,15 @@ namespace PayPalPlusPlugin\WC;
 class GatewaySettingsModel {
 
 	/**
+	 * Returns all settings options
+	 *
 	 * @return array
 	 */
 	public function get_settings() {
 
 		$settings = [];
 
-		//General
+		// General.
 		$settings += [
 			'enabled'     => [
 				'title'   => __( 'Enable/Disable', 'woo-paypal-plus' ),
@@ -46,7 +48,7 @@ class GatewaySettingsModel {
 			],
 		];
 
-		//Credentials
+		// Credentials.
 		$settings += [
 			'credentials_section'           => [
 				'title' => __( 'Credentials', 'woo-paypal-plus' ),
@@ -78,7 +80,7 @@ class GatewaySettingsModel {
 			'sandbox_experience_profile_id' => [
 				'title'       => __( 'Sandbox Experience Profile ID', 'woo-paypal-plus' ),
 				'type'        => 'text',
-				'description' => __( "This value will be automatically generated and populated here when you save your settings.",
+				'description' => __( 'This value will be automatically generated and populated here when you save your settings.',
 					'woo-paypal-plus' ),
 				'default'     => '',
 				'class'       => 'credential_field readonly',
@@ -100,7 +102,7 @@ class GatewaySettingsModel {
 			'live_experience_profile_id'    => [
 				'title'       => __( 'Experience Profile ID', 'woo-paypal-plus' ),
 				'type'        => 'text',
-				'description' => __( "This value will be automatically generated and populated here when you save your settings.",
+				'description' => __( 'This value will be automatically generated and populated here when you save your settings.',
 					'woo-paypal-plus' ),
 				'default'     => '',
 				'class'       => 'credential_field readonly',
@@ -118,7 +120,7 @@ class GatewaySettingsModel {
 				'type'        => 'text',
 				'description' => __( 'This will be displayed as your brand / company name on the PayPal checkout pages.',
 					'woo-paypal-plus' ),
-				'default'     => __( get_bloginfo( 'name' ), 'woo-paypal-plus' ),
+				'default'     => get_bloginfo( 'name' ),
 			],
 			'checkout_logo'       => [
 				'title'       => __( 'PayPal Checkout Logo (190x60px)', 'woo-paypal-plus' ),
@@ -129,14 +131,14 @@ class GatewaySettingsModel {
 			],
 		];
 
-		//Settings
+		// Settings.
 		$settings += [
-			'settings_section'                 => [
+			'settings_section'              => [
 				'title' => __( 'Settings', 'woo-paypal-plus' ),
 				'type'  => 'title',
 				'desc'  => '',
 			],
-			'country'                          => [
+			'country'                       => [
 				'title'       => __( 'PayPal Account Country', 'woo-paypal-plus' ),
 				'type'        => 'select',
 				'description' => __( 'Set this to the country your PayPal account is based in.', 'woo-paypal-plus' ),
@@ -147,7 +149,7 @@ class GatewaySettingsModel {
 					'DE' => 'Germany',
 				],
 			],
-			'invoice_prefix'                   => [
+			'invoice_prefix'                => [
 				'title'       => __( 'Invoice Prefix', 'woo-paypal-plus' ),
 				'type'        => 'text',
 				'description' => __( 'Please enter a prefix for your invoice numbers. If you use your PayPal account for multiple stores ensure this prefix is unique as PayPal will not allow orders with the same invoice number.',
@@ -155,7 +157,7 @@ class GatewaySettingsModel {
 				'default'     => 'WC-PP-PLUS-',
 				'desc_tip'    => TRUE,
 			],
-			'cancel_url'                       => [
+			'cancel_url'                    => [
 				'title'       => __( 'Cancel Page', 'woo-paypal-plus' ),
 				'description' => __( 'Sets the page users will be returned to if they click the Cancel link on the PayPal checkout pages.',
 					'woo-paypal-plus' ),
@@ -163,7 +165,7 @@ class GatewaySettingsModel {
 				'options'     => $this->get_cancel_page_urls(),
 				'default'     => wc_get_page_id( 'checkout' ),
 			],
-			'legal_note'                       => [
+			'legal_note'                    => [
 				'title'       => __( 'Legal Note for PAY UPON INVOICE Payment', 'woo-paypal-plus' ),
 				'type'        => 'textarea',
 				'description' => __( 'legal note that will be added to the thank you page and emails.',
@@ -172,7 +174,7 @@ class GatewaySettingsModel {
 					'woo-paypal-plus' ),
 				'desc_tip'    => FALSE,
 			],
-			'pay_upon_invoice_instructions'    => [
+			'pay_upon_invoice_instructions' => [
 				'title'       => __( 'Pay upon Invoice Instructions', 'woo-paypal-plus' ),
 				'type'        => 'textarea',
 				'description' => __( 'Pay upon Invoice Instructions that will be added to the thank you page and emails.',
@@ -187,6 +189,8 @@ class GatewaySettingsModel {
 	}
 
 	/**
+	 * Retrieves all possible Cancel page URLs
+	 *
 	 * @return array
 	 */
 	public function get_cancel_page_urls() {

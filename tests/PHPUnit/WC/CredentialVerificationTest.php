@@ -46,7 +46,7 @@ class CredentialVerificationTest extends BrainMonkeyWpTestCase {
 
 		$context = \Mockery::mock( ApiContext::class );
 
-		Actions::expectFired( 'paypal-plus-plugin.log' )
+		Actions::expectFired( 'paypal_plus_plugin_log' )
 		       ->once()
 		       ->with( 'credential_exception', $credEx );
 

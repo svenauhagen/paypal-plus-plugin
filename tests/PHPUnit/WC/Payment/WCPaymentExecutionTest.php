@@ -63,7 +63,7 @@ class WCPaymentExecutionTest extends BrainMonkeyWpTestCase {
 		$success = \Mockery::mock( PaymentExecutionSuccess::class );
 		$success->shouldNotReceive( 'execute' );
 
-		Actions::expectFired( 'paypal-plus-plugin.log' )
+		Actions::expectFired( 'paypal_plus_plugin_log' )
 		       ->once()
 		       ->with( 'payment_execution_exception', $exception );
 

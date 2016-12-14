@@ -53,7 +53,7 @@ class WCRefund {
 				// Todo: handle this properly
 			}
 		} catch ( PayPalConnectionException $ex ) {
-			do_action( 'paypal-plus-plugin.log', 'refund_exception', $ex );
+			do_action( 'paypal_plus_plugin_log', 'refund_exception', $ex );
 
 			return FALSE;
 		}

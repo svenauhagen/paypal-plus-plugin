@@ -26,9 +26,9 @@ class OrderUpdater {
 	/**
 	 * OrderUpdater constructor.
 	 *
-	 * @param \WC_Order        $order
-	 * @param IPNData          $data
-	 * @param PaymentValidator $validator
+	 * @param \WC_Order        $order     WooCommerce Order.
+	 * @param IPNData          $data      IPN Data.
+	 * @param PaymentValidator $validator Payment validator.
 	 */
 	public function __construct(
 		\WC_Order $order,
@@ -38,26 +38,36 @@ class OrderUpdater {
 
 		$this->order     = $order;
 		$this->data      = $data;
-		$this->validator = $validator ?: new PaymentValidator( $order );
+		$this->validator = $validator
+			?: new PaymentValidator( $this->data->get( 'txn_type' ), $this->data->get( 'mc_currency' ),
+				$this->data->get( 'mc_gross' ), $order );
+	}
+
+	/**
+	 * Handle a pending payment.
+	 *
+	 * @return bool
+	 */
+	public function payment_status_pending() {
+
+		return $this->payment_status_completed();
 	}
 
 	/**
 	 * Handle a completed payment.
 	 *
+	 * @return bool
 	 */
 	public function payment_status_completed() {
 
 		if ( $this->order->has_status( 'completed' ) ) {
-			exit;
+			return TRUE;
 		}
 
-		if ( ! $this->validator->validate_transaction_type( $this->data->get( 'txn_type' ) )
-		     || $this->validator->validate_currency( $this->data->get( 'mc_currency' ) )
-		     || $this->validator->validate_amount( $this->data->get( 'mc_gross' ) )
-		) {
+		if ( ! $this->validator->is_valid() ) {
 			$this->order->update_status( 'on-hold', $this->validator->get_last_error() );
 
-			return;
+			return FALSE;
 		}
 
 		$this->save_paypal_meta_data();
@@ -73,123 +83,88 @@ class OrderUpdater {
 				update_post_meta( $this->order->id, 'PayPal Transaction Fee', wc_clean( $fee ) );
 			}
 		} else {
-			$this->payment_on_hold( $this->order,
-				sprintf( __( 'Payment pending: %s', 'woo-paypal-plus' ), $this->data->get( 'pending_reason' ) ) );
+			$this->payment_on_hold( sprintf( __( 'Payment pending: %s', 'woo-paypal-plus' ),
+				$this->data->get( 'pending_reason' ) ) );
 		}
-	}
 
-	/**
-	 * Handle a pending payment.
-	 *
-	 */
-	public function payment_status_pending() {
-
-		$this->payment_status_completed();
-	}
-
-	/**
-	 * Handle a failed payment.
-	 *
-	 * @param array $posted
-	 */
-	public function payment_status_failed( $posted ) {
-
-		$this->order->update_status( 'failed',
-			sprintf( __( 'Payment %s via IPN.', 'woo-paypal-plus' ), wc_clean( $posted['payment_status'] ) ) );
+		return TRUE;
 	}
 
 	/**
 	 * Handle a denied payment.
 	 *
-	 * @param array $posted
+	 * @return bool
 	 */
-	public function payment_status_denied( $posted ) {
+	public function payment_status_denied() {
 
-		$this->payment_status_failed( $posted );
+		return $this->payment_status_failed();
+	}
+
+	/**
+	 * Handle a failed payment.
+	 *
+	 * @return bool
+	 */
+	public function payment_status_failed() {
+
+		return $this->order->update_status( 'failed',
+			sprintf( __( 'Payment %s via IPN.', 'woo-paypal-plus' ),
+				wc_clean( $this->data->get( 'payment_status' ) ) ) );
 	}
 
 	/**
 	 * Handle an expired payment.
 	 *
-	 * @param array $posted
+	 * @return bool
 	 */
-	public function payment_status_expired( $posted ) {
+	public function payment_status_expired() {
 
-		$this->payment_status_failed( $posted );
+		return $this->payment_status_failed();
 	}
 
 	/**
 	 * Handle a voided payment.
 	 *
-	 * @param array $posted
+	 * @return bool
 	 */
-	public function payment_status_voided( $posted ) {
+	public function payment_status_voided() {
 
-		$this->payment_status_failed( $posted );
+		return $this->payment_status_failed();
 	}
 
 	/**
 	 * Handle a refunded order.
-	 *
-	 * @param array $posted
 	 */
-	public function payment_status_refunded( $posted ) {
+	public function payment_status_refunded() {
 
-		if ( $this->order->get_total() == ( $posted['mc_gross'] * - 1 ) ) {
+		if ( $this->order->get_total() === ( $this->data->get( 'mc_gross', 0 ) * - 1 ) ) {
 			$this->order->update_status( 'refunded',
-				sprintf( __( 'Payment %s via IPN.', 'woo-paypal-plus' ), strtolower( $posted['payment_status'] ) ) );
-			do_action( 'paypal-plus-plugin.ipn-payment-update', 'refunded', $this->data );
+				sprintf( __( 'Payment %s via IPN.', 'woo-paypal-plus' ),
+					strtolower( $this->data->get( 'payment_status' ) ) ) );
+			do_action( 'paypal_plus_plugin_ipn_payment_update', 'refunded', $this->data );
 		}
 	}
 
 	/**
-	 * Handle a reveral.
-	 *
-	 * @param array $posted
+	 * Handle a payment reversal.
 	 */
-	public function payment_status_reversed( $posted ) {
+	public function payment_status_reversed() {
 
 		$this->order->update_status( 'on-hold',
-			sprintf( __( 'Payment %s via IPN.', 'woo-paypal-plus' ), wc_clean( $posted['payment_status'] ) ) );
+			sprintf( __( 'Payment %s via IPN.', 'woo-paypal-plus' ),
+				wc_clean( $this->data->get( 'payment_status' ) ) ) );
 
-		do_action( 'paypal-plus-plugin.ipn-payment-update', 'reversed', $this->data );
-
-	}
-
-	/**
-	 * Handle a cancelled reveral.
-	 *
-	 * @param array $posted
-	 */
-	public function payment_status_canceled_reversal( $posted ) {
-
-		do_action( 'paypal-plus-plugin.ipn-payment-update', 'canceled_reversal', $this->data );
+		do_action( 'paypal_plus_plugin_ipn_payment_update', 'reversed', $this->data );
 
 	}
 
 	/**
-	 * Complete order, add transaction ID and note.
-	 *
-	 * @param  string $transaction_id
-	 * @param  string $note
+	 * Handle a cancelled reversal.
 	 */
-	private function payment_complete( $transaction_id = '', $note = '' ) {
+	public function payment_status_canceled_reversal() {
 
-		$this->order->add_order_note( $note );
-		$this->order->payment_complete( $transaction_id );
-	}
+		do_action( 'paypal_plus_plugin_ipn_payment_update', 'canceled_reversal', $this->data );
 
-	/**
-	 * Hold order and add note.
-	 *
-	 * @param  \WC_Order $order
-	 * @param  string    $reason
-	 */
-	private function payment_on_hold( $order, $reason = '' ) {
-
-		$order->update_status( 'on-hold', $reason );
-		$order->reduce_order_stock();
-		WC()->cart->empty_cart();
 	}
 
 	/**
@@ -211,6 +186,30 @@ class OrderUpdater {
 			}
 		}
 
+	}
+
+	/**
+	 * Complete order, add transaction ID and note.
+	 *
+	 * @param  string $transaction_id The Transaction ID.
+	 * @param  string $note           Payment note.
+	 */
+	private function payment_complete( $transaction_id = '', $note = '' ) {
+
+		$this->order->add_order_note( $note );
+		$this->order->payment_complete( $transaction_id );
+	}
+
+	/**
+	 * Hold order and add note.
+	 *
+	 * @param  string $reason Reason for refunding.
+	 */
+	private function payment_on_hold( $reason = '' ) {
+
+		$this->order->update_status( 'on-hold', $reason );
+		$this->order->reduce_order_stock();
+		WC()->cart->empty_cart();
 	}
 
 }

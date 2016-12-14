@@ -14,154 +14,121 @@ use MonkeryTestCase\BrainMonkeyWpTestCase;
 class PaymentValidatorTest extends BrainMonkeyWpTestCase {
 
 	/**
-	 * @dataProvider amount_test_data
+	 * Tests the is_valid method
+	 *
+	 * @dataProvider default_test_data
 	 *
 	 * @param \WC_Order $order
-	 * @param           $wc_amount
-	 * @param           $pp_amount
+	 * @param float     $wc_amount
+	 * @param float     $pp_amount
+	 * @param string    $transaction_type
+	 * @param string[]  $accepted_types
+	 * @param string    $wc_currency
+	 * @param string    $pp_currency
 	 */
-	public function test_validate_amount( \WC_Order $order, $wc_amount, $pp_amount ) {
+	public function test_is_valid( \WC_Order $order, $wc_amount, $pp_amount, $transaction_type, $accepted_types, $wc_currency, $pp_currency ) {
 
-		Functions::expect( '__' )
-		         ->andReturn( 'error' );
+		$order->shouldReceive( 'get_order_currency' )
+		      ->once()
+		      ->andReturn( $wc_currency );
 
 		$order->shouldReceive( 'get_total' )
 		      ->once()
 		      ->andReturn( $wc_amount );
-		$testee = new PaymentValidator( $order );
 
-		$result = $testee->validate_amount( $pp_amount );
+		Functions::expect('__');
 
-		if ( number_format( $wc_amount, 2, '.', '' ) === number_format( $pp_amount, 2, '.', '' ) ) {
+		$testee = new PaymentValidator( $transaction_type, $pp_currency, $pp_amount, $order, $accepted_types );
+		$result = $testee->is_valid();
+		if ( in_array( $transaction_type, $accepted_types, TRUE )
+		     && $wc_currency === $pp_currency
+		     && number_format( $wc_amount, 2, '.', '' ) === number_format( $pp_amount, 2, '.', '' )
+		) {
 			$this->assertTrue( $result );
 		} else {
 			$this->assertFalse( $result );
-			$error = $testee->get_last_error();
-			$this->assertInternalType( 'string', $error );
-			$this->assertNotEmpty( $error );
+
 		}
 
 	}
 
 	/**
-	 * @dataProvider transaction_test_data
-	 *
-	 * @param \WC_Order $order
-	 * @param           $accepted_types
-	 * @param           $transaction_type
+	 * Provides complete validation test data
 	 */
-	public function test_validate_transaction( \WC_Order $order, $accepted_types, $transaction_type ) {
-
-		Functions::expect( '__' )
-		         ->andReturn( 'error' );
-		$testee = new PaymentValidator( $order, $accepted_types );
-
-		$result = $testee->validate_transaction_type( $transaction_type );
-
-		if ( in_array( $transaction_type, $accepted_types ) ) {
-			$this->assertTrue( $result );
-
-		} else {
-			$this->assertFalse( $result );
-			$error = $testee->get_last_error();
-			$this->assertInternalType( 'string', $error );
-			$this->assertNotEmpty( $error );
-		}
-	}
-
-	public function validate_currency( \WC_Order $order, $wc_currency, $pp_currency ) {
-
-		Functions::expect( '__' )
-		         ->andReturn( 'error' );
-
-		$order->shouldReceive( 'get_total' )
-		      ->once()
-		      ->andReturn( $wc_currency );
-
-		$testee = new PaymentValidator( $order );
-		$result = $testee->validate_currency( $pp_currency );
-		if ( $wc_currency === $pp_currency ) {
-			$this->assertTrue( $result );
-
-		} else {
-			$this->assertFalse( $result );
-			$error = $testee->get_last_error();
-			$this->assertInternalType( 'string', $error );
-			$this->assertNotEmpty( $error );
-		}
-
-	}
-
-	/**
-	 * @return array
-	 */
-	public function amount_test_data() {
+	public function default_test_data() {
 
 		$data = [];
 
 		$data['test_1'] = [
+			// Order mock.
 			\Mockery::mock( \WC_Order::class ),
+			// WooCommerce Price.
 			100.00,
+			// PayPal price.
 			100.00,
+			// Transaction type.
+			'foo',
+			// Accepted Transaction Types.
+			[ 'foo', 'bar' ],
+			// WooCommerce currency.
+			'foo',
+			// PayPal currency.
+			'foo',
 		];
 
 		$data['test_2'] = [
+			// Order mock.
 			\Mockery::mock( \WC_Order::class ),
-			"100.00",
-			100,
+			// WooCommerce Price.
+			100.00,
+			// PayPal price.
+			101.00,
+			// Transaction type.
+			'foo',
+			// Accepted Transaction Types.
+			[ 'foo', 'bar' ],
+			// WooCommerce currency.
+			'foo',
+			// PayPal currency.
+			'foo',
 		];
 
 		$data['test_3'] = [
+			// Order mock.
 			\Mockery::mock( \WC_Order::class ),
-			"100.00",
-			200,
+			// WooCommerce Price.
+			100.00,
+			// PayPal price.
+			100.00,
+			// Transaction type.
+			'foo',
+			// Accepted Transaction Types.
+			[ 'bar', 'baz' ],
+			// WooCommerce currency.
+			'foo',
+			// PayPal currency.
+			'foo',
 		];
 
-		return $data;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function transaction_test_data() {
-
-		$data = [];
-
-		$data['test_1'] = [
+		$data['test_4'] = [
+			// Order mock.
 			\Mockery::mock( \WC_Order::class ),
+			// WooCommerce Price.
+			100.00,
+			// PayPal price.
+			101.00,
+			// Transaction type.
+			'foo',
+			// Accepted Transaction Types.
 			[ 'foo', 'bar' ],
+			// WooCommerce currency.
 			'foo',
-		];
-
-		$data['test_2'] = [
-			\Mockery::mock( \WC_Order::class ),
-			[ 'foo', 'bar' ],
-			'baz',
+			// PayPal currency.
+			'bar',
 		];
 
 		return $data;
-	}
 
-	/**
-	 * @return array
-	 */
-	public function currency_test_data() {
-
-		$data = [];
-
-		$data['test_1'] = [
-			\Mockery::mock( \WC_Order::class ),
-			'foo',
-			'foo',
-		];
-
-		$data['test_2'] = [
-			\Mockery::mock( \WC_Order::class ),
-			'foo',
-			'baz',
-		];
-
-		return $data;
 	}
 
 }

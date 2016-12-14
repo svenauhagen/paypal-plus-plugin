@@ -44,7 +44,7 @@ class WCPaymentPatch {
 				return TRUE;
 			}
 		} catch ( PayPalConnectionException $ex ) {
-			do_action( 'paypal-plus-plugin.log', 'payment_patch_exception', $ex );
+			do_action( 'paypal_plus_plugin_log', 'payment_patch_exception', $ex );
 
 			return FALSE;
 		}
