@@ -66,7 +66,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			'refunds',
 		];
 		$ipn_data           = new IPNData(
-			filter_input_array( INPUT_POST ),
+			filter_input_array( INPUT_POST ) ?: [],
 			$this->is_sandbox()
 		);
 		$this->ipn          = $ipn ?: new IPN( $this->id, $ipn_data );
@@ -106,7 +106,6 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'on_save' ], 10 );
 		add_action( 'woocommerce_receipt_' . $this->id, [ $this, 'render_receipt_page' ] );
 		add_action( 'woocommerce_api_' . $this->id, array( $this, 'execute_payment' ), 12 );
-
 	}
 
 	/**

@@ -8,17 +8,29 @@
 
 namespace PayPalPlusPlugin\WC;
 
+/**
+ * Class ReceiptPageView
+ *
+ * @package PayPalPlusPlugin\WC
+ */
 class ReceiptPageView {
 
+	/**
+	 * Setup the Recipt page JS
+	 * TODO: This could be done in a separate js file, leveraging wp_localize_script()
+	 */
 	public function render() {
+
+		$message = __(
+			'Thank you for your order. We are now redirecting you to PayPal to make payment.',
+			'woo-paypal-plus'
+		);
 		?>
-		<script src="https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js"
-			type="text/javascript"></script>
+		<!--suppress JSUnresolvedFunction, JSUnresolvedVariable -->
 		<script>
 			function paypal_plus_redirect() {
 				jQuery.blockUI( {
-					message   : "<?php echo esc_js( __( 'Thank you for your order. We are now redirecting you to PayPal to make payment.',
-						'woo-paypal-plus' ) ) ?>",
+					message   : "<?php echo esc_js( $message );?>",
 					baseZ     : 99999,
 					overlayCSS: {
 						background: "#fff",
