@@ -10,9 +10,16 @@ namespace PayPalPlusPlugin\WC\Payment;
 
 use PayPalPlusPlugin\WC\RequestSuccessHandler;
 
+/**
+ * Class PaymentExecutionSuccess
+ *
+ * @package PayPalPlusPlugin\WC\Payment
+ */
 class PaymentExecutionSuccess implements RequestSuccessHandler {
 
 	/**
+	 * Payment Data from successful Execution.
+	 *
 	 * @var PaymentExecutionData
 	 */
 	private $data;
@@ -20,7 +27,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 	/**
 	 * PaymentExecutionSuccess constructor.
 	 *
-	 * @param PaymentExecutionData $data
+	 * @param PaymentExecutionData $data Payment Data from successful Execution.
 	 */
 	public function __construct( PaymentExecutionData $data ) {
 
@@ -28,7 +35,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 	}
 
 	/**
-	 *
+	 * Execute!
 	 */
 	public function execute() {
 
@@ -41,41 +48,54 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 			$redirect_url = $order->get_checkout_order_received_url();
 
 		} else {
-			wc_add_notice( __( 'Error Payment state:' . $this->data->get_payment_state(), 'woo-paypal-plus' ),
-				'error' );
+			$notice = sprintf(
+				__( 'Error Payment state: %s', 'woo-paypal-plus' ),
+				$this->data->get_payment_state()
+			);
+			wc_add_notice( $notice, 'error' );
 			$redirect_url = wc_get_cart_url();
 		}
-		//Todo: Refactor so that we can properly test this class
-		wp_redirect( $redirect_url );
+		// Todo: Refactor so that we can properly test this class.
+		wp_safe_redirect( $redirect_url );
 		exit;
 	}
 
+	/**
+	 * Update Order details.
+	 */
 	private function update_order() {
 
 		$sale    = $this->data->get_sale();
 		$sale_id = $sale->getId();
 		$order   = $this->data->get_order();
 
-		if ( $sale->getState() == 'pending' ) {
-			$order->add_order_note( sprintf( __( 'PayPal Reason code: %s.', 'woo-paypal-plus' ),
-				$sale->getReasonCode() ) );
+		if ( $sale->getState() === 'pending' ) {
+			$note = sprintf(
+				__( 'PayPal Reason code: %s.', 'woo-paypal-plus' ),
+				$sale->getReasonCode()
+			);
+			$order->add_order_note( $note );
 			$order->update_status( 'on-hold' );
 
-		} elseif ( $sale->getState() == 'completed' && ! $this->data->is_PUI() ) {
+		} elseif ( $sale->getState() === 'completed' && ! $this->data->is_pui() ) {
+
 			$order->add_order_note( __( 'PayPal Plus payment completed', 'woo-paypal-plus' ) );
 			$order->payment_complete( $sale_id );
-			$order->add_order_note( sprintf( __( 'PayPal Plus payment approved! Transaction ID: %s',
-				'woo-paypal-plus' ), $sale_id ) );
+			$note = sprintf(
+				__( 'PayPal Plus payment approved! Transaction ID: %s', 'woo-paypal-plus' ),
+				$sale_id
+			);
+			$order->add_order_note( $note );
 			WC()->cart->empty_cart();
 		} else {
 			$order->update_status( 'on-hold', __( 'Awaiting payment', 'woocommerce' ) );
 			$order->reduce_order_stock();
 		}
 
-		if ( $this->data->is_PUI() ) {
+		if ( $this->data->is_pui() ) {
 			$instruction      = $this->data->get_payment_instruction();
 			$instruction_type = $instruction->getInstructionType();
-			if ( $instruction_type == 'PAY_UPON_INVOICE' ) {
+			if ( 'PAY_UPON_INVOICE' === $instruction_type ) {
 				$this->update_payment_data();
 			}
 		}
@@ -87,6 +107,9 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 
 	}
 
+	/**
+	 * Update order post meta with payment information.
+	 */
 	private function update_payment_data() {
 
 		$order               = $this->data->get_order();
@@ -94,32 +117,45 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 		$reference_number    = $payment_instruction->getReferenceNumber();
 		$payment_due_date    = $payment_instruction->getPaymentDueDate();
 
-		$RecipientBankingInstruction       = $payment_instruction->getRecipientBankingInstruction();
-		$bank_name                         = $RecipientBankingInstruction->getBankName();
-		$account_holder_name               = $RecipientBankingInstruction->getAccountHolderName();
-		$international_bank_account_number = $RecipientBankingInstruction->getInternationalBankAccountNumber();
-		$bank_identifier_code              = $RecipientBankingInstruction->getBankIdentifierCode();
+		$recipient_banking_instruction = $payment_instruction->getRecipientBankingInstruction();
+		$bank_name                     = $recipient_banking_instruction->getBankName();
+		$account_holder_name           = $recipient_banking_instruction->getAccountHolderName();
+		$iban                          = $recipient_banking_instruction->getInternationalBankAccountNumber();
+		$bank_identifier_code          = $recipient_banking_instruction->getBankIdentifierCode();
 
-		$instruction_data['reference_number']                                                   = $reference_number;
-		$instruction_data['instruction_type']                                                   = 'PAY_UPON_INVOICE';
-		$instruction_data['recipient_banking_instruction']['bank_name']                         = $bank_name;
-		$instruction_data['recipient_banking_instruction']['account_holder_name']               = $account_holder_name;
-		$instruction_data['recipient_banking_instruction']['international_bank_account_number'] = $international_bank_account_number;
-		$instruction_data['recipient_banking_instruction']['bank_identifier_code']              = $bank_identifier_code;
+		$instruction_data[ 'reference_number' ]                                                     = $reference_number;
+		$instruction_data[ 'instruction_type' ]                                                     = 'PAY_UPON_INVOICE';
+		$instruction_data[ 'recipient_banking_instruction' ][ 'bank_name' ]                         = $bank_name;
+		$instruction_data[ 'recipient_banking_instruction' ][ 'account_holder_name' ]               = $account_holder_name;
+		$instruction_data[ 'recipient_banking_instruction' ][ 'international_bank_account_number' ] = $iban;
+		$instruction_data[ 'recipient_banking_instruction' ][ 'bank_identifier_code' ]              = $bank_identifier_code;
 
 		update_post_meta( $order->id, 'reference_number', $reference_number );
 		update_post_meta( $order->id, 'instruction_type', 'PAY_UPON_INVOICE' );
 		update_post_meta( $order->id, 'payment_due_date', $payment_due_date );
 		update_post_meta( $order->id, 'bank_name', $bank_name );
 		update_post_meta( $order->id, 'account_holder_name', $account_holder_name );
-		update_post_meta( $order->id, 'international_bank_account_number',
-			$international_bank_account_number );
+		update_post_meta( $order->id, 'international_bank_account_number', $iban );
 		update_post_meta( $order->id, 'bank_identifier_code', $bank_identifier_code );
 		update_post_meta( $order->id, 'payment_due_date', $payment_due_date );
 		update_post_meta( $order->id, '_payment_instruction_result', $instruction_data );
 
 	}
 
+	/**
+	 * Check if the customer's address needs to be updated.
+	 *
+	 * @return bool
+	 */
+	private function should_update_address() {
+
+		return ! empty( $this->data->get_payment()->payer->payer_info->billing_address->line1 );
+
+	}
+
+	/**
+	 * Update the Order billing address
+	 */
 	private function update_billing_address() {
 
 		$payment         = $this->data->get_payment();
@@ -135,11 +171,5 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 			'country'    => $payment->payer->payer_info->billing_address->country_code,
 		);
 		$order->set_address( $billing_address, $type = 'billing' );
-	}
-
-	private function should_update_address() {
-
-		return ! empty( $this->data->get_payment()->payer->payer_info->billing_address->line1 );
-
 	}
 }

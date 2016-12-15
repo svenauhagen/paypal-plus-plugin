@@ -106,9 +106,13 @@ class PaymentValidator {
 	private function validate_transaction_type( $transaction_type ) {
 
 		if ( ! in_array( strtolower( $transaction_type ), $this->accepted_transaction_types, true ) ) {
-			$this->last_error = sprintf( __( 'Validation error: Invalid transaction type "%s".',
-			                                 'woo-paypal-plus' ),
-			                             $transaction_type );
+			$this->last_error = sprintf(
+				__(
+					'Validation error: Invalid transaction type "%s".',
+					'woo-paypal-plus'
+				),
+				$transaction_type
+			);
 
 			return false;
 		}
@@ -126,9 +130,13 @@ class PaymentValidator {
 	private function validate_currency( $currency ) {
 
 		if ( $this->order->get_order_currency() !== $currency ) {
-			$this->last_error = sprintf( __( 'Validation error: PayPal currencies do not match (code %s).',
-			                                 'woo-paypal-plus' ),
-			                             $currency );
+			$this->last_error = sprintf(
+				__(
+					'Validation error: PayPal currencies do not match (code %s).',
+					'woo-paypal-plus'
+				),
+				$currency
+			);
 
 			return false;
 		}
@@ -139,16 +147,20 @@ class PaymentValidator {
 	/**
 	 * Check payment amount from IPN matches the order.
 	 *
-	 * @param int $amount
+	 * @param int $amount The payment amount.
 	 *
 	 * @return bool
 	 */
 	private function validate_amount( $amount ) {
 
 		if ( number_format( $this->order->get_total(), 2, '.', '' ) !== number_format( $amount, 2, '.', '' ) ) {
-			$this->last_error = sprintf( __( 'Validation error: PayPal amounts do not match (gross %s).',
-			                                 'woo-paypal-plus' ),
-			                             $amount );
+			$this->last_error = sprintf(
+				__(
+					'Validation error: PayPal amounts do not match (gross %s).',
+					'woo-paypal-plus'
+				),
+				$amount
+			);
 
 			return false;
 		}

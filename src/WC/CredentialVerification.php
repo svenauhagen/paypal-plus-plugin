@@ -13,13 +13,22 @@ use PayPal\Exception\PayPalConnectionException;
 use PayPal\Exception\PayPalInvalidCredentialException;
 use PayPal\Rest\ApiContext;
 
+/**
+ * Class CredentialVerification
+ *
+ * @package PayPalPlusPlugin\WC
+ */
 class CredentialVerification {
 
 	/**
+	 * PayPal SDK API Context object.
+	 *
 	 * @var ApiContext
 	 */
 	private $context;
 	/**
+	 * The last error that occurred.
+	 *
 	 * @var string
 	 */
 	private $error;
@@ -27,18 +36,23 @@ class CredentialVerification {
 	/**
 	 * CredentialVerification constructor.
 	 *
-	 * @param ApiContext $context
+	 * @param ApiContext $context PayPal SDK API Context object.
 	 */
 	public function __construct( $context ) {
 
 		$this->context = $context;
 	}
 
+	/**
+	 * Verify the API Credentials by making a dummy API call with them.
+	 *
+	 * @return bool
+	 */
 	public function verify() {
 
 		$api_context = $this->context;
 		if ( is_null( $api_context ) ) {
-			return FALSE;
+			return false;
 		}
 		try {
 			$params = array( 'count' => 1 );
@@ -47,18 +61,20 @@ class CredentialVerification {
 			do_action( 'paypal_plus_plugin_log', 'credential_exception', $ex );
 			$this->error = $ex->getMessage();
 
-			return FALSE;
+			return false;
 		} catch ( PayPalConnectionException $ex ) {
 			do_action( 'paypal_plus_plugin_log', 'credential_exception', $ex );
 			$this->error = $ex->getMessage();
 
-			return FALSE;
+			return false;
 		}
 
-		return TRUE;
+		return true;
 	}
 
 	/**
+	 * Returns the last error that occurred during verification
+	 *
 	 * @return string
 	 */
 	public function get_error_message() {

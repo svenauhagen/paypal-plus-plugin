@@ -14,13 +14,22 @@ use PayPal\Api\WebProfile;
 use PayPal\Exception\PayPalConnectionException;
 use PayPal\Rest\ApiContext;
 
+/**
+ * Class WCWebExperienceProfile
+ *
+ * @package PayPalPlusPlugin\WC
+ */
 class WCWebExperienceProfile {
 
 	/**
+	 * PayPal SDK Api Context object.
+	 *
 	 * @var ApiContext
 	 */
 	private $api_context;
 	/**
+	 * Profile configuration.
+	 *
 	 * @var array
 	 */
 	private $config;
@@ -28,8 +37,8 @@ class WCWebExperienceProfile {
 	/**
 	 * WCWebExperienceProfile constructor.
 	 *
-	 * @param array      $config
-	 * @param ApiContext $api_context
+	 * @param array      $config      Profile configuration.
+	 * @param ApiContext $api_context PayPal SDK Api Context object.
 	 */
 	public function __construct( array $config, ApiContext $api_context ) {
 
@@ -49,76 +58,83 @@ class WCWebExperienceProfile {
 	}
 
 	/**
-	 * @param $profile_id
+	 * Updates a web profile. Creates a new one if none is specified or found
 	 *
-	 * @return null|WebProfile
-	 */
-	public function get_existing_profile( $profile_id ) {
-
-		$webProfile = NULL;
-		try {
-			$webProfile = WebProfile::get( $profile_id, $this->api_context );
-		} catch ( PayPalConnectionException $ex ) {
-			error_log( $ex->getMessage() );
-			error_log( $ex->getData() );
-		}
-
-		return $webProfile;
-
-	}
-
-	/**
-	 * @param bool $local_id
+	 * @param bool $local_id The profile id.
 	 *
 	 * @return string
 	 */
-	private function update_profile( $local_id = FALSE ) {
+	private function update_profile( $local_id = false ) {
 
 		if ( $local_id ) {
-			$webProfile = $this->get_existing_profile( $local_id );
+			$web_profile = $this->get_existing_profile( $local_id );
 		} else {
-			$webProfile = new WebProfile();
+			$web_profile = new WebProfile();
 
 		}
 		$brand_name = '';
-		if ( ! empty( $this->config['brand_name'] ) ) {
-			$brand_name = $this->config['brand_name'];
+		if ( ! empty( $this->config[ 'brand_name' ] ) ) {
+			$brand_name = $this->config[ 'brand_name' ];
 		}
 
-		$webProfile->setName( substr( $brand_name . uniqid(), 0, 50 ) )
-		           ->setInputFields( $this->get_input_fields() )
-		           ->setPresentation( $this->get_presentation() );
+		$web_profile->setName( substr( $brand_name . uniqid(), 0, 50 ) )
+		            ->setInputFields( $this->get_input_fields() )
+		            ->setPresentation( $this->get_presentation() );
 
-		$new_id = NULL;
+		$new_id = null;
 		try {
 			if ( $local_id ) {
 
-				if ( $webProfile->update( $this->api_context ) ) {
+				if ( $web_profile->update( $this->api_context ) ) {
 					$new_id = $local_id;
 				}
 			} else {
-				$response = $webProfile->create( $this->api_context );
+				$response = $web_profile->create( $this->api_context );
 				$new_id   = $response->getId();
 			}
-
 		} catch ( PayPalConnectionException $ex ) {
-			error_log( $ex->getMessage() );
-			error_log( $ex->getData() );
+			do_action( 'paypal_plus_plugin_log', 'web_profile_exception', $ex );
 		}
 
 		return $new_id;
 	}
 
+	/**
+	 * Fetches an existing profile
+	 *
+	 * @param string $profile_id The profile ID.
+	 *
+	 * @return null|WebProfile
+	 */
+	public function get_existing_profile( $profile_id ) {
+
+		$web_profile = null;
+		try {
+			$web_profile = WebProfile::get( $profile_id, $this->api_context );
+		} catch ( PayPalConnectionException $ex ) {
+			do_action( 'paypal_plus_plugin_log', 'web_profile_exception', $ex );
+
+		}
+
+		return $web_profile;
+
+	}
+
+	/**
+	 * Returns a configured InputFields object
+	 *
+	 * @return InputFields
+	 */
 	private function get_input_fields() {
 
-		$inputFields = new InputFields();
+		$input_fields = new InputFields();
 
-		$no_shipping = ( isset( $this->config['no_shipping'] ) ) ? intval( $this->config['no_shipping'] ) : 1;
+		$no_shipping = ( isset( $this->config[ 'no_shipping' ] ) ) ? intval( $this->config[ 'no_shipping' ] ) : 1;
 
-		$inputFields->setNoShipping( $no_shipping )
-		            ->setAddressOverride( 1 );
+		$input_fields->setNoShipping( $no_shipping )
+		             ->setAddressOverride( 1 );
 
-		return $inputFields;
+		return $input_fields;
 	}
 
 	/**
@@ -130,28 +146,17 @@ class WCWebExperienceProfile {
 
 		$presentation = new Presentation();
 
-		if ( ! empty( $this->config['checkout_logo'] ) ) {
-			$presentation->setLogoImage( $this->config['checkout_logo'] );
+		if ( ! empty( $this->config[ 'checkout_logo' ] ) ) {
+			$presentation->setLogoImage( $this->config[ 'checkout_logo' ] );
 		}
-		if ( ! empty( $this->config['brand_name'] ) ) {
-			$presentation->setBrandName( $this->config['brand_name'] );
+		if ( ! empty( $this->config[ 'brand_name' ] ) ) {
+			$presentation->setBrandName( $this->config[ 'brand_name' ] );
 		}
-		if ( ! empty( $this->config['country'] ) ) {
-			$presentation->setLocaleCode( $this->config['country'] );
+		if ( ! empty( $this->config[ 'country' ] ) ) {
+			$presentation->setLocaleCode( $this->config[ 'country' ] );
 		}
 
 		return $presentation;
-	}
-
-	/**
-	 * Checks if a local profile ID was previously saved
-	 *
-	 * @return bool
-	 */
-	private function has_local_id() {
-
-		return is_string( $this->get_local_id() );
-
 	}
 
 	/**
@@ -161,6 +166,6 @@ class WCWebExperienceProfile {
 	 */
 	private function get_local_id() {
 
-		return isset( $this->config['local_id'] ) ? $this->config['local_id'] : NULL;
+		return isset( $this->config[ 'local_id' ] ) ? $this->config[ 'local_id' ] : null;
 	}
 }

@@ -10,53 +10,77 @@ namespace PayPalPlusPlugin\WC\Payment;
 
 use PayPal\Api\Patch;
 
+/**
+ * Class PatchProvider
+ *
+ * @package PayPalPlusPlugin\WC\Payment
+ */
 class PatchProvider {
 
 	/**
+	 * WooCommerce Order object.
+	 *
 	 * @var \WC_Order
 	 */
 	private $order;
 
+	/**
+	 * PatchProvider constructor.
+	 *
+	 * @param \WC_Order $order WooCommerce Order object.
+	 */
 	public function __construct( \WC_Order $order ) {
 
 		$this->order = $order;
 	}
 
 	/**
-	 * @param string $invoice_prefix
+	 * Returns the invoice Patch.
+	 *
+	 * @param string $invoice_prefix The invoice prefix.
 	 *
 	 * @return Patch
 	 */
 	public function get_invoice_patch( $invoice_prefix ) {
 
-		$invoice_number = preg_replace( "/[^a-zA-Z0-9]/", "", $this->order->id );
+		$invoice_number = preg_replace( '/[^a-zA-Z0-9]/', '', $this->order->id );
 
-		$patchAdd = new Patch();
-		$patchAdd->setOp( 'add' )
+		$invoice_patch = new Patch();
+		$invoice_patch->setOp( 'add' )
 		         ->setPath( '/transactions/0/invoice_number' )
 		         ->setValue( $invoice_prefix . $invoice_number );
 
-		return $patchAdd;
+		return $invoice_patch;
 
 	}
 
+	/**
+	 * Returns the custom Patch.
+	 *
+	 * @return Patch
+	 */
 	public function get_custom_patch() {
 
-		$patchAdd_custom = new Patch();
-		$patchAdd_custom->setOp( 'add' )
+		$custom_patch = new Patch();
+		$custom_patch->setOp( 'add' )
 		                ->setPath( '/transactions/0/custom' )
-		                ->setValue( json_encode( [
+		                ->setValue( wp_json_encode( [
 			                'order_id'  => $this->order->id,
 			                'order_key' => $this->order->order_key,
 		                ] ) );
 
-		return $patchAdd_custom;
+		return $custom_patch;
 
 	}
 
+	/**
+	 * Returns the payment amount Patch.
+	 *
+	 * @return Patch
+	 */
 	public function get_payment_amount_patch() {
 
-		$patchReplace = new Patch();
+		$replace_patch = new Patch();
 
 		$payment_data = [
 			'total'    => $this->order
@@ -69,14 +93,19 @@ class PatchProvider {
 			],
 		];
 
-		$patchReplace->setOp( 'replace' )
+		$replace_patch->setOp( 'replace' )
 		             ->setPath( '/transactions/0/amount' )
 		             ->setValue( $payment_data );
 
-		return $patchReplace;
+		return $replace_patch;
 
 	}
 
+	/**
+	 * Returns the billing Patch.
+	 *
+	 * @return Patch
+	 */
 	public function get_billing_patch() {
 
 		$billing_data = [
@@ -89,15 +118,17 @@ class PatchProvider {
 			'country_code'   => $this->order->shipping_country,
 		];
 
-		$patchBilling = new Patch();
-		$patchBilling->setOp( 'add' )
+		$billing_patch = new Patch();
+		$billing_patch->setOp( 'add' )
 		             ->setPath( '/transactions/0/item_list/shipping_address' )
 		             ->setValue( $billing_data );
 
-		return $patchBilling;
+		return $billing_patch;
 	}
 
 	/**
+	 * Checks if billing should be patched.
+	 *
 	 * @return bool
 	 */
 	public function should_patch_billing() {

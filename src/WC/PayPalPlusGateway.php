@@ -204,8 +204,8 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		if ( ! $this->can_refund_order( $order ) ) {
 			return false;
 		}
-		$refundData = new RefundData( $order, $amount, $reason, $this->get_api_context() );
-		$refund     = new WCRefund( $refundData, $this->get_api_context() );
+		$refund_data = new RefundData( $order, $amount, $reason, $this->get_api_context() );
+		$refund     = new WCRefund( $refund_data, $this->get_api_context() );
 
 		return $refund->execute();
 
@@ -247,8 +247,13 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		} else {
 			unset( $_POST[ $this->get_field_key( 'enabled' ) ] );
 			$this->enabled = 'no';
-			$this->add_error( __( 'Your API credentials are either missing or invalid: ' . $verification->get_error_message(),
-				'woo-paypal-plus' ) );
+			$this->add_error(
+
+				sprintf(
+					__( 'Your API credentials are either missing or invalid: %s', 'woo-paypal-plus' ),
+					$verification->get_error_message()
+				)
+			);
 		}
 
 		// Save again to catch all values we've updated.
@@ -426,7 +431,6 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$notify_url,
 			$web_profile_id,
 			$api_context
-
 		);
 	}
 

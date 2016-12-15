@@ -14,9 +14,16 @@ use PayPal\Api\Payment;
 use PayPal\Exception\PayPalConnectionException;
 use PayPal\Rest\ApiContext;
 
+/**
+ * Class WCPaymentPatch
+ *
+ * @package PayPalPlusPlugin\WC\Payment
+ */
 class WCPaymentPatch {
 
 	/**
+	 * Patch data object.
+	 *
 	 * @var PaymentPatchData
 	 */
 	private $patch_data;
@@ -24,7 +31,7 @@ class WCPaymentPatch {
 	/**
 	 * WCPaymentPatch constructor.
 	 *
-	 * @param PaymentPatchData $patch_data
+	 * @param PaymentPatchData $patch_data You guessed it: The Patch data.
 	 */
 	public function __construct( PaymentPatchData $patch_data ) {
 
@@ -32,6 +39,8 @@ class WCPaymentPatch {
 	}
 
 	/**
+	 * Execute the PatchRequest
+	 *
 	 * @return bool
 	 */
 	public function execute() {
@@ -40,18 +49,16 @@ class WCPaymentPatch {
 		try {
 			$payment = $this->patch_data->get_payment();
 			$result  = $payment->update( $patch_request, $this->patch_data->get_api_context() );
-			if ( $result == TRUE ) {
-				return TRUE;
+			if ( $result ) {
+				return true;
 			}
 		} catch ( PayPalConnectionException $ex ) {
 			do_action( 'paypal_plus_plugin_log', 'payment_patch_exception', $ex );
 
-			return FALSE;
+			return false;
 		}
 
-		return FALSE;
+		return false;
 	}
-
-
 
 }

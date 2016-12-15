@@ -1,5 +1,4 @@
-<?php # -*- coding: utf-8 -*-
-
+<?php
 /**
  * Plugin Name: PayPal Plus Plugin
  * Description: Official WordPress plugin for PayPal Plus
@@ -31,7 +30,7 @@ add_action( 'plugins_loaded', function () {
 				$class   = 'notice notice-error';
 				$message = __( 'Could not find a working autoloader for PayPal Plus.', 'paypal-plus-plugin' );
 
-				printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );
+				printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 			} );
 
 			return;
@@ -48,7 +47,7 @@ add_action( 'plugins_loaded', function () {
 			$class   = 'notice notice-error';
 			$message = __( 'PayPay Plus requires WooCommerce to be active.', 'paypal-plus-plugin' );
 
-			printf( '<div class="%1$s"><p>%2$s</p></div>', $class, $message );
+			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 		} );
 
 		return;

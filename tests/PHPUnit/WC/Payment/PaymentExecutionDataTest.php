@@ -43,7 +43,7 @@ class PaymentExecutionDataTest extends BrainMonkeyWpTestCase {
 		$context    = \Mockery::mock( ApiContext::class );
 
 		$testee = new PaymentExecutionData( $order, $payer_id, $payment_id, $context );
-		$result = $testee->is_PUI();
+		$result = $testee->is_pui();
 		$this->assertSame( $hasInstructions, $result );
 	}
 

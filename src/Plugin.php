@@ -13,14 +13,20 @@ use PayPalPlusPlugin\WC\PayPalPlusGateway;
 class Plugin {
 
 	/**
+	 * Plugin filename.
+	 *
 	 * @var string
 	 */
 	private $file;
 	/**
+	 * Gateway ID.
+	 *
 	 * @var string
 	 */
 	private $gateway_id = 'paypal_plus';
 	/**
+	 * Payment Gateway object.
+	 *
 	 * @var PayPalPlusGateway
 	 */
 	private $gateway;
@@ -28,7 +34,7 @@ class Plugin {
 	/**
 	 * Plugin constructor.
 	 *
-	 * @param $file
+	 * @param string $file Plugin filename.
 	 */
 	public function __construct( $file ) {
 
@@ -42,7 +48,7 @@ class Plugin {
 	}
 
 	/**
-	 *
+	 * Initialize the Plugin and configure all needed controllers.
 	 */
 	public function init() {
 

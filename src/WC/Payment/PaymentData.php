@@ -18,22 +18,32 @@ use PayPal\Rest\ApiContext;
 class PaymentData {
 
 	/**
+	 * The URL to return back to after finishing payment.
+	 *
 	 * @var string
 	 */
 	private $return_url;
 	/**
+	 *  The URL to return back to cancelling finishing payment.
+	 *
 	 * @var string
 	 */
 	private $cancel_url;
 	/**
+	 * The URL to use for IPN.
+	 *
 	 * @var string
 	 */
 	private $notify_url;
 	/**
+	 * The Web Profile ID to use during the payment process.
+	 *
 	 * @var string
 	 */
 	private $web_profile_id;
 	/**
+	 * The PayPal SDK ApiContext object.
+	 *
 	 * @var ApiContext
 	 */
 	private $api_context;
@@ -41,11 +51,11 @@ class PaymentData {
 	/**
 	 * PaymentData constructor.
 	 *
-	 * @param string     $return_url
-	 * @param string     $cancel_url
-	 * @param string     $notify_url
-	 * @param string     $web_profile_id
-	 * @param ApiContext $api_context
+	 * @param string     $return_url     The URL to return back to after finishing payment.
+	 * @param string     $cancel_url     The URL to return back to cancelling finishing payment.
+	 * @param string     $notify_url     The URL to use for IPN.
+	 * @param string     $web_profile_id The Web Profile ID to use during the payment process.
+	 * @param ApiContext $api_context    The PayPal SDK ApiContext object.
 	 */
 	public function __construct(
 		$return_url,
@@ -59,10 +69,12 @@ class PaymentData {
 		$this->cancel_url     = $cancel_url;
 		$this->notify_url     = $notify_url;
 		$this->web_profile_id = $web_profile_id;
-		$this->api_context = $api_context;
+		$this->api_context    = $api_context;
 	}
 
 	/**
+	 * Returns the IPN URL.
+	 *
 	 * @return string
 	 */
 	public function get_notify_url() {
@@ -71,6 +83,8 @@ class PaymentData {
 	}
 
 	/**
+	 * Returns the cancel URL.
+	 *
 	 * @return string
 	 */
 	public function get_cancel_url() {
@@ -79,6 +93,8 @@ class PaymentData {
 	}
 
 	/**
+	 * Returns the ...return URL.
+	 *
 	 * @return string
 	 */
 	public function get_return_url() {
@@ -87,6 +103,8 @@ class PaymentData {
 	}
 
 	/**
+	 * Returns the web profile ID.
+	 *
 	 * @return string
 	 */
 	public function get_web_profile_id() {
@@ -95,6 +113,8 @@ class PaymentData {
 	}
 
 	/**
+	 * Returns the APIContext object.
+	 *
 	 * @return ApiContext
 	 */
 	public function get_api_context() {

@@ -11,6 +11,11 @@ namespace PayPalPlusPlugin\WC\Payment;
 use PayPal\Exception\PayPalConnectionException;
 use PayPalPlusPlugin\WC\RequestSuccessHandler;
 
+/**
+ * Class WCPaymentExecution
+ *
+ * @package PayPalPlusPlugin\WC\Payment
+ */
 class WCPaymentExecution {
 
 	/**
@@ -34,6 +39,11 @@ class WCPaymentExecution {
 		$this->success_handler = $success_handler;
 	}
 
+	/**
+	 * Execute the Payment.
+	 *
+	 * @return bool
+	 */
 	public function execute() {
 
 		try {
@@ -43,10 +53,10 @@ class WCPaymentExecution {
 		} catch ( PayPalConnectionException $ex ) {
 			do_action( 'paypal_plus_plugin_log', 'payment_execution_exception', $ex );
 
-			return FALSE;
+			return false;
 		}
 
-		return TRUE;
+		return true;
 	}
 
 }

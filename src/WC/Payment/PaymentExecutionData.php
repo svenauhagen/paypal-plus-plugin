@@ -12,30 +12,58 @@ use PayPal\Api\Payment;
 use PayPal\Api\PaymentExecution;
 use PayPal\Rest\ApiContext;
 
+/**
+ * Class PaymentExecutionData
+ *
+ * @package PayPalPlusPlugin\WC\Payment
+ */
 class PaymentExecutionData {
 
 	/**
+	 * Paypal Payment object.
+	 *
 	 * @var Payment
 	 */
 	private $payment;
 	/**
+	 * The payer ID.
+	 *
 	 * @var string
 	 */
 	private $payer_id;
 	/**
+	 * The Payment ID.
+	 *
 	 * @var string
 	 */
 	private $payment_id;
 	/**
+	 * The PayPal SDK ApiContext object.
+	 *
 	 * @var ApiContext
 	 */
 	private $context;
 	/**
+	 * The WooCommerce Order object.
+	 *
 	 * @var \WC_Order
 	 */
 	private $order;
 
-	public function __construct( \WC_Order $order, $payer_id, $payment_id, ApiContext $context ) {
+	/**
+	 * PaymentExecutionData constructor.
+	 *
+	 * @param \WC_Order  $order      The WooCommerce Order object.
+	 * @param string     $payer_id   The payer ID.
+	 * @param string     $payment_id The Payment ID.
+	 * @param ApiContext $context    The PayPal SDK ApiContext object.
+	 */
+	public function __construct(
+		\WC_Order $order,
+		$payer_id,
+		$payment_id,
+		ApiContext $context
+	) {
 
 		$this->payer_id   = $payer_id;
 		$this->payment_id = $payment_id;
@@ -43,7 +71,12 @@ class PaymentExecutionData {
 		$this->order      = $order;
 	}
 
-	public function is_PUI() {
+	/**
+	 * Check if this is a Pay Upon Invoice Payment
+	 *
+	 * @return bool
+	 */
+	public function is_pui() {
 
 		$instructions = $this->get_payment_instruction();
 
@@ -52,15 +85,9 @@ class PaymentExecutionData {
 	}
 
 	/**
-	 * @return bool;
-	 */
-	public function is_approved() {
-
-		return $this->get_payment_state() === 'approved';
-	}
-
-	/**
-	 * @return \PayPal\Api\PaymentInstruction
+	 * Returns the Payment Instruction object, if it exists
+	 *
+	 * @return \PayPal\Api\PaymentInstruction|null
 	 */
 	public function get_payment_instruction() {
 
@@ -70,28 +97,8 @@ class PaymentExecutionData {
 	}
 
 	/**
-	 * Returns the sale object of the payment
+	 * Fetches and returns a PayPayl Payment object
 	 *
-	 * @return \PayPal\Api\Sale
-	 */
-	public function get_sale() {
-
-		$transactions     = $this->get_payment()
-		                         ->getTransactions();
-		$relatedResources = $transactions[0]->getRelatedResources();
-
-		return $relatedResources[0]->getSale();
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_payment_state() {
-
-		return $this->get_payment()->state;
-	}
-
-	/**
 	 * @return Payment
 	 */
 	public function get_payment() {
@@ -105,6 +112,42 @@ class PaymentExecutionData {
 	}
 
 	/**
+	 * Checks if the Payment status is approved
+	 *
+	 * @return bool;
+	 */
+	public function is_approved() {
+
+		return $this->get_payment_state() === 'approved';
+	}
+
+	/**
+	 * Returns the Payment state.
+	 *
+	 * @return string
+	 */
+	public function get_payment_state() {
+
+		return $this->get_payment()->state;
+	}
+
+	/**
+	 * Returns the sale object of the payment
+	 *
+	 * @return \PayPal\Api\Sale
+	 */
+	public function get_sale() {
+
+		$transactions     = $this->get_payment()
+		                         ->getTransactions();
+		$relatedResources = $transactions[ 0 ]->getRelatedResources();
+
+		return $relatedResources[ 0 ]->getSale();
+	}
+
+	/**
+	 * Returns a configured PaymentExecution object.
+	 *
 	 * @return PaymentExecution
 	 */
 	public function get_payment_execution() {
@@ -117,6 +160,8 @@ class PaymentExecutionData {
 	}
 
 	/**
+	 * Returns the Payment ID.
+	 *
 	 * @return string
 	 */
 	public function get_payment_id() {
@@ -125,6 +170,8 @@ class PaymentExecutionData {
 	}
 
 	/**
+	 * Returns the payer ID
+	 *
 	 * @return string
 	 */
 	public function get_payer_id() {
@@ -133,6 +180,8 @@ class PaymentExecutionData {
 	}
 
 	/**
+	 * Returns the PayPal SDK ApiContext object.
+	 *
 	 * @return ApiContext
 	 */
 	public function get_context() {
@@ -141,6 +190,8 @@ class PaymentExecutionData {
 	}
 
 	/**
+	 * Returns the WooCommcerce Order object
+	 *
 	 * @return \WC_Order
 	 */
 	public function get_order() {

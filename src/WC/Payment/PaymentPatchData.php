@@ -8,29 +8,45 @@
 
 namespace PayPalPlusPlugin\WC\Payment;
 
+use PayPal\Api\Patch;
 use PayPal\Api\PatchRequest;
 use PayPal\Api\Payment;
 use PayPal\Rest\ApiContext;
 
+/**
+ * Class PaymentPatchData
+ *
+ * @package PayPalPlusPlugin\WC\Payment
+ */
 class PaymentPatchData {
 
 	/**
+	 * WooCommerce Order object.
+	 *
 	 * @var \WC_Order
 	 */
 	private $order;
 	/**
+	 * The Payment ID.
+	 *
 	 * @var string
 	 */
 	private $payment_id;
 	/**
+	 * The invoice prefix.
+	 *
 	 * @var string
 	 */
 	private $invoice_prefix;
 	/**
+	 * The PayPal SDK ApiContext object.
+	 *
 	 * @var ApiContext
 	 */
 	private $api_context;
 	/**
+	 * The PatchProvider object
+	 *
 	 * @var PatchProvider
 	 */
 	private $patch_provider;
@@ -38,18 +54,18 @@ class PaymentPatchData {
 	/**
 	 * PaymentPatchData constructor.
 	 *
-	 * @param \WC_Order     $order
-	 * @param string        $payment_id
-	 * @param string        $invoice_prefix
-	 * @param ApiContext    $api_context
-	 * @param PatchProvider $patch_provider
+	 * @param \WC_Order     $order          WooCommerce Order object.
+	 * @param string        $payment_id     The Payment ID.
+	 * @param string        $invoice_prefix The invoice prefix.
+	 * @param ApiContext    $api_context    The PayPal SDK ApiContext object.
+	 * @param PatchProvider $patch_provider The PatchProvider object.
 	 */
 	public function __construct(
 		\WC_Order $order,
 		$payment_id,
 		$invoice_prefix,
 		ApiContext $api_context,
-		PatchProvider $patch_provider = NULL
+		PatchProvider $patch_provider = null
 	) {
 
 		$this->order          = $order;
@@ -65,6 +81,8 @@ class PaymentPatchData {
 	}
 
 	/**
+	 * Returns the WooCommerce Order object
+	 *
 	 * @return \WC_Order
 	 */
 	public function get_order() {
@@ -73,30 +91,8 @@ class PaymentPatchData {
 	}
 
 	/**
-	 * @return string
-	 */
-	public function get_payment_id() {
-
-		return $this->payment_id;
-	}
-
-	/**
-	 * @return string
-	 */
-	public function get_invoice_prefix() {
-
-		return $this->invoice_prefix;
-	}
-
-	/**
-	 * @return ApiContext
-	 */
-	public function get_api_context() {
-
-		return $this->api_context;
-	}
-
-	/**
+	 * Fetches an existing Payment object via API call
+	 *
 	 * @return Payment
 	 */
 	public function get_payment() {
@@ -106,19 +102,43 @@ class PaymentPatchData {
 	}
 
 	/**
+	 * Returns the payment ID.
+	 *
+	 * @return string
+	 */
+	public function get_payment_id() {
+
+		return $this->payment_id;
+	}
+
+	/**
+	 * Returns the APIContext object.
+	 *
+	 * @return ApiContext
+	 */
+	public function get_api_context() {
+
+		return $this->api_context;
+	}
+
+	/**
+	 * Returns a configured PatchRequest object.
+	 *
 	 * @return PatchRequest
 	 */
 	public function get_patch_request() {
 
-		$patchRequest = new PatchRequest();
+		$patch_request = new PatchRequest();
 
-		$patchRequest->setPatches( $this->get_patches() );
+		$patch_request->setPatches( $this->get_patches() );
 
-		return $patchRequest;
+		return $patch_request;
 	}
 
 	/**
-	 * @return array
+	 * Returns an array of configured Patch objects relevant to the current request
+	 *
+	 * @return Patch[]
 	 */
 	private function get_patches() {
 
@@ -134,5 +154,15 @@ class PaymentPatchData {
 		}
 
 		return $patches;
+	}
+
+	/**
+	 * Returns the invoice prefix.
+	 *
+	 * @return string
+	 */
+	public function get_invoice_prefix() {
+
+		return $this->invoice_prefix;
 	}
 }
