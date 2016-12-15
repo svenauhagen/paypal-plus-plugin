@@ -22,35 +22,57 @@ class PaymentValidator {
 	 */
 	private $last_error;
 	/**
+	 * The transaction types to validate against
+	 *
 	 * @var array|NULL
 	 */
 	private $accepted_transaction_types;
 	/**
+	 * WooCommerce Order object
+	 *
 	 * @var \WC_Order
 	 */
 	private $order;
+	/**
+	 * The actual transaction type of the PayPal Payment
+	 *
+	 * @var string
+	 */
 	private $transaction_type;
+	/**
+	 * The currency used by the PayPal Payment
+	 *
+	 * @var string
+	 */
 	private $currency;
+	/**
+	 * The payment amount.
+	 *
+	 * @var float
+	 */
 	private $amount;
 
 	/**
 	 * PaymentValidator constructor.
 	 *
-	 * @param           $transaction_type
-	 * @param           $currency
-	 * @param           $amount
+	 * @param string    $transaction_type           The transaction type.
+	 * @param string    $currency                   The currency used.
+	 * @param float     $amount                     The payment amount.
 	 * @param \WC_Order $order                      The WooCommerce order.
-	 * @param array     $accepted_transaction_types An array of accepted transaction types.
+	 * @param array     $accepted_transaction_types Optional. An array of accepted transaction types.
 	 */
 	public function __construct(
 		$transaction_type,
 		$currency,
 		$amount,
-		\WC_Order $order, array $accepted_transaction_types = NULL
+		\WC_Order $order,
+		array $accepted_transaction_types = null
 	) {
 
-		$this->order = $order;
-
+		$this->transaction_type           = $transaction_type;
+		$this->currency                   = $currency;
+		$this->amount                     = $amount;
+		$this->order                      = $order;
 		$this->accepted_transaction_types = $accepted_transaction_types
 			?: [
 				'cart',
@@ -60,10 +82,6 @@ class PaymentValidator {
 				'masspay',
 				'send_money',
 			];
-		$this->transaction_type           = $transaction_type;
-		$this->currency                   = $currency;
-		$this->amount                     = $amount;
-		$this->accepted_transaction_types = $accepted_transaction_types;
 	}
 
 	/**
@@ -79,16 +97,6 @@ class PaymentValidator {
 	}
 
 	/**
-	 * Returns the last validation error
-	 *
-	 * @return string
-	 */
-	public function get_last_error() {
-
-		return $this->last_error;
-	}
-
-	/**
 	 * Check for a valid transaction type.
 	 *
 	 * @param string $transaction_type The transaction type to test against.
@@ -97,15 +105,15 @@ class PaymentValidator {
 	 */
 	private function validate_transaction_type( $transaction_type ) {
 
-		if ( ! in_array( strtolower( $transaction_type ), $this->accepted_transaction_types, TRUE ) ) {
+		if ( ! in_array( strtolower( $transaction_type ), $this->accepted_transaction_types, true ) ) {
 			$this->last_error = sprintf( __( 'Validation error: Invalid transaction type "%s".',
-				'woo-paypal-plus' ),
-				$transaction_type );
+			                                 'woo-paypal-plus' ),
+			                             $transaction_type );
 
-			return FALSE;
+			return false;
 		}
 
-		return TRUE;
+		return true;
 	}
 
 	/**
@@ -119,13 +127,13 @@ class PaymentValidator {
 
 		if ( $this->order->get_order_currency() !== $currency ) {
 			$this->last_error = sprintf( __( 'Validation error: PayPal currencies do not match (code %s).',
-				'woo-paypal-plus' ),
-				$currency );
+			                                 'woo-paypal-plus' ),
+			                             $currency );
 
-			return FALSE;
+			return false;
 		}
 
-		return TRUE;
+		return true;
 	}
 
 	/**
@@ -139,13 +147,23 @@ class PaymentValidator {
 
 		if ( number_format( $this->order->get_total(), 2, '.', '' ) !== number_format( $amount, 2, '.', '' ) ) {
 			$this->last_error = sprintf( __( 'Validation error: PayPal amounts do not match (gross %s).',
-				'woo-paypal-plus' ),
-				$amount );
+			                                 'woo-paypal-plus' ),
+			                             $amount );
 
-			return FALSE;
+			return false;
 		}
 
-		return TRUE;
+		return true;
+	}
+
+	/**
+	 * Returns the last validation error
+	 *
+	 * @return string
+	 */
+	public function get_last_error() {
+
+		return $this->last_error;
 	}
 
 }

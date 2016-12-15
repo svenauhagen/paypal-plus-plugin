@@ -16,6 +16,8 @@ namespace PayPalPlusPlugin\WC;
 class PayPalIframeView {
 
 	/**
+	 * View data
+	 *
 	 * @var array
 	 */
 	private $data;
@@ -23,7 +25,7 @@ class PayPalIframeView {
 	/**
 	 * PayPalIframeView constructor.
 	 *
-	 * @param array $data
+	 * @param array $data View data.
 	 */
 	public function __construct( array $data ) {
 
@@ -36,10 +38,10 @@ class PayPalIframeView {
 	public function render() {
 
 		?>
-		<div id="<?php echo $this->data['app_config']['placeholder'] ?>"></div>
+		<div id="<?php echo esc_attr( $this->data[ 'app_config' ][ 'placeholder' ] ) ?>"></div>
 		<script type="application/javascript">
 			if ( typeof PAYPAL != "undefined" ) {
-				var ppp = PAYPAL.apps.PPP( <?php echo json_encode( $this->data['app_config'] ) ?>);
+				var ppp = PAYPAL.apps.PPP( <?php echo wp_json_encode( $this->data[ 'app_config' ] ) ?>);
 			}
 		</script>
 		<style>

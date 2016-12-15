@@ -8,25 +8,38 @@
 
 namespace PayPalPlusPlugin\WC\IPN;
 
+/**
+ * Class IPNValidator
+ *
+ * @package PayPalPlusPlugin\WC\IPN
+ */
 class IPNValidator {
 
 	/**
-	 * @var IPNData
-	 */
-	private $data;
-	/**
+	 * Request data.
+	 *
 	 * @var array
 	 */
 	private $request_data;
+	/**
+	 * URL for remote calls
+	 *
+	 * @var string
+	 */
 	private $paypal_url;
+	/**
+	 * The user agent
+	 *
+	 * @var string
+	 */
 	private $user_agent;
 
 	/**
 	 * IPNValidator constructor.
 	 *
-	 * @param array  $request_data
-	 * @param string $paypal_url
-	 * @param string $user_agent
+	 * @param array  $request_data Request Data array.
+	 * @param string $paypal_url   URL to use in PayPal calls.
+	 * @param string $user_agent   User Agent to use in payPal calls.
 	 */
 	public function __construct( array $request_data, $paypal_url, $user_agent ) {
 
@@ -35,31 +48,36 @@ class IPNValidator {
 		$this->user_agent   = $user_agent;
 	}
 
+	/**
+	 * Validates an IPN Request
+	 *
+	 * @return bool
+	 */
 	public function validate() {
 
 		$params = [
 			'body'        => $this->request_data,
 			'timeout'     => 60,
 			'httpversion' => '1.1',
-			'compress'    => FALSE,
-			'decompress'  => FALSE,
+			'compress'    => false,
+			'decompress'  => false,
 			'user-agent'  => $this->user_agent,
 		];
 
 		$response = wp_safe_remote_post( $this->paypal_url, $params );
 
 		if ( $response instanceof \WP_Error ) {
-			return FALSE;
+			return false;
 		}
-		if ( ! isset( $response['response']['code'] ) ) {
-			return FALSE;
+		if ( ! isset( $response[ 'response' ][ 'code' ] ) ) {
+			return false;
 		}
-		if ( $response['response']['code'] >= 200 && $response['response']['code'] < 300
-		     && strstr( $response['body'], 'VERIFIED' )
+		if ( $response[ 'response' ][ 'code' ] >= 200 && $response[ 'response' ][ 'code' ] < 300
+		     && strstr( $response[ 'body' ], 'VERIFIED' )
 		) {
-			return TRUE;
+			return true;
 		}
 
-		return FALSE;
+		return false;
 	}
 }

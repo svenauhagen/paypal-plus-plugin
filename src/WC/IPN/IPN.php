@@ -14,14 +14,20 @@ namespace PayPalPlusPlugin\WC\IPN;
 class IPN {
 
 	/**
+	 * ID of this Payment gateway
+	 *
 	 * @var string
 	 */
 	private $gateway_id;
 	/**
+	 * IPN Data Provider
+	 *
 	 * @var IPNData
 	 */
 	private $data;
 	/**
+	 * IPN Validator class
+	 *
 	 * @var IPNValidator
 	 */
 	private $validator;
@@ -29,17 +35,16 @@ class IPN {
 	/**
 	 * Constructor.
 	 *
-	 * @param              $gateway_id
+	 * @param string       $gateway_id The Gateway ID.
 	 *
-	 * @param IPNData      $data
+	 * @param IPNData      $data       IPN Data provider.
 	 *
-	 * @param IPNValidator $validator
-	 *
+	 * @param IPNValidator $validator  IPN Data Validator.
 	 */
 	public function __construct(
 		$gateway_id,
-		IPNData $data = NULL,
-		IPNValidator $validator = NULL
+		IPNData $data = null,
+		IPNValidator $validator = null
 	) {
 
 		$this->gateway_id = $gateway_id;
@@ -54,12 +59,20 @@ class IPN {
 
 	}
 
+	/**
+	 * Register WP/WC Hooks
+	 */
 	public function register() {
 
 		add_action( 'woocommerce_api_' . $this->gateway_id, array( $this, 'check_response' ) );
 
 	}
 
+	/**
+	 * Returns the Notification URL
+	 *
+	 * @return string
+	 */
 	public function get_notify_url() {
 
 		return WC()->api_request_url( $this->gateway_id );
@@ -71,7 +84,7 @@ class IPN {
 	 */
 	public function check_response() {
 
-		if ( isset( $_POST['ipn_track_id'] ) && ! empty( $_POST['ipn_track_id'] ) ) {
+		if ( $this->data->has( 'ipn_track_id' ) ) {
 			if (
 				$this->validator->validate()
 				&& ! empty( $this->data->get( 'custom' ) )
@@ -86,7 +99,6 @@ class IPN {
 
 	/**
 	 * There was a valid response.
-	 *
 	 */
 	public function valid_response() {
 
@@ -95,10 +107,10 @@ class IPN {
 		if ( method_exists( $updater, 'payment_status_' . $payment_status ) ) {
 			call_user_func( [ $updater, 'payment_status_' . $payment_status ] );
 
-			return TRUE;
+			return true;
 		}
 
-		return FALSE;
+		return false;
 	}
 
 }
