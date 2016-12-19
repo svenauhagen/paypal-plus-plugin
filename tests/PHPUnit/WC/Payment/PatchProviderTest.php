@@ -43,10 +43,17 @@ class PatchProviderTest extends BrainMonkeyWpTestCase {
 		$order_key        = uniqid();
 		$order->id        = $order_id;
 		$order->order_key = $order_key;
-		$testee           = new PatchProvider( $order );
-		$result           = $testee->get_custom_patch();
+
+		Functions::expect( 'wp_json_encode' )
+		         ->once()
+		         ->andReturnUsing( function ( $data ) {
+
+			         return json_encode( $data );
+		         } );
+		$testee = new PatchProvider( $order );
+		$result = $testee->get_custom_patch();
 		$this->assertInstanceOf( Patch::class, $result );
-		$data = json_decode( $result->getValue(), TRUE );
+		$data = json_decode( $result->getValue(), true );
 
 		$this->assertArrayHasKey( 'order_id', $data );
 		$this->assertSame( $data['order_id'], $order_id );
