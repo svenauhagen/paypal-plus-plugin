@@ -48,7 +48,7 @@ class IPN {
 	) {
 
 		$this->gateway_id = $gateway_id;
-		$this->data       = $data ?: new IPNData( $_POST );
+		$this->data       = $data ?: new IPNData( filter_input_array( INPUT_POST ) ?: [] );
 
 		$this->validator = $validator
 			?: new IPNValidator(

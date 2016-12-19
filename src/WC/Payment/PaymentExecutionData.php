@@ -138,11 +138,11 @@ class PaymentExecutionData {
 	 */
 	public function get_sale() {
 
-		$transactions     = $this->get_payment()
-		                         ->getTransactions();
-		$relatedResources = $transactions[ 0 ]->getRelatedResources();
+		$transactions      = $this->get_payment()
+		                          ->getTransactions();
+		$related_resources = $transactions[0]->getRelatedResources();
 
-		return $relatedResources[ 0 ]->getSale();
+		return $related_resources[0]->getSale();
 	}
 
 	/**

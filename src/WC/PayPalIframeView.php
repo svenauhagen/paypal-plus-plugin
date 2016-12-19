@@ -37,12 +37,12 @@ class PayPalIframeView {
 	 */
 	public function render() {
 
-		$id = $this->data[ 'app_config' ][ 'placeholder' ];
+		$id = $this->data['app_config']['placeholder'];
 		?>
 		<div id="<?php echo esc_attr( $id ) ?>"></div>
 		<script type="application/javascript">
 			if ( typeof PAYPAL != "undefined" ) {
-				var ppp = PAYPAL.apps.PPP( <?php echo wp_json_encode( $this->data[ 'app_config' ] ) ?>);
+				var ppp = PAYPAL.apps.PPP( <?php echo wp_json_encode( $this->data['app_config'] ) ?>);
 			}
 		</script>
 		<style>

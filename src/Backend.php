@@ -10,23 +10,41 @@ namespace PayPalPlusPlugin;
 
 use PayPalPlusPlugin\WC\PayPalPlusGateway;
 
+/**
+ * Class Backend
+ *
+ * @package PayPalPlusPlugin
+ */
 class Backend implements Controller {
 
 	/**
+	 * Gateway class
+	 *
 	 * @var PayPalPlusGateway
 	 */
 	private $gateway;
 	/**
-	 * @var
+	 * Main Plugin file path
+	 *
+	 * @var string
 	 */
 	private $file;
 
+	/**
+	 * Backend constructor.
+	 *
+	 * @param string            $file    Main plugin filepath.
+	 * @param PayPalPlusGateway $gateway Gateway class.
+	 */
 	public function __construct( $file, PayPalPlusGateway $gateway ) {
 
 		$this->gateway = $gateway;
 		$this->file    = $file;
 	}
 
+	/**
+	 * Setup hooks
+	 */
 	public function init() {
 
 		add_action( 'admin_enqueue_scripts', function () {

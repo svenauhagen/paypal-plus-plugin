@@ -123,12 +123,12 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 		$iban                          = $recipient_banking_instruction->getInternationalBankAccountNumber();
 		$bank_identifier_code          = $recipient_banking_instruction->getBankIdentifierCode();
 
-		$instruction_data[ 'reference_number' ]                                                     = $reference_number;
-		$instruction_data[ 'instruction_type' ]                                                     = 'PAY_UPON_INVOICE';
-		$instruction_data[ 'recipient_banking_instruction' ][ 'bank_name' ]                         = $bank_name;
-		$instruction_data[ 'recipient_banking_instruction' ][ 'account_holder_name' ]               = $account_holder_name;
-		$instruction_data[ 'recipient_banking_instruction' ][ 'international_bank_account_number' ] = $iban;
-		$instruction_data[ 'recipient_banking_instruction' ][ 'bank_identifier_code' ]              = $bank_identifier_code;
+		$instruction_data['reference_number']                                                   = $reference_number;
+		$instruction_data['instruction_type']                                                   = 'PAY_UPON_INVOICE';
+		$instruction_data['recipient_banking_instruction']['bank_name']                         = $bank_name;
+		$instruction_data['recipient_banking_instruction']['account_holder_name']               = $account_holder_name;
+		$instruction_data['recipient_banking_instruction']['international_bank_account_number'] = $iban;
+		$instruction_data['recipient_banking_instruction']['bank_identifier_code']              = $bank_identifier_code;
 
 		update_post_meta( $order->id, 'reference_number', $reference_number );
 		update_post_meta( $order->id, 'instruction_type', 'PAY_UPON_INVOICE' );

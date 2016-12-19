@@ -147,8 +147,12 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		if ( is_null( $this->auth ) ) {
 			$creds      = $this->get_api_credentials();
-			$this->auth = new ApiContext( new OAuthTokenCredential( $creds[ 'client_id' ],
-				$creds[ 'client_secret' ] ) );
+			$this->auth = new ApiContext(
+				new OAuthTokenCredential(
+					$creds['client_id'],
+					$creds['client_secret']
+				)
+			);
 
 			$this->auth->setConfig( array(
 				'mode'           => ( $this->is_sandbox() ) ? 'SANDBOX' : 'LIVE',
@@ -205,7 +209,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			return false;
 		}
 		$refund_data = new RefundData( $order, $amount, $reason, $this->get_api_context() );
-		$refund     = new WCRefund( $refund_data, $this->get_api_context() );
+		$refund      = new WCRefund( $refund_data, $this->get_api_context() );
 
 		return $refund->execute();
 
@@ -407,7 +411,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		$payment                   = ( new WCPayPalPayment( $this->get_payment_data(), $order ) )->create();
 		WC()->session->paymentId   = $payment->id;
-		WC()->session->approvalurl = isset( $payment->links[ 1 ]->href ) ? $payment->links[ 1 ]->href : false;
+		WC()->session->approvalurl = isset( $payment->links[1]->href ) ? $payment->links[1]->href : false;
 
 		return $payment->getApprovalLink();
 	}

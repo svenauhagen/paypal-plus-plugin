@@ -175,12 +175,12 @@ class WCPayPalPayment {
 	 */
 	private function get_item( array $item ) {
 
-		$product  = ( $this->is_order ) ? $this->order->get_product_from_item( $item ) : $item[ 'data' ];
+		$product  = ( $this->is_order ) ? $this->order->get_product_from_item( $item ) : $item['data'];
 		$name     = html_entity_decode( $product->get_title(), ENT_NOQUOTES, 'UTF-8' );
 		$currency = get_woocommerce_currency();
-		$quantity = ( $this->is_order ) ? absint( $item[ 'qty' ] ) : absint( $item[ 'quantity' ] );
+		$quantity = ( $this->is_order ) ? absint( $item['qty'] ) : absint( $item['quantity'] );
 		$sku      = $product->get_sku();
-		$price    = $item[ 'line_subtotal' ] / $quantity;
+		$price    = $item['line_subtotal'] / $quantity;
 
 		if ( $product instanceof \WC_Product_Variation ) {
 			$sku = $product->parent->get_sku();

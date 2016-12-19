@@ -10,27 +10,40 @@ namespace PayPalPlusPlugin;
 
 use PayPalPlusPlugin\WC\PayPalPlusGateway;
 
+/**
+ * Class Common
+ *
+ * @package PayPalPlusPlugin
+ */
 class Common implements Controller {
 
 	/**
+	 * The Payment Gateway.
+	 *
 	 * @var PayPalPlusGateway
 	 */
 	private $gateway;
 
-	public function __construct(PayPalPlusGateway $gateway) {
+	/**
+	 * Common constructor.
+	 *
+	 * @param PayPalPlusGateway $gateway The Payment Gateway.
+	 */
+	public function __construct( PayPalPlusGateway $gateway ) {
 
 		$this->gateway = $gateway;
 	}
 
+	/**
+	 * Setup hooks.
+	 */
 	public function init() {
 
-		add_filter( 'woocommerce_payment_gateways', [ $this, 'add_paypal_plus' ] );
-	}
+		add_filter( 'woocommerce_payment_gateways', function ( $methods ) {
 
-	public function add_paypal_plus( $methods ) {
+			$methods[] = $this->gateway;
 
-		$methods[] = $this->gateway;
-
-		return $methods;
+			return $methods;
+		} );
 	}
 }

@@ -8,7 +8,17 @@
 
 namespace PayPalPlusPlugin;
 
+/**
+ * Interface Controller
+ *
+ * @package PayPalPlusPlugin
+ */
 interface Controller {
 
+	/**
+	 * Initializes the Controller.
+	 *
+	 * @return mixed
+	 */
 	public function init();
 }

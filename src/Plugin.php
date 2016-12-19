@@ -60,7 +60,9 @@ class Plugin {
 	}
 
 	/**
-	 * return Controller
+	 * Returns the Controller that runs both on frontend and backend.
+	 *
+	 * @return Controller
 	 */
 	public function get_common_controller() {
 
@@ -69,6 +71,8 @@ class Plugin {
 	}
 
 	/**
+	 * Returns either a BackendController or a FrontendController, based on is_admin().
+	 *
 	 * @return Controller
 	 */
 	private function get_request_controller() {

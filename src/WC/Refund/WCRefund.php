@@ -11,27 +11,36 @@ namespace PayPalPlusPlugin\WC\Refund;
 use PayPal\Exception\PayPalConnectionException;
 use PayPal\Rest\ApiContext;
 
+/**
+ * Class WCRefund
+ *
+ * @package PayPalPlusPlugin\WC\Refund
+ */
 class WCRefund {
 
 	/**
+	 * RefundData object.
+	 *
 	 * @var ApiContext
 	 */
 	private $context;
 	/**
+	 * PayPal Api Context object.
+	 *
 	 * @var RefundData
 	 */
-	private $refundData;
+	private $refund_data;
 
 	/**
 	 * WCRefund constructor.
 	 *
-	 * @param RefundData $refundData
-	 * @param ApiContext $context
+	 * @param RefundData $refund_data RefundData object.
+	 * @param ApiContext $context PayPal Api Context object.
 	 */
-	public function __construct( RefundData $refundData, ApiContext $context ) {
+	public function __construct( RefundData $refund_data, ApiContext $context ) {
 
-		$this->context = $context;
-		$this->refundData = $refundData;
+		$this->context    = $context;
+		$this->refund_data = $refund_data;
 	}
 
 	/**
@@ -41,24 +50,24 @@ class WCRefund {
 	 */
 	public function execute() {
 
-		$sale   = $this->refundData->get_sale();
-		$refund = $this->refundData->get_refund();
+		$sale   = $this->refund_data->get_sale();
+		$refund = $this->refund_data->get_refund();
 
 		try {
-			$refundedSale = $sale->refundSale( $refund, $this->context );
-			if ( $refundedSale->state == 'completed' ) {
-				$this->refundData->get_success_handler( $refundedSale->getId() )
-				                 ->execute();
+			$refunded_sale = $sale->refundSale( $refund, $this->context );
+			if ( 'completed' === $refunded_sale->state ) {
+				$this->refund_data->get_success_handler( $refunded_sale->getId() )
+				                  ->execute();
 			} else {
-				// Todo: handle this properly
+				// Todo: handle this properly.
 			}
 		} catch ( PayPalConnectionException $ex ) {
 			do_action( 'paypal_plus_plugin_log', 'refund_exception', $ex );
 
-			return FALSE;
+			return false;
 		}
 
-		return TRUE;
+		return true;
 	}
 
 }

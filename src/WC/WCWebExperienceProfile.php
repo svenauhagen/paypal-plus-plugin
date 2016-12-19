@@ -73,8 +73,8 @@ class WCWebExperienceProfile {
 
 		}
 		$brand_name = '';
-		if ( ! empty( $this->config[ 'brand_name' ] ) ) {
-			$brand_name = $this->config[ 'brand_name' ];
+		if ( ! empty( $this->config['brand_name'] ) ) {
+			$brand_name = $this->config['brand_name'];
 		}
 
 		$web_profile->setName( substr( $brand_name . uniqid(), 0, 50 ) )
@@ -129,7 +129,7 @@ class WCWebExperienceProfile {
 
 		$input_fields = new InputFields();
 
-		$no_shipping = ( isset( $this->config[ 'no_shipping' ] ) ) ? intval( $this->config[ 'no_shipping' ] ) : 1;
+		$no_shipping = ( isset( $this->config['no_shipping'] ) ) ? intval( $this->config['no_shipping'] ) : 1;
 
 		$input_fields->setNoShipping( $no_shipping )
 		             ->setAddressOverride( 1 );
@@ -146,14 +146,14 @@ class WCWebExperienceProfile {
 
 		$presentation = new Presentation();
 
-		if ( ! empty( $this->config[ 'checkout_logo' ] ) ) {
-			$presentation->setLogoImage( $this->config[ 'checkout_logo' ] );
+		if ( ! empty( $this->config['checkout_logo'] ) ) {
+			$presentation->setLogoImage( $this->config['checkout_logo'] );
 		}
-		if ( ! empty( $this->config[ 'brand_name' ] ) ) {
-			$presentation->setBrandName( $this->config[ 'brand_name' ] );
+		if ( ! empty( $this->config['brand_name'] ) ) {
+			$presentation->setBrandName( $this->config['brand_name'] );
 		}
-		if ( ! empty( $this->config[ 'country' ] ) ) {
-			$presentation->setLocaleCode( $this->config[ 'country' ] );
+		if ( ! empty( $this->config['country'] ) ) {
+			$presentation->setLocaleCode( $this->config['country'] );
 		}
 
 		return $presentation;
@@ -166,6 +166,6 @@ class WCWebExperienceProfile {
 	 */
 	private function get_local_id() {
 
-		return isset( $this->config[ 'local_id' ] ) ? $this->config[ 'local_id' ] : null;
+		return isset( $this->config['local_id'] ) ? $this->config['local_id'] : null;
 	}
 }

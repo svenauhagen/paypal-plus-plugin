@@ -145,8 +145,8 @@ class IPNData {
 		           && ! preg_match( '/[CO]:\+?[0-9]+:"/', $raw_custom )
 		           && ( $custom = maybe_unserialize( $raw_custom ) )
 		) {
-			$order_id  = $custom[ 0 ];
-			$order_key = $custom[ 1 ];
+			$order_id  = $custom[0];
+			$order_key = $custom[1];
 		} else {
 
 			return null;

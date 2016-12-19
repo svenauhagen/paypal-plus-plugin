@@ -19,10 +19,14 @@ use PayPalPlusPlugin\WC\RequestSuccessHandler;
 class WCPaymentExecution {
 
 	/**
+	 * PaymentExecutionData object.
+	 *
 	 * @var PaymentExecutionData
 	 */
 	private $data;
 	/**
+	 * SuccessHandler object.
+	 *
 	 * @var RequestSuccessHandler
 	 */
 	private $success_handler;
@@ -30,8 +34,8 @@ class WCPaymentExecution {
 	/**
 	 * WCPaymentExecution constructor.
 	 *
-	 * @param PaymentExecutionData  $data
-	 * @param RequestSuccessHandler $success_handler
+	 * @param PaymentExecutionData  $data PaymentExecutionData object.
+	 * @param RequestSuccessHandler $success_handler SuccessHandler object.
 	 */
 	public function __construct( PaymentExecutionData $data, RequestSuccessHandler $success_handler ) {
 

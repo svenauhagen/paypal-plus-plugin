@@ -10,23 +10,32 @@ namespace PayPalPlusPlugin\WC\Refund;
 
 use PayPalPlusPlugin\WC\RequestSuccessHandler;
 
+/**
+ * Class RefundSuccess
+ *
+ * @package PayPalPlusPlugin\WC\Refund
+ */
 class RefundSuccess implements RequestSuccessHandler {
 
 	/**
+	 * WooCommerce Order object.
+	 *
 	 * @var \WC_Order
 	 */
 	private $order;
 	/**
-	 * @var
+	 * PayPal transaction ID.
+	 *
+	 * @var string
 	 */
 	private $transaction_id;
 
 	/**
 	 * RefundSuccess constructor.
 	 *
-	 * @param \WC_Order $order
-	 * @param           $transaction_id
-	 * @param           $reason
+	 * @param \WC_Order $order          WooCommerce Order object.
+	 * @param string    $transaction_id PayPal transaction ID.
+	 * @param string    $reason         Refund reason.
 	 */
 	public function __construct( \WC_Order $order, $transaction_id, $reason ) {
 
@@ -35,6 +44,8 @@ class RefundSuccess implements RequestSuccessHandler {
 	}
 
 	/**
+	 * Handle the successful request.
+	 *
 	 * @return bool
 	 */
 	public function execute() {
@@ -48,6 +59,6 @@ class RefundSuccess implements RequestSuccessHandler {
 			$this->order->update_status( 'refunded' );
 		}
 
-		return TRUE;
+		return true;
 	}
 }

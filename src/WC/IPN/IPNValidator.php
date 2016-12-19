@@ -69,11 +69,11 @@ class IPNValidator {
 		if ( $response instanceof \WP_Error ) {
 			return false;
 		}
-		if ( ! isset( $response[ 'response' ][ 'code' ] ) ) {
+		if ( ! isset( $response['response']['code'] ) ) {
 			return false;
 		}
-		if ( $response[ 'response' ][ 'code' ] >= 200 && $response[ 'response' ][ 'code' ] < 300
-		     && strstr( $response[ 'body' ], 'VERIFIED' )
+		if ( $response['response']['code'] >= 200 && $response['response']['code'] < 300
+		     && strstr( $response['body'], 'VERIFIED' )
 		) {
 			return true;
 		}
