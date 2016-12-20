@@ -71,7 +71,6 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		);
 		$this->ipn          = $ipn ?: new IPN( $this->id, $ipn_data );
 
-		$this->ipn->register();
 		$this->init_form_fields();
 		$this->init_settings();
 	}
@@ -103,9 +102,12 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	 */
 	public function register() {
 
+		$this->ipn->register();
+
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'on_save' ], 10 );
 		add_action( 'woocommerce_receipt_' . $this->id, [ $this, 'render_receipt_page' ] );
 		add_action( 'woocommerce_api_' . $this->id, array( $this, 'execute_payment' ), 12 );
+
 	}
 
 	/**

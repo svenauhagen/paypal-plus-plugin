@@ -130,6 +130,8 @@ class IPNData {
 
 	/**
 	 * Get the order from the PayPal 'Custom' variable.
+	 * TODO Passing and decoding custom data should by handled by one set of objects.
+	 * TODO Right now, this is implemented in 2 completely separate places
 	 *
 	 * @return \WC_Order
 	 */
