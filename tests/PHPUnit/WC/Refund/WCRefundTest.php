@@ -94,7 +94,7 @@ class WCRefundTest extends BrainMonkeyWpTestCase {
 			->shouldReceive( 'get_refund' )
 			->andReturn( $refundRequest );
 
-		Actions::expectFired( 'paypal_plus_plugin_log' )
+		Actions::expectFired( 'paypal_plus_plugin_log_exception' )
 		       ->once()
 		       ->with( 'refund_exception', $exception );
 

@@ -93,6 +93,7 @@ class IPN {
 				$this->valid_response();
 				exit;
 			}
+			do_action( 'paypal_plus_plugin_log_error', 'Invalid IPN call', $this->data->get_all() );
 			wp_die( 'PayPal IPN Request Failure', 'PayPal IPN', array( 'response' => 500 ) );
 		}
 	}

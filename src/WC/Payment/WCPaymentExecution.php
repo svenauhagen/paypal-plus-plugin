@@ -55,7 +55,7 @@ class WCPaymentExecution {
 			$payment->execute( $this->data->get_payment_execution(), $this->data->get_context() );
 			$this->success_handler->execute();
 		} catch ( PayPalConnectionException $ex ) {
-			do_action( 'paypal_plus_plugin_log', 'payment_execution_exception', $ex );
+			do_action( 'paypal_plus_plugin_log_exception', 'payment_execution_exception', $ex );
 
 			return false;
 		}

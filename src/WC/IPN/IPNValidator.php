@@ -43,7 +43,7 @@ class IPNValidator {
 	 */
 	public function __construct( array $request_data, $paypal_url, $user_agent ) {
 
-		$this->request_data = [ 'cmd' => '_notify-validate' ] + $request_data;
+		$this->request_data = $request_data;
 		$this->paypal_url   = $paypal_url;
 		$this->user_agent   = $user_agent;
 	}
@@ -56,7 +56,7 @@ class IPNValidator {
 	public function validate() {
 
 		$params = [
-			'body'        => $this->request_data,
+			'body'        => [ 'cmd' => '_notify-validate' ] + $this->request_data,
 			'timeout'     => 60,
 			'httpversion' => '1.1',
 			'compress'    => false,
