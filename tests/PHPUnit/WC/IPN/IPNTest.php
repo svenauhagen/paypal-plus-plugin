@@ -44,18 +44,22 @@ class IPNTest extends BrainMonkeyWpTestCase {
 		$shouldReceive = method_exists( OrderUpdater::class, $method );
 
 		$updater = \Mockery::mock( OrderUpdater::class );
-		if ( $shouldReceive ) {
-			$updater->shouldReceive( $method )
-			        ->once()
-			        ->andReturn( true );
-		}
+
 		$ipnData = \Mockery::mock( IPNData::class );
 		$ipnData->shouldReceive( 'get_payment_status' )
 		        ->once()
 		        ->andReturn( $paymentStatus );
 		$ipnData->shouldReceive( 'get_order_updater' )
 		        ->andReturn( $updater );
-		$ipnData->shouldReceive( 'get_all' );
+		if ( $shouldReceive ) {
+			$updater->shouldReceive( $method )
+			        ->once()
+			        ->andReturn( true );
+			$ipnData->shouldReceive( 'get_all' )
+			        ->once();
+			Actions::expectFired( 'paypal_plus_plugin_log' )
+			       ->once();
+		}
 
 		$validator = \Mockery::mock( IPNValidator::class );
 		$testee    = new IPN( $gateway_id, $ipnData, $validator );
