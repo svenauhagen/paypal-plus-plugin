@@ -75,7 +75,7 @@ class IPN {
 	 */
 	private function get_api_endpoint() {
 
-		return $this->gateway_id . '_IPN';
+		return $this->gateway_id . '_ipn';
 
 	}
 
