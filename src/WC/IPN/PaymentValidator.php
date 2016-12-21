@@ -162,7 +162,8 @@ class PaymentValidator {
 					'Validation error: PayPal payment amounts do not match (gross %1$1s, should be %2$2s).',
 					'woo-paypal-plus'
 				),
-				$amount
+				$amount,
+				$wc_total
 			);
 
 			return false;
