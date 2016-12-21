@@ -108,6 +108,8 @@ class OrderUpdater {
 			if ( ! empty( $fee = $this->data->get( 'mc_fee' ) ) ) {
 				update_post_meta( $this->order->id, 'PayPal Transaction Fee', wc_clean( $fee ) );
 			}
+			do_action( 'paypal_plus_plugin_log', 'Payment completed successfully ', [] );
+
 		} else {
 			$this->payment_on_hold(
 				sprintf(
@@ -115,8 +117,9 @@ class OrderUpdater {
 					$this->data->get( 'pending_reason' )
 				)
 			);
+			do_action( 'paypal_plus_plugin_log', 'Payment put on hold ', [] );
+
 		}
-		do_action( 'paypal_plus_plugin_log', 'Payment completed successfully ', [] );
 
 		return true;
 	}
@@ -128,15 +131,15 @@ class OrderUpdater {
 
 		foreach (
 			[
-				'payer_email',
-				'first_name',
-				'last_name',
-				'payment_type',
+				'payer_email'  => 'Payer PayPal address',
+				'first_name'   => 'Payer first name',
+				'last_name'    => 'Payer last name',
+				'payment_type' => 'Payment type',
 			]
-			as $key
+			as $key => $name
 		) {
 			if ( ! empty( $value = $this->data->get( $key ) ) ) {
-				update_post_meta( $this->order->id, 'Payer PayPal address', wc_clean( $value ) );
+				update_post_meta( $this->order->id, $name, wc_clean( $value ) );
 			}
 		}
 

@@ -99,7 +99,7 @@ class PaymentValidatorTest extends BrainMonkeyWpTestCase {
 			// WooCommerce Price.
 			100.00,
 			// PayPal price.
-			100.00,
+			'100.00',
 			// Transaction type.
 			'foo',
 			// Accepted Transaction Types.
@@ -116,7 +116,7 @@ class PaymentValidatorTest extends BrainMonkeyWpTestCase {
 			// WooCommerce Price.
 			100.00,
 			// PayPal price.
-			101.00,
+			'101,00',
 			// Transaction type.
 			'foo',
 			// Accepted Transaction Types.
