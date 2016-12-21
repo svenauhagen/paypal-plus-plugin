@@ -26,7 +26,7 @@ class IPNTest extends BrainMonkeyWpTestCase {
 
 		$testee = new IPN( $gateway_id, $ipnData, $validator );
 
-		Actions::expectAdded( 'woocommerce_api_' . $gateway_id )
+		Actions::expectAdded( 'woocommerce_api_' . $gateway_id . '_IPN' )
 		       ->once();
 
 		$testee->register();
@@ -47,7 +47,7 @@ class IPNTest extends BrainMonkeyWpTestCase {
 		if ( $shouldReceive ) {
 			$updater->shouldReceive( $method )
 			        ->once()
-			        ->andReturn( TRUE );
+			        ->andReturn( true );
 		}
 		$ipnData = \Mockery::mock( IPNData::class );
 		$ipnData->shouldReceive( 'get_payment_status' )

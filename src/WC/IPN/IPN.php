@@ -64,7 +64,18 @@ class IPN {
 	 */
 	public function register() {
 
-		add_action( 'woocommerce_api_' . $this->gateway_id, array( $this, 'check_response' ) );
+		add_action( 'woocommerce_api_' . $this->get_api_endpoint(), array( $this, 'check_response' ) );
+
+	}
+
+	/**
+	 * Returns the endpoint used for IPN requests
+	 *
+	 * @return string
+	 */
+	private function get_api_endpoint() {
+
+		return $this->gateway_id . '_IPN';
 
 	}
 
@@ -75,7 +86,7 @@ class IPN {
 	 */
 	public function get_notify_url() {
 
-		return WC()->api_request_url( $this->gateway_id );
+		return WC()->api_request_url( $this->get_api_endpoint() );
 
 	}
 
