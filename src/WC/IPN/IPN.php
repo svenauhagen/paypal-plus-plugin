@@ -88,7 +88,7 @@ class IPN {
 			if (
 				$this->validator->validate()
 				&& ! empty( $this->data->get( 'custom' ) )
-				&& ( $order = $this->data->get_paypal_order() )
+				&& ( $order = $this->data->get_woocommerce_order() )
 			) {
 				$this->valid_response();
 				exit;

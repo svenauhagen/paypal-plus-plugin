@@ -121,7 +121,7 @@ class IPNData {
 	public function get_order_updater() {
 
 		if ( is_null( $this->updater ) ) {
-			$this->updater = new OrderUpdater( $this->get_paypal_order(), $this );
+			$this->updater = new OrderUpdater( $this->get_woocommerce_order(), $this );
 		}
 
 		return $this->updater;
@@ -135,7 +135,7 @@ class IPNData {
 	 *
 	 * @return \WC_Order
 	 */
-	public function get_paypal_order() {
+	public function get_woocommerce_order() {
 
 		if ( ! $raw_custom = $this->get( 'custom', false ) ) {
 			return null;

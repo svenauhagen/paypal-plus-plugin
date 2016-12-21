@@ -56,7 +56,7 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 		$order  = \Mockery::mock( \WC_Order::class );
 		$testee = \Mockery::mock( IPNData::class, [ $request, $sandbox ] )
 		                  ->makePartial();
-		$testee->shouldReceive( 'get_paypal_order' )
+		$testee->shouldReceive( 'get_woocommerce_order' )
 		       ->once()
 		       ->andReturn( $order );
 		$result = $testee->get_order_updater();
@@ -107,7 +107,7 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 	 * @param $valid_order_id
 	 * @param $valid_order_key
 	 */
-	public function test_get_paypal_order( $request, $valid_order_id, $valid_order_key ) {
+	public function test_get_woocommerce_order( $request, $valid_order_id, $valid_order_key ) {
 
 		if ( isset( $request['custom'] ) && ( $custom = json_decode( $request['custom'] ) ) && is_object( $custom ) ) {
 			$wc_get_order                 = Functions::expect( 'wc_get_order' );
@@ -136,7 +136,7 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 		}
 		$testee = new IPNData( $request );
 
-		$result = $testee->get_paypal_order();
+		$result = $testee->get_woocommerce_order();
 
 		if ( ! isset( $request['custom'] ) ) {
 			$this->assertNull( $result );
