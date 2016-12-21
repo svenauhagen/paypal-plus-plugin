@@ -129,7 +129,8 @@ class PaymentValidator {
 	 */
 	private function validate_currency( $currency ) {
 
-		if ( $wc_currency = $this->order->get_order_currency() !== $currency ) {
+		$wc_currency = $this->order->get_order_currency();
+		if ( $wc_currency !== $currency ) {
 			$this->last_error = sprintf(
 				__(
 					'Validation error: PayPal currencies do not match (PayPal: %1$1s, WooCommerce: %2$2s).',
@@ -154,10 +155,11 @@ class PaymentValidator {
 	 */
 	private function validate_amount( $amount ) {
 
-		if ( number_format( $this->order->get_total(), 2, '.', '' ) !== number_format( $amount, 2, '.', '' ) ) {
+		$wc_total = number_format( $this->order->get_total(), 2, '.', '' );
+		if ( number_format( $amount, 2, '.', '' ) !== $wc_total ) {
 			$this->last_error = sprintf(
 				__(
-					'Validation error: PayPal amounts do not match (gross %s).',
+					'Validation error: PayPal payment amounts do not match (gross %1$1s, should be %2$2s).',
 					'woo-paypal-plus'
 				),
 				$amount
