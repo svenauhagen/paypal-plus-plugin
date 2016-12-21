@@ -115,6 +115,10 @@ class IPN {
 		$payment_status = $this->data->get_payment_status();
 		$updater        = $this->data->get_order_updater();
 		if ( method_exists( $updater, 'payment_status_' . $payment_status ) ) {
+			do_action(
+				'paypal_plus_plugin_log', 'Processing IPN. payment status: ' . $payment_status,
+				$this->data->get_all()
+			);
 			call_user_func( [ $updater, 'payment_status_' . $payment_status ] );
 
 			return true;

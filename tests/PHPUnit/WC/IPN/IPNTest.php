@@ -55,6 +55,7 @@ class IPNTest extends BrainMonkeyWpTestCase {
 		        ->andReturn( $paymentStatus );
 		$ipnData->shouldReceive( 'get_order_updater' )
 		        ->andReturn( $updater );
+		$ipnData->shouldReceive( 'get_all' );
 
 		$validator = \Mockery::mock( IPNValidator::class );
 		$testee    = new IPN( $gateway_id, $ipnData, $validator );
