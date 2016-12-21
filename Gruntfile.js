@@ -83,7 +83,6 @@ module.exports = function( grunt ) {
 			main: {
 				options: {
 					archive: function() {
-						// The global value git.tag is set by another task
 						return 'dist/PayPal Plus for WooCommcerce - ' + new Date().getTime() + '.zip';
 					},
 					level  : 6
@@ -94,7 +93,10 @@ module.exports = function( grunt ) {
 						src   : [
 							'./assets/**/*',
 							'./src/**/*',
-							'./vendor/**/*',
+							'./vendor/composer/**/*',
+							'./vendor/autoload.php',
+							'./vendor/paypal/**/*',
+							'./vendor/psr/**/*',
 							'./CHANGELOG.md',
 							'./LICENSE',
 							'./paypal-plus-plugin.php',

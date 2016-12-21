@@ -129,13 +129,14 @@ class PaymentValidator {
 	 */
 	private function validate_currency( $currency ) {
 
-		if ( $this->order->get_order_currency() !== $currency ) {
+		if ( $wc_currency = $this->order->get_order_currency() !== $currency ) {
 			$this->last_error = sprintf(
 				__(
-					'Validation error: PayPal currencies do not match (code %s).',
+					'Validation error: PayPal currencies do not match (PayPal: %1$1s, WooCommerce: %2$2s).',
 					'woo-paypal-plus'
 				),
-				$currency
+				$currency,
+				$wc_currency
 			);
 
 			return false;

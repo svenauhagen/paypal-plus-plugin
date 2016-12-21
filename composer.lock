@@ -9,16 +9,16 @@
     "packages": [
         {
             "name": "paypal/rest-api-sdk-php",
-            "version": "1.10.0",
+            "version": "1.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paypal/PayPal-PHP-SDK.git",
-                "reference": "f87c4306cccf31be9acea71a55c4978a7f77afcf"
+                "reference": "7e664f12be32b975575371e8ad3bc17b6b318851"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paypal/PayPal-PHP-SDK/zipball/f87c4306cccf31be9acea71a55c4978a7f77afcf",
-                "reference": "f87c4306cccf31be9acea71a55c4978a7f77afcf",
+                "url": "https://api.github.com/repos/paypal/PayPal-PHP-SDK/zipball/7e664f12be32b975575371e8ad3bc17b6b318851",
+                "reference": "7e664f12be32b975575371e8ad3bc17b6b318851",
                 "shasum": ""
             },
             "require": {
@@ -54,7 +54,7 @@
                 "rest",
                 "sdk"
             ],
-            "time": "2016-10-27 21:14:38"
+            "time": "2016-12-14 21:59:21"
         },
         {
             "name": "psr/log",

@@ -89,7 +89,7 @@ class OrderUpdater {
 			$this->order->update_status( 'on-hold', $last_error );
 			do_action(
 				'paypal_plus_plugin_log_error',
-				'IPN Error. Payment already completed: ' . $last_error,
+				'IPN Error. Payment validation failed: ' . $last_error,
 				[]
 			);
 
