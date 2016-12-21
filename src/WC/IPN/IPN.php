@@ -84,18 +84,16 @@ class IPN {
 	 */
 	public function check_response() {
 
-		if ( $this->data->has( 'ipn_track_id' ) ) {
-			if (
-				$this->validator->validate()
-				&& ! empty( $this->data->get( 'custom' ) )
-				&& ( $order = $this->data->get_woocommerce_order() )
-			) {
-				$this->valid_response();
-				exit;
-			}
-			do_action( 'paypal_plus_plugin_log_error', 'Invalid IPN call', $this->data->get_all() );
-			wp_die( 'PayPal IPN Request Failure', 'PayPal IPN', array( 'response' => 500 ) );
+		if (
+			$this->validator->validate()
+			&& ! empty( $this->data->get( 'custom' ) )
+			&& ( $order = $this->data->get_woocommerce_order() )
+		) {
+			$this->valid_response();
+			exit;
 		}
+		do_action( 'paypal_plus_plugin_log_error', 'Invalid IPN call', $this->data->get_all() );
+		wp_die( 'PayPal IPN Request Failure', 'PayPal IPN', array( 'response' => 500 ) );
 	}
 
 	/**
