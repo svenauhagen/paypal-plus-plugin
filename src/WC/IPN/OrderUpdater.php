@@ -76,11 +76,22 @@ class OrderUpdater {
 	public function payment_status_completed() {
 
 		if ( $this->order->has_status( 'completed' ) ) {
+			do_action(
+				'paypal_plus_plugin_log_error', 'IPN Error. Payment already completed: ',
+				[]
+			);
+
 			return true;
 		}
 
 		if ( ! $this->validator->is_valid() ) {
-			$this->order->update_status( 'on-hold', $this->validator->get_last_error() );
+			$last_error = $this->validator->get_last_error();
+			$this->order->update_status( 'on-hold', $last_error );
+			do_action(
+				'paypal_plus_plugin_log_error',
+				'IPN Error. Payment already completed: ' . $last_error,
+				[]
+			);
 
 			return false;
 		}
@@ -105,6 +116,7 @@ class OrderUpdater {
 				)
 			);
 		}
+		do_action( 'paypal_plus_plugin_log', 'Payment completed successfully ', [] );
 
 		return true;
 	}
