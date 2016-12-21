@@ -143,12 +143,6 @@ class IPNData {
 		if ( ( $custom = json_decode( $raw_custom ) ) && is_object( $custom ) ) {
 			$order_id  = $custom->order_id;
 			$order_key = $custom->order_key;
-		} elseif ( preg_match( '/^a:2:{/', $raw_custom )
-		           && ! preg_match( '/[CO]:\+?[0-9]+:"/', $raw_custom )
-		           && ( $custom = maybe_unserialize( $raw_custom ) )
-		) {
-			$order_id  = $custom[0];
-			$order_key = $custom[1];
 		} else {
 
 			return null;
@@ -157,7 +151,7 @@ class IPNData {
 			$order_id = wc_get_order_id_by_order_key( $order_key );
 			$order    = wc_get_order( $order_id );
 		}
-		if ( ! $order || $order->order_key !== $order_key ) {
+		if ( ! $order ) {
 
 			return null;
 		}

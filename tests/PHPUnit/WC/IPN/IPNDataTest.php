@@ -16,12 +16,12 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 	public function test_get_paypal_url() {
 
 		Functions::expect( 'wp_unslash' );
-		$testee  = new IPNData( [], TRUE );
+		$testee  = new IPNData( [], true );
 		$result1 = $testee->get_paypal_url();
 		$this->assertInternalType( 'string', $result1 );
 		$this->assertNotEmpty( 'string', $result1 );
 
-		$testee  = new IPNData( [], FALSE );
+		$testee  = new IPNData( [], false );
 		$result2 = $testee->get_paypal_url();
 		$this->assertInternalType( 'string', $result2 );
 		$this->assertNotEmpty( 'string', $result2 );
@@ -101,22 +101,57 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 	}
 
 	/**
-	 * @dataProvider default_test_data
+	 * @dataProvider paypal_order_data
 	 *
 	 * @param $request
-	 * @param $sandbox
+	 * @param $valid_order_id
+	 * @param $valid_order_key
 	 */
-	public function test_get_paypal_order( $request, $sandbox ) {
+	public function test_get_paypal_order( $request, $valid_order_id, $valid_order_key ) {
 
-		$this->markTestIncomplete( 'Have a look at the actual API response first' );
+		if ( isset( $request['custom'] ) && ( $custom = json_decode( $request['custom'] ) ) && is_object( $custom ) ) {
+			$wc_get_order                 = Functions::expect( 'wc_get_order' );
+			$wc_get_order_id_by_order_key = Functions::expect( 'wc_get_order_id_by_order_key' );
 
-		$testee = new IPNData( $request, $sandbox );
+			if ( $valid_order_id && ! $valid_order_key ) {
+
+				$wc_get_order->once()
+				             ->andReturn( \Mockery::mock( \WC_Order::class ) );
+			} elseif ( $valid_order_key && $valid_order_key ) {
+				$wc_get_order->once()
+				             ->andReturn( \Mockery::mock( \WC_Order::class ) );
+			} elseif ( ! $valid_order_id && ! $valid_order_key ) {
+				$wc_get_order_id_by_order_key->once();
+				$wc_get_order->twice();
+				$wc_get_order->andReturn( null );
+
+			} else {// !$valid_order_id && $valid_order_key
+				$wc_get_order->once()
+				             ->andReturn( null );
+				$wc_get_order_id_by_order_key->once()
+				                             ->andReturn( 666 );
+				$wc_get_order->once()
+				             ->andReturn( \Mockery::mock( \WC_Order::class ) );
+			}
+		}
+		$testee = new IPNData( $request );
 
 		$result = $testee->get_paypal_order();
+
 		if ( ! isset( $request['custom'] ) ) {
 			$this->assertNull( $result );
 		} else {
-			$this->assertInstanceOf( \WC_Order::class, $result );
+			if ( $valid_order_id ) {
+				$this->assertInstanceOf( \WC_Order::class, $result );
+			} else {
+				if ( $valid_order_key ) {
+					$this->assertInstanceOf( \WC_Order::class, $result );
+				} else {
+					$this->assertNull( $result );
+
+				}
+
+			}
 
 		}
 
@@ -180,7 +215,7 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 			#param $request
 			[ 'payment_status' => 'foo' ],
 			#param $sandbox
-			TRUE,
+			true,
 		];
 
 		# 2. Testrun
@@ -188,10 +223,80 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 			#param $request
 			[ 'custom' => 'foo' ],
 			#param $sandbox
-			FALSE,
+			false,
+		];
+
+		# 3. Testrun
+		$data['test_2'] = [
+			#param $request
+			[ 'custom' => '{"order_id":1337,"order_key":42}' ],
+			#param $sandbox
+			false,
 		];
 
 		return $data;
+	}
+
+	public function paypal_order_data() {
+
+		$data = [];
+
+		$data['Missing custom data'] = [
+			#param $request
+			[ 'foo' => 'bar' ],
+			#param $valid_order_id
+			false,
+			#param $valid_order_key
+			false,
+		];
+
+		$data['Wrong custom data'] = [
+			#param $request
+			[ 'custom' => 'foo' ],
+			#param $valid_order_id
+			false,
+			#param $valid_order_key
+			false,
+		];
+
+		$data['Valid order_id, invalid order_key'] = [
+			#param $request
+			[ 'custom' => '{"order_id":1337,"order_key":42}' ],
+			#param $valid_order_id
+			true,
+			#param $valid_order_key
+			false,
+		];
+
+		$data['Valid order_id, valid order_key'] = [
+			#param $request
+			[ 'custom' => '{"order_id":1337,"order_key":42}' ],
+			#param $valid_order_id
+			true,
+			#param $valid_order_key
+			true,
+		];
+
+		$data['Invalid order_id, invalid order_key'] = [
+			#param $request
+			[ 'custom' => '{"order_id":1337,"order_key":42}' ],
+			#param $valid_order_id
+			false,
+			#param $valid_order_key
+			false,
+		];
+
+		$data['test_2'] = [
+			#param $request
+			[ 'custom' => '{"order_id":1337,"order_key":42}' ],
+			#param $valid_order_id
+			true,
+			#param $valid_order_key
+			true,
+		];
+
+		return $data;
+
 	}
 
 }
