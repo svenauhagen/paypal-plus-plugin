@@ -35,7 +35,7 @@ class OrderUpdaterTest extends BrainMonkeyWpTestCase {
 
 		if ( ! $order_complete ) {
 
-			$validator->shouldReceive( 'is_valid' )
+			$validator->shouldReceive( 'is_valid_payment' )
 			          ->once()
 			          ->andReturn( $validator_result );
 

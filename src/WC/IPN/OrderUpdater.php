@@ -84,7 +84,7 @@ class OrderUpdater {
 			return true;
 		}
 
-		if ( ! $this->validator->is_valid() ) {
+		if ( ! $this->validator->is_valid_payment() ) {
 			$last_error = $this->validator->get_last_error();
 			$this->order->update_status( 'on-hold', $last_error );
 			do_action(
@@ -219,7 +219,7 @@ class OrderUpdater {
 	 */
 	public function payment_status_refunded() {
 
-		if ( $this->order->get_total() === ( $this->data->get( 'mc_gross', 0 ) * - 1 ) ) {
+		if ( $this->validator->is_valid_refund() ) {
 			$this->order->update_status(
 				'refunded',
 				sprintf( __( 'Payment %s via IPN.', 'woo-paypal-plus' ),

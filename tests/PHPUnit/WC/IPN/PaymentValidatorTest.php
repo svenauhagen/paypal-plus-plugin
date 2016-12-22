@@ -16,7 +16,7 @@ class PaymentValidatorTest extends BrainMonkeyWpTestCase {
 	/**
 	 * Tests the is_valid method
 	 *
-	 * @dataProvider default_test_data
+	 * @dataProvider payment_test_data
 	 *
 	 * @param \WC_Order $order
 	 * @param float     $wc_amount
@@ -26,7 +26,7 @@ class PaymentValidatorTest extends BrainMonkeyWpTestCase {
 	 * @param string    $wc_currency
 	 * @param string    $pp_currency
 	 */
-	public function test_is_valid( \WC_Order $order, $wc_amount, $pp_amount, $transaction_type, $accepted_types, $wc_currency, $pp_currency ) {
+	public function test_is_valid_payment( \WC_Order $order, $wc_amount, $pp_amount, $transaction_type, $accepted_types, $wc_currency, $pp_currency ) {
 
 		$order->shouldReceive( 'get_order_currency' )
 		      ->once()
@@ -36,11 +36,11 @@ class PaymentValidatorTest extends BrainMonkeyWpTestCase {
 		      ->once()
 		      ->andReturn( $wc_amount );
 
-		Functions::expect('__');
+		Functions::expect( '__' );
 
 		$testee = new PaymentValidator( $transaction_type, $pp_currency, $pp_amount, $order, $accepted_types );
-		$result = $testee->is_valid();
-		if ( in_array( $transaction_type, $accepted_types, TRUE )
+		$result = $testee->is_valid_payment();
+		if ( in_array( $transaction_type, $accepted_types, true )
 		     && $wc_currency === $pp_currency
 		     && number_format( $wc_amount, 2, '.', '' ) === number_format( $pp_amount, 2, '.', '' )
 		) {
@@ -53,9 +53,39 @@ class PaymentValidatorTest extends BrainMonkeyWpTestCase {
 	}
 
 	/**
+	 *
+	 * @dataProvider refund_test_data
+	 *
+	 * @param \WC_Order $order
+	 * @param           $wc_amount
+	 * @param           $pp_amount
+	 * @param           $transaction_type
+	 * @param           $accepted_types
+	 * @param           $wc_currency
+	 * @param           $pp_currency
+	 */
+	public function test_is_valid_refund( \WC_Order $order, $wc_amount, $pp_amount, $transaction_type, $accepted_types, $wc_currency, $pp_currency ) {
+
+		$order->shouldReceive( 'get_total' )
+		      ->once()
+		      ->andReturn( $wc_amount );
+		$testee = new PaymentValidator( $transaction_type, $pp_currency, $pp_amount, $order, $accepted_types );
+		$result = $testee->is_valid_refund();
+
+		if ( number_format( $wc_amount, 2, '.', '' ) === number_format( $pp_amount * - 1, 2, '.', '' ) ) {
+
+			$this->assertTrue( $result );
+		} else {
+			$this->assertFalse( $result );
+
+		}
+
+	}
+
+	/**
 	 * Provides complete validation test data
 	 */
-	public function default_test_data() {
+	public function payment_test_data() {
 
 		$data = [];
 
@@ -117,6 +147,85 @@ class PaymentValidatorTest extends BrainMonkeyWpTestCase {
 			100.00,
 			// PayPal price.
 			'101,00',
+			// Transaction type.
+			'foo',
+			// Accepted Transaction Types.
+			[ 'foo', 'bar' ],
+			// WooCommerce currency.
+			'foo',
+			// PayPal currency.
+			'bar',
+		];
+
+		return $data;
+
+	}
+
+	/**
+	 * Provides complete validation test data
+	 */
+	public function refund_test_data() {
+
+		$data = [];
+
+		$data['test_1'] = [
+			// Order mock.
+			\Mockery::mock( \WC_Order::class ),
+			// WooCommerce Price.
+			100.00,
+			// PayPal price.
+			-100.00,
+			// Transaction type.
+			'foo',
+			// Accepted Transaction Types.
+			[ 'foo', 'bar' ],
+			// WooCommerce currency.
+			'foo',
+			// PayPal currency.
+			'foo',
+		];
+
+		$data['test_2'] = [
+			// Order mock.
+			\Mockery::mock( \WC_Order::class ),
+			// WooCommerce Price.
+			100.00,
+			// PayPal price.
+			101.00,
+			// Transaction type.
+			'foo',
+			// Accepted Transaction Types.
+			[ 'foo', 'bar' ],
+			// WooCommerce currency.
+			'foo',
+			// PayPal currency.
+			'foo',
+		];
+
+		$data['test_3'] = [
+			// Order mock.
+			\Mockery::mock( \WC_Order::class ),
+			// WooCommerce Price.
+			100.00,
+			// PayPal price.
+			'100.00',
+			// Transaction type.
+			'foo',
+			// Accepted Transaction Types.
+			[ 'bar', 'baz' ],
+			// WooCommerce currency.
+			'foo',
+			// PayPal currency.
+			'foo',
+		];
+
+		$data['test_4'] = [
+			// Order mock.
+			\Mockery::mock( \WC_Order::class ),
+			// WooCommerce Price.
+			100.00,
+			// PayPal price.
+			'-101,00',
 			// Transaction type.
 			'foo',
 			// Accepted Transaction Types.

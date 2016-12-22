@@ -89,11 +89,11 @@ class PaymentValidator {
 	 *
 	 * @return bool
 	 */
-	public function is_valid() {
+	public function is_valid_payment() {
 
 		return ( $this->validate_transaction_type( $this->transaction_type )
 		         && $this->validate_currency( $this->currency )
-		         && $this->validate_amount( $this->amount ) );
+		         && $this->validate_payment_amount( $this->amount ) );
 	}
 
 	/**
@@ -153,10 +153,11 @@ class PaymentValidator {
 	 *
 	 * @return bool
 	 */
-	private function validate_amount( $amount ) {
+	private function validate_payment_amount( $amount ) {
 
 		$wc_total = number_format( $this->order->get_total(), 2, '.', '' );
-		if ( number_format( $amount, 2, '.', '' ) !== $wc_total ) {
+		$pp_total = number_format( $amount, 2, '.', '' );
+		if ( $pp_total !== $wc_total ) {
 			$this->last_error = sprintf(
 				__(
 					'Validation error: PayPal payment amounts do not match (gross %1$1s, should be %2$2s).',
@@ -170,6 +171,19 @@ class PaymentValidator {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Checks if we're dealing with a valid refund request.
+	 *
+	 * @return bool
+	 */
+	public function is_valid_refund() {
+
+		$wc_total = number_format( $this->order->get_total(), 2, '.', '' );
+		$pp_total = number_format( $this->amount * - 1, 2, '.', '' );
+
+		return ( $pp_total === $wc_total );
 	}
 
 	/**

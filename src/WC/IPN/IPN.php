@@ -64,7 +64,7 @@ class IPN {
 	 */
 	public function register() {
 
-		add_action( 'woocommerce_api_' . $this->get_api_endpoint(), array( $this, 'check_response' ) );
+		add_action( 'woocommerce_api_' . $this->get_api_endpoint(), [ $this, 'check_response' ] );
 
 	}
 
@@ -104,7 +104,7 @@ class IPN {
 			exit;
 		}
 		do_action( 'paypal_plus_plugin_log_error', 'Invalid IPN call', $this->data->get_all() );
-		wp_die( 'PayPal IPN Request Failure', 'PayPal IPN', array( 'response' => 500 ) );
+		wp_die( 'PayPal IPN Request Failure', 'PayPal IPN', [ 'response' => 500 ] );
 	}
 
 	/**
