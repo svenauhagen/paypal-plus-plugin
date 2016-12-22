@@ -71,15 +71,7 @@ class IPNData {
 	 */
 	public function get_payment_status() {
 
-		$status = $this->get( 'payment_status' );
-
-		if ( $this->get( 'test_ipn', false )
-		     && 'pending' === $status
-		) {
-			$status = 'completed';
-		}
-
-		return strtolower( $status );
+		return strtolower( $this->get( 'payment_status' ) );
 
 	}
 

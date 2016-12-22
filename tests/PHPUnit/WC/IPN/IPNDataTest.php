@@ -15,7 +15,6 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 
 	public function test_get_paypal_url() {
 
-		Functions::expect( 'wp_unslash' );
 		$testee  = new IPNData( [], true );
 		$result1 = $testee->get_paypal_url();
 		$this->assertInternalType( 'string', $result1 );
@@ -38,10 +37,10 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_get_payment_status( $request, $sandbox ) {
 
-		Functions::expect( 'wp_unslash' );
-		$testee = new IPNData( $request, $sandbox );
-		$result = $testee->get_payment_status();
-		$this->markTestIncomplete( 'See if we even need the added complexity in the test method first' );
+		$expected = ( isset( $request['payment_status'] ) ) ? strtolower( $request['payment_status'] ) : '';
+		$testee   = new IPNData( $request, $sandbox );
+		$result   = $testee->get_payment_status();
+		$this->assertSame( $expected, $result );
 	}
 
 	/**
@@ -52,7 +51,6 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_get_order_updater( $request, $sandbox ) {
 
-		Functions::expect( 'wp_unslash' );
 		$order  = \Mockery::mock( \WC_Order::class );
 		$testee = \Mockery::mock( IPNData::class, [ $request, $sandbox ] )
 		                  ->makePartial();
@@ -71,7 +69,6 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_get_all( $request, $sandbox ) {
 
-		Functions::expect( 'wp_unslash' );
 		$testee = new IPNData( $request, $sandbox );
 
 		$result = $testee->get_all();
@@ -86,7 +83,6 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_get_user_agent( $request, $sandbox ) {
 
-		Functions::expect( 'wp_unslash' );
 		$wc          = \Mockery::mock( \WooCommerce::class );
 		$wc->version = 'foo';
 		Functions::expect( 'WC' )
@@ -213,7 +209,7 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 		# 1. Testrun
 		$data['test_1'] = [
 			#param $request
-			[ 'payment_status' => 'foo' ],
+			[ 'payment_status' => 'Foo' ],
 			#param $sandbox
 			true,
 		];
