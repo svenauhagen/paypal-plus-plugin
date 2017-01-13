@@ -106,7 +106,11 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'on_save' ], 10 );
 		add_action( 'woocommerce_receipt_' . $this->id, [ $this, 'render_receipt_page' ] );
-		add_action( 'woocommerce_api_' . $this->id, array( $this, 'execute_payment' ), 12 );
+		add_action( 'woocommerce_api_' . $this->id, [ $this, 'execute_payment' ], 12 );
+
+		add_action( 'woocommerce_add_to_cart', [ $this, 'clear_session_data' ] );
+		add_action( 'woocommerce_cart_item_removed', [ $this, 'clear_session_data' ] );
+		add_action( 'woocommerce_after_cart_item_quantity_update', [ $this, 'clear_session_data' ] );
 
 	}
 
@@ -156,14 +160,14 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 				)
 			);
 
-			$this->auth->setConfig( array(
+			$this->auth->setConfig( [
 				'mode'           => ( $this->is_sandbox() ) ? 'SANDBOX' : 'LIVE',
 				'log.LogEnabled' => true,
 				'log.LogLevel'   => ( $this->is_sandbox() ) ? 'DEBUG' : 'INFO',
 				'log.FileName'   => wc_get_log_file_path( 'paypal_plus' ),
 				'cache.enabled'  => true,
 				'cache.FileName' => wc_get_log_file_path( 'paypal_plus_cache' ),
-			) );
+			] );
 		} else {
 			$this->auth->resetRequestId();
 		}
@@ -317,14 +321,23 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		$order = new \WC_Order( $order_id );
 		if ( isset( WC()->session->token ) ) {
-			unset( WC()->session->paymentId );
-			unset( WC()->session->PayerID );
+			$this->clear_session_data();
 		}
 
 		return [
 			'result'   => 'success',
 			'redirect' => $order->get_checkout_payment_url( true ),
 		];
+	}
+
+	/**
+	 * Removes all stored session data used by this gateway.
+	 */
+	public function clear_session_data() {
+
+		unset( WC()->session->paymentId );
+		unset( WC()->session->PayerID );
+		unset( WC()->session->approvalurl );
 	}
 
 	/**
@@ -403,19 +416,23 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	 */
 	private function get_approval_url() {
 
-		$order = null;
-		$key   = filter_input( INPUT_GET, 'key' );
-		if ( $key ) {
-			$order_id                   = wc_get_order_id_by_order_key( $key );
-			$order                      = new \WC_Order( $order_id );
-			WC()->session->ppp_order_id = $order_id;
+		if ( empty( WC()->session->approvalurl ) || empty( WC()->session->paymentId ) ) {
+
+			$order = null;
+			$key   = filter_input( INPUT_GET, 'key' );
+			if ( $key ) {
+				$order_id                   = wc_get_order_id_by_order_key( $key );
+				$order                      = new \WC_Order( $order_id );
+				WC()->session->ppp_order_id = $order_id;
+			}
+
+			$payment = ( new WCPayPalPayment( $this->get_payment_data(), $order ) )->create();
+
+			WC()->session->paymentId   = $payment->getId();
+			WC()->session->approvalurl = $payment->getApprovalLink();
 		}
 
-		$payment                   = ( new WCPayPalPayment( $this->get_payment_data(), $order ) )->create();
-		WC()->session->paymentId   = $payment->id;
-		WC()->session->approvalurl = isset( $payment->links[1]->href ) ? $payment->links[1]->href : false;
-
-		return $payment->getApprovalLink();
+		return WC()->session->approvalurl;
 	}
 
 	/**
