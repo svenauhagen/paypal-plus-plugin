@@ -10,6 +10,7 @@ namespace PayPalPlusPlugin\WC;
 
 use Brain\Monkey\WP\Actions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
+use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Exception\PayPalInvalidCredentialException;
 use PayPal\Rest\ApiContext;
 
@@ -20,11 +21,20 @@ class CredentialVerificationTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_verify() {
 
-		$saleMock = \Mockery::mock( 'alias:' . 'PayPal\Api\Payment' );
-		$saleMock->shouldReceive( 'all' )
+		$paymentMock = \Mockery::mock( 'alias:' . 'PayPal\Api\Payment' );
+		$paymentMock->shouldReceive( 'all' )
 		         ->once();
 
+		$credentialMock = \Mockery::mock( OAuthTokenCredential::class );
+		$credentialMock->shouldReceive( 'getClientId' )
+		               ->andReturn( 'fhlwdjakfhwi' );
+		$credentialMock->shouldReceive( 'getClientSecret' )
+		               ->andReturn( 'jaajvhsulvsj' );
+
 		$context = \Mockery::mock( ApiContext::class );
+		$context->shouldReceive( 'getCredential' )
+		        ->once()
+		        ->andReturn( $credentialMock );
 
 		$testee = new CredentialVerification( $context );
 		$result = $testee->verify();
@@ -37,18 +47,16 @@ class CredentialVerificationTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_verify_no_credentials() {
 
-		$credEx = \Mockery::mock( PayPalInvalidCredentialException::class, [ 'Foo' ] );
-
-		$payment = \Mockery::mock( 'alias:' . 'PayPal\Api\Payment' );
-		$payment->shouldReceive( 'all' )
-		        ->once()
-		        ->andThrow( $credEx );
+		$credentialMock = \Mockery::mock( OAuthTokenCredential::class );
+		$credentialMock->shouldReceive( 'getClientId' )
+		               ->andReturn( '' );
+		$credentialMock->shouldReceive( 'getClientSecret' )
+		               ->andReturn( '' );
 
 		$context = \Mockery::mock( ApiContext::class );
-
-		Actions::expectFired( 'paypal_plus_plugin_log_exception' )
-		       ->once()
-		       ->with( 'credential_exception', $credEx );
+		$context->shouldReceive( 'getCredential' )
+		        ->once()
+		        ->andReturn( $credentialMock );
 
 		$testee = new CredentialVerification( $context );
 		$result = $testee->verify();
