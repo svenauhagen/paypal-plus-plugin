@@ -54,8 +54,14 @@ class CredentialVerification {
 		if ( is_null( $api_context ) ) {
 			return false;
 		}
+		$credential = $api_context->getCredential();
+		if ( empty( $credential->getClientId() ) || empty( $credential->getClientSecret() ) ) {
+			$this->error = 'Missing API Credentials';
+
+			return false;
+		}
 		try {
-			$params = array( 'count' => 1 );
+			$params = [ 'count' => 1 ];
 			Payment::all( $params, $api_context );
 		} catch ( PayPalInvalidCredentialException $ex ) {
 			do_action( 'paypal_plus_plugin_log_exception', 'credential_exception', $ex );
