@@ -68,6 +68,16 @@ class WCWebExperienceProfile {
 
 		if ( $local_id ) {
 			$web_profile = $this->get_existing_profile( $local_id );
+
+			/**
+			 * Something went wrong fetching the existing profile.
+			 * It could have been deleted externally or the Credentials have changed,
+			 * TODO Invalidate local ID when credentials change (out of scope for this class)
+			 */
+			if ( is_null( $web_profile ) ) {
+				$web_profile = new WebProfile();
+				$local_id    = false;
+			}
 		} else {
 			$web_profile = new WebProfile();
 
