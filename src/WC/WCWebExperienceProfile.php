@@ -139,7 +139,7 @@ class WCWebExperienceProfile {
 
 		$input_fields = new InputFields();
 
-		$no_shipping = ( isset( $this->config['no_shipping'] ) ) ? intval( $this->config['no_shipping'] ) : 1;
+		$no_shipping = ( isset( $this->config['no_shipping'] ) ) ? intval( $this->config['no_shipping'] ) : 0;
 
 		$input_fields->setNoShipping( $no_shipping )
 		             ->setAddressOverride( 1 );
