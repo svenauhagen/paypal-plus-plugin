@@ -459,7 +459,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	private function get_payment_data() {
 
 		$return_url     = WC()->api_request_url( $this->id );
-		$cancel_url     = wc_get_cart_url();
+		$cancel_url     = wc_get_checkout_url();
 		$notify_url     = $this->ipn->get_notify_url();
 		$web_profile_id = $this->get_option( $this->get_experience_profile_option_key() );
 		$api_context    = $this->get_api_context();
