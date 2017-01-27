@@ -11,9 +11,9 @@ abstract class OrderDataCommon implements OrderDataProvider {
 
 		$total    = $this->get_subtotal();
 		$tax      = $this->format( $this->get_total_tax() );
-		$discount = $this->get_total_discount();
+		$shipping = $this->get_total_shipping();
 
-		//$total -= $discount;
+		$total += $shipping;
 		$total += $tax;
 
 		return $this->round( $total );
