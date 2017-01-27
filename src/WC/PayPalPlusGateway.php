@@ -412,7 +412,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 				'approvalUrl'          => $this->get_approval_url(),
 				'placeholder'          => 'ppplus',
 				'mode'                 => ( $this->is_sandbox() ) ? 'sandbox' : 'live',
-				'country'              => $this->get_option( 'country', 'DE' ),
+				'country'              => WC()->customer->get_country(),
 				'language'             => $this->get_locale(),
 				'buttonLocation'       => 'outside',
 				'showPuiOnSandbox'     => true,

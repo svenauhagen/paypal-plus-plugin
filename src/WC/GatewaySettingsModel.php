@@ -152,17 +152,17 @@ class GatewaySettingsModel {
 				'type'  => 'title',
 				'desc'  => '',
 			],
-			'country'                       => [
-				'title'       => __( 'PayPal Account Country', 'woo-paypal-plus' ),
-				'type'        => 'select',
-				'description' => __( 'Set this to the country your PayPal account is based in.', 'woo-paypal-plus' ),
-				'default'     => 'DE',
-				'options'     => [
-					'BR' => 'Brazil',
-					'MX' => 'Mexico',
-					'DE' => 'Germany',
-				],
-			],
+			//'country'                       => [
+			//	'title'       => __( 'PayPal Account Country', 'woo-paypal-plus' ),
+			//	'type'        => 'select',
+			//	'description' => __( 'Set this to the country your PayPal account is based in.', 'woo-paypal-plus' ),
+			//	'default'     => 'DE',
+			//	'options'     => [
+			//		'BR' => 'Brazil',
+			//		'MX' => 'Mexico',
+			//		'DE' => 'Germany',
+			//	],
+			//],
 			'invoice_prefix'                => [
 				'title'       => __( 'Invoice Prefix', 'woo-paypal-plus' ),
 				'type'        => 'text',
