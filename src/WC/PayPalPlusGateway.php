@@ -408,13 +408,14 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		$data = [
 			'app_config' => [
-				'approvalUrl'      => $this->get_approval_url(),
-				'placeholder'      => 'ppplus',
-				'mode'             => ( $this->is_sandbox() ) ? 'sandbox' : 'live',
-				'country'          => $this->get_option( 'country', 'DE' ),
-				'language'         => $this->get_locale(),
-				'buttonLocation'   => 'outside',
-				'showPuiOnSandbox' => true,
+				'showLoadingIndicator' => true,
+				'approvalUrl'          => $this->get_approval_url(),
+				'placeholder'          => 'ppplus',
+				'mode'                 => ( $this->is_sandbox() ) ? 'sandbox' : 'live',
+				'country'              => $this->get_option( 'country', 'DE' ),
+				'language'             => $this->get_locale(),
+				'buttonLocation'       => 'outside',
+				'showPuiOnSandbox'     => true,
 			],
 		];
 		( new PayPalIframeView( $data ) )->render();
