@@ -3,10 +3,20 @@ namespace PayPalPlusPlugin\WC\Payment;
 
 use PayPal\Api\Item;
 
+/**
+ * Class OrderDataCommon
+ *
+ * @package PayPalPlusPlugin\WC\Payment
+ */
 abstract class OrderDataCommon implements OrderDataProvider {
 
 	use OrderDataProcessor;
 
+	/**
+	 * Calculate the order total.
+	 *
+	 * @return float
+	 */
 	public function get_total() {
 
 		$total    = $this->get_subtotal();
@@ -19,6 +29,15 @@ abstract class OrderDataCommon implements OrderDataProvider {
 		return $this->round( $total );
 	}
 
+	/**
+	 * Calculate the order subtotal.
+	 *
+	 * TODO There are rare cases where the rounded subtotal woocommerce gives us is not the same as the sum of all order items.
+	 * This leads to an error by PayPal, because the total amount is off by 1 cent.
+	 * There is some rounding error involved that needs to be investigated.
+	 *
+	 * @return float|int
+	 */
 	public function get_subtotal() {
 
 		$subtotal = 0;

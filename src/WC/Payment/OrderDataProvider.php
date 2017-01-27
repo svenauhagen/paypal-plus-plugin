@@ -18,31 +18,43 @@ use PayPal\Api\Item;
 interface OrderDataProvider {
 
 	/**
+	 * Array of item data providers.
+	 *
 	 * @return OrderItemDataProvider[]
 	 */
 	public function get_items();
 
 	/**
+	 * Order subtotal.
+	 *
 	 * @return float
 	 */
 	public function get_subtotal();
 
 	/**
+	 * Order total.
+	 *
 	 * @return float
 	 */
 	public function get_total();
 
 	/**
+	 * Tax total amount.
+	 *
 	 * @return float
 	 */
 	public function get_total_tax();
 
 	/**
+	 * Total shipping cost.
+	 *
 	 * @return float
 	 */
 	public function get_total_shipping();
 
 	/**
+	 * Total discount amount.
+	 *
 	 * @return float
 	 */
 	public function get_total_discount();

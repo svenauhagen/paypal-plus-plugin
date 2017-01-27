@@ -25,35 +25,11 @@ use PayPal\Exception\PayPalConnectionException;
 class WCPayPalPayment {
 
 	/**
-	 * Flag used for determining if we're dealing with a WC_Order
-	 *
-	 * @var bool
-	 */
-	private $is_order;
-	/**
-	 * WooCommerce Order object.
-	 *
-	 * @var \WC_Order|null
-	 */
-	private $order;
-	/**
 	 * Payment object from response.
 	 *
 	 * @var Payment
 	 */
 	private $response;
-	/**
-	 * Cart|Order total.
-	 *
-	 * @var float
-	 */
-	private $order_total;
-	/**
-	 * Cart/Order items
-	 *
-	 * @var array
-	 */
-	private $items;
 	/**
 	 * The PaymentData object.
 	 *
@@ -61,6 +37,8 @@ class WCPayPalPayment {
 	 */
 	private $payment_data;
 	/**
+	 * The Order data provider object.
+	 *
 	 * @var OrderDataProvider
 	 */
 	private $order_data;
@@ -99,12 +77,6 @@ class WCPayPalPayment {
 	private function create_payment() {
 
 		$payment = $this->get_payment_object();
-		/**
-		 * @var Transaction $transaction
-		 */
-		$transaction = reset( $payment->getTransactions() );
-		$total       = $transaction->getAmount()->getTotal();
-		$tax         = $transaction->getAmount()->getDetails()->getTax();
 		try {
 			$payment->create( $this->payment_data->get_api_context() );
 		} catch ( PayPalConnectionException $ex ) {
@@ -182,8 +154,10 @@ class WCPayPalPayment {
 	}
 
 	/**
-	 * @param Amount   $amount
-	 * @param ItemList $item_list
+	 * Cretae a configured Transaction object.
+	 *
+	 * @param Amount   $amount Amount object.
+	 * @param ItemList $item_list ItemList object.
 	 *
 	 * @return Transaction
 	 */

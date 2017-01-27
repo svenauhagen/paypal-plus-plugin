@@ -8,19 +8,41 @@
 
 namespace PayPalPlusPlugin\WC\Payment;
 
+/**
+ * Class OrderData
+ *
+ * @package PayPalPlusPlugin\WC\Payment
+ */
+/**
+ * Class OrderData
+ *
+ * @package PayPalPlusPlugin\WC\Payment
+ */
 class OrderData extends OrderDataCommon {
 
 	use OrderDataProcessor;
 	/**
+	 * WooCommerce Order object.
+	 *
 	 * @var \WC_Order
 	 */
 	private $order;
 
+	/**
+	 * OrderData constructor.
+	 *
+	 * @param \WC_Order $order WooCommerce order object.
+	 */
 	public function __construct( \WC_Order $order ) {
 
 		$this->order = $order;
 	}
 
+	/**
+	 * Returns an array of item data providers.
+	 *
+	 * @return OrderItemDataProvider[]
+	 */
 	public function get_items() {
 
 		$cart  = $this->order->get_items();
@@ -34,30 +56,39 @@ class OrderData extends OrderDataCommon {
 				'name'          => 'Total Discount',
 				'qty'           => 1,
 				'line_subtotal' => - $this->format( $this->get_total_discount() ),
-				//'number' => implode( ", ", $this->order->get_used_coupons() ),
 			] );
 		}
 
 		return $items;
 	}
 
+	/**
+	 * Returns the total discount on the order.
+	 *
+	 * @return float
+	 */
 	public function get_total_discount() {
 
 		return $this->order->get_total_discount();
 	}
 
+	/**
+	 * Returns the total tax amount of the order.
+	 *
+	 * @return float
+	 */
 	public function get_total_tax() {
 
-		//if ( get_option( 'woocommerce_prices_include_tax' ) === 'yes' ) {
-		//	$tax = 0;
-		//} else {
-		//	$tax = $this->order->get_total_tax();
-		//}
 		$tax = $this->order->get_total_tax();
 
 		return $tax;
 	}
 
+	/**
+	 * Returns the total shipping cost of the order.
+	 *
+	 * @return float
+	 */
 	public function get_total_shipping() {
 
 		if ( get_option( 'woocommerce_prices_include_tax' ) === 'yes' && ! ( 'yes' === get_option( 'woocommerce_calc_taxes' ) && 'yes' === get_option( 'woocommerce_prices_include_tax' ) ) ) {

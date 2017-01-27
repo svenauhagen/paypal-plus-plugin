@@ -10,6 +10,13 @@ namespace PayPalPlusPlugin\WC\Payment;
 
 trait OrderDataProcessor {
 
+	/**
+	 * Wrap around number_format() to return country-specific decimal numbers.
+	 *
+	 * @param float $price The unformatted price.
+	 *
+	 * @return string
+	 */
 	protected function format( $price ) {
 
 		$decimals = 2;
