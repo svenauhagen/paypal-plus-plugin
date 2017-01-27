@@ -61,4 +61,11 @@ class RefundSuccess implements RequestSuccessHandler {
 
 		return true;
 	}
+
+	/**
+	 * Allow the implementing class to setup hooks
+	 */
+	public function register() {
+		// TODO: Implement register() method.
+	}
 }

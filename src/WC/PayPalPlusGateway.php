@@ -5,6 +5,10 @@ use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Rest\ApiContext;
 use PayPalPlusPlugin\WC\IPN\IPN;
 use PayPalPlusPlugin\WC\IPN\IPNData;
+use PayPalPlusPlugin\WC\IPN\OrderUpdater;
+use PayPalPlusPlugin\WC\Payment\CartData;
+use PayPalPlusPlugin\WC\Payment\OrderData;
+use PayPalPlusPlugin\WC\Payment\OrderDataProvider;
 use PayPalPlusPlugin\WC\Payment\PaymentData;
 use PayPalPlusPlugin\WC\Payment\PaymentExecutionData;
 use PayPalPlusPlugin\WC\Payment\PaymentExecutionSuccess;
@@ -12,6 +16,9 @@ use PayPalPlusPlugin\WC\Payment\PaymentPatchData;
 use PayPalPlusPlugin\WC\Payment\WCPaymentExecution;
 use PayPalPlusPlugin\WC\Payment\WCPaymentPatch;
 use PayPalPlusPlugin\WC\Payment\WCPayPalPayment;
+use PayPalPlusPlugin\WC\PUI\PaymentInstructionData;
+use PayPalPlusPlugin\WC\PUI\PaymentInstructionHandler;
+use PayPalPlusPlugin\WC\PUI\PaymentInstructionView;
 use PayPalPlusPlugin\WC\Refund\RefundData;
 use PayPalPlusPlugin\WC\Refund\WCRefund;
 
@@ -131,15 +138,18 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		WC()->session->PayerID = $payer_id;
 		$order                 = new \WC_Order( WC()->session->ppp_order_id );
-
-		$data = new PaymentExecutionData( $order,
+		$pui_data              = new PaymentInstructionData( $order );
+		$pui_view              = new PaymentInstructionView( $pui_data );
+		$pui_handler           = new PaymentInstructionHandler( $pui_data, $pui_view );
+		$data                  = new PaymentExecutionData( $order,
 			WC()->session->PayerID,
 			$payment_id,
-			$this->get_api_context()
+			$this->get_api_context(),
+			$pui_handler
 		);
 
 		$success = new PaymentExecutionSuccess( $data );
-		$payment = new WCPaymentExecution( $data, $success );
+		$payment = new WCPaymentExecution( $data, [ $success ] );
 		$payment->execute();
 
 	}
@@ -425,9 +435,12 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 				$order                      = new \WC_Order( $order_id );
 				WC()->session->ppp_order_id = $order_id;
 			}
-
-			$payment = ( new WCPayPalPayment( $this->get_payment_data(), $order ) )->create();
-
+			$data              = $this->get_payment_data();
+			$wc_paypal_payment = new WCPayPalPayment( $data, $this->get_order_data( $order ) );
+			$payment           = $wc_paypal_payment->create();
+			if ( is_null( $payment ) ) {
+				return null;
+			}
 			WC()->session->paymentId   = $payment->getId();
 			WC()->session->approvalurl = $payment->getApprovalLink();
 		}
@@ -455,6 +468,20 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$web_profile_id,
 			$api_context
 		);
+	}
+
+	/**
+	 * @param \WC_Order|null $order
+	 *
+	 * @return OrderDataProvider
+	 */
+	private function get_order_data( \WC_Order $order = null ) {
+
+		if ( is_null( $order ) ) {
+			return new CartData( WC()->cart );
+		} else {
+			return new OrderData( $order );
+		}
 	}
 
 	/**

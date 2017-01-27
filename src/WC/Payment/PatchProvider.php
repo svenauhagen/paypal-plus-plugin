@@ -31,7 +31,8 @@ class PatchProvider {
 	 */
 	public function __construct( \WC_Order $order ) {
 
-		$this->order = $order;
+		$this->order      = $order;
+		$this->order_data = new OrderData( $this->order );
 	}
 
 	/**
@@ -47,8 +48,8 @@ class PatchProvider {
 
 		$invoice_patch = new Patch();
 		$invoice_patch->setOp( 'add' )
-		         ->setPath( '/transactions/0/invoice_number' )
-		         ->setValue( $invoice_prefix . $invoice_number );
+		              ->setPath( '/transactions/0/invoice_number' )
+		              ->setValue( $invoice_prefix . $invoice_number );
 
 		return $invoice_patch;
 
@@ -63,11 +64,11 @@ class PatchProvider {
 
 		$custom_patch = new Patch();
 		$custom_patch->setOp( 'add' )
-		                ->setPath( '/transactions/0/custom' )
-		                ->setValue( wp_json_encode( [
-			                'order_id'  => $this->order->id,
-			                'order_key' => $this->order->order_key,
-		                ] ) );
+		             ->setPath( '/transactions/0/custom' )
+		             ->setValue( wp_json_encode( [
+			             'order_id'  => $this->order->id,
+			             'order_key' => $this->order->order_key,
+		             ] ) );
 
 		return $custom_patch;
 
@@ -83,19 +84,18 @@ class PatchProvider {
 		$replace_patch = new Patch();
 
 		$payment_data = [
-			'total'    => $this->order
-				->get_total(),
+			'total'    => $this->order_data->get_total(),
 			'currency' => get_woocommerce_currency(),
 			'details'  => [
-				'subtotal' => $this->order->get_subtotal(),
-				'shipping' => $this->order->get_total_shipping(),
-				'tax'      => $this->order->get_total_tax(),
+				'subtotal' => $this->order_data->get_subtotal(),
+				'shipping' => $this->order_data->get_total_shipping(),
+				'tax'      => $this->order_data->get_total_tax(),
 			],
 		];
 
 		$replace_patch->setOp( 'replace' )
-		             ->setPath( '/transactions/0/amount' )
-		             ->setValue( $payment_data );
+		              ->setPath( '/transactions/0/amount' )
+		              ->setValue( $payment_data );
 
 		return $replace_patch;
 
@@ -120,8 +120,8 @@ class PatchProvider {
 
 		$billing_patch = new Patch();
 		$billing_patch->setOp( 'add' )
-		             ->setPath( '/transactions/0/item_list/shipping_address' )
-		             ->setValue( $billing_data );
+		              ->setPath( '/transactions/0/item_list/shipping_address' )
+		              ->setValue( $billing_data );
 
 		return $billing_patch;
 	}

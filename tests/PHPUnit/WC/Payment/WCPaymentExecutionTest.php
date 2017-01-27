@@ -30,15 +30,16 @@ class WCPaymentExecutionTest extends BrainMonkeyWpTestCase {
 		     ->andReturn( $payment );
 		$data->shouldReceive( 'get_payment_execution' )
 		     ->once()
-		     ->andReturn( TRUE );
+		     ->andReturn( true );
 		$data->shouldReceive( 'get_context' )
 		     ->once()
-		     ->andReturn( TRUE );
+		     ->andReturn( true );
 		$success = \Mockery::mock( PaymentExecutionSuccess::class );
+		$success->shouldReceive( 'register' );
 		$success->shouldReceive( 'execute' )
 		        ->once();
 
-		$testee = new WCPaymentExecution( $data, $success );
+		$testee = new WCPaymentExecution( $data, [ $success ] );
 		$result = $testee->execute();
 		$this->assertTrue( $result );
 	}
@@ -56,18 +57,19 @@ class WCPaymentExecutionTest extends BrainMonkeyWpTestCase {
 		     ->andReturn( $payment );
 		$data->shouldReceive( 'get_payment_execution' )
 		     ->once()
-		     ->andReturn( TRUE );
+		     ->andReturn( true );
 		$data->shouldReceive( 'get_context' )
 		     ->once()
-		     ->andReturn( TRUE );
+		     ->andReturn( true );
 		$success = \Mockery::mock( PaymentExecutionSuccess::class );
+		$success->shouldReceive( 'register' );
 		$success->shouldNotReceive( 'execute' );
 
 		Actions::expectFired( 'paypal_plus_plugin_log_exception' )
 		       ->once()
 		       ->with( 'payment_execution_exception', $exception );
 
-		$testee = new WCPaymentExecution( $data, $success );
+		$testee = new WCPaymentExecution( $data, [ $success ] );
 		$result = $testee->execute();
 		$this->assertFalse( $result );
 	}

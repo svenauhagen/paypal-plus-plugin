@@ -172,4 +172,11 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 		);
 		$order->set_address( $billing_address, $type = 'billing' );
 	}
+
+	/**
+	 * Allow the implementing class to setup hooks
+	 */
+	public function register() {
+		// Nothing to do.
+	}
 }

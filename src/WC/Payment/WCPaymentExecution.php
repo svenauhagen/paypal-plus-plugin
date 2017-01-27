@@ -29,18 +29,22 @@ class WCPaymentExecution {
 	 *
 	 * @var RequestSuccessHandler
 	 */
-	private $success_handler;
+	private $success_handlers;
 
 	/**
 	 * WCPaymentExecution constructor.
 	 *
-	 * @param PaymentExecutionData  $data PaymentExecutionData object.
-	 * @param RequestSuccessHandler $success_handler SuccessHandler object.
+	 * @param PaymentExecutionData    $data             PaymentExecutionData object.
+	 * @param RequestSuccessHandler[] $success_handlers Array of SuccessHandler objects.
 	 */
-	public function __construct( PaymentExecutionData $data, RequestSuccessHandler $success_handler ) {
+	public function __construct( PaymentExecutionData $data, array $success_handlers ) {
 
-		$this->data            = $data;
-		$this->success_handler = $success_handler;
+		$this->data             = $data;
+		$this->success_handlers = $success_handlers;
+
+		foreach ( $this->success_handlers as $success_handler ) {
+			$success_handler->register();
+		}
 	}
 
 	/**
@@ -53,7 +57,9 @@ class WCPaymentExecution {
 		try {
 			$payment = $this->data->get_payment();
 			$payment->execute( $this->data->get_payment_execution(), $this->data->get_context() );
-			$this->success_handler->execute();
+			foreach ( $this->success_handlers as $success_handler ) {
+				$success_handler->execute();
+			}
 		} catch ( PayPalConnectionException $ex ) {
 			do_action( 'paypal_plus_plugin_log_exception', 'payment_execution_exception', $ex );
 
