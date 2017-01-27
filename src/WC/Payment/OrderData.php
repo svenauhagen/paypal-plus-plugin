@@ -29,17 +29,21 @@ class OrderData extends OrderDataCommon {
 			$items[] = new OrderItemData( $item );
 		}
 
+		if ( $this->get_total_discount() > 0 ) {
+			$items[] = new OrderDiscountData( [
+				'name'          => 'Total Discount',
+				'qty'           => 1,
+				'line_subtotal' => - $this->format( $this->get_total_discount() ),
+				//'number' => implode( ", ", $this->order->get_used_coupons() ),
+			] );
+		}
+
 		return $items;
 	}
 
-	public function get_total() {
+	public function get_total_discount() {
 
-		$total = $this->get_subtotal();
-
-		$tax = $this->format( $this->get_total_tax() );
-		$total += $tax;
-
-		return $this->round( $total );
+		return $this->order->get_total_discount();
 	}
 
 	public function get_total_tax() {

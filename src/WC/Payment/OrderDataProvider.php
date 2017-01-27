@@ -10,6 +10,11 @@ namespace PayPalPlusPlugin\WC\Payment;
 
 use PayPal\Api\Item;
 
+/**
+ * Interface OrderDataProvider
+ *
+ * @package PayPalPlusPlugin\WC\Payment
+ */
 interface OrderDataProvider {
 
 	/**
@@ -17,18 +22,35 @@ interface OrderDataProvider {
 	 */
 	public function get_items();
 
+	/**
+	 * @return float
+	 */
 	public function get_subtotal();
 
+	/**
+	 * @return float
+	 */
 	public function get_total();
 
+	/**
+	 * @return float
+	 */
 	public function get_total_tax();
 
+	/**
+	 * @return float
+	 */
 	public function get_total_shipping();
+
+	/**
+	 * @return float
+	 */
+	public function get_total_discount();
 
 	/**
 	 * Creates a single Order Item for the Paypal API
 	 *
-	 * @param array $item Order|Cart item.
+	 * @param OrderItemDataProvider $item Order|Cart item.
 	 *
 	 * @return Item
 	 */

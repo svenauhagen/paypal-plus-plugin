@@ -1,10 +1,16 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: biont
+ * Date: 27.01.17
+ * Time: 15:30
+ */
+
 namespace PayPalPlusPlugin\WC\Payment;
 
-class CartItemData implements OrderItemDataProvider {
+class OrderDiscountData implements OrderItemDataProvider {
 
 	use OrderDataProcessor;
-
 	/**
 	 * @var array
 	 */
@@ -22,7 +28,7 @@ class CartItemData implements OrderItemDataProvider {
 
 	public function get_quantity() {
 
-		return intval( $this->data['quantity'] );
+		return intval( $this->data['qty'] );
 	}
 
 	/**
@@ -30,14 +36,7 @@ class CartItemData implements OrderItemDataProvider {
 	 */
 	public function get_name() {
 
-		$product = $this->get_product();
-
-		return $product->get_title();
-	}
-
-	protected function get_product() {
-
-		return wc_get_product( $this->data['product_id'] );
+		return 'Discount';
 	}
 
 	/**
@@ -45,12 +44,6 @@ class CartItemData implements OrderItemDataProvider {
 	 */
 	public function get_sku() {
 
-		$product = $this->get_product();
-		$sku     = $product->get_sku();
-		if ( $product instanceof \WC_Product_Variation ) {
-			$sku = $product->parent->get_sku();
-		}
-
-		return $sku;
+		return null;
 	}
 }

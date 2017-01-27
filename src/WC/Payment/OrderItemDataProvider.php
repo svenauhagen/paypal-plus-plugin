@@ -21,8 +21,13 @@ interface OrderItemDataProvider {
 	public function get_quantity();
 
 	/**
-	 * @return \WC_Product
+	 * @return string
 	 */
-	public function get_product();
+	public function get_name();
+
+	/**
+	 * @return string|null
+	 */
+	public function get_sku();
 
 }

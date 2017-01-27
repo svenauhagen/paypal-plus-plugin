@@ -5,10 +5,24 @@ use PayPal\Api\Item;
 
 abstract class OrderDataCommon implements OrderDataProvider {
 
+	use OrderDataProcessor;
+
+	public function get_total() {
+
+		$total    = $this->get_subtotal();
+		$tax      = $this->format( $this->get_total_tax() );
+		$discount = $this->get_total_discount();
+
+		//$total -= $discount;
+		$total += $tax;
+
+		return $this->round( $total );
+	}
+
 	public function get_subtotal() {
 
 		$subtotal = 0;
-		$items = $this->get_items();
+		$items    = $this->get_items();
 		foreach ( $items as $item ) {
 			$product_price = $item->get_price();
 			$item_price    = $product_price * $item->get_quantity();
@@ -27,14 +41,11 @@ abstract class OrderDataCommon implements OrderDataProvider {
 	 */
 	public function get_item( OrderItemDataProvider $data ) {
 
-		$product  = $data->get_product();
-		$name     = html_entity_decode( $product->get_title(), ENT_NOQUOTES, 'UTF-8' );
+		$name     = html_entity_decode( $data->get_name(), ENT_NOQUOTES, 'UTF-8' );
 		$currency = get_woocommerce_currency();
-		$sku      = $product->get_sku();
+		$sku      = $data->get_sku();
 		$price    = $data->get_price();
-		if ( $product instanceof \WC_Product_Variation ) {
-			$sku = $product->parent->get_sku();
-		}
+
 		$item = new Item();
 
 		$item->setName( $name )
