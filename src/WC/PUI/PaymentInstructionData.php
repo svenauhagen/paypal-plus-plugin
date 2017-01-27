@@ -33,6 +33,10 @@ class PaymentInstructionData {
 	 * @var string
 	 */
 	private $bank_identifier_code;
+	/**
+	 * @var \WC_Order
+	 */
+	private $order;
 
 	/**
 	 * PaymentInstructionData constructor.
@@ -41,6 +45,7 @@ class PaymentInstructionData {
 	 */
 	public function __construct( \WC_Order $order ) {
 
+		$this->order                             = $order;
 		$this->bank_name                         = get_post_meta( $order->id, 'bank_name', true );
 		$this->account_holder_name               = get_post_meta( $order->id, 'account_holder_name', true );
 		$this->international_bank_account_number = get_post_meta( $order->id, 'international_bank_account_number',
@@ -49,6 +54,11 @@ class PaymentInstructionData {
 		$this->reference_number                  = get_post_meta( $order->id, 'reference_number', true );
 		$this->bank_identifier_code              = get_post_meta( $order->id, 'bank_identifier_code', true );
 
+	}
+
+	public function get_order_id() {
+
+		return $this->order->id;
 	}
 
 	/**
@@ -80,7 +90,7 @@ class PaymentInstructionData {
 	 */
 	public function get_payment_due_date() {
 
-		return $this->payment_due_date;
+		return date_i18n( get_option( 'date_format' ), strtotime( $this->payment_due_date ) );
 	}
 
 	/**

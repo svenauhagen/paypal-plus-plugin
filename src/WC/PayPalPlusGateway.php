@@ -5,7 +5,6 @@ use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Rest\ApiContext;
 use PayPalPlusPlugin\WC\IPN\IPN;
 use PayPalPlusPlugin\WC\IPN\IPNData;
-use PayPalPlusPlugin\WC\IPN\OrderUpdater;
 use PayPalPlusPlugin\WC\Payment\CartData;
 use PayPalPlusPlugin\WC\Payment\OrderData;
 use PayPalPlusPlugin\WC\Payment\OrderDataProvider;
@@ -16,9 +15,7 @@ use PayPalPlusPlugin\WC\Payment\PaymentPatchData;
 use PayPalPlusPlugin\WC\Payment\WCPaymentExecution;
 use PayPalPlusPlugin\WC\Payment\WCPaymentPatch;
 use PayPalPlusPlugin\WC\Payment\WCPayPalPayment;
-use PayPalPlusPlugin\WC\PUI\PaymentInstructionData;
-use PayPalPlusPlugin\WC\PUI\PaymentInstructionHandler;
-use PayPalPlusPlugin\WC\PUI\PaymentInstructionView;
+use PayPalPlusPlugin\WC\PUI\PaymentInstructionRenderer;
 use PayPalPlusPlugin\WC\Refund\RefundData;
 use PayPalPlusPlugin\WC\Refund\WCRefund;
 
@@ -49,6 +46,13 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	private $ipn;
 
 	/**
+	 * PaymentInstructionRenderer object.
+	 *
+	 * @var PaymentInstructionRenderer
+	 */
+	private $pui;
+
+	/**
 	 * PayPal API Context object.
 	 *
 	 * @var ApiContext
@@ -77,7 +81,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$this->is_sandbox()
 		);
 		$this->ipn          = $ipn ?: new IPN( $this->id, $ipn_data );
-
+		$this->pui          = new PaymentInstructionRenderer();
 		$this->init_form_fields();
 		$this->init_settings();
 	}
@@ -110,6 +114,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	public function register() {
 
 		$this->ipn->register();
+		$this->pui->register();
 
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'on_save' ], 10 );
 		add_action( 'woocommerce_receipt_' . $this->id, [ $this, 'render_receipt_page' ] );
@@ -138,14 +143,11 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		WC()->session->PayerID = $payer_id;
 		$order                 = new \WC_Order( WC()->session->ppp_order_id );
-		$pui_data              = new PaymentInstructionData( $order );
-		$pui_view              = new PaymentInstructionView( $pui_data );
-		$pui_handler           = new PaymentInstructionHandler( $pui_data, $pui_view );
-		$data                  = new PaymentExecutionData( $order,
+		$data                  = new PaymentExecutionData(
+			$order,
 			WC()->session->PayerID,
 			$payment_id,
-			$this->get_api_context(),
-			$pui_handler
+			$this->get_api_context()
 		);
 
 		$success = new PaymentExecutionSuccess( $data );
