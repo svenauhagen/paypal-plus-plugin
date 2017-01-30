@@ -71,7 +71,7 @@ class PaymentValidatorTest extends BrainMonkeyWpTestCase {
 		      ->andReturn( $wc_amount );
 		$testee = new PaymentValidator( $transaction_type, $pp_currency, $pp_amount, $order, $accepted_types );
 		$result = $testee->is_valid_refund();
-		//TODO: It's not good to have to recreate the actual implementation here. Maybe wee need to hardcode test data and assert directly
+		//TODO: It's not good to have to recreate the actual implementation here. Maybe we need to hardcode test data and assert directly
 		if ( number_format( str_replace( ',', '.', $wc_amount ), 2, '.', '' ) === number_format( str_replace( ',', '.',
 					$pp_amount ) * - 1, 2, '.', '' )
 		) {
