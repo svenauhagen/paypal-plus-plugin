@@ -71,26 +71,41 @@ class PatchProviderTest extends BrainMonkeyWpTestCase {
 
 		$currency      = 'Rai';
 		$total         = 200;
-		$subttotal     = 100;
+		$subtotal     = 100;
 		$totalShipping = 50;
 		$totalTax      = 50;
 
 		Functions::expect( 'get_woocommerce_currency' )
 		         ->andReturn( 'Rai' );
-		$order->shouldReceive( 'get_total' )
-		      ->once()
-		      ->andReturn( $total );
-		$order->shouldReceive( 'get_subtotal' )
-		      ->once()
-		      ->andReturn( $subttotal );
-		$order->shouldReceive( 'get_total_shipping' )
-		      ->once()
-		      ->andReturn( $totalShipping );
-		$order->shouldReceive( 'get_total_tax' )
-		      ->once()
-		      ->andReturn( $totalTax );
+		//$order->shouldReceive( 'get_total' )
+		//      ->once()
+		//      ->andReturn( $total );
+		//$order->shouldReceive( 'get_subtotal' )
+		//      ->once()
+		//      ->andReturn( $subtotal );
+		//$order->shouldReceive( 'get_total_shipping' )
+		//      ->once()
+		//      ->andReturn( $totalShipping );
+		//$order->shouldReceive( 'get_total_tax' )
+		//      ->once()
+		//      ->andReturn( $totalTax );
 
-		$testee = new PatchProvider( $order );
+		$order_data = \Mockery::mock( OrderData::class );
+		//$order_data->shouldReceive( 'get_items' );
+
+		$order_data->shouldReceive( 'get_total' )
+		           ->andReturn( $total );
+
+		$order_data->shouldReceive( 'get_subtotal' )
+		           ->andReturn( $subtotal );
+
+		$order_data->shouldReceive( 'get_total_shipping' )
+		           ->andReturn( $totalShipping );
+
+		$order_data->shouldReceive( 'get_total_tax' )
+		           ->andReturn( $totalTax );
+
+		$testee = new PatchProvider( $order, $order_data );
 		$result = $testee->get_payment_amount_patch();
 		$this->assertInstanceOf( Patch::class, $result );
 		$data = $result->getValue();
@@ -104,7 +119,7 @@ class PatchProviderTest extends BrainMonkeyWpTestCase {
 
 		$this->assertSame( $data['total'], $total );
 		$this->assertSame( $data['currency'], $currency );
-		$this->assertSame( $data['details']['subtotal'], $subttotal );
+		$this->assertSame( $data['details']['subtotal'], $subtotal );
 		$this->assertSame( $data['details']['shipping'], $totalShipping );
 		$this->assertSame( $data['details']['tax'], $totalTax );
 

@@ -27,12 +27,13 @@ class PatchProvider {
 	/**
 	 * PatchProvider constructor.
 	 *
-	 * @param \WC_Order $order WooCommerce Order object.
+	 * @param \WC_Order $order      WooCommerce Order object.
+	 * @param OrderData $order_data Order data provider.
 	 */
-	public function __construct( \WC_Order $order ) {
+	public function __construct( \WC_Order $order, OrderData $order_data = null ) {
 
 		$this->order      = $order;
-		$this->order_data = new OrderData( $this->order );
+		$this->order_data = $order_data ?: new OrderData( $this->order );
 	}
 
 	/**

@@ -180,10 +180,20 @@ class PaymentValidator {
 	 */
 	public function is_valid_refund() {
 
-		$wc_total = number_format( $this->order->get_total(), 2, '.', '' );
-		$pp_total = number_format( $this->amount * - 1, 2, '.', '' );
+		$wc_total = number_format( $this->sanitize_string_amount( $this->order->get_total() ), 2, '.', '' );
+		$pp_total = number_format( $this->sanitize_string_amount( $this->amount ) * - 1, 2, '.', '' );
 
 		return ( $pp_total === $wc_total );
+	}
+
+	private function sanitize_string_amount( $amt ) {
+
+		if ( is_string( $amt ) ) {
+			$amt = str_replace( ',', '.', $amt );
+		}
+
+		return $amt;
+
 	}
 
 	/**
