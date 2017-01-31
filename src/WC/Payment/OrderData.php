@@ -51,11 +51,11 @@ class OrderData extends OrderDataCommon {
 			$items[] = new OrderItemData( $item );
 		}
 
-		if ( $this->get_total_discount() > 0 ) {
+		if ( ( $discount = $this->get_total_discount() ) > 0 ) {
 			$items[] = new OrderDiscountData( [
 				'name'          => 'Total Discount',
 				'qty'           => 1,
-				'line_subtotal' => - $this->format( $this->get_total_discount() ),
+				'line_subtotal' => - $this->format( $discount ),
 			] );
 		}
 
@@ -91,7 +91,7 @@ class OrderData extends OrderDataCommon {
 	 */
 	public function get_total_shipping() {
 
-		if ( get_option( 'woocommerce_prices_include_tax' ) === 'yes' && ! ( 'yes' === get_option( 'woocommerce_calc_taxes' ) && 'yes' === get_option( 'woocommerce_prices_include_tax' ) ) ) {
+		if ( get_option( 'woocommerce_prices_include_tax' ) === 'yes' ) {
 			$shipping = $this->order->get_total_shipping() + $this->order->get_shipping_tax();
 		} else {
 			$shipping = $this->order->get_total_shipping();
