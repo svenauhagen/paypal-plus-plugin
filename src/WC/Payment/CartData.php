@@ -62,7 +62,7 @@ class CartData extends OrderDataCommon {
 				$items[] = new OrderDiscountData( [
 					'name'          => 'Cart Discount',
 					'qty'           => '1',
-					'line_subtotal' => '-' . $this->format( WC()->cart->coupon_discount_amounts[ $code ] ),
+					'line_subtotal' => '-' . $this->format( $this->cart->coupon_discount_amounts[ $code ] ),
 				] );
 			}
 		}
@@ -88,8 +88,8 @@ class CartData extends OrderDataCommon {
 	 */
 	public function get_total_shipping() {
 
-		if ( get_option( 'woocommerce_prices_include_tax' ) === 'yes' && ! ( 'yes' === get_option( 'woocommerce_calc_taxes' ) && 'yes' === get_option( 'woocommerce_prices_include_tax' ) ) ) {
-			$shipping = $this->cart->shipping_total + WC()->cart->shipping_tax_total;
+		if ( get_option( 'woocommerce_prices_include_tax' ) === 'yes' ) {
+			$shipping = $this->cart->shipping_total + $this->cart->shipping_tax_total;
 		} else {
 			$shipping = $this->cart->shipping_total;
 		}
