@@ -71,7 +71,7 @@ class OrderItemData implements OrderItemDataProvider {
 	 *
 	 * @return \WC_Product
 	 */
-	public function get_product() {
+	protected function get_product() {
 
 		return wc_get_product( $this->data['product_id'] );
 	}
