@@ -20,7 +20,7 @@ abstract class OrderDataCommon implements OrderDataProvider {
 	public function get_total() {
 
 		$total    = $this->get_subtotal();
-		$tax      = $this->format( $this->get_total_tax() );
+		$tax      = floatval( $this->format( $this->get_total_tax() ) );
 		$shipping = $this->get_total_shipping();
 
 		$total += $shipping;
@@ -32,9 +32,9 @@ abstract class OrderDataCommon implements OrderDataProvider {
 	/**
 	 * Calculate the order subtotal.
 	 *
-	 * TODO There are rare cases where the rounded subtotal woocommerce gives us is not the same as the sum of all order items.
-	 * This leads to an error by PayPal, because the total amount is off by 1 cent.
-	 * There is some rounding error involved that needs to be investigated.
+	 * TODO There are rare cases where the rounded subtotal woocommerce gives us is not the same as the sum of all
+	 * order items. This leads to an error by PayPal, because the total amount is off by 1 cent. There is some rounding
+	 * error involved that needs to be investigated.
 	 *
 	 * @return float|int
 	 */
