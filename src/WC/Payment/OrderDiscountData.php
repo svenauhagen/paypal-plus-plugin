@@ -57,13 +57,12 @@ class OrderDiscountData implements OrderItemDataProvider {
 
 	/**
 	 * Returns the item name.
-	 * TODO: Maybe we want to add the discount name here..?
 	 *
 	 * @return string
 	 */
 	public function get_name() {
 
-		return 'Discount';
+		return $this->data['name'];
 	}
 
 	/**

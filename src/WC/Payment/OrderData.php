@@ -50,7 +50,13 @@ class OrderData extends OrderDataCommon {
 		foreach ( $cart as $item ) {
 			$items[] = new OrderItemData( $item );
 		}
-
+		foreach ( $this->order->get_fees() as $fee ) {
+			$items[] = new OrderItemData( [
+				'name'          => $fee['name'],
+				'qty'           => 1,
+				'line_subtotal' => $fee['line_total'],
+			] );
+		}
 		if ( ( $discount = $this->get_total_discount() ) > 0 ) {
 			$items[] = new OrderDiscountData( [
 				'name'          => 'Total Discount',

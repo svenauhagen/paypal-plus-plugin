@@ -42,7 +42,7 @@ class CartData extends OrderDataCommon {
 
 		$tax = $this->cart->get_taxes_total();
 
-		return $tax;
+		return floatval( $this->format( $tax ) );
 	}
 
 	/**
@@ -60,11 +60,16 @@ class CartData extends OrderDataCommon {
 		if ( $this->get_total_discount() > 0 ) {
 			foreach ( $this->cart->get_coupons( 'cart' ) as $code => $coupon ) {
 				$items[] = new OrderDiscountData( [
+					// TODO: Maybe we want to add the discount name here..?
 					'name'          => 'Cart Discount',
 					'qty'           => '1',
 					'line_subtotal' => '-' . $this->format( $this->cart->coupon_discount_amounts[ $code ] ),
 				] );
 			}
+		}
+
+		foreach ( $this->cart->get_fees() as $fee ) {
+			$items[] = new FeeData( $fee );
 		}
 
 		return $items;

@@ -20,13 +20,13 @@ abstract class OrderDataCommon implements OrderDataProvider {
 	public function get_total() {
 
 		$total    = $this->get_subtotal();
-		$tax      = floatval( $this->format( $this->get_total_tax() ) );
+		$tax      = $this->get_total_tax();
 		$shipping = $this->get_total_shipping();
 
 		$total += $shipping;
 		$total += $tax;
 
-		return $this->round( $total );
+		return floatval( $this->format( $this->round( $total ) ) );
 	}
 
 	/**
@@ -36,7 +36,7 @@ abstract class OrderDataCommon implements OrderDataProvider {
 	 * order items. This leads to an error by PayPal, because the total amount is off by 1 cent. There is some rounding
 	 * error involved that needs to be investigated.
 	 *
-	 * @return float|int
+	 * @return float
 	 */
 	public function get_subtotal() {
 
@@ -48,7 +48,7 @@ abstract class OrderDataCommon implements OrderDataProvider {
 			$subtotal += $this->round( $item_price );
 		}
 
-		return $subtotal;
+		return floatval( $subtotal );
 	}
 
 	/**
