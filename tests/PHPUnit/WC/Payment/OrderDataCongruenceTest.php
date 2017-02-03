@@ -40,7 +40,8 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		$fees
+		$fees,
+		$pricesIncludeTax
 	) {
 
 		$cart = Test\WCCartMock::getMock(
@@ -51,7 +52,8 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$this->format_fees_for_cart( $fees )
+			$this->format_fees_for_cart( $fees ),
+			$pricesIncludeTax
 		);
 
 		$order = Test\WCOrderMock::getMock(
@@ -62,7 +64,8 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$this->format_fees_for_order( $fees )
+			$this->format_fees_for_order( $fees ),
+			$pricesIncludeTax
 		);
 
 		$cartData  = new CartData( $cart );
@@ -116,7 +119,8 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		$fees
+		$fees,
+		$pricesIncludeTax
 	) {
 
 		/**
@@ -130,7 +134,8 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$this->format_fees_for_cart( $fees )
+			$this->format_fees_for_cart( $fees ),
+			$pricesIncludeTax
 		);
 
 		/**
@@ -144,7 +149,8 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$this->format_fees_for_order( $fees )
+			$this->format_fees_for_order( $fees ),
+			$pricesIncludeTax
 		);
 
 		/**
@@ -177,7 +183,8 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		$fees
+		$fees,
+		$pricesIncludeTax
 	) {
 
 		$cart  = Test\WCCartMock::getMock(
@@ -188,7 +195,8 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$this->format_fees_for_cart( $fees )
+			$this->format_fees_for_cart( $fees ),
+			$pricesIncludeTax
 		);
 		$order = Test\WCOrderMock::getMock(
 			'get_items',
@@ -198,7 +206,8 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$this->format_fees_for_order( $fees )
+			$this->format_fees_for_order( $fees ),
+			$pricesIncludeTax
 		);
 
 		$orderData = new OrderData( $order );
@@ -287,6 +296,7 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 					'amount' => 5.0,
 				],
 			],
+			true,
 		];
 
 		return $data;

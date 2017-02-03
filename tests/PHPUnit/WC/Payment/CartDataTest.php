@@ -34,7 +34,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		array $fees
+		array $fees,
+		$pricesIncludeTax
 	) {
 
 		$cart  = WCCartMock::getMock(
@@ -45,7 +46,9 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$fees );
+			$fees,
+			$pricesIncludeTax
+		);
 		$data  = new CartData( $cart );
 		$total = $data->get_total();
 		$this->assertSame( $cart_total, $total );
@@ -72,7 +75,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		array $fees
+		array $fees,
+		$pricesIncludeTax
 	) {
 
 		$cart = WCCartMock::getMock(
@@ -83,7 +87,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$fees
+			$fees,
+			$pricesIncludeTax
 		);
 
 		$data  = new CartData( $cart );
@@ -118,7 +123,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		array $fees
+		array $fees,
+		$pricesIncludeTax
 	) {
 
 		$cart = WCCartMock::getMock(
@@ -129,7 +135,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$fees
+			$fees,
+			$pricesIncludeTax
 		);
 
 		$data   = new CartData( $cart );
@@ -158,7 +165,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		array $fees
+		array $fees,
+		$pricesIncludeTax
 	) {
 
 		$cart = WCCartMock::getMock(
@@ -169,7 +177,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$fees
+			$fees,
+			$pricesIncludeTax
 		);
 
 		$data   = new CartData( $cart );
@@ -198,7 +207,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		array $fees
+		array $fees,
+		$pricesIncludeTax
 	) {
 
 		$cart = WCCartMock::getMock(
@@ -209,7 +219,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$fees
+			$fees,
+			$pricesIncludeTax
 		);
 
 		$data   = new CartData( $cart );
@@ -238,7 +249,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		array $fees
+		array $fees,
+		$pricesIncludeTax
 	) {
 
 		$cart->shouldReceive( 'get_cart' )
@@ -313,6 +325,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 					'amount' => 5.0,
 				],
 			],
+			// Prices include tax
+			true
 		];
 
 		$data['test_2'] = [
@@ -332,6 +346,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 			0.0,
 			// Fees
 			[],
+			// Prices include tax
+			true
 		];
 
 		$data['test_3'] = [
@@ -361,6 +377,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 					'amount' => 20.0,
 				],
 			],
+			// Prices include tax
+			true
 		];
 
 		return $data;

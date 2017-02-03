@@ -20,6 +20,7 @@ class WCCartMock {
 	 * @param       $tax
 	 * @param       $discount
 	 * @param array $fees
+	 * @param       $pricesIncludeTax
 	 *
 	 * @return \Mockery\MockInterface|\WC_Cart
 	 */
@@ -31,7 +32,8 @@ class WCCartMock {
 		$shipping,
 		$tax,
 		$discount,
-		array $fees
+		array $fees,
+		$pricesIncludeTax
 	) {
 
 		$cart = \Mockery::mock( 'WC_Cart' );
@@ -117,11 +119,10 @@ class WCCartMock {
 				     ->andReturn( $tax );
 				break;
 			case 'get_total_shipping':
-				$shippingIncludesTax = (bool) mt_rand( 0, 1 );
 				Functions::expect( 'get_option' )
 				         ->once()
-				         ->andReturn( ( $shippingIncludesTax ) ? 'yes' : 'no' );
-				if ( $shippingIncludesTax ) {
+				         ->andReturn( ( $pricesIncludeTax ) ? 'yes' : 'no' );
+				if ( $pricesIncludeTax ) {
 					$cart->shipping_tax_total = $tax;
 				}
 

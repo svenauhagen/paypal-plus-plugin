@@ -33,7 +33,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		array $fees
+		array $fees,
+		$pricesIncludeTax
 	) {
 
 		$order = Test\WCOrderMock::getMock( 'get_total', $rawItems,
@@ -42,7 +43,9 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$fees );
+			$fees,
+			$pricesIncludeTax
+		);
 
 		$data  = new OrderData( $order );
 		$total = $data->get_total();
@@ -70,7 +73,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		array $fees
+		array $fees,
+		$pricesIncludeTax
 	) {
 
 		$order = Test\WCOrderMock::getMock(
@@ -81,7 +85,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$fees );
+			$fees,
+			$pricesIncludeTax );
 
 		$testee   = new OrderData( $order );
 		$subTotal = $testee->get_subtotal();
@@ -114,7 +119,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		array $fees
+		array $fees,
+		$pricesIncludeTax
 	) {
 
 		$order = Test\WCOrderMock::getMock(
@@ -125,7 +131,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$fees
+			$fees,
+			$pricesIncludeTax
 		);
 
 		$data  = new OrderData( $order );
@@ -150,7 +157,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		array $fees
+		array $fees,
+		$pricesIncludeTax
 	) {
 
 		$order = Test\WCOrderMock::getMock(
@@ -161,7 +169,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$fees
+			$fees,
+			$pricesIncludeTax
 		);
 
 		$data   = new OrderData( $order );
@@ -181,7 +190,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		array $fees
+		array $fees,
+		$pricesIncludeTax
 	) {
 
 		$order = Test\WCOrderMock::getMock(
@@ -192,7 +202,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$fees
+			$fees,
+			$pricesIncludeTax
 		);
 
 		$data   = new OrderData( $order );
@@ -212,7 +223,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		$shipping,
 		$tax,
 		$discount,
-		array $fees
+		array $fees,
+		$pricesIncludeTax
 	) {
 
 		$order  = Test\WCOrderMock::getMock(
@@ -223,7 +235,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 			$shipping,
 			$tax,
 			$discount,
-			$fees
+			$fees,
+			$pricesIncludeTax
 		);
 		$data   = new OrderData( $order );
 		$result = $data->get_total_shipping();
@@ -268,6 +281,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 					'line_total' => 5.0,
 				],
 			],
+			// Prices include tax
+			true,
 		];
 
 		$data['test_2'] = [
@@ -287,6 +302,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 			0.0,
 			// Fees
 			[],
+			// Prices include tax
+			true,
 		];
 
 		$data['test_3'] = [
@@ -316,6 +333,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 					'line_total' => 20.0,
 				],
 			],
+			// Prices include tax
+			true,
 		];
 
 		return $data;

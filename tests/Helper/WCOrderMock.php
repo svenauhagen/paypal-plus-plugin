@@ -32,7 +32,8 @@ class WCOrderMock {
 		$shipping,
 		$tax,
 		$discount,
-		array $fees
+		array $fees,
+		$pricesIncludeTax
 	) {
 
 		$order = \Mockery::mock( 'WC_Order' );
@@ -95,14 +96,13 @@ class WCOrderMock {
 				break;
 			case 'get_total_shipping':
 
-				$shippingIncludesTax = (bool) mt_rand( 0, 1 );
 				Functions::expect( 'get_option' )
 				         ->once()
-				         ->andReturn( ( $shippingIncludesTax ) ? 'yes' : 'no' );
+				         ->andReturn( ( $pricesIncludeTax ) ? 'yes' : 'no' );
 
 				$order->shouldReceive( 'get_total_shipping' )
 				      ->andReturn( $shipping );
-				if ( $shippingIncludesTax ) {
+				if ( $pricesIncludeTax ) {
 					$order->shouldReceive( 'get_shipping_tax' )
 					      ->andReturn( $tax );
 				}
