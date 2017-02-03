@@ -1,0 +1,69 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: biont
+ * Date: 03.02.17
+ * Time: 13:31
+ */
+
+namespace PayPalPlusPlugin\Test;
+
+use Brain\Monkey\Functions;
+
+class WCOrderMock {
+
+	/**
+	 * @param       $context
+	 * @param       $rawItems
+	 * @param       $cart_total
+	 * @param       $cart_subtotal
+	 * @param       $shipping
+	 * @param       $tax
+	 * @param       $discount
+	 * @param array $fees
+	 *
+	 * @return \Mockery\MockInterface|\WC_Order
+	 */
+	public static function getMock(
+		$context,
+		$rawItems,
+		$cart_total,
+		$cart_subtotal,
+		$shipping,
+		$tax,
+		$discount,
+		array $fees
+	) {
+
+		$order = \Mockery::mock( 'WC_Order' );
+		switch ( $context ) {
+			case'get_total':
+				$order->shouldReceive( 'get_items' )
+				      ->andReturn( $rawItems );
+
+				$order->shouldReceive( 'get_total_discount' )
+				      ->once()
+				      ->andReturn( $discount );
+
+				$order->shouldReceive( 'get_total_tax' )
+				      ->andReturn( $tax );
+
+				$order->shouldReceive( 'get_fees' )
+				      ->once()
+				      ->andReturn( $fees );
+
+				Functions::expect( 'get_woocommerce_currency' );
+
+				Functions::expect( 'get_option' )
+				         ->once()
+				         ->andReturn( 'no' );
+
+				$order->shouldReceive( 'get_total_shipping' )
+				      ->andReturn( $shipping );
+				break;
+		}
+
+
+		return $order;
+	}
+}

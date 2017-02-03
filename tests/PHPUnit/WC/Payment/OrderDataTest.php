@@ -10,6 +10,7 @@ namespace PayPalPlusPlugin\WC\Payment;
 
 use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
+use PayPalPlusPlugin\Test;
 
 class OrderDataTest extends BrainMonkeyWpTestCase {
 
@@ -36,28 +37,13 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		array $fees
 	) {
 
-		$order->shouldReceive( 'get_items' )
-		      ->andReturn( $rawItems );
-
-		$order->shouldReceive( 'get_total_discount' )
-		      ->once()
-		      ->andReturn( $discount );
-
-		$order->shouldReceive( 'get_total_tax' )
-		      ->andReturn( $tax );
-
-		$order->shouldReceive( 'get_fees' )
-		      ->once()
-		      ->andReturn( $fees );
-
-		Functions::expect( 'get_woocommerce_currency' );
-
-		Functions::expect( 'get_option' )
-		         ->once()
-		         ->andReturn( 'no' );
-
-		$order->shouldReceive( 'get_total_shipping' )
-		      ->andReturn( $shipping );
+		$order = Test\WCOrderMock::getMock( 'get_total', $rawItems,
+			$cart_total,
+			$cart_subtotal,
+			$shipping,
+			$tax,
+			$discount,
+			$fees );
 
 		$data  = new OrderData( $order );
 		$total = $data->get_total();

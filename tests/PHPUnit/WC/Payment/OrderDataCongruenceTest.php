@@ -10,6 +10,7 @@ namespace PayPalPlusPlugin\WC\Payment;
 
 use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
+use PayPalPlusPlugin\Test;
 
 /**
  * Class OrderDataCongruenceTest
@@ -42,60 +43,27 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 		$fees
 	) {
 
-		$cart = \Mockery::mock( 'WC_Cart' );
-		$cart->shouldReceive( 'get_cart' )
-		     ->andReturn( $rawItems );
+		$cart = Test\WCCartMock::getMock(
+			'get_total',
+			$rawItems,
+			$total,
+			$subTotal,
+			$shipping,
+			$tax,
+			$discount,
+			$this->format_fees_for_cart( $fees )
+		);
 
-		$cart->shouldReceive( 'get_cart_discount_total' )
-		     ->once()
-		     ->andReturn( $discount );
-
-		$cart->shouldReceive( 'get_taxes_total' )
-		     ->andReturn( $tax );
-
-		$cart->shouldReceive( 'get_fees' )
-		     ->once()
-		     ->andReturn( $this->format_fees_for_cart( $fees ) );
-
-		if ( $discount > 0 ) {
-			$cart->coupon_discount_amounts['foo'] = $discount;
-			$cart->shouldReceive( 'get_coupons' )
-			     ->andReturn( [
-				     'foo' => 'bar',
-			     ] );
-		}
-		Functions::expect( 'get_woocommerce_currency' );
-
-		Functions::expect( 'get_option' )
-		         ->once()
-		         ->andReturn( 'no' );
-
-		$cart->shipping_total = $shipping;
-
-		$order = \Mockery::mock( 'WC_Order' );
-
-		$order->shouldReceive( 'get_items' )
-		      ->andReturn( $rawItems );
-
-		$order->shouldReceive( 'get_total_discount' )
-		      ->once()
-		      ->andReturn( $discount );
-
-		$order->shouldReceive( 'get_total_tax' )
-		      ->andReturn( $tax );
-
-		$order->shouldReceive( 'get_fees' )
-		      ->once()
-		      ->andReturn( $this->format_fees_for_order( $fees ) );
-
-		Functions::expect( 'get_woocommerce_currency' );
-
-		Functions::expect( 'get_option' )
-		         ->once()
-		         ->andReturn( 'no' );
-
-		$order->shouldReceive( 'get_total_shipping' )
-		      ->andReturn( $shipping );
+		$order = Test\WCOrderMock::getMock(
+			'get_total',
+			$rawItems,
+			$total,
+			$subTotal,
+			$shipping,
+			$tax,
+			$discount,
+			$this->format_fees_for_order( $fees )
+		);
 
 		$cartData  = new CartData( $cart );
 		$orderData = new OrderData( $order );

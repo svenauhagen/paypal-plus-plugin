@@ -31,6 +31,11 @@
       "PayPalPlusPlugin\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "PayPalPlusPlugin\\Test\\": "tests/Helper"
+    }
+  },
   "config":{
     "optimize-autoloader": true
   }

@@ -10,6 +10,7 @@ namespace PayPalPlusPlugin\WC\Payment;
 
 use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
+use PayPalPlusPlugin\Test\WCCartMock;
 
 class CartDataTest extends BrainMonkeyWpTestCase {
 
@@ -36,35 +37,15 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		array $fees
 	) {
 
-		$cart->shouldReceive( 'get_cart' )
-		     ->andReturn( $rawItems );
-
-		$cart->shouldReceive( 'get_cart_discount_total' )
-		     ->once()
-		     ->andReturn( $discount );
-
-		$cart->shouldReceive( 'get_taxes_total' )
-		     ->andReturn( $tax );
-
-		$cart->shouldReceive( 'get_fees' )
-		     ->once()
-		     ->andReturn( $fees );
-
-		if ( $discount > 0 ) {
-			$cart->coupon_discount_amounts['foo'] = $discount;
-			$cart->shouldReceive( 'get_coupons' )
-			     ->andReturn( [
-				     'foo' => 'bar',
-			     ] );
-		}
-		Functions::expect( 'get_woocommerce_currency' );
-
-		Functions::expect( 'get_option' )
-		         ->once()
-		         ->andReturn( 'no' );
-
-		$cart->shipping_total = $shipping;
-
+		$cart  = WCCartMock::getMock(
+			'get_total',
+			$rawItems,
+			$cart_total,
+			$cart_subtotal,
+			$shipping,
+			$tax,
+			$discount,
+			$fees );
 		$data  = new CartData( $cart );
 		$total = $data->get_total();
 		$this->assertSame( $cart_total, $total );
