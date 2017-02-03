@@ -72,6 +72,19 @@ class WCOrderMock {
 				$order->shouldReceive( 'get_fees' )
 				      ->andReturn( $fees );
 				break;
+			case'get_items':
+				$order->shouldReceive( 'get_items' )
+				      ->andReturn( $rawItems );
+				$order->shouldReceive( 'get_fees' )
+				      ->andReturn( $fees );
+				$order->shouldReceive( 'get_total_discount' )
+				      ->once()
+				      ->andReturn( $discount );
+				if ( $discount > 0 ) {
+					Functions::expect( 'get_woocommerce_currency' )
+					         ->once();
+				}
+				break;
 		}
 
 		return $order;

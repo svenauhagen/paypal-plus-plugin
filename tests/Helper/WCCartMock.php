@@ -83,6 +83,29 @@ class WCCartMock {
 				$cart->shouldReceive( 'get_fees' )
 				     ->andReturn( $fees );
 				break;
+			case'get_items':
+
+				$cart->shouldReceive( 'get_cart' )
+				     ->andReturn( $rawItems );
+
+				$cart->shouldReceive( 'get_cart_discount_total' )
+				     ->once()
+				     ->andReturn( $discount );
+
+				$cart->shouldReceive( 'get_fees' )
+				     ->once()
+				     ->andReturn( $fees );
+
+				if ( $discount > 0 ) {
+					$cart->coupon_discount_amounts['foo'] = $discount;
+					$cart->shouldReceive( 'get_coupons' )
+					     ->andReturn( [
+						     'foo' => 'bar',
+					     ] );
+					Functions::expect( 'get_woocommerce_currency' )
+					         ->once();
+				}
+				break;
 		}
 
 		return $cart;

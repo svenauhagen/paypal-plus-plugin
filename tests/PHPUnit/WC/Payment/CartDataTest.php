@@ -75,26 +75,16 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		array $fees
 	) {
 
-		$cart->shouldReceive( 'get_cart' )
-		     ->andReturn( $rawItems );
-
-		$cart->shouldReceive( 'get_cart_discount_total' )
-		     ->once()
-		     ->andReturn( $discount );
-
-		$cart->shouldReceive( 'get_fees' )
-		     ->once()
-		     ->andReturn( $fees );
-
-		if ( $discount > 0 ) {
-			$cart->coupon_discount_amounts['foo'] = $discount;
-			$cart->shouldReceive( 'get_coupons' )
-			     ->andReturn( [
-				     'foo' => 'bar',
-			     ] );
-			Functions::expect( 'get_woocommerce_currency' )
-			         ->once();
-		}
+		$cart = WCCartMock::getMock(
+			'get_items',
+			$rawItems,
+			$cart_total,
+			$cart_subtotal,
+			$shipping,
+			$tax,
+			$discount,
+			$fees
+		);
 
 		$data  = new CartData( $cart );
 		$items = $data->get_items();
