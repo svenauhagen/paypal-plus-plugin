@@ -89,6 +89,10 @@ class WCOrderMock {
 				$order->shouldReceive( 'get_total_discount' )
 				      ->andReturn( $discount );
 				break;
+			case'get_total_tax':
+				$order->shouldReceive( 'get_total_tax' )
+				      ->andReturn( $tax );
+				break;
 		}
 
 		return $order;

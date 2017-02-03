@@ -161,10 +161,16 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		array $fees
 	) {
 
-		Functions::expect( 'get_woocommerce_currency' )
-		         ->once();
-		$cart->shouldReceive( 'get_taxes_total' )
-		     ->andReturn( $tax );
+		$cart = WCCartMock::getMock(
+			'get_total_tax',
+			$rawItems,
+			$cart_total,
+			$cart_subtotal,
+			$shipping,
+			$tax,
+			$discount,
+			$fees
+		);
 
 		$data   = new CartData( $cart );
 		$result = $data->get_total_tax();

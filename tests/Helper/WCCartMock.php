@@ -110,6 +110,12 @@ class WCCartMock {
 				$cart->shouldReceive( 'get_cart_discount_total' )
 				     ->andReturn( $discount );
 				break;
+			case 'get_total_tax':
+				Functions::expect( 'get_woocommerce_currency' )
+				         ->once();
+				$cart->shouldReceive( 'get_taxes_total' )
+				     ->andReturn( $tax );
+				break;
 		}
 
 		return $cart;

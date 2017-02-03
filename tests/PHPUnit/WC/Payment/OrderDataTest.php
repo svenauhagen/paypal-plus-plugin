@@ -185,8 +185,16 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		array $fees
 	) {
 
-		$order->shouldReceive( 'get_total_tax' )
-		      ->andReturn( $tax );
+		$order = Test\WCOrderMock::getMock(
+			'get_total_tax',
+			$rawItems,
+			$cart_total,
+			$cart_subtotal,
+			$shipping,
+			$tax,
+			$discount,
+			$fees
+		);
 
 		$data   = new OrderData( $order );
 		$result = $data->get_total_tax();
