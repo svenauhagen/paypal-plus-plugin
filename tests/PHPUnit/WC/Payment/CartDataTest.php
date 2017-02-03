@@ -121,8 +121,16 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		array $fees
 	) {
 
-		$cart->shouldReceive( 'get_cart_discount_total' )
-		     ->andReturn( $discount );
+		$cart = WCCartMock::getMock(
+			'get_total_discount',
+			$rawItems,
+			$cart_total,
+			$cart_subtotal,
+			$shipping,
+			$tax,
+			$discount,
+			$fees
+		);
 
 		$data   = new CartData( $cart );
 		$result = $data->get_total_discount();

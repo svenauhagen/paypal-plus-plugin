@@ -106,6 +106,10 @@ class WCCartMock {
 					         ->once();
 				}
 				break;
+			case 'get_total_discount':
+				$cart->shouldReceive( 'get_cart_discount_total' )
+				     ->andReturn( $discount );
+				break;
 		}
 
 		return $cart;
