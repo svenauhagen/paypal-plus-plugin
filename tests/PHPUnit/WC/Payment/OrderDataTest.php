@@ -240,7 +240,10 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		);
 		$data   = new OrderData( $order );
 		$result = $data->get_total_shipping();
-		$this->assertSame( $shipping + $tax, $result );
+
+		$expected = ( $pricesIncludeTax ) ? $shipping + $tax : $shipping;
+		
+		$this->assertSame( $expected, $result );
 
 	}
 
@@ -334,7 +337,7 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 				],
 			],
 			// Prices include tax
-			true,
+			false,
 		];
 
 		return $data;
