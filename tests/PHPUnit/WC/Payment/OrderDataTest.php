@@ -74,15 +74,15 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		array $fees
 	) {
 
-		$order->shouldReceive( 'get_items' )
-		      ->andReturn( $rawItems );
-		$order->shouldReceive( 'get_total_discount' )
-		      ->andReturn( $discount );
-		if ( $discount > 0 ) {
-			Functions::expect( 'get_woocommerce_currency' );
-		}
-		$order->shouldReceive( 'get_fees' )
-		      ->andReturn( $fees );
+		$order = Test\WCOrderMock::getMock(
+			'get_subtotal',
+			$rawItems,
+			$cart_total,
+			$cart_subtotal,
+			$shipping,
+			$tax,
+			$discount,
+			$fees );
 
 		$testee   = new OrderData( $order );
 		$subTotal = $testee->get_subtotal();

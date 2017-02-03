@@ -122,36 +122,30 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 		/**
 		 * Setup CartData Mocks
 		 */
-		$cart = \Mockery::mock( 'WC_Cart' );
-		$cart->shouldReceive( 'get_cart' )
-		     ->andReturn( $rawItems );
-		$cart->shouldReceive( 'get_cart_discount_total' )
-		     ->andReturn( $discount );
-		if ( $discount > 0 ) {
-			$cart->coupon_discount_amounts['foo'] = $discount;
-			$cart->shouldReceive( 'get_coupons' )
-			     ->andReturn( [
-				     'foo' => 'bar',
-			     ] );
-			Functions::expect( 'get_woocommerce_currency' );
-		}
-		$cart->shouldReceive( 'get_fees' )
-		     ->andReturn( $this->format_fees_for_cart( $fees ) );
+		$cart = Test\WCCartMock::getMock(
+			'get_subtotal',
+			$rawItems,
+			$total,
+			$subTotal,
+			$shipping,
+			$tax,
+			$discount,
+			$this->format_fees_for_cart( $fees )
+		);
 
 		/**
 		 * Setup OrderData Mocks
 		 */
-		$order = \Mockery::mock( 'WC_Order' );
-
-		$order->shouldReceive( 'get_items' )
-		      ->andReturn( $rawItems );
-		$order->shouldReceive( 'get_total_discount' )
-		      ->andReturn( $discount );
-		if ( $discount > 0 ) {
-			Functions::expect( 'get_woocommerce_currency' );
-		}
-		$order->shouldReceive( 'get_fees' )
-		      ->andReturn( $this->format_fees_for_order( $fees ) );
+		$order = Test\WCOrderMock::getMock(
+			'get_subtotal',
+			$rawItems,
+			$total,
+			$subTotal,
+			$shipping,
+			$tax,
+			$discount,
+			$this->format_fees_for_order( $fees )
+		);
 
 		/**
 		 * Actual test below

@@ -61,8 +61,18 @@ class WCOrderMock {
 				$order->shouldReceive( 'get_total_shipping' )
 				      ->andReturn( $shipping );
 				break;
+			case'get_subtotal':
+				$order->shouldReceive( 'get_items' )
+				      ->andReturn( $rawItems );
+				$order->shouldReceive( 'get_total_discount' )
+				      ->andReturn( $discount );
+				if ( $discount > 0 ) {
+					Functions::expect( 'get_woocommerce_currency' );
+				}
+				$order->shouldReceive( 'get_fees' )
+				      ->andReturn( $fees );
+				break;
 		}
-
 
 		return $order;
 	}

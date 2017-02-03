@@ -67,6 +67,22 @@ class WCCartMock {
 				$cart->shipping_total = $shipping;
 
 				break;
+			case'get_subtotal':
+				$cart->shouldReceive( 'get_cart' )
+				     ->andReturn( $rawItems );
+				$cart->shouldReceive( 'get_cart_discount_total' )
+				     ->andReturn( $discount );
+				if ( $discount > 0 ) {
+					$cart->coupon_discount_amounts['foo'] = $discount;
+					$cart->shouldReceive( 'get_coupons' )
+					     ->andReturn( [
+						     'foo' => 'bar',
+					     ] );
+					Functions::expect( 'get_woocommerce_currency' );
+				}
+				$cart->shouldReceive( 'get_fees' )
+				     ->andReturn( $fees );
+				break;
 		}
 
 		return $cart;
