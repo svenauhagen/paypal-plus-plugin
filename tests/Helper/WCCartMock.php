@@ -116,6 +116,17 @@ class WCCartMock {
 				$cart->shouldReceive( 'get_taxes_total' )
 				     ->andReturn( $tax );
 				break;
+			case 'get_total_shipping':
+				$shippingIncludesTax = (bool) mt_rand( 0, 1 );
+				Functions::expect( 'get_option' )
+				         ->once()
+				         ->andReturn( ( $shippingIncludesTax ) ? 'yes' : 'no' );
+				if ( $shippingIncludesTax ) {
+					$cart->shipping_tax_total = $tax;
+				}
+
+				$cart->shipping_total = $shipping;
+				break;
 		}
 
 		return $cart;

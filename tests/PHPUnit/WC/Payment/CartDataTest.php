@@ -201,17 +201,16 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		array $fees
 	) {
 
-		$shippingIncludesTax = (bool) mt_rand( 0, 1 );
-		Functions::expect( 'get_option' )
-		         ->once()
-		         ->andReturn( ( $shippingIncludesTax ) ? 'yes' : 'no' );
-		$tax = 0;
-		if ( $shippingIncludesTax ) {
-			$tax                      = mt_rand( 0, 20 );
-			$cart->shipping_tax_total = $tax;
-		}
-
-		$cart->shipping_total = $shipping;
+		$cart = WCCartMock::getMock(
+			'get_total_shipping',
+			$rawItems,
+			$cart_total,
+			$cart_subtotal,
+			$shipping,
+			$tax,
+			$discount,
+			$fees
+		);
 
 		$data   = new CartData( $cart );
 		$result = $data->get_total_shipping();

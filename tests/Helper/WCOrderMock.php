@@ -93,6 +93,21 @@ class WCOrderMock {
 				$order->shouldReceive( 'get_total_tax' )
 				      ->andReturn( $tax );
 				break;
+			case 'get_total_shipping':
+
+				$shippingIncludesTax = (bool) mt_rand( 0, 1 );
+				Functions::expect( 'get_option' )
+				         ->once()
+				         ->andReturn( ( $shippingIncludesTax ) ? 'yes' : 'no' );
+
+				$order->shouldReceive( 'get_total_shipping' )
+				      ->andReturn( $shipping );
+				if ( $shippingIncludesTax ) {
+					$order->shouldReceive( 'get_shipping_tax' )
+					      ->andReturn( $tax );
+				}
+
+				break;
 		}
 
 		return $order;

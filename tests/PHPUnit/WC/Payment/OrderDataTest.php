@@ -8,7 +8,6 @@
 
 namespace PayPalPlusPlugin\WC\Payment;
 
-use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
 use PayPalPlusPlugin\Test;
 
@@ -216,20 +215,16 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		array $fees
 	) {
 
-		$shippingIncludesTax = (bool) mt_rand( 0, 1 );
-		Functions::expect( 'get_option' )
-		         ->once()
-		         ->andReturn( ( $shippingIncludesTax ) ? 'yes' : 'no' );
-
-		$order->shouldReceive( 'get_total_shipping' )
-		      ->andReturn( $shipping );
-		$tax = 0;
-		if ( $shippingIncludesTax ) {
-			$tax = mt_rand( 0, 20 );
-			$order->shouldReceive( 'get_shipping_tax' )
-			      ->andReturn( $tax );
-		}
-
+		$order  = Test\WCOrderMock::getMock(
+			'get_total_shipping',
+			$rawItems,
+			$cart_total,
+			$cart_subtotal,
+			$shipping,
+			$tax,
+			$discount,
+			$fees
+		);
 		$data   = new OrderData( $order );
 		$result = $data->get_total_shipping();
 		$this->assertSame( $shipping + $tax, $result );
