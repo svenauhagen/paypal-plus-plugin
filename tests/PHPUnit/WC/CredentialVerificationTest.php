@@ -19,7 +19,6 @@ class CredentialVerificationTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_verify() {
 
-		return;
 		$paymentMock = \Mockery::mock( 'alias:' . 'PayPal\Api\Payment' );
 		$paymentMock->shouldReceive( 'all' )
 		            ->once();
@@ -46,7 +45,6 @@ class CredentialVerificationTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_verify_no_credentials() {
 
-		return;
 		$credentialMock = \Mockery::mock( OAuthTokenCredential::class );
 		$credentialMock->shouldReceive( 'getClientId' )
 		               ->andReturn( '' );
