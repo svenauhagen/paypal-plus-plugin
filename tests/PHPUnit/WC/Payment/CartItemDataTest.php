@@ -22,7 +22,7 @@ class CartItemDataTest extends BrainMonkeyWpTestCase {
 
 		Functions::expect( 'get_woocommerce_currency' );
 		$testee   = new CartItemData( $data );
-		$expected = number_format( $data['line_subtotal'] / $testee->get_quantity(), 2, '.', '' );
+		$expected = $data['line_subtotal'] / $testee->get_quantity();
 		$result   = $testee->get_price();
 		$this->assertSame( $expected, $result );
 

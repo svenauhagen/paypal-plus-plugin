@@ -26,20 +26,26 @@ class CartItemData implements OrderItemDataProvider {
 	 * CartItemData constructor.
 	 *
 	 * @param array $data Item data.
+	 *
+	 * @throws \Exception
 	 */
 	public function __construct( array $data ) {
 
+		if ( ! isset( $data['product_id'] ) ) {
+			throw new \Exception( 'Missing Data' );
+		}
 		$this->data = $data;
 	}
 
 	/**
 	 * Returns the item price.
 	 *
-	 * @return string
+	 * @return float
 	 */
 	public function get_price() {
 
-		return $this->format( $this->data['line_subtotal'] / $this->get_quantity() );
+		return $this->data['line_subtotal'] / $this->get_quantity();
+		//return $this->format( $this->data['line_subtotal'] / $this->get_quantity() );
 	}
 
 	/**

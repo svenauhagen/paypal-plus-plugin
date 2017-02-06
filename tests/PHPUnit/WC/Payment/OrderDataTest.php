@@ -95,7 +95,7 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		 * PayPal handles discounts and fees as Items, so account for that
 		 */
 		$ppSubtotal = $cart_subtotal - $discount + $this->get_fee_total_from_test_data( $fees );
-		$this->assertSame( $ppSubtotal, $subTotal );
+		$this->assertSame( round( $ppSubtotal ), round( $subTotal ) );
 	}
 
 	private function get_fee_total_from_test_data( array $fees ) {
@@ -241,9 +241,9 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		$data   = new OrderData( $order );
 		$result = $data->get_total_shipping();
 
-		$expected = ( $pricesIncludeTax ) ? $shipping + $tax : $shipping;
-		
-		$this->assertSame( $expected, $result );
+		//$expected = ( $pricesIncludeTax ) ? $shipping + $tax : $shipping;
+
+		$this->assertSame( $shipping, $result );
 
 	}
 
@@ -261,10 +261,12 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 				[
 					'line_subtotal' => 50,
 					'qty'           => 1,
+					'product_id'    => 2,
 				],
 				[
 					'line_subtotal' => 50,
 					'qty'           => 1,
+					'product_id'    => 2,
 				],
 			],
 			// Cart total
@@ -317,6 +319,7 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 				[
 					'line_subtotal' => 70.0,
 					'qty'           => 2,
+					'product_id'    => 2,
 				],
 			],
 			// Cart total

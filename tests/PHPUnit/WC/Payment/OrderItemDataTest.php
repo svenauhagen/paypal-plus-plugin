@@ -22,7 +22,7 @@ class OrderItemDataTest extends BrainMonkeyWpTestCase {
 
 		Functions::expect( 'get_woocommerce_currency' );
 		$testee   = new OrderItemData( $data );
-		$expected = number_format( $data['line_subtotal'] / $testee->get_quantity(), 2, '.', '' );
+		$expected = floatval( number_format( $data['line_subtotal'] / $testee->get_quantity(), 2, '.', '' ) );
 		$result   = $testee->get_price();
 		$this->assertSame( $expected, $result );
 

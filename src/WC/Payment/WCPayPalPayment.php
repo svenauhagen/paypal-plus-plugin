@@ -76,11 +76,15 @@ class WCPayPalPayment {
 	 */
 	private function create_payment() {
 
-		$payment = $this->get_payment_object();
+		$payment     = $this->get_payment_object();
+		$transaction = $payment->getTransactions();
+		$itemslist   = $transaction[0]->getItemList();
+		$items       = $itemslist->getItems();
 		try {
 			$payment->create( $this->payment_data->get_api_context() );
 		} catch ( PayPalConnectionException $ex ) {
 			do_action( 'paypal_plus_plugin_log_exception', 'create_payment_exception', $ex );
+			var_dump( $ex );
 
 			return null;
 		}
@@ -125,13 +129,13 @@ class WCPayPalPayment {
 	 */
 	private function get_item_list() {
 
-		$item_list = new ItemList();
-		foreach ( $this->order_data->get_items() as $order_item ) {
+		//$item_list = new ItemList();
+		//foreach ( $this->order_data->get_items() as $order_item ) {
+		//
+		//	$item_list->addItem( $this->order_data->get_item( $order_item ) );
+		//}
 
-			$item_list->addItem( $this->order_data->get_item( $order_item ) );
-		}
-
-		return $item_list;
+		return $this->order_data->get_item_list();
 	}
 
 	/**
@@ -156,7 +160,7 @@ class WCPayPalPayment {
 	/**
 	 * Cretae a configured Transaction object.
 	 *
-	 * @param Amount   $amount Amount object.
+	 * @param Amount   $amount    Amount object.
 	 * @param ItemList $item_list ItemList object.
 	 *
 	 * @return Transaction

@@ -2,6 +2,7 @@
 namespace PayPalPlusPlugin\WC\Payment;
 
 use PayPal\Api\Item;
+use PayPal\Api\ItemList;
 
 /**
  * Class OrderDataCommon
@@ -26,7 +27,7 @@ abstract class OrderDataCommon implements OrderDataProvider {
 		$total += $shipping;
 		$total += $tax;
 
-		return floatval( $this->format( $this->round( $total ) ) );
+		return $total;
 	}
 
 	/**
@@ -41,14 +42,36 @@ abstract class OrderDataCommon implements OrderDataProvider {
 	public function get_subtotal() {
 
 		$subtotal = 0;
-		$items    = $this->get_items();
+		$items    = $this->get_item_list()
+		                 ->getItems();
+		if ( empty( $items ) ) {
+			return $subtotal;
+		}
 		foreach ( $items as $item ) {
-			$product_price = $item->get_price();
-			$item_price    = $product_price * $item->get_quantity();
-			$subtotal += $this->round( $item_price );
+			$product_price = $item->getPrice();
+			$item_price    = floatval( $product_price * $item->getQuantity() );
+			$subtotal += $item_price;
+			//$subtotal += $this->round( $item_price );
 		}
 
-		return floatval( $subtotal );
+		return $subtotal;
+		//return $this->round($subtotal);
+	}
+
+	/**
+	 * Generated a new ItemList object from the items of the current order
+	 *
+	 * @return ItemList
+	 */
+	public function get_item_list() {
+
+		$item_list = new ItemList();
+		foreach ( $this->get_items() as $order_item ) {
+
+			$item_list->addItem( $this->get_item( $order_item ) );
+		}
+
+		return $item_list;
 	}
 
 	/**

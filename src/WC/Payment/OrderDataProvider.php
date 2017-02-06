@@ -9,6 +9,7 @@
 namespace PayPalPlusPlugin\WC\Payment;
 
 use PayPal\Api\Item;
+use PayPal\Api\ItemList;
 
 /**
  * Interface OrderDataProvider
@@ -23,6 +24,13 @@ interface OrderDataProvider {
 	 * @return OrderItemDataProvider[]
 	 */
 	public function get_items();
+
+	/**
+	 * Array of item data providers.
+	 *
+	 * @return ItemList
+	 */
+	public function get_item_list();
 
 	/**
 	 * Order subtotal.

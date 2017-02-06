@@ -2,18 +2,18 @@
 /**
  * Created by PhpStorm.
  * User: biont
- * Date: 27.01.17
- * Time: 11:47
+ * Date: 06.02.17
+ * Time: 16:02
  */
 
 namespace PayPalPlusPlugin\WC\Payment;
 
 /**
- * Class OrderItemData
+ * Class OrderFeeData
  *
  * @package PayPalPlusPlugin\WC\Payment
  */
-class OrderItemData implements OrderItemDataProvider {
+class OrderFeeData implements OrderItemDataProvider {
 
 	use OrderDataProcessor;
 
@@ -28,14 +28,9 @@ class OrderItemData implements OrderItemDataProvider {
 	 * OrderItemData constructor.
 	 *
 	 * @param array $data Item data.
-	 *
-	 * @throws \Exception
 	 */
 	public function __construct( array $data ) {
 
-		if ( ! isset( $data['product_id'] ) ) {
-			throw new \Exception( 'Missing Data' );
-		}
 		$this->data = $data;
 	}
 
@@ -66,35 +61,16 @@ class OrderItemData implements OrderItemDataProvider {
 	 */
 	public function get_name() {
 
-		$product = $this->get_product();
-
-		return $product->get_title();
+		return $this->data['name'];
 	}
 
 	/**
-	 * Returns the WC_Product associated with the order item.
-	 *
-	 * @return \WC_Product
-	 */
-	protected function get_product() {
-
-		return wc_get_product( $this->data['product_id'] );
-	}
-
-	/**
-	 * Returns the product SKU.
-	 * TODO Un-DRY. CartItemData does pretty much the exact same thing
+	 * Returns no product SKU.
 	 *
 	 * @return string|null
 	 */
 	public function get_sku() {
 
-		$product = $this->get_product();
-		$sku     = $product->get_sku();
-		if ( $product instanceof \WC_Product_Variation ) {
-			$sku = $product->parent->get_sku();
-		}
-
-		return $sku;
+		return null;
 	}
 }

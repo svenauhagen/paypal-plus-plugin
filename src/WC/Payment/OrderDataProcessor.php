@@ -15,17 +15,28 @@ trait OrderDataProcessor {
 	 *
 	 * @param float $price The unformatted price.
 	 *
-	 * @return string
+	 * @return float
 	 */
 	protected function format( $price ) {
 
 		$decimals = 2;
 
-		if ( in_array( get_woocommerce_currency(), [ 'HUF', 'JPY', 'TWD' ], true ) ) {
+		if ( $this->currency_has_decimals() ) {
 			$decimals = 0;
 		}
 
-		return number_format( $price, $decimals, '.', '' );
+		return floatval( number_format( $price, $decimals, '.', '' ) );
+	}
+
+	/**
+	 * Checks if the currency supports decimals.
+	 *
+	 * @return bool
+	 */
+	private function currency_has_decimals() {
+
+		return in_array( get_woocommerce_currency(), [ 'HUF', 'JPY', 'TWD' ], true );
+
 	}
 
 	/**
@@ -39,7 +50,7 @@ trait OrderDataProcessor {
 
 		$precision = 2;
 
-		if ( in_array( get_woocommerce_currency(), [ 'HUF', 'JPY', 'TWD' ], true ) ) {
+		if ( $this->currency_has_decimals() ) {
 			$precision = 0;
 		}
 

@@ -51,7 +51,7 @@ class OrderData extends OrderDataCommon {
 			$items[] = new OrderItemData( $item );
 		}
 		foreach ( $this->order->get_fees() as $fee ) {
-			$items[] = new OrderItemData( [
+			$items[] = new OrderFeeData( [
 				'name'          => $fee['name'],
 				'qty'           => 1,
 				'line_subtotal' => $fee['line_total'],
@@ -97,11 +97,12 @@ class OrderData extends OrderDataCommon {
 	 */
 	public function get_total_shipping() {
 
-		if ( get_option( 'woocommerce_prices_include_tax' ) === 'yes' ) {
-			$shipping = $this->order->get_total_shipping() + $this->order->get_shipping_tax();
-		} else {
-			$shipping = $this->order->get_total_shipping();
-		}
+		//if ( get_option( 'woocommerce_prices_include_tax' ) === 'yes' ) {
+		//	$shipping = $this->order->get_total_shipping() + $this->order->get_shipping_tax();
+		//} else {
+		$shipping = $this->order->get_total_shipping();
+
+		//}
 
 		return $shipping;
 	}

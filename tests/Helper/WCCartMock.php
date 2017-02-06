@@ -62,9 +62,17 @@ class WCCartMock {
 				}
 				Functions::expect( 'get_woocommerce_currency' );
 
-				Functions::expect( 'get_option' )
-				         ->once()
-				         ->andReturn( 'no' );
+				$productMock = \Mockery::mock( 'WC_Product' );
+				$productMock->shouldReceive( 'get_title' )
+				            ->andReturn( 'foo' );
+				$productMock->shouldReceive( 'get_sku' )
+				            ->andReturn( 'bar' );
+				Functions::expect( 'wc_get_product' )
+				         ->andReturn( $productMock );
+
+				//Functions::expect( 'get_option' )
+				//         ->once()
+				//         ->andReturn( 'no' );
 
 				$cart->shipping_total = $shipping;
 
@@ -80,10 +88,19 @@ class WCCartMock {
 					     ->andReturn( [
 						     'foo' => 'bar',
 					     ] );
-					Functions::expect( 'get_woocommerce_currency' );
 				}
+				Functions::expect( 'get_woocommerce_currency' );
+
 				$cart->shouldReceive( 'get_fees' )
 				     ->andReturn( $fees );
+
+				$productMock = \Mockery::mock( 'WC_Product' );
+				$productMock->shouldReceive( 'get_title' )
+				            ->andReturn( 'foo' );
+				$productMock->shouldReceive( 'get_sku' )
+				            ->andReturn( 'bar' );
+				Functions::expect( 'wc_get_product' )
+				         ->andReturn( $productMock );
 				break;
 			case'get_items':
 
@@ -104,8 +121,7 @@ class WCCartMock {
 					     ->andReturn( [
 						     'foo' => 'bar',
 					     ] );
-					Functions::expect( 'get_woocommerce_currency' )
-					         ->once();
+					Functions::expect( 'get_woocommerce_currency' );
 				}
 				break;
 			case 'get_total_discount':
@@ -113,18 +129,17 @@ class WCCartMock {
 				     ->andReturn( $discount );
 				break;
 			case 'get_total_tax':
-				Functions::expect( 'get_woocommerce_currency' )
-				         ->once();
+				Functions::expect( 'get_woocommerce_currency' );
 				$cart->shouldReceive( 'get_taxes_total' )
 				     ->andReturn( $tax );
 				break;
 			case 'get_total_shipping':
-				Functions::expect( 'get_option' )
-				         ->once()
-				         ->andReturn( ( $pricesIncludeTax ) ? 'yes' : 'no' );
-				if ( $pricesIncludeTax ) {
-					$cart->shipping_tax_total = $tax;
-				}
+				//Functions::expect( 'get_option' )
+				//         ->once()
+				//         ->andReturn( ( $pricesIncludeTax ) ? 'yes' : 'no' );
+				//if ( $pricesIncludeTax ) {
+				//	$cart->shipping_tax_total = $tax;
+				//}
 
 				$cart->shipping_total = $shipping;
 				break;
