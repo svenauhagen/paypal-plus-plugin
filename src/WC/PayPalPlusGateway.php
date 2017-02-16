@@ -408,6 +408,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		$data = [
 			'app_config' => [
+				'useraction'           => 'commit',
 				'showLoadingIndicator' => true,
 				'approvalUrl'          => $this->get_approval_url(),
 				'placeholder'          => 'ppplus',
