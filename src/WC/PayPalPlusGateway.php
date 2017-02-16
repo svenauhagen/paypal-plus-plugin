@@ -173,12 +173,13 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			);
 
 			$this->auth->setConfig( [
-				'mode'           => ( $this->is_sandbox() ) ? 'SANDBOX' : 'LIVE',
-				'log.LogEnabled' => true,
-				'log.LogLevel'   => ( $this->is_sandbox() ) ? 'DEBUG' : 'INFO',
-				'log.FileName'   => wc_get_log_file_path( 'paypal_plus' ),
-				'cache.enabled'  => true,
-				'cache.FileName' => wc_get_log_file_path( 'paypal_plus_cache' ),
+				'mode'                                       => ( $this->is_sandbox() ) ? 'SANDBOX' : 'LIVE',
+				'http.headers.PayPal-Partner-Attribution-Id' => 'WooCommerce_Cart_Plus',
+				'log.LogEnabled'                             => true,
+				'log.LogLevel'                               => ( $this->is_sandbox() ) ? 'DEBUG' : 'INFO',
+				'log.FileName'                               => wc_get_log_file_path( 'paypal_plus' ),
+				'cache.enabled'                              => true,
+				'cache.FileName'                             => wc_get_log_file_path( 'paypal_plus_cache' ),
 			] );
 		} else {
 			$this->auth->resetRequestId();
