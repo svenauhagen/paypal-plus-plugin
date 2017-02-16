@@ -16,20 +16,17 @@ namespace PayPalPlusPlugin\WC\PUI;
 class PaymentInstructionRenderer {
 
 	/**
-	 * @var PaymentInstructionView
+	 * Setup required hooks.
 	 */
-	private $view;
-	/**
-	 * @var PaymentInstructionData
-	 */
-	private $data;
-
 	public function register() {
 
 		add_action( 'woocommerce_thankyou_paypal_plus', [ $this, 'delegate_thankyou' ], 10, 1 );
 		add_action( 'woocommerce_email_before_order_table', [ $this, 'delegate_email' ], 10, 3 );
 	}
 
+	/**
+	 * Gather needed data and then render the view, if possible
+	 */
 	public function delegate_thankyou() {
 
 		$order_key = filter_input( INPUT_GET, 'key' );
@@ -44,7 +41,14 @@ class PaymentInstructionRenderer {
 
 	}
 
-	public function delegate_email( $order, $sent_to_admin, $plain_text = false ) {
+	/**
+	 * Gather needed data and then render the view, if possible
+	 *
+	 * @param \WC_Order $order WooCommerce order.
+	 * @param bool      $sent_to_admin
+	 * @param bool      $plain_text
+	 */
+	public function delegate_email( \WC_Order $order, $sent_to_admin, $plain_text = false ) {
 
 		$pui_data = new PaymentInstructionData( $order );
 		if ( ! $pui_data->has_payment_instructions() ) {
