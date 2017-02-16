@@ -20,7 +20,7 @@ class PaymentInstructionData {
 	/**
 	 * @var string
 	 */
-	private $international_bank_account_number;
+	private $iban;
 	/**
 	 * @var string
 	 */
@@ -32,7 +32,7 @@ class PaymentInstructionData {
 	/**
 	 * @var string
 	 */
-	private $bank_identifier_code;
+	private $bic;
 	/**
 	 * @var \WC_Order
 	 */
@@ -45,15 +45,20 @@ class PaymentInstructionData {
 	 */
 	public function __construct( \WC_Order $order ) {
 
-		$this->order                             = $order;
-		$this->bank_name                         = get_post_meta( $order->id, 'bank_name', true );
-		$this->account_holder_name               = get_post_meta( $order->id, 'account_holder_name', true );
-		$this->international_bank_account_number = get_post_meta( $order->id, 'international_bank_account_number',
+		$this->order               = $order;
+		$this->bank_name           = get_post_meta( $order->id, 'bank_name', true );
+		$this->account_holder_name = get_post_meta( $order->id, 'account_holder_name', true );
+		$this->iban                = get_post_meta( $order->id, 'international_bank_account_number',
 			true );
-		$this->payment_due_date                  = get_post_meta( $order->id, 'payment_due_date', true );
-		$this->reference_number                  = get_post_meta( $order->id, 'reference_number', true );
-		$this->bank_identifier_code              = get_post_meta( $order->id, 'bank_identifier_code', true );
+		$this->payment_due_date    = get_post_meta( $order->id, 'payment_due_date', true );
+		$this->reference_number    = get_post_meta( $order->id, 'reference_number', true );
+		$this->bic                 = get_post_meta( $order->id, 'bank_identifier_code', true );
 
+	}
+
+	public function has_payment_instructions() {
+
+		return ! empty( $this->iban ) && ! empty( $this->bic );
 	}
 
 	public function get_order_id() {
@@ -80,9 +85,9 @@ class PaymentInstructionData {
 	/**
 	 * @return mixed
 	 */
-	public function get_international_bank_account_number() {
+	public function get_iban() {
 
-		return $this->international_bank_account_number;
+		return $this->iban;
 	}
 
 	/**
@@ -96,9 +101,9 @@ class PaymentInstructionData {
 	/**
 	 * @return mixed
 	 */
-	public function get_bank_identifier_code() {
+	public function get_bic() {
 
-		return $this->bank_identifier_code;
+		return $this->bic;
 	}
 
 	/**

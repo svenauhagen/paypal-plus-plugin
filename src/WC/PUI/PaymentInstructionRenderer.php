@@ -16,21 +16,13 @@ namespace PayPalPlusPlugin\WC\PUI;
 class PaymentInstructionRenderer {
 
 	/**
-	 * @var PUIView
+	 * @var PaymentInstructionView
 	 */
 	private $view;
 	/**
 	 * @var PaymentInstructionData
 	 */
 	private $data;
-
-	/**
-	 * PaymentInstructionRenderer constructor.
-	 *
-	 */
-	public function __construct() {
-
-	}
 
 	public function register() {
 
@@ -44,14 +36,20 @@ class PaymentInstructionRenderer {
 
 		$order    = wc_get_order( wc_get_order_id_by_order_key( $order_key ) );
 		$pui_data = new PaymentInstructionData( $order );
+		if ( ! $pui_data->has_payment_instructions() ) {
+			return;
+		}
 		$pui_view = new PaymentInstructionView( $pui_data );
 		$pui_view->thankyou_page();
 
 	}
 
-	public function delegate_email(  $order, $sent_to_admin, $plain_text = false ) {
+	public function delegate_email( $order, $sent_to_admin, $plain_text = false ) {
 
 		$pui_data = new PaymentInstructionData( $order );
+		if ( ! $pui_data->has_payment_instructions() ) {
+			return;
+		}
 		$pui_view = new PaymentInstructionView( $pui_data );
 		$pui_view->email_instructions();
 	}

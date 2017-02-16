@@ -44,11 +44,11 @@ class PaymentInstructionView {
 			</tr>
 			<tr>
 				<th scope="row"><?php _e( 'IBAN:', 'woo-paypal-plus' ); ?></th>
-				<td><span><?php echo $this->data->get_international_bank_account_number(); ?></span></td>
+				<td><span><?php echo $this->data->get_iban(); ?></span></td>
 			</tr>
 			<tr>
 				<th scope="row"><?php _e( 'BIC:', 'woo-paypal-plus' ); ?></th>
-				<td><span><?php echo $this->data->get_bank_identifier_code(); ?></span></td>
+				<td><span><?php echo $this->data->get_bic(); ?></span></td>
 			</tr>
 			<tr>
 				<th scope="row"><?php _e( 'Payment due date:', 'woo-paypal-plus' ); ?></th>
@@ -85,11 +85,11 @@ class PaymentInstructionView {
 			],
 			'iban'                => [
 				'label' => __( 'IBAN', 'woo-paypal-plus' ),
-				'value' => $this->data->get_international_bank_account_number(),
+				'value' => $this->data->get_iban(),
 			],
 			'bic'                 => [
 				'label' => __( 'BIC', 'woo-paypal-plus' ),
-				'value' => $this->data->get_bank_identifier_code(),
+				'value' => $this->data->get_bic(),
 			],
 			'payment_due_date'    => [
 				'label' => __( 'Payment due date', 'woo-paypal-plus' ),
