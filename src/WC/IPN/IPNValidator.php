@@ -55,6 +55,9 @@ class IPNValidator {
 	 */
 	public function validate() {
 
+		if ( defined( 'PPP_DEBUG' ) and PPP_DEBUG ) {
+			return true;
+		}
 		$params = [
 			'body'        => [ 'cmd' => '_notify-validate' ] + $this->request_data,
 			'timeout'     => 60,
