@@ -96,7 +96,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 			$instruction      = $this->data->get_payment_instruction();
 			$instruction_type = $instruction->getInstructionType();
 			if ( 'PAY_UPON_INVOICE' === $instruction_type ) {
-				$this->update_payment_data();
+				$this->update_payment_data( $sale_id );
 			}
 		}
 
@@ -109,8 +109,10 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 
 	/**
 	 * Update order post meta with payment information.
+	 *
+	 * @param string $sale_id PayPal Payment ID.
 	 */
-	private function update_payment_data() {
+	private function update_payment_data( $sale_id ) {
 
 		$order               = $this->data->get_order();
 		$payment_instruction = $this->data->get_payment_instruction();
@@ -139,6 +141,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 		update_post_meta( $order->id, 'bank_identifier_code', $bank_identifier_code );
 		update_post_meta( $order->id, 'payment_due_date', $payment_due_date );
 		update_post_meta( $order->id, '_payment_instruction_result', $instruction_data );
+		update_post_meta( $order->id, '_transaction_id', $sale_id );
 
 	}
 
@@ -160,7 +163,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 
 		$payment         = $this->data->get_payment();
 		$order           = $this->data->get_order();
-		$billing_address = array(
+		$billing_address = [
 			'first_name' => $payment->payer->payer_info->first_name,
 			'last_name'  => $payment->payer->payer_info->last_name,
 			'address_1'  => $payment->payer->payer_info->billing_address->line1,
@@ -169,7 +172,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 			'state'      => $payment->payer->payer_info->billing_address->state,
 			'postcode'   => $payment->payer->payer_info->billing_address->postal_code,
 			'country'    => $payment->payer->payer_info->billing_address->country_code,
-		);
+		];
 		$order->set_address( $billing_address, $type = 'billing' );
 	}
 
