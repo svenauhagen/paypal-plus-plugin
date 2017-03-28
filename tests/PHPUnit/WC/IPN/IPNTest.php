@@ -29,7 +29,9 @@ class IPNTest extends BrainMonkeyWpTestCase {
 		Actions::expectAdded( 'woocommerce_api_' . $gateway_id . '_ipn' )
 		       ->once();
 
-		$testee->register();
+		$result = $testee->register();
+
+		$this->assertTrue( $result );
 	}
 
 	/**

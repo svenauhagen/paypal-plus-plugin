@@ -62,6 +62,7 @@ class OrderUpdaterTest extends BrainMonkeyWpTestCase {
 		if ( $order_complete ) {
 			$this->assertTrue( $result );
 		} else {
+			$this->assertFalse( $result );
 
 		}
 	}
@@ -74,14 +75,14 @@ class OrderUpdaterTest extends BrainMonkeyWpTestCase {
 		$data           = [];
 		$data['test_1'] = [
 			// Order already complete?.
-			TRUE,
-			TRUE,
+			true,
+			true,
 		];
 
 		$data['test_2'] = [
 			// Order already complete?.
-			FALSE,
-			FALSE,
+			false,
+			false,
 		];
 
 		return $data;

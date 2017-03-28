@@ -4,7 +4,6 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7a139a8fa4dde161062eaca258325640",
     "content-hash": "3b37128a04b9c478056e8bb2b2e5b111",
     "packages": [
         {
@@ -54,7 +53,7 @@
                 "rest",
                 "sdk"
             ],
-            "time": "2016-12-14 21:59:21"
+            "time": "2016-12-14T21:59:21+00:00"
         },
         {
             "name": "psr/log",
@@ -101,7 +100,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-10-10 12:19:37"
+            "time": "2016-10-10T12:19:37+00:00"
         }
     ],
     "packages-dev": [
@@ -144,7 +143,7 @@
                 "runkit",
                 "testing"
             ],
-            "time": "2015-10-09 18:20:06"
+            "time": "2015-10-09T18:20:06+00:00"
         },
         {
             "name": "brain/monkey",
@@ -205,7 +204,7 @@
                 "test",
                 "testing"
             ],
-            "time": "2016-11-17 18:47:07"
+            "time": "2016-11-17T18:47:07+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
@@ -250,7 +249,7 @@
             "keywords": [
                 "test"
             ],
-            "time": "2015-05-11 14:41:42"
+            "time": "2015-05-11T14:41:42+00:00"
         },
         {
             "name": "inpsyde/monkery-test-case",
@@ -258,12 +257,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/inpsyde/monkery-test-case.git",
-                "reference": "7b7d1a2023d1b7de7ce17be7e44b2650ac1ebfa3"
+                "reference": "6bf101e0072a312174468b4239100a7961082fc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/inpsyde/monkery-test-case/zipball/7b7d1a2023d1b7de7ce17be7e44b2650ac1ebfa3",
-                "reference": "7b7d1a2023d1b7de7ce17be7e44b2650ac1ebfa3",
+                "url": "https://api.github.com/repos/inpsyde/monkery-test-case/zipball/6bf101e0072a312174468b4239100a7961082fc3",
+                "reference": "6bf101e0072a312174468b4239100a7961082fc3",
                 "shasum": ""
             },
             "require": {
@@ -288,24 +287,24 @@
                 {
                     "name": "Inpsyde GmbH",
                     "homepage": "http://inpsyde.com",
-                    "role": "Company"
+                    "role": "company"
                 }
             ],
             "description": "Composition package of brain/monkey and mockery/mockery with a custom test case class for PHPUnit",
-            "time": "2016-12-08 09:32:17"
+            "time": "2017-02-17T14:13:28+00:00"
         },
         {
             "name": "mockery/mockery",
-            "version": "0.9.6",
+            "version": "0.9.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/padraic/mockery.git",
-                "reference": "65d4ca18e15cb02eeb1e5336f884e46b9b905be0"
+                "reference": "6fdb61243844dc924071d3404bb23994ea0b6856"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/padraic/mockery/zipball/65d4ca18e15cb02eeb1e5336f884e46b9b905be0",
-                "reference": "65d4ca18e15cb02eeb1e5336f884e46b9b905be0",
+                "url": "https://api.github.com/repos/padraic/mockery/zipball/6fdb61243844dc924071d3404bb23994ea0b6856",
+                "reference": "6fdb61243844dc924071d3404bb23994ea0b6856",
                 "shasum": ""
             },
             "require": {
@@ -357,7 +356,7 @@
                 "test double",
                 "testing"
             ],
-            "time": "2016-09-30 12:09:40"
+            "time": "2017-02-28T12:52:32+00:00"
         }
     ],
     "aliases": [],

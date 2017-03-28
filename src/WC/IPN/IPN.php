@@ -64,7 +64,7 @@ class IPN {
 	 */
 	public function register() {
 
-		add_action( 'woocommerce_api_' . $this->get_api_endpoint(), [ $this, 'check_response' ] );
+		return add_action( 'woocommerce_api_' . $this->get_api_endpoint(), [ $this, 'check_response' ] );
 
 	}
 
