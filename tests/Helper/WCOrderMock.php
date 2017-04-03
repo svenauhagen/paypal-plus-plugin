@@ -59,7 +59,7 @@ class WCOrderMock {
 				//         ->once()
 				//         ->andReturn( 'no' );
 
-				$order->shouldReceive( 'get_total_shipping' )
+				$order->shouldReceive( 'get_shipping_total' )
 				      ->andReturn( $shipping );
 
 				$productMock = \Mockery::mock( 'WC_Product' );
@@ -108,13 +108,13 @@ class WCOrderMock {
 				$order->shouldReceive( 'get_total_tax' )
 				      ->andReturn( $tax );
 				break;
-			case 'get_total_shipping':
+			case 'get_shipping_total':
 
 				//Functions::expect( 'get_option' )
 				//         ->once()
 				//         ->andReturn( ( $pricesIncludeTax ) ? 'yes' : 'no' );
 				//
-				$order->shouldReceive( 'get_total_shipping' )
+				$order->shouldReceive( 'get_shipping_total' )
 				      ->andReturn( $shipping );
 				//if ( $pricesIncludeTax ) {
 				//	$order->shouldReceive( 'get_shipping_tax' )

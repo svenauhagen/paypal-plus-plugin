@@ -8,8 +8,6 @@
 
 namespace PayPalPlusPlugin\WC\Payment;
 
-use PayPal\Api\ItemList;
-
 /**
  * Class CartData
  *
@@ -45,8 +43,6 @@ class CartData extends OrderDataCommon {
 		$tax = $this->cart->get_taxes_total( true, false );
 
 		return $tax;
-
-		return floatval( $this->format( $tax ) );
 	}
 
 	/**
@@ -56,17 +52,8 @@ class CartData extends OrderDataCommon {
 	 */
 	public function get_total_shipping() {
 
-		//if ( get_option( 'woocommerce_prices_include_tax' ) === 'yes' ) {
-		//	$shipping = $this->cart->shipping_total + $this->cart->shipping_tax_total;
-		//} else {
-		$shipping = $this->cart->shipping_total;
-
-		//}
-
-		return $shipping;
+		return $this->cart->shipping_total;
 	}
-
-
 
 	/**
 	 * Returns an array of item data providers.

@@ -105,7 +105,7 @@ class RefundData {
 	public function get_refund() {
 
 		$amt = new Amount();
-		$amt->setCurrency( $this->order->get_order_currency() );
+		$amt->setCurrency( $this->order->get_currency() );
 		$amt->setTotal( $this->number_format( $this->amount ) );
 		$refund = new RefundRequest();
 		$refund->setAmount( $amt );

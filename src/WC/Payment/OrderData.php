@@ -100,7 +100,7 @@ class OrderData extends OrderDataCommon {
 		//if ( get_option( 'woocommerce_prices_include_tax' ) === 'yes' ) {
 		//	$shipping = $this->order->get_total_shipping() + $this->order->get_shipping_tax();
 		//} else {
-		$shipping = $this->order->get_total_shipping();
+		$shipping = $this->order->get_shipping_total();
 
 		//}
 

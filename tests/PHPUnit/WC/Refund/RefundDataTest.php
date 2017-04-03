@@ -85,7 +85,7 @@ class RefundDataTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_get_refund( \WC_Order $order, $amount, $reason, ApiContext $context ) {
 
-		$order->shouldReceive( 'get_order_currency' );
+		$order->shouldReceive( 'get_currency' );
 		Functions::expect( 'get_woocommerce_currency' );
 
 		$testee = new RefundData( $order, $amount, $reason, $context );

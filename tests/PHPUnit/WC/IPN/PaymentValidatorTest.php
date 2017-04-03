@@ -28,7 +28,7 @@ class PaymentValidatorTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_is_valid_payment( \WC_Order $order, $wc_amount, $pp_amount, $transaction_type, $accepted_types, $wc_currency, $pp_currency ) {
 
-		$order->shouldReceive( 'get_order_currency' )
+		$order->shouldReceive( 'get_currency' )
 		      ->once()
 		      ->andReturn( $wc_currency );
 

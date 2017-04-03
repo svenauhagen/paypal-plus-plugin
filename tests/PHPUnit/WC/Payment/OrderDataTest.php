@@ -235,7 +235,7 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 	) {
 
 		$order  = Test\WCOrderMock::getMock(
-			'get_total_shipping',
+			'get_shipping_total',
 			$rawItems,
 			$cart_total,
 			$cart_subtotal,

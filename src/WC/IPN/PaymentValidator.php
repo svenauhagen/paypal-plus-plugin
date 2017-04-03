@@ -129,7 +129,7 @@ class PaymentValidator {
 	 */
 	private function validate_currency( $currency ) {
 
-		$wc_currency = $this->order->get_order_currency();
+		$wc_currency = $this->order->get_currency();
 		if ( $wc_currency !== $currency ) {
 			$this->last_error = sprintf(
 				__(
