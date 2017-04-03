@@ -1,39 +1,53 @@
 <?php
+
 namespace PayPalPlusPlugin\WC\PUI;
 
 /**
- * Created by PhpStorm.
- * User: biont
- * Date: 16.01.17
- * Time: 13:44
+ * Class PaymentInstructionData
+ *
+ * @package PayPalPlusPlugin\WC\PUI
  */
 class PaymentInstructionData {
 
 	/**
+	 * Bank name.
+	 *
 	 * @var string
 	 */
 	private $bank_name;
 	/**
+	 * Bank account holer name.
+	 *
 	 * @var string
 	 */
 	private $account_holder_name;
 	/**
+	 * IBAN.
+	 *
 	 * @var string
 	 */
 	private $iban;
 	/**
+	 * Due date.
+	 *
 	 * @var string
 	 */
 	private $payment_due_date;
 	/**
+	 * Reference number.
+	 *
 	 * @var string
 	 */
 	private $reference_number;
 	/**
+	 * BIC.
+	 *
 	 * @var string
 	 */
 	private $bic;
 	/**
+	 * WooCommerce Order object.
+	 *
 	 * @var \WC_Order
 	 */
 	private $order;
@@ -41,33 +55,48 @@ class PaymentInstructionData {
 	/**
 	 * PaymentInstructionData constructor.
 	 *
-	 * @param \WC_Order $order
+	 * @param \WC_Order $order The WooCommcerce Order object.
 	 */
 	public function __construct( \WC_Order $order ) {
 
-		$this->order               = $order;
-		$this->bank_name           = get_post_meta( $order->id, 'bank_name', true );
-		$this->account_holder_name = get_post_meta( $order->id, 'account_holder_name', true );
-		$this->iban                = get_post_meta( $order->id, 'international_bank_account_number',
-			true );
-		$this->payment_due_date    = get_post_meta( $order->id, 'payment_due_date', true );
-		$this->reference_number    = get_post_meta( $order->id, 'reference_number', true );
-		$this->bic                 = get_post_meta( $order->id, 'bank_identifier_code', true );
+		$this->order = $order;
+
+		$order_id = $this->get_order_id();
+
+		$this->bank_name           = get_post_meta( $order_id, 'bank_name', true );
+		$this->account_holder_name = get_post_meta( $order_id, 'account_holder_name', true );
+		$this->iban                = get_post_meta( $order_id, 'international_bank_account_number', true );
+		$this->payment_due_date    = get_post_meta( $order_id, 'payment_due_date', true );
+		$this->reference_number    = get_post_meta( $order_id, 'reference_number', true );
+		$this->bic                 = get_post_meta( $order_id, 'bank_identifier_code', true );
 
 	}
 
+	/**
+	 * Returns the order id.
+	 *
+	 * @return int
+	 */
+	public function get_order_id() {
+
+		return $this->order->get_id();
+	}
+
+	/**
+	 * Checks if there are Payment Instructions present.
+	 * Used to determine PUI Payments.
+	 *
+	 * @return bool
+	 */
 	public function has_payment_instructions() {
 
 		return ! empty( $this->iban ) && ! empty( $this->bic );
 	}
 
-	public function get_order_id() {
-
-		return $this->order->id;
-	}
-
 	/**
-	 * @return mixed
+	 * Returns the bank name.
+	 *
+	 * @return string
 	 */
 	public function get_bank_name() {
 
@@ -75,7 +104,9 @@ class PaymentInstructionData {
 	}
 
 	/**
-	 * @return mixed
+	 * Get bank account holder name.
+	 *
+	 * @return string
 	 */
 	public function get_account_holder_name() {
 
@@ -83,7 +114,9 @@ class PaymentInstructionData {
 	}
 
 	/**
-	 * @return mixed
+	 * Returns the IBAN.
+	 *
+	 * @return string
 	 */
 	public function get_iban() {
 
@@ -91,7 +124,9 @@ class PaymentInstructionData {
 	}
 
 	/**
-	 * @return mixed
+	 * Returns the due date of the payment.
+	 *
+	 * @return string
 	 */
 	public function get_payment_due_date() {
 
@@ -99,7 +134,9 @@ class PaymentInstructionData {
 	}
 
 	/**
-	 * @return mixed
+	 * Returns the BIC.
+	 *
+	 * @return string
 	 */
 	public function get_bic() {
 
@@ -107,7 +144,9 @@ class PaymentInstructionData {
 	}
 
 	/**
-	 * @return mixed
+	 * Returns the reference number.
+	 *
+	 * @return string
 	 */
 	public function get_reference_number() {
 
