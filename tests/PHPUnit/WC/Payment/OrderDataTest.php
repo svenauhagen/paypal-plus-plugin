@@ -8,6 +8,7 @@
 
 namespace PayPalPlusPlugin\WC\Payment;
 
+use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
 use PayPalPlusPlugin\Test;
 
@@ -37,6 +38,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		$pricesIncludeTax
 	) {
 
+		Functions::expect( 'WC' )
+		         ->andReturn( (object) [ 'version' => '3.0.0' ] );
 		$order = Test\WCOrderMock::getMock( 'get_total', $rawItems,
 			$cart_total,
 			$cart_subtotal,
@@ -77,6 +80,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		$pricesIncludeTax
 	) {
 
+		Functions::expect( 'WC' )
+		         ->andReturn( (object) [ 'version' => '3.0.0' ] );
 		$order = Test\WCOrderMock::getMock(
 			'get_subtotal',
 			$rawItems,
@@ -123,6 +128,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		$pricesIncludeTax
 	) {
 
+		Functions::expect( 'WC' )
+		         ->andReturn( (object) [ 'version' => '3.0.0' ] );
 		$order = Test\WCOrderMock::getMock(
 			'get_items',
 			$rawItems,
@@ -259,14 +266,14 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 			// Cart Items
 			[
 				[
-					'line_subtotal' => 50,
-					'qty'           => 1,
-					'product_id'    => 2,
+					'subtotal'   => 50,
+					'quantity'   => 1,
+					'product_id' => 2,
 				],
 				[
-					'line_subtotal' => 50,
-					'qty'           => 1,
-					'product_id'    => 2,
+					'subtotal'   => 50,
+					'quantity'   => 1,
+					'product_id' => 2,
 				],
 			],
 			// Cart total
@@ -317,9 +324,9 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 			// Cart Items
 			[
 				[
-					'line_subtotal' => 70.0,
-					'qty'           => 2,
-					'product_id'    => 2,
+					'subtotal'   => 70.0,
+					'quantity'   => 2,
+					'product_id' => 2,
 				],
 			],
 			// Cart total

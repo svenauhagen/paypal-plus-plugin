@@ -27,16 +27,12 @@ class OrderItemData implements OrderItemDataProvider {
 	/**
 	 * OrderItemData constructor.
 	 *
-	 * @param array $data Item data.
-	 *
-	 * @throws \Exception
+	 * @param \WC_Order_Item $data Item data.
 	 */
-	public function __construct( array $data ) {
+	public function __construct( \WC_Order_Item $data ) {
 
-		if ( ! isset( $data['product_id'] ) ) {
-			throw new \Exception( 'Missing Data' );
-		}
-		$this->data = $data;
+		$this->data                  = $data->get_data();
+
 	}
 
 	/**
@@ -46,7 +42,7 @@ class OrderItemData implements OrderItemDataProvider {
 	 */
 	public function get_price() {
 
-		return $this->format( $this->data['line_subtotal'] / $this->get_quantity() );
+		return $this->format( $this->data['subtotal'] / $this->get_quantity() );
 	}
 
 	/**
@@ -56,7 +52,7 @@ class OrderItemData implements OrderItemDataProvider {
 	 */
 	public function get_quantity() {
 
-		return intval( $this->data['qty'] );
+		return intval( $this->data['quantity'] );
 	}
 
 	/**

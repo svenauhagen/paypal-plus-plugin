@@ -10,6 +10,7 @@ namespace PayPalPlusPlugin\WC\Payment;
 
 use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
+use PayPalPlusPlugin\Test\WCOrderItemMock;
 
 class OrderItemDataTest extends BrainMonkeyWpTestCase {
 
@@ -21,9 +22,10 @@ class OrderItemDataTest extends BrainMonkeyWpTestCase {
 	public function test_get_price( array $data ) {
 
 		Functions::expect( 'get_woocommerce_currency' );
-		$testee   = new OrderItemData( $data );
-		$expected = floatval( number_format( $data['line_subtotal'] / $testee->get_quantity(), 2, '.', '' ) );
-		$result   = $testee->get_price();
+		$orderItem = WCOrderItemMock::getMock( $data );
+		$testee    = new OrderItemData( $orderItem );
+		$expected  = floatval( number_format( $data['subtotal'] / $testee->get_quantity(), 2, '.', '' ) );
+		$result    = $testee->get_price();
 		$this->assertSame( $expected, $result );
 
 	}
@@ -35,9 +37,10 @@ class OrderItemDataTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_get_quantity( array $data ) {
 
-		$testee = new OrderItemData( $data );
-		$result = $testee->get_quantity();
-		$this->assertSame( $data['qty'], $result );
+		$orderItem = WCOrderItemMock::getMock( $data );
+		$testee    = new OrderItemData( $orderItem );
+		$result    = $testee->get_quantity();
+		$this->assertSame( $data['quantity'], $result );
 
 	}
 
@@ -53,12 +56,12 @@ class OrderItemDataTest extends BrainMonkeyWpTestCase {
 		$product->shouldReceive( 'get_title' )
 		        ->once()
 		        ->andReturn( $name );
-
+		$orderItem = WCOrderItemMock::getMock( $data );
 		Functions::expect( 'wc_get_product' )
 		         ->once()
 		         ->andReturn( $product );
 
-		$testee = new OrderItemData( $data );
+		$testee = new OrderItemData( $orderItem );
 		$result = $testee->get_name();
 		$this->assertSame( $result, $name );
 
@@ -80,9 +83,9 @@ class OrderItemDataTest extends BrainMonkeyWpTestCase {
 		Functions::expect( 'wc_get_product' )
 		         ->once()
 		         ->andReturn( $product );
-
-		$testee = new OrderItemData( $data );
-		$result = $testee->get_sku();
+		$orderItem = WCOrderItemMock::getMock( $data );
+		$testee    = new OrderItemData( $orderItem );
+		$result    = $testee->get_sku();
 		$this->assertSame( $result, $sku );
 
 	}
@@ -95,17 +98,17 @@ class OrderItemDataTest extends BrainMonkeyWpTestCase {
 		$data           = [];
 		$data['test_1'] = [
 			[
-				'product_id'    => 42,
-				'line_subtotal' => 12,
-				'qty'           => 2,
+				'product_id' => 42,
+				'subtotal'   => 12,
+				'quantity'   => 2,
 			],
 		];
 
 		$data['test_2'] = [
 			[
-				'product_id'    => '42',
-				'line_subtotal' => PHP_INT_MAX,
-				'qty'           => 7438657,
+				'product_id' => '42',
+				'subtotal'   => PHP_INT_MAX,
+				'quantity'   => 7438657,
 			],
 		];
 

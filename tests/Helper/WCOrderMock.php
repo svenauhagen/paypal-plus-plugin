@@ -40,7 +40,7 @@ class WCOrderMock {
 		switch ( $context ) {
 			case'get_total':
 				$order->shouldReceive( 'get_items' )
-				      ->andReturn( $rawItems );
+				      ->andReturn( self::get_items( $rawItems ) );
 
 				$order->shouldReceive( 'get_total_discount' )
 				      ->once()
@@ -72,11 +72,11 @@ class WCOrderMock {
 				break;
 			case'get_subtotal':
 				$order->shouldReceive( 'get_items' )
-				      ->andReturn( $rawItems );
+				      ->andReturn( self::get_items( $rawItems ) );
 				$order->shouldReceive( 'get_total_discount' )
 				      ->andReturn( $discount );
 				//if ( $discount > 0 ) {
-					Functions::expect( 'get_woocommerce_currency' );
+				Functions::expect( 'get_woocommerce_currency' );
 				//}
 				$order->shouldReceive( 'get_fees' )
 				      ->andReturn( $fees );
@@ -90,7 +90,7 @@ class WCOrderMock {
 				break;
 			case'get_items':
 				$order->shouldReceive( 'get_items' )
-				      ->andReturn( $rawItems );
+				      ->andReturn( self::get_items( $rawItems ) );
 				$order->shouldReceive( 'get_fees' )
 				      ->andReturn( $fees );
 				$order->shouldReceive( 'get_total_discount' )
@@ -125,5 +125,20 @@ class WCOrderMock {
 		}
 
 		return $order;
+	}
+
+	/**
+	 * @param array $itemData
+	 *
+	 * @return \WC_Order_Item[]
+	 */
+	private static function get_items( array $itemData ) {
+
+		$items = [];
+		foreach ( $itemData as $item ) {
+			$items[] = WCOrderItemMock::getMock( $item );
+		}
+
+		return $items;
 	}
 }

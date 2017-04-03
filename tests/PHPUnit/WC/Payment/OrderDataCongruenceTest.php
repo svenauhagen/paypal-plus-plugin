@@ -8,6 +8,7 @@
 
 namespace PayPalPlusPlugin\WC\Payment;
 
+use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
 use PayPalPlusPlugin\Test;
 
@@ -42,6 +43,9 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 		$fees,
 		$pricesIncludeTax
 	) {
+
+		Functions::expect( 'WC' )
+		         ->andReturn( (object) [ 'version' => '3.0.0' ] );
 
 		$cart = Test\WCCartMock::getMock(
 			'get_total',
@@ -122,6 +126,9 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 		$pricesIncludeTax
 	) {
 
+		Functions::expect( 'WC' )
+		         ->andReturn( (object) [ 'version' => '3.0.0' ] );
+
 		/**
 		 * Setup CartData Mocks
 		 */
@@ -185,6 +192,9 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 		$fees,
 		$pricesIncludeTax
 	) {
+
+		Functions::expect( 'WC' )
+		         ->andReturn( (object) [ 'version' => '3.0.0' ] );
 
 		$cart  = Test\WCCartMock::getMock(
 			'get_items',
@@ -269,12 +279,14 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 			[
 				[
 					'product_id'    => 50,
+					'subtotal'      => 50,
 					'line_subtotal' => 50,
 					'quantity'      => 1, // Must be same as qty
 					'qty'           => 1, // Must be same as quantity
 				],
 				[
 					'product_id'    => 50,
+					'subtotal'      => 50,
 					'line_subtotal' => 50,
 					'quantity'      => 1, // Must be same as qty
 					'qty'           => 1, // Must be same as quantity

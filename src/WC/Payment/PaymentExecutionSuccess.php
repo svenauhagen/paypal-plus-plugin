@@ -89,7 +89,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 			WC()->cart->empty_cart();
 		} else {
 			$order->update_status( 'on-hold', __( 'Awaiting payment', 'woocommerce' ) );
-			$order->reduce_order_stock();
+			wc_reduce_stock_levels( $order->get_id() );
 		}
 
 		if ( $this->data->is_pui() ) {
@@ -132,16 +132,18 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 		$instruction_data['recipient_banking_instruction']['international_bank_account_number'] = $iban;
 		$instruction_data['recipient_banking_instruction']['bank_identifier_code']              = $bank_identifier_code;
 
-		update_post_meta( $order->id, 'reference_number', $reference_number );
-		update_post_meta( $order->id, 'instruction_type', 'PAY_UPON_INVOICE' );
-		update_post_meta( $order->id, 'payment_due_date', $payment_due_date );
-		update_post_meta( $order->id, 'bank_name', $bank_name );
-		update_post_meta( $order->id, 'account_holder_name', $account_holder_name );
-		update_post_meta( $order->id, 'international_bank_account_number', $iban );
-		update_post_meta( $order->id, 'bank_identifier_code', $bank_identifier_code );
-		update_post_meta( $order->id, 'payment_due_date', $payment_due_date );
-		update_post_meta( $order->id, '_payment_instruction_result', $instruction_data );
-		update_post_meta( $order->id, '_transaction_id', $sale_id );
+		$order_id = $order->get_id();
+
+		update_post_meta( $order_id, 'reference_number', $reference_number );
+		update_post_meta( $order_id, 'instruction_type', 'PAY_UPON_INVOICE' );
+		update_post_meta( $order_id, 'payment_due_date', $payment_due_date );
+		update_post_meta( $order_id, 'bank_name', $bank_name );
+		update_post_meta( $order_id, 'account_holder_name', $account_holder_name );
+		update_post_meta( $order_id, 'international_bank_account_number', $iban );
+		update_post_meta( $order_id, 'bank_identifier_code', $bank_identifier_code );
+		update_post_meta( $order_id, 'payment_due_date', $payment_due_date );
+		update_post_meta( $order_id, '_payment_instruction_result', $instruction_data );
+		update_post_meta( $order_id, '_transaction_id', $sale_id );
 
 	}
 

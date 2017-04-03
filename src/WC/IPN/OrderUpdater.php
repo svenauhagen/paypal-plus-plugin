@@ -106,7 +106,7 @@ class OrderUpdater {
 			$this->payment_complete( $transaction_id, $note );
 
 			if ( ! empty( $fee = $this->data->get( 'mc_fee' ) ) ) {
-				update_post_meta( $this->order->id, 'PayPal Transaction Fee', wc_clean( $fee ) );
+				update_post_meta( $this->order->get_id(), 'PayPal Transaction Fee', wc_clean( $fee ) );
 			}
 			do_action( 'paypal_plus_plugin_log', 'Payment completed successfully ', [] );
 
@@ -139,7 +139,7 @@ class OrderUpdater {
 			as $key => $name
 		) {
 			if ( ! empty( $value = $this->data->get( $key ) ) ) {
-				update_post_meta( $this->order->id, $name, wc_clean( $value ) );
+				update_post_meta( $this->order->get_id(), $name, wc_clean( $value ) );
 			}
 		}
 
@@ -165,7 +165,7 @@ class OrderUpdater {
 	private function payment_on_hold( $reason = '' ) {
 
 		$this->order->update_status( 'on-hold', $reason );
-		$this->order->reduce_order_stock();
+		wc_reduce_stock_levels( $this->order->get_id() );
 		WC()->cart->empty_cart();
 	}
 

@@ -21,10 +21,12 @@ class PatchProviderTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_get_invoice_patch( \WC_Order $order ) {
 
-		$order->id     = 42;
+		$order_id = rand( 0, 42 );
+		$order->shouldReceive( 'get_id' )
+		      ->andReturn( $order_id );
 		$invoicePrefix = 'Testvalue';
 
-		$expected = $invoicePrefix . $order->id;
+		$expected = $invoicePrefix . $order_id;
 		$testee   = new PatchProvider( $order );
 		$result   = $testee->get_invoice_patch( $invoicePrefix );
 		$this->assertInstanceOf( Patch::class, $result );
@@ -39,11 +41,12 @@ class PatchProviderTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_get_custom_patch( \WC_Order $order ) {
 
-		$order_id         = rand( 0, 999 );
-		$order_key        = uniqid();
-		$order->id        = $order_id;
-		$order->order_key = $order_key;
-
+		$order_id  = rand( 0, 999 );
+		$order_key = uniqid();
+		$order->shouldReceive( 'get_id' )
+		      ->andReturn( $order_id );
+		$order->shouldReceive( 'get_order_key' )
+		      ->andReturn( $order_key );
 		Functions::expect( 'wp_json_encode' )
 		         ->once()
 		         ->andReturnUsing( function ( $data ) {
@@ -71,7 +74,7 @@ class PatchProviderTest extends BrainMonkeyWpTestCase {
 
 		$currency      = 'Rai';
 		$total         = 200;
-		$subtotal     = 100;
+		$subtotal      = 100;
 		$totalShipping = 50;
 		$totalTax      = 50;
 

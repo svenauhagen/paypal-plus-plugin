@@ -45,7 +45,7 @@ class PatchProvider {
 	 */
 	public function get_invoice_patch( $invoice_prefix ) {
 
-		$invoice_number = preg_replace( '/[^a-zA-Z0-9]/', '', $this->order->id );
+		$invoice_number = preg_replace( '/[^a-zA-Z0-9]/', '', $this->order->get_id() );
 
 		$invoice_patch = new Patch();
 		$invoice_patch->setOp( 'add' )
@@ -67,8 +67,8 @@ class PatchProvider {
 		$custom_patch->setOp( 'add' )
 		             ->setPath( '/transactions/0/custom' )
 		             ->setValue( wp_json_encode( [
-			             'order_id'  => $this->order->id,
-			             'order_key' => $this->order->order_key,
+			             'order_id'  => $this->order->get_id(),
+			             'order_key' => $this->order->get_order_key(),
 		             ] ) );
 
 		return $custom_patch;
