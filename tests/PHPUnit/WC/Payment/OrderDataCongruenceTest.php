@@ -6,11 +6,11 @@
  * Time: 14:34
  */
 
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
 use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
-use PayPalPlusPlugin\Test;
+use WCPayPalPlus\Test;
 
 /**
  * Class OrderDataCongruenceTest
@@ -18,7 +18,7 @@ use PayPalPlusPlugin\Test;
  * This does not test a specific class, but tests if the behaviour of CartData ond OrderData
  * is the exact same when given the same data
  *
- * @package PayPalPlusPlugin\WC\Payment
+ * @package WCPayPalPlus\WC\Payment
  */
 class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 

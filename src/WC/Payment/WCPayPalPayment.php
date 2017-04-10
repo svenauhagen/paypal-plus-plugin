@@ -6,7 +6,7 @@
  * Time: 17:07
  */
 
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
 use PayPal\Api\Amount;
 use PayPal\Api\Details;
@@ -20,7 +20,7 @@ use PayPal\Exception\PayPalConnectionException;
 /**
  * Class WCPayPalPayment
  *
- * @package PayPalPlusPlugin\WC\Payment
+ * @package WCPayPalPlus\WC\Payment
  */
 class WCPayPalPayment {
 

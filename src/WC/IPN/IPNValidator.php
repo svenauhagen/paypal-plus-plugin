@@ -6,12 +6,12 @@
  * Time: 17:32
  */
 
-namespace PayPalPlusPlugin\WC\IPN;
+namespace WCPayPalPlus\WC\IPN;
 
 /**
  * Class IPNValidator
  *
- * @package PayPalPlusPlugin\WC\IPN
+ * @package WCPayPalPlus\WC\IPN
  */
 class IPNValidator {
 

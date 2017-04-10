@@ -1,11 +1,11 @@
 <?php
 
-namespace PayPalPlusPlugin\WC\PUI;
+namespace WCPayPalPlus\WC\PUI;
 
 /**
  * Class PaymentInstructionData
  *
- * @package PayPalPlusPlugin\WC\PUI
+ * @package WCPayPalPlus\WC\PUI
  */
 class PaymentInstructionData {
 

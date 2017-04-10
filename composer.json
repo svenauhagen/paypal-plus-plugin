@@ -1,5 +1,5 @@
 {
-  "name": "inpsyde/paypal-plus-plugin",
+  "name": "inpsyde/paypalplus-woocommerce",
   "description": "Official WordPress plugin for PayPal Plus",
   "minimum-stability": "dev",
   "prefer-stable": true,
@@ -28,12 +28,12 @@
   },
   "autoload": {
     "psr-4": {
-      "PayPalPlusPlugin\\": "src/"
+      "WCPayPalPlus\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "PayPalPlusPlugin\\Test\\": "tests/Helper"
+      "WCPayPalPlus\\Test\\": "tests/Helper"
     }
   },
   "config":{

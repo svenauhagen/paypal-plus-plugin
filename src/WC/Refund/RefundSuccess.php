@@ -6,14 +6,14 @@
  * Time: 10:54
  */
 
-namespace PayPalPlusPlugin\WC\Refund;
+namespace WCPayPalPlus\WC\Refund;
 
-use PayPalPlusPlugin\WC\RequestSuccessHandler;
+use WCPayPalPlus\WC\RequestSuccessHandler;
 
 /**
  * Class RefundSuccess
  *
- * @package PayPalPlusPlugin\WC\Refund
+ * @package WCPayPalPlus\WC\Refund
  */
 class RefundSuccess implements RequestSuccessHandler {
 

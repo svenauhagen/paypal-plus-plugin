@@ -6,12 +6,12 @@
  * Time: 10:24
  */
 
-namespace PayPalPlusPlugin\WC\IPN;
+namespace WCPayPalPlus\WC\IPN;
 
 /**
  * Class PaymentValidator
  *
- * @package PayPalPlusPlugin\WC\IPN
+ * @package WCPayPalPlus\WC\IPN
  */
 class PaymentValidator {
 
@@ -109,7 +109,7 @@ class PaymentValidator {
 			$this->last_error = sprintf(
 				__(
 					'Validation error: Invalid transaction type "%s".',
-					'woo-paypal-plus'
+					'paypalplus-woocommerce'
 				),
 				$transaction_type
 			);
@@ -134,7 +134,7 @@ class PaymentValidator {
 			$this->last_error = sprintf(
 				__(
 					'Validation error: PayPal currencies do not match (PayPal: %1$1s, WooCommerce: %2$2s).',
-					'woo-paypal-plus'
+					'paypalplus-woocommerce'
 				),
 				$currency,
 				$wc_currency
@@ -161,7 +161,7 @@ class PaymentValidator {
 			$this->last_error = sprintf(
 				__(
 					'Validation error: PayPal payment amounts do not match (gross %1$1s, should be %2$2s).',
-					'woo-paypal-plus'
+					'paypalplus-woocommerce'
 				),
 				$amount,
 				$wc_total

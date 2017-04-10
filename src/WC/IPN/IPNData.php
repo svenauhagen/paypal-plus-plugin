@@ -6,12 +6,12 @@
  * Time: 16:43
  */
 
-namespace PayPalPlusPlugin\WC\IPN;
+namespace WCPayPalPlus\WC\IPN;
 
 /**
  * Class IPNData
  *
- * @package PayPalPlusPlugin\WC\IPN
+ * @package WCPayPalPlus\WC\IPN
  */
 class IPNData {
 

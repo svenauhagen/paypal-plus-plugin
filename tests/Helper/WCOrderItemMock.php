@@ -6,7 +6,7 @@
  * Time: 12:13
  */
 
-namespace PayPalPlusPlugin\Test;
+namespace WCPayPalPlus\Test;
 
 class WCOrderItemMock {
 

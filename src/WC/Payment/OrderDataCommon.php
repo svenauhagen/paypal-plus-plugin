@@ -1,5 +1,5 @@
 <?php
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
 use PayPal\Api\Item;
 use PayPal\Api\ItemList;
@@ -7,7 +7,7 @@ use PayPal\Api\ItemList;
 /**
  * Class OrderDataCommon
  *
- * @package PayPalPlusPlugin\WC\Payment
+ * @package WCPayPalPlus\WC\Payment
  */
 abstract class OrderDataCommon implements OrderDataProvider {
 

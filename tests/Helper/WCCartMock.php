@@ -1,5 +1,5 @@
 <?php
-namespace PayPalPlusPlugin\Test;
+namespace WCPayPalPlus\Test;
 
 use Brain\Monkey\Functions;
 

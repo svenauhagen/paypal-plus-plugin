@@ -1,4 +1,4 @@
-# Inpsyde PayPal Plus Plugin
+# Inpsyde PayPal Plus for WooCommerce
 
 Official WordPress plugin for PayPal Plus
 
@@ -15,7 +15,7 @@ Official WordPress plugin for PayPal Plus
 The best way to use this package is through Composer:
 
 ```BASH
-$ composer require inpsyde/paypal-plus-plugin
+$ composer require inpsyde/paypalplus-woocommerce
 ```
 
 ## Usage

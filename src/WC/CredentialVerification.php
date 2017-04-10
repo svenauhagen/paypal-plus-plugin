@@ -6,7 +6,7 @@
  * Time: 12:13
  */
 
-namespace PayPalPlusPlugin\WC;
+namespace WCPayPalPlus\WC;
 
 use PayPal\Api\Payment;
 use PayPal\Exception\PayPalConnectionException;
@@ -16,7 +16,7 @@ use PayPal\Rest\ApiContext;
 /**
  * Class CredentialVerification
  *
- * @package PayPalPlusPlugin\WC
+ * @package WCPayPalPlus\WC
  */
 class CredentialVerification {
 

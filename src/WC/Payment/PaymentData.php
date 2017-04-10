@@ -6,14 +6,14 @@
  * Time: 16:42
  */
 
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
 use PayPal\Rest\ApiContext;
 
 /**
  * Class PaymentData
  *
- * @package PayPalPlusPlugin\WC\Payment
+ * @package WCPayPalPlus\WC\Payment
  */
 class PaymentData {
 

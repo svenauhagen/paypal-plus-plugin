@@ -6,7 +6,7 @@
  * Time: 15:52
  */
 
-namespace PayPalPlusPlugin\WC\IPN;
+namespace WCPayPalPlus\WC\IPN;
 
 use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
@@ -14,7 +14,7 @@ use MonkeryTestCase\BrainMonkeyWpTestCase;
 /**
  * Class IPNValidatorTest
  *
- * @package PayPalPlusPlugin\WC\IPN
+ * @package WCPayPalPlus\WC\IPN
  */
 class IPNValidatorTest extends BrainMonkeyWpTestCase {
 

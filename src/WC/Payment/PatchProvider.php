@@ -6,14 +6,14 @@
  * Time: 10:50
  */
 
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
 use PayPal\Api\Patch;
 
 /**
  * Class PatchProvider
  *
- * @package PayPalPlusPlugin\WC\Payment
+ * @package WCPayPalPlus\WC\Payment
  */
 class PatchProvider {
 

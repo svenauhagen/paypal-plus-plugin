@@ -6,14 +6,14 @@
  * Time: 14:43
  */
 
-namespace PayPalPlusPlugin;
+namespace WCPayPalPlus;
 
-use PayPalPlusPlugin\WC\PayPalPlusGateway;
+use WCPayPalPlus\WC\PayPalPlusGateway;
 
 /**
  * Class Frontend
  *
- * @package PayPalPlusPlugin
+ * @package WCPayPalPlus
  */
 class Frontend implements Controller {
 

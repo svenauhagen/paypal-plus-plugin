@@ -6,12 +6,12 @@
  * Time: 15:22
  */
 
-namespace PayPalPlusPlugin\WC\PUI;
+namespace WCPayPalPlus\WC\PUI;
 
 /**
  * Class PaymentInstructionRenderer
  *
- * @package PayPalPlusPlugin\WC\PUI
+ * @package WCPayPalPlus\WC\PUI
  */
 class PaymentInstructionRenderer {
 

@@ -6,7 +6,7 @@
  * Time: 12:18
  */
 
-namespace PayPalPlusPlugin\WC;
+namespace WCPayPalPlus\WC;
 
 use MonkeryTestCase\BrainMonkeyWpTestCase;
 use PayPal\Auth\OAuthTokenCredential;

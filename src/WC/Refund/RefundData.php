@@ -6,7 +6,7 @@
  * Time: 10:23
  */
 
-namespace PayPalPlusPlugin\WC\Refund;
+namespace WCPayPalPlus\WC\Refund;
 
 use PayPal\Api\Amount;
 use PayPal\Api\RefundRequest;
@@ -19,7 +19,7 @@ use PayPal\Rest\ApiContext;
  * Bridge between WooCommcerce and PayPal objects.
  * Provides WooCommcerce with the objects needed to perform a refund
  *
- * @package PayPalPlusPlugin\WC
+ * @package WCPayPalPlus\WC
  */
 class RefundData {
 

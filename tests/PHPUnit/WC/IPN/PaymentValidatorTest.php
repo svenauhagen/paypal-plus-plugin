@@ -6,7 +6,7 @@
  * Time: 16:24
  */
 
-namespace PayPalPlusPlugin\WC\IPN;
+namespace WCPayPalPlus\WC\IPN;
 
 use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;

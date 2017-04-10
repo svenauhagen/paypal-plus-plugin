@@ -6,12 +6,12 @@
  * Time: 10:01
  */
 
-namespace PayPalPlusPlugin\WC\IPN;
+namespace WCPayPalPlus\WC\IPN;
 
 /**
  * Class OrderUpdater
  *
- * @package PayPalPlusPlugin\WC\IPN
+ * @package WCPayPalPlus\WC\IPN
  */
 class OrderUpdater {
 
@@ -101,7 +101,7 @@ class OrderUpdater {
 		if ( 'completed' === $this->data->get_payment_status() ) {
 
 			$transaction_id = wc_clean( $this->data->get( 'txn_id' ) );
-			$note           = __( 'IPN payment completed', 'woo-paypal-plus' );
+			$note           = __( 'IPN payment completed', 'paypalplus-woocommerce' );
 
 			$this->payment_complete( $transaction_id, $note );
 
@@ -113,7 +113,7 @@ class OrderUpdater {
 		} else {
 			$this->payment_on_hold(
 				sprintf(
-					__( 'Payment pending: %s', 'woo-paypal-plus' ),
+					__( 'Payment pending: %s', 'paypalplus-woocommerce' ),
 					$this->data->get( 'pending_reason' )
 				)
 			);
@@ -188,7 +188,7 @@ class OrderUpdater {
 
 		return $this->order->update_status( 'failed',
 			sprintf(
-				__( 'Payment %s via IPN.', 'woo-paypal-plus' ),
+				__( 'Payment %s via IPN.', 'paypalplus-woocommerce' ),
 				wc_clean( $this->data->get_payment_status() )
 			)
 		);
@@ -222,7 +222,7 @@ class OrderUpdater {
 		if ( $this->validator->is_valid_refund() ) {
 			$this->order->update_status(
 				'refunded',
-				sprintf( __( 'Payment %s via IPN.', 'woo-paypal-plus' ),
+				sprintf( __( 'Payment %s via IPN.', 'paypalplus-woocommerce' ),
 					$this->data->get_payment_status()
 				)
 			);
@@ -237,7 +237,7 @@ class OrderUpdater {
 
 		$this->order->update_status( 'on-hold',
 			sprintf(
-				__( 'Payment %s via IPN.', 'woo-paypal-plus' ),
+				__( 'Payment %s via IPN.', 'paypalplus-woocommerce' ),
 				wc_clean(
 					$this->data->get_payment_status()
 				)

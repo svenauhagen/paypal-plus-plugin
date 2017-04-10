@@ -1,28 +1,28 @@
 <?php
-namespace PayPalPlusPlugin\WC;
+namespace WCPayPalPlus\WC;
 
 use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Rest\ApiContext;
-use PayPalPlusPlugin\WC\IPN\IPN;
-use PayPalPlusPlugin\WC\IPN\IPNData;
-use PayPalPlusPlugin\WC\Payment\CartData;
-use PayPalPlusPlugin\WC\Payment\OrderData;
-use PayPalPlusPlugin\WC\Payment\OrderDataProvider;
-use PayPalPlusPlugin\WC\Payment\PaymentData;
-use PayPalPlusPlugin\WC\Payment\PaymentExecutionData;
-use PayPalPlusPlugin\WC\Payment\PaymentExecutionSuccess;
-use PayPalPlusPlugin\WC\Payment\PaymentPatchData;
-use PayPalPlusPlugin\WC\Payment\WCPaymentExecution;
-use PayPalPlusPlugin\WC\Payment\WCPaymentPatch;
-use PayPalPlusPlugin\WC\Payment\WCPayPalPayment;
-use PayPalPlusPlugin\WC\PUI\PaymentInstructionRenderer;
-use PayPalPlusPlugin\WC\Refund\RefundData;
-use PayPalPlusPlugin\WC\Refund\WCRefund;
+use WCPayPalPlus\WC\IPN\IPN;
+use WCPayPalPlus\WC\IPN\IPNData;
+use WCPayPalPlus\WC\Payment\CartData;
+use WCPayPalPlus\WC\Payment\OrderData;
+use WCPayPalPlus\WC\Payment\OrderDataProvider;
+use WCPayPalPlus\WC\Payment\PaymentData;
+use WCPayPalPlus\WC\Payment\PaymentExecutionData;
+use WCPayPalPlus\WC\Payment\PaymentExecutionSuccess;
+use WCPayPalPlus\WC\Payment\PaymentPatchData;
+use WCPayPalPlus\WC\Payment\WCPaymentExecution;
+use WCPayPalPlus\WC\Payment\WCPaymentPatch;
+use WCPayPalPlus\WC\Payment\WCPayPalPayment;
+use WCPayPalPlus\WC\PUI\PaymentInstructionRenderer;
+use WCPayPalPlus\WC\Refund\RefundData;
+use WCPayPalPlus\WC\Refund\WCRefund;
 
 /**
  * Class PayPalPlusGateway
  *
- * @package PayPalPlusPlugin\WC
+ * @package WCPayPalPlus\WC
  */
 class PayPalPlusGateway extends \WC_Payment_Gateway {
 
@@ -273,7 +273,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$this->add_error(
 
 				sprintf(
-					__( 'Your API credentials are either missing or invalid: %s', 'woo-paypal-plus' ),
+					__( 'Your API credentials are either missing or invalid: %s', 'paypalplus-woocommerce' ),
 					$verification->get_error_message()
 				)
 			);
@@ -378,7 +378,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$view->render();
 
 		} else {
-			wc_add_notice( __( 'Error processing checkout. Please try again. ', 'woo-paypal-plus' ), 'error' );
+			wc_add_notice( __( 'Error processing checkout. Please try again. ', 'paypalplus-woocommerce' ), 'error' );
 			wp_safe_redirect( wc_get_cart_url() );
 			exit;
 		}

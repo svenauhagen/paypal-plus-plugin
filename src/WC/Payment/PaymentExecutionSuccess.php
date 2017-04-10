@@ -6,14 +6,14 @@
  * Time: 09:37
  */
 
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
-use PayPalPlusPlugin\WC\RequestSuccessHandler;
+use WCPayPalPlus\WC\RequestSuccessHandler;
 
 /**
  * Class PaymentExecutionSuccess
  *
- * @package PayPalPlusPlugin\WC\Payment
+ * @package WCPayPalPlus\WC\Payment
  */
 class PaymentExecutionSuccess implements RequestSuccessHandler {
 
@@ -49,7 +49,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 
 		} else {
 			$notice = sprintf(
-				__( 'Error Payment state: %s', 'woo-paypal-plus' ),
+				__( 'Error Payment state: %s', 'paypalplus-woocommerce' ),
 				$this->data->get_payment_state()
 			);
 			wc_add_notice( $notice, 'error' );
@@ -71,7 +71,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 
 		if ( $sale->getState() === 'pending' ) {
 			$note = sprintf(
-				__( 'PayPal Reason code: %s.', 'woo-paypal-plus' ),
+				__( 'PayPal Reason code: %s.', 'paypalplus-woocommerce' ),
 				$sale->getReasonCode()
 			);
 			$order->add_order_note( $note );
@@ -79,10 +79,10 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 
 		} elseif ( $sale->getState() === 'completed' && ! $this->data->is_pui() ) {
 
-			$order->add_order_note( __( 'PayPal Plus payment completed', 'woo-paypal-plus' ) );
+			$order->add_order_note( __( 'PayPal Plus payment completed', 'paypalplus-woocommerce' ) );
 			$order->payment_complete( $sale_id );
 			$note = sprintf(
-				__( 'PayPal Plus payment approved! Transaction ID: %s', 'woo-paypal-plus' ),
+				__( 'PayPal Plus payment approved! Transaction ID: %s', 'paypalplus-woocommerce' ),
 				$sale_id
 			);
 			$order->add_order_note( $note );

@@ -6,12 +6,12 @@
  * Time: 15:53
  */
 
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
 /**
  * Class CartData
  *
- * @package PayPalPlusPlugin\WC\Payment
+ * @package WCPayPalPlus\WC\Payment
  */
 class CartData extends OrderDataCommon {
 

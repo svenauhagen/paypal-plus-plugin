@@ -1,8 +1,8 @@
 <?php
-namespace PayPalPlusPlugin;
+namespace WCPayPalPlus;
 
-use PayPalPlusPlugin\WC\IPN;
-use PayPalPlusPlugin\WC\PayPalPlusGateway;
+use WCPayPalPlus\WC\IPN;
+use WCPayPalPlus\WC\PayPalPlusGateway;
 
 /**
  * Created by PhpStorm.
@@ -40,7 +40,7 @@ class Plugin {
 
 		$this->gateway = new PayPalPlusGateway(
 			$this->gateway_id,
-			__( 'PayPal Plus', 'paypal-plus-plugin' )
+			__( 'PayPal Plus', 'paypalplus-woocommerce' )
 		);
 		$this->gateway->register();
 

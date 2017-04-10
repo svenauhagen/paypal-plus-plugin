@@ -6,7 +6,7 @@
  * Time: 13:49
  */
 
-namespace PayPalPlusPlugin\WC\Refund;
+namespace WCPayPalPlus\WC\Refund;
 
 use PayPal\Exception\PayPalConnectionException;
 use PayPal\Rest\ApiContext;
@@ -14,7 +14,7 @@ use PayPal\Rest\ApiContext;
 /**
  * Class WCRefund
  *
- * @package PayPalPlusPlugin\WC\Refund
+ * @package WCPayPalPlus\WC\Refund
  */
 class WCRefund {
 

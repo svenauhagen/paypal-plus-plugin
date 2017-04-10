@@ -6,14 +6,14 @@
  * Time: 14:42
  */
 
-namespace PayPalPlusPlugin;
+namespace WCPayPalPlus;
 
-use PayPalPlusPlugin\WC\PayPalPlusGateway;
+use WCPayPalPlus\WC\PayPalPlusGateway;
 
 /**
  * Class Backend
  *
- * @package PayPalPlusPlugin
+ * @package WCPayPalPlus
  */
 class Backend implements Controller {
 
@@ -53,7 +53,7 @@ class Backend implements Controller {
 			$min          = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '';
 			$admin_script = "{$asset_url}/assets/js/admin{$min}.js";
 
-			wp_enqueue_script( 'paypal-plus-admin', $admin_script, [ 'jquery' ] );
+			wp_enqueue_script( 'paypalplus-woocommerce-admin', $admin_script, [ 'jquery' ] );
 		} );
 	}
 

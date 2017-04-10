@@ -6,7 +6,7 @@
  * Time: 13:31
  */
 
-namespace PayPalPlusPlugin\Test;
+namespace WCPayPalPlus\Test;
 
 use Brain\Monkey\Functions;
 

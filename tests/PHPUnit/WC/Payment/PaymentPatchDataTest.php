@@ -6,7 +6,7 @@
  * Time: 09:55
  */
 
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
 use MonkeryTestCase\BrainMonkeyWpTestCase;
 use PayPal\Api\PatchRequest;

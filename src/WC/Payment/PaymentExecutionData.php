@@ -6,7 +6,7 @@
  * Time: 18:25
  */
 
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
 use PayPal\Api\Payment;
 use PayPal\Api\PaymentExecution;
@@ -15,7 +15,7 @@ use PayPal\Rest\ApiContext;
 /**
  * Class PaymentExecutionData
  *
- * @package PayPalPlusPlugin\WC\Payment
+ * @package WCPayPalPlus\WC\Payment
  */
 class PaymentExecutionData {
 

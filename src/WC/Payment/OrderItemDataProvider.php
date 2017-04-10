@@ -6,7 +6,7 @@
  * Time: 14:06
  */
 
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
 interface OrderItemDataProvider {
 

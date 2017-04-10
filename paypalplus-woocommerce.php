@@ -1,16 +1,16 @@
 <?php
 /**
- * Plugin Name: PayPal Plus Plugin
+ * Plugin Name: PayPal Plus for WooCommerce
  * Description: Official WordPress plugin for PayPal Plus
- * Author:      Inpsyde GmbH
+ * Author:      Inpsyde GmbH, Moritz Meißelbach
  * Author URI:  http://inpsyde.com/
- * Version:     dev-master
+ * Version:     1.0
  * License:     MIT
- * Text Domain: paypal-plus-plugin
+ * Text Domain: paypalplus-woocommerce
  * Domain Path: /languages/
  */
 
-namespace PayPalPlusPlugin;
+namespace WCPayPalPlus;
 
 add_action( 'plugins_loaded', function () {
 
@@ -28,7 +28,7 @@ add_action( 'plugins_loaded', function () {
 			add_action( 'admin_notices', function () {
 
 				$class   = 'notice notice-error';
-				$message = __( 'Could not find a working autoloader for PayPal Plus.', 'paypal-plus-plugin' );
+				$message = __( 'Could not find a working autoloader for PayPal Plus.', 'paypalplus-woocommerce' );
 
 				printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 			} );
@@ -45,7 +45,7 @@ add_action( 'plugins_loaded', function () {
 		add_action( 'admin_notices', function () {
 
 			$class   = 'notice notice-error';
-			$message = __( 'PayPay Plus requires WooCommerce to be active.', 'paypal-plus-plugin' );
+			$message = __( 'PayPay Plus requires WooCommerce to be active.', 'paypalplus-woocommerce' );
 
 			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 		} );

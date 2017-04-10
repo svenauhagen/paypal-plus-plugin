@@ -6,14 +6,14 @@
  * Time: 16:21
  */
 
-namespace PayPalPlusPlugin\WC\IPN;
+namespace WCPayPalPlus\WC\IPN;
 
 use MonkeryTestCase\BrainMonkeyWpTestCase;
 
 /**
  * Class OrderUpdaterTest
  *
- * @package PayPalPlusPlugin\WC\IPN
+ * @package WCPayPalPlus\WC\IPN
  */
 class OrderUpdaterTest extends BrainMonkeyWpTestCase {
 

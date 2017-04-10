@@ -1,5 +1,5 @@
 {
-  "name": "paypal-plus-plugin",
+  "name": "paypalplus-woocommerce",
   "version": "0.0.1",
 
   "description": "Official WordPress plugin for PayPal Plus",
@@ -11,7 +11,7 @@
   ],
   "author": "Inpsyde GmbH",
   "license": "GPL-3.0",
-  "homepage": "https://bitbucket.org/inpsyde/paypal-plus-plugin#readme",
+  "homepage": "https://bitbucket.org/inpsyde/paypalplus-woocommerce#readme",
   "main": "Gruntfile.js",
   "directories": {
     "test": "tests"

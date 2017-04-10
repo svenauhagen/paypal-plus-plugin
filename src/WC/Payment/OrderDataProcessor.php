@@ -6,7 +6,7 @@
  * Time: 17:07
  */
 
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
 trait OrderDataProcessor {
 

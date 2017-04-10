@@ -6,12 +6,12 @@
  * Time: 17:36
  */
 
-namespace PayPalPlusPlugin\WC;
+namespace WCPayPalPlus\WC;
 
 /**
  * Class ReceiptPageView
  *
- * @package PayPalPlusPlugin\WC
+ * @package WCPayPalPlus\WC
  */
 class ReceiptPageView {
 
@@ -23,7 +23,7 @@ class ReceiptPageView {
 
 		$message = __(
 			'Thank you for your order. We are now redirecting you to PayPal to make payment.',
-			'woo-paypal-plus'
+			'paypalplus-woocommerce'
 		);
 		?>
 		<!--suppress JSUnresolvedFunction, JSUnresolvedVariable -->

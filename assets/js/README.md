@@ -1,5 +1,5 @@
-# PayPal Plus Plugin Scripts
+# PayPal Plus for WooCommerce Scripts
 
-These stylesheets are part of PayPal Plus Plugin and licensed under the MIT license.
+These stylesheets are part of PayPal Plus for WooCommerce and licensed under the MIT license.
 
 (c) 2016 Inpsyde GmbH

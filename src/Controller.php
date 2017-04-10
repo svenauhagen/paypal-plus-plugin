@@ -6,12 +6,12 @@
  * Time: 15:30
  */
 
-namespace PayPalPlusPlugin;
+namespace WCPayPalPlus;
 
 /**
  * Interface Controller
  *
- * @package PayPalPlusPlugin
+ * @package WCPayPalPlus
  */
 interface Controller {
 

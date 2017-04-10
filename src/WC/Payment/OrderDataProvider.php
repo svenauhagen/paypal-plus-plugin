@@ -6,7 +6,7 @@
  * Time: 15:52
  */
 
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
 use PayPal\Api\Item;
 use PayPal\Api\ItemList;
@@ -14,7 +14,7 @@ use PayPal\Api\ItemList;
 /**
  * Interface OrderDataProvider
  *
- * @package PayPalPlusPlugin\WC\Payment
+ * @package WCPayPalPlus\WC\Payment
  */
 interface OrderDataProvider {
 

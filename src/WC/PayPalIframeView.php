@@ -6,12 +6,12 @@
  * Time: 14:27
  */
 
-namespace PayPalPlusPlugin\WC;
+namespace WCPayPalPlus\WC;
 
 /**
  * Class PayPalIframeView
  *
- * @package PayPalPlusPlugin\WC
+ * @package WCPayPalPlus\WC
  */
 class PayPalIframeView {
 

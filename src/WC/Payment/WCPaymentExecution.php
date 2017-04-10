@@ -6,15 +6,15 @@
  * Time: 12:55
  */
 
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
 use PayPal\Exception\PayPalConnectionException;
-use PayPalPlusPlugin\WC\RequestSuccessHandler;
+use WCPayPalPlus\WC\RequestSuccessHandler;
 
 /**
  * Class WCPaymentExecution
  *
- * @package PayPalPlusPlugin\WC\Payment
+ * @package WCPayPalPlus\WC\Payment
  */
 class WCPaymentExecution {
 

@@ -6,7 +6,7 @@
  * Time: 10:55
  */
 
-namespace PayPalPlusPlugin\WC;
+namespace WCPayPalPlus\WC;
 
 interface RequestSuccessHandler {
 	/**

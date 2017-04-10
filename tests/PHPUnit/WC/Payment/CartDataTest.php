@@ -6,11 +6,11 @@
  * Time: 16:13
  */
 
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
 use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
-use PayPalPlusPlugin\Test\WCCartMock;
+use WCPayPalPlus\Test\WCCartMock;
 
 class CartDataTest extends BrainMonkeyWpTestCase {
 

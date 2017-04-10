@@ -6,7 +6,7 @@
  * Time: 14:09
  */
 
-namespace PayPalPlusPlugin\WC;
+namespace WCPayPalPlus\WC;
 
 use PayPal\Api\InputFields;
 use PayPal\Api\Presentation;
@@ -17,7 +17,7 @@ use PayPal\Rest\ApiContext;
 /**
  * Class WCWebExperienceProfile
  *
- * @package PayPalPlusPlugin\WC
+ * @package WCPayPalPlus\WC
  */
 class WCWebExperienceProfile {
 

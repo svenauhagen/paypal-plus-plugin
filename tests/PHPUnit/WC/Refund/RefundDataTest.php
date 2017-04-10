@@ -6,13 +6,13 @@
  * Time: 14:37
  */
 
-namespace PayPalPlusPlugin\WC\Refund;
+namespace WCPayPalPlus\WC\Refund;
 
 use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
 use PayPal\Api\RefundRequest;
 use PayPal\Rest\ApiContext;
-use PayPalPlusPlugin\WC\RequestSuccessHandler;
+use WCPayPalPlus\WC\RequestSuccessHandler;
 
 class RefundDataTest extends BrainMonkeyWpTestCase {
 

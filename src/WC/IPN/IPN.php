@@ -6,7 +6,7 @@
  * Time: 10:46
  */
 
-namespace PayPalPlusPlugin\WC\IPN;
+namespace WCPayPalPlus\WC\IPN;
 
 /**
  * Handles responses from PayPal IPN.

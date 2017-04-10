@@ -6,7 +6,7 @@
  * Time: 11:10
  */
 
-namespace PayPalPlusPlugin\WC\Payment;
+namespace WCPayPalPlus\WC\Payment;
 
 use Mockery\Mock;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
