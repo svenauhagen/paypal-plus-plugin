@@ -103,7 +103,7 @@ class WCWebExperienceProfile {
 				$new_id   = $response->getId();
 			}
 		} catch ( PayPalConnectionException $ex ) {
-			do_action( 'paypal_plus_plugin_log_exception', 'web_profile_exception', $ex );
+			do_action( 'wc_paypal_plus__log_exception', 'web_profile_exception', $ex );
 		}
 
 		return $new_id;
@@ -122,7 +122,7 @@ class WCWebExperienceProfile {
 		try {
 			$web_profile = WebProfile::get( $profile_id, $this->api_context );
 		} catch ( PayPalConnectionException $ex ) {
-			do_action( 'paypal_plus_plugin_log_exception', 'web_profile_exception', $ex );
+			do_action( 'wc_paypal_plus__log_exception', 'web_profile_exception', $ex );
 
 		}
 

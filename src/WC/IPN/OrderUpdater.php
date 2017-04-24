@@ -77,7 +77,7 @@ class OrderUpdater {
 
 		if ( $this->order->has_status( 'completed' ) ) {
 			do_action(
-				'paypal_plus_plugin_log_error', 'IPN Error. Payment already completed: ',
+				'wc_paypal_plus__log_error', 'IPN Error. Payment already completed: ',
 				[]
 			);
 
@@ -88,7 +88,7 @@ class OrderUpdater {
 			$last_error = $this->validator->get_last_error();
 			$this->order->update_status( 'on-hold', $last_error );
 			do_action(
-				'paypal_plus_plugin_log_error',
+				'wc_paypal_plus__log_error',
 				'IPN Error. Payment validation failed: ' . $last_error,
 				[]
 			);
@@ -108,7 +108,7 @@ class OrderUpdater {
 			if ( ! empty( $fee = $this->data->get( 'mc_fee' ) ) ) {
 				update_post_meta( $this->order->get_id(), 'PayPal Transaction Fee', wc_clean( $fee ) );
 			}
-			do_action( 'paypal_plus_plugin_log', 'Payment completed successfully ', [] );
+			do_action( 'wc_paypal_plus__log', 'Payment completed successfully ', [] );
 
 		} else {
 			$this->payment_on_hold(
@@ -117,7 +117,7 @@ class OrderUpdater {
 					$this->data->get( 'pending_reason' )
 				)
 			);
-			do_action( 'paypal_plus_plugin_log', 'Payment put on hold ', [] );
+			do_action( 'wc_paypal_plus__log', 'Payment put on hold ', [] );
 
 		}
 
@@ -226,7 +226,7 @@ class OrderUpdater {
 					$this->data->get_payment_status()
 				)
 			);
-			do_action( 'paypal_plus_plugin_ipn_payment_update', 'refunded', $this->data );
+			do_action( 'wc_paypal_plus__ipn_payment_update', 'refunded', $this->data );
 		}
 	}
 
@@ -244,7 +244,7 @@ class OrderUpdater {
 			)
 		);
 
-		do_action( 'paypal_plus_plugin_ipn_payment_update', 'reversed', $this->data );
+		do_action( 'wc_paypal_plus__ipn_payment_update', 'reversed', $this->data );
 
 	}
 
@@ -253,7 +253,7 @@ class OrderUpdater {
 	 */
 	public function payment_status_canceled_reversal() {
 
-		do_action( 'paypal_plus_plugin_ipn_payment_update', 'canceled_reversal', $this->data );
+		do_action( 'wc_paypal_plus__ipn_payment_update', 'canceled_reversal', $this->data );
 
 	}
 

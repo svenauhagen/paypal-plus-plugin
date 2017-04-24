@@ -18,7 +18,7 @@ add_action( 'plugins_loaded', function () {
 	 * Check if we're already autoloaded by some external autloader
 	 * If not, load our own
 	 */
-	if ( ! class_exists( 'PayPalPlusPlugin\\Plugin' ) ) {
+	if ( ! class_exists( 'WCPayPalPlus\\Plugin' ) ) {
 
 		if ( file_exists( $autoloader = __DIR__ . '/vendor/autoload.php' ) ) {
 			/** @noinspection PhpIncludeInspection */

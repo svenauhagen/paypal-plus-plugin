@@ -65,7 +65,7 @@ class WCPaymentExecutionTest extends BrainMonkeyWpTestCase {
 		$success->shouldReceive( 'register' );
 		$success->shouldNotReceive( 'execute' );
 
-		Actions::expectFired( 'paypal_plus_plugin_log_exception' )
+		Actions::expectFired( 'wc_paypal_plus__log_exception' )
 		       ->once()
 		       ->with( 'payment_execution_exception', $exception );
 

@@ -59,7 +59,7 @@ class IPNTest extends BrainMonkeyWpTestCase {
 			        ->andReturn( true );
 			$ipnData->shouldReceive( 'get_all' )
 			        ->once();
-			Actions::expectFired( 'paypal_plus_plugin_log' )
+			Actions::expectFired( 'wc_paypal_plus__log' )
 			       ->once();
 		}
 
