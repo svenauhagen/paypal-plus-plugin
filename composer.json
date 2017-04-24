@@ -1,6 +1,6 @@
 {
   "name": "inpsyde/paypalplus-woocommerce",
-  "description": "Official WordPress plugin for PayPal Plus",
+  "description": "PayPal Plus - the official WordPress Plugin for WooCommerce",
   "minimum-stability": "dev",
   "prefer-stable": true,
   "license": "MIT",

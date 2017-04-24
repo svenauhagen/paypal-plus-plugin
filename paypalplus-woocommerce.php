@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: PayPal Plus for WooCommerce
- * Description: Official WordPress plugin for PayPal Plus
- * Author:      Inpsyde GmbH, Moritz Meißelbach
+ * Description: PayPal Plus - the official WordPress Plugin for WooCommerce
+ * Author:      Inpsyde GmbH
  * Author URI:  http://inpsyde.com/
  * Version:     1.0
  * License:     MIT
