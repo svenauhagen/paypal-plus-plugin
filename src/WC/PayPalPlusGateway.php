@@ -1,4 +1,5 @@
 <?php
+
 namespace WCPayPalPlus\WC;
 
 use PayPal\Auth\OAuthTokenCredential;
@@ -124,6 +125,27 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		add_action( 'woocommerce_cart_item_removed', [ $this, 'clear_session_data' ] );
 		add_action( 'woocommerce_after_cart_item_quantity_update', [ $this, 'clear_session_data' ] );
 
+		add_action( 'woocommerce_email_customer_details', [ $this, 'add_legal_note' ], 30, 3 );
+
+	}
+
+	/**
+	 * Adds the legal note defined in the settings to the eMail sent to the customer.
+	 *
+	 * @param \WC_Order $order         The order object.
+	 * @param bool      $sent_to_admin Is the eMail sent to admin?.
+	 * @param bool      $plain_text    Render plain text?.
+	 */
+	public function add_legal_note( $order, $sent_to_admin, $plain_text = false ) {
+
+		$instruction_type = get_post_meta( $order->get_id(), 'instruction_type', true );
+		if ( ! empty( $instruction_type ) && 'PAY_UPON_INVOICE' === $instruction_type ) {
+			if ( ! $sent_to_admin && 'paypal_plus' === $order->get_payment_method() ) {
+				if ( $legal_note = $this->get_option( 'legal_note', '' ) ) {
+					echo esc_html( wpautop( wptexturize( $legal_note ) ) );
+				}
+			}
+		}
 	}
 
 	/**

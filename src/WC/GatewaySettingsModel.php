@@ -191,7 +191,7 @@ class GatewaySettingsModel {
 					'paypalplus-woocommerce'
 				),
 				'default'     => __(
-					'Händler hat die Forderung gegen Sie im Rahmen eines laufenden Factoringvertrages an die PayPal (Europe) S.àr.l. et Cie, S.C.A. abgetreten. Zahlungen mit schuldbefreiender Wirkung können nur an die PayPal (Europe) S.àr.l. et Cie, S.C.A. geleistet werden.',
+					'Dealer has ceeded the claim against you within the framework of an ongoing factoring contract to the PayPal (Europe) S.àr.l. et Cie, S.C.A.. Payments with a debt-free effect can only be paid to the PayPal (Europe) S.àr.l. et Cie, S.C.A.',
 					'paypalplus-woocommerce'
 				),
 				'desc_tip'    => false,
