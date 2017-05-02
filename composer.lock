@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3b37128a04b9c478056e8bb2b2e5b111",
+    "content-hash": "509b551ae050b7f1c0055a9fc49d7f29",
     "packages": [
         {
             "name": "paypal/rest-api-sdk-php",
@@ -291,19 +291,19 @@
                 }
             ],
             "description": "Composition package of brain/monkey and mockery/mockery with a custom test case class for PHPUnit",
-            "time": "2017-02-17T14:13:28+00:00"
+            "time": "2017-02-17 14:13:28"
         },
         {
             "name": "mockery/mockery",
             "version": "0.9.9",
             "source": {
                 "type": "git",
-                "url": "https://github.com/padraic/mockery.git",
+                "url": "https://github.com/mockery/mockery.git",
                 "reference": "6fdb61243844dc924071d3404bb23994ea0b6856"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/padraic/mockery/zipball/6fdb61243844dc924071d3404bb23994ea0b6856",
+                "url": "https://api.github.com/repos/mockery/mockery/zipball/6fdb61243844dc924071d3404bb23994ea0b6856",
                 "reference": "6fdb61243844dc924071d3404bb23994ea0b6856",
                 "shasum": ""
             },

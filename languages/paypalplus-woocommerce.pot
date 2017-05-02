@@ -329,5 +329,5 @@ msgid "Inpsyde GmbH, Moritz Meißelbach"
 msgstr ""
 
 #. Author URI of the plugin
-msgid "http://inpsyde.com/"
+msgid "https://inpsyde.com/"
 msgstr ""

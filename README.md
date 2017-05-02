@@ -42,7 +42,7 @@ To create a release, run `grunt compress`. The release will be a timestamped zip
 
 ## Crafted by Inpsyde
 
-The team at [Inpsyde](http://inpsyde.com) is engineering the Web since 2006.
+The team at [Inpsyde](https://inpsyde.com) is engineering the Web since 2006.
 
 ## License
 
