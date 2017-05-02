@@ -114,7 +114,8 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 	 */
 	private function update_payment_data( $sale_id ) {
 
-		$order               = $this->data->get_order();
+		$order = $this->data->get_order();
+
 		$payment_instruction = $this->data->get_payment_instruction();
 		$reference_number    = $payment_instruction->getReferenceNumber();
 		$payment_due_date    = $payment_instruction->getPaymentDueDate();
@@ -132,18 +133,23 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 		$instruction_data['recipient_banking_instruction']['international_bank_account_number'] = $iban;
 		$instruction_data['recipient_banking_instruction']['bank_identifier_code']              = $bank_identifier_code;
 
-		$order_id = $order->get_id();
+		$meta_data = [
+			'reference_number'                  => $reference_number,
+			'instruction_type'                  => 'PAY_UPON_INVOICE',
+			'payment_due_date'                  => $payment_due_date,
+			'bank_name'                         => $bank_name,
+			'account_holder_name'               => $account_holder_name,
+			'international_bank_account_number' => $iban,
+			'bank_identifier_code'              => $bank_identifier_code,
+			'_payment_instruction_result'       => $instruction_data,
+			'_transaction_id'                   => $sale_id,
+		];
 
-		update_post_meta( $order_id, 'reference_number', $reference_number );
-		update_post_meta( $order_id, 'instruction_type', 'PAY_UPON_INVOICE' );
-		update_post_meta( $order_id, 'payment_due_date', $payment_due_date );
-		update_post_meta( $order_id, 'bank_name', $bank_name );
-		update_post_meta( $order_id, 'account_holder_name', $account_holder_name );
-		update_post_meta( $order_id, 'international_bank_account_number', $iban );
-		update_post_meta( $order_id, 'bank_identifier_code', $bank_identifier_code );
-		update_post_meta( $order_id, 'payment_due_date', $payment_due_date );
-		update_post_meta( $order_id, '_payment_instruction_result', $instruction_data );
-		update_post_meta( $order_id, '_transaction_id', $sale_id );
+		foreach ( $meta_data as $key => $value ) {
+			$order->add_meta_data( $key, $value );
+
+		}
+		$order->save();
 
 	}
 

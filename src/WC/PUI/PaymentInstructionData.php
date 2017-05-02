@@ -61,14 +61,12 @@ class PaymentInstructionData {
 
 		$this->order = $order;
 
-		$order_id = $this->get_order_id();
-
-		$this->bank_name           = get_post_meta( $order_id, 'bank_name', true );
-		$this->account_holder_name = get_post_meta( $order_id, 'account_holder_name', true );
-		$this->iban                = get_post_meta( $order_id, 'international_bank_account_number', true );
-		$this->payment_due_date    = get_post_meta( $order_id, 'payment_due_date', true );
-		$this->reference_number    = get_post_meta( $order_id, 'reference_number', true );
-		$this->bic                 = get_post_meta( $order_id, 'bank_identifier_code', true );
+		$this->bank_name           = $order->get_meta( 'bank_name' );
+		$this->account_holder_name = $order->get_meta( 'account_holder_name' );
+		$this->iban                = $order->get_meta( 'international_bank_account_number' );
+		$this->payment_due_date    = $order->get_meta( 'payment_due_date' );
+		$this->reference_number    = $order->get_meta( 'reference_number' );
+		$this->bic                 = $order->get_meta( 'bank_identifier_code' );
 
 	}
 
