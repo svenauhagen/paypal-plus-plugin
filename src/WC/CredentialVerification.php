@@ -64,12 +64,12 @@ class CredentialVerification {
 			$params = [ 'count' => 1 ];
 			Payment::all( $params, $api_context );
 		} catch ( PayPalInvalidCredentialException $ex ) {
-			do_action( 'wc_paypal_plus__log_exception', 'credential_exception', $ex );
+			do_action( 'wc_paypal_plus_log_exception', 'credential_exception', $ex );
 			$this->error = $ex->getMessage();
 
 			return false;
 		} catch ( PayPalConnectionException $ex ) {
-			do_action( 'wc_paypal_plus__log_exception', 'credential_exception', $ex );
+			do_action( 'wc_paypal_plus_log_exception', 'credential_exception', $ex );
 			$this->error = $ex->getMessage();
 
 			return false;

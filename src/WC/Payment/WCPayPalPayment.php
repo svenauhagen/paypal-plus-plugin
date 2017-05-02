@@ -83,9 +83,7 @@ class WCPayPalPayment {
 		try {
 			$payment->create( $this->payment_data->get_api_context() );
 		} catch ( PayPalConnectionException $ex ) {
-			do_action( 'wc_paypal_plus__log_exception', 'create_payment_exception', $ex );
-			var_dump( $ex );
-
+			do_action( 'wc_paypal_plus_log_exception', 'create_payment_exception', $ex );
 			return null;
 		}
 

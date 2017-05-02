@@ -77,7 +77,7 @@ class OrderUpdater {
 
 		if ( $this->order->has_status( 'completed' ) ) {
 			do_action(
-				'wc_paypal_plus__log_error', 'IPN Error. Payment already completed: ',
+				'wc_paypal_plus_log_error', 'IPN Error. Payment already completed: ',
 				[]
 			);
 
@@ -88,7 +88,7 @@ class OrderUpdater {
 			$last_error = $this->validator->get_last_error();
 			$this->order->update_status( 'on-hold', $last_error );
 			do_action(
-				'wc_paypal_plus__log_error',
+				'wc_paypal_plus_log_error',
 				'IPN Error. Payment validation failed: ' . $last_error,
 				[]
 			);
