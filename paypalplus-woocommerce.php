@@ -45,7 +45,7 @@ add_action( 'plugins_loaded', function () {
 		add_action( 'admin_notices', function () {
 
 			$class   = 'notice notice-error';
-			$message = __( 'PayPay Plus requires WooCommerce to be active.', 'paypalplus-woocommerce' );
+			$message = __( 'PayPal Plus requires WooCommerce to be active.', 'paypalplus-woocommerce' );
 
 			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 		} );
