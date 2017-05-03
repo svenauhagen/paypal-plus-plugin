@@ -483,7 +483,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	private function get_payment_data() {
 
 		$return_url     = WC()->api_request_url( $this->id );
-		$cancel_url     = wc_get_checkout_url();
+		$cancel_url     = $this->get_cancel_url();
 		$notify_url     = $this->ipn->get_notify_url();
 		$web_profile_id = $this->get_option( $this->get_experience_profile_option_key() );
 		$api_context    = $this->get_api_context();
@@ -495,6 +495,32 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$web_profile_id,
 			$api_context
 		);
+	}
+
+	/**
+	 * Returns the cancel URL specified in the Gateway settings.
+	 *
+	 * @return string
+	 */
+	private function get_cancel_url() {
+
+		switch ( $this->get_option( 'cancel_url' ) ) {
+			case 'cart':
+				return wc_get_cart_url();
+				break;
+			case 'checkout':
+				return wc_get_checkout_url();
+				break;
+			case 'account':
+				return wc_get_account_endpoint_url( 'dashboard' );
+				break;
+			case 'shop':
+			default:
+				return get_permalink( wc_get_page_id( 'shop' ) );
+
+				break;
+		}
+
 	}
 
 	/**

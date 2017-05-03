@@ -182,7 +182,7 @@ class GatewaySettingsModel {
 					'paypalplus-woocommerce'
 				),
 				'type'        => 'select',
-				'options'     => $this->get_cancel_page_urls(),
+				'options'     => $this->get_cancel_page_options(),
 				'default'     => wc_get_page_id( 'checkout' ),
 			],
 			'legal_note'                    => [
@@ -221,15 +221,19 @@ class GatewaySettingsModel {
 	 *
 	 * @return array
 	 */
-	public function get_cancel_page_urls() {
+	protected function get_cancel_page_options() {
 
-		$args        = [];
-		$pages       = get_pages( $args );
-		$cancel_page = [];
-		foreach ( $pages as $p ) {
-			$cancel_page[ $p->ID ] = $p->post_title;
+		$keys        = [
+			'cart'     => __( 'Cart', 'paypalplus-woocommerce' ),
+			'checkout' => __( 'Checkout', 'paypalplus-woocommerce' ),
+			'account'  => __( 'Account', 'paypalplus-woocommerce' ),
+			'shop'     => __( 'Shop', 'paypalplus-woocommerce' ),
+		];
+		$options = [];
+		foreach ( $keys as $key => $title ) {
+			$options[ $key ] = $title;
 		}
 
-		return $cancel_page;
+		return $options;
 	}
 }
