@@ -49,7 +49,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 
 		} else {
 			$notice = sprintf(
-				__( 'Error Payment state: %s', 'paypalplus-woocommerce' ),
+				__( 'There was an error executing the payment. Payment state: %s', 'paypalplus-woocommerce' ),
 				$this->data->get_payment_state()
 			);
 			wc_add_notice( $notice, 'error' );
