@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/paypal-plus-"
 "plugin\n"
 "POT-Creation-Date: 2017-05-03 11:51+0200\n"
-"PO-Revision-Date: 2017-05-03 12:03+0200\n"
+"PO-Revision-Date: 2017-05-03 12:02+0200\n"
 "Last-Translator: admin <m.meisselbach@inpsyde.com>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -75,8 +75,8 @@ msgid ""
 "PayPal sandbox can be used to test payments. Sign up for a <a href=\"%s"
 "\">developer account</a>."
 msgstr ""
-"Die PayPal-Sandbox kann verwendet werden, um Zahlungen zu testen. Melde dich "
-"dazu für ein <a href=\"%s\">Entwickler-Konto</a> an."
+"Die PayPal-Sandbox kann verwendet werden, um Zahlungen zu testen. Melden Sie "
+"sich dazu für ein <a href=\"%s\">Entwickler-Konto</a> an."
 
 #: src/WC/GatewaySettingsModel.php:75
 msgid "Sandbox Client ID"
@@ -84,7 +84,7 @@ msgstr "Sandbox Client ID"
 
 #: src/WC/GatewaySettingsModel.php:77
 msgid "Enter your PayPal REST Sandbox API Client ID."
-msgstr "Gib hier deine PayPal REST Sandbox API Client ID ein."
+msgstr "Geben Sie hier Ihre PayPal REST Sandbox API Client ID ein."
 
 #: src/WC/GatewaySettingsModel.php:82
 msgid "Sandbox Secret ID"
@@ -92,7 +92,7 @@ msgstr "Sandbox Secret ID"
 
 #: src/WC/GatewaySettingsModel.php:84
 msgid "Enter your PayPal REST Sandbox API Secret ID."
-msgstr "Gib hier deine PayPal REST Sandbox API Secret ID ein."
+msgstr "Geben Sie hier Ihre PayPal REST Sandbox API Secret ID ein."
 
 #: src/WC/GatewaySettingsModel.php:89
 msgid "Sandbox Experience Profile ID"
@@ -103,8 +103,8 @@ msgid ""
 "This value will be automatically generated and populated here when you save "
 "your settings."
 msgstr ""
-"Dieser Wert wird automatisch generiert und hier eingetragen, wenn du die "
-"Einstellungen speicherst."
+"Dieser Wert wird automatisch generiert und hier eingetragen, wenn Sie die "
+"Einstellungen speichern."
 
 #: src/WC/GatewaySettingsModel.php:99
 msgid "Live Client ID"
@@ -112,7 +112,7 @@ msgstr "Live Client ID"
 
 #: src/WC/GatewaySettingsModel.php:101
 msgid "Enter your PayPal REST Live API Client ID."
-msgstr "Gib hier deine PayPal Rest Live API Client ID ein."
+msgstr "Geben Sie hier Ihre PayPal Rest Live API Client ID ein."
 
 #: src/WC/GatewaySettingsModel.php:106
 msgid "Live Secret ID"
@@ -120,7 +120,7 @@ msgstr "Live Secret ID"
 
 #: src/WC/GatewaySettingsModel.php:108
 msgid "Enter your PayPal REST Live API Secret ID."
-msgstr "Gib hier deine PayPal Rest Live API Secret ID ein."
+msgstr "Geben Sie hier Ihre PayPal Rest Live API Secret ID ein."
 
 #: src/WC/GatewaySettingsModel.php:113
 msgid "Experience Profile ID"
@@ -139,7 +139,7 @@ msgid ""
 "This will be displayed as your brand / company name on the PayPal checkout "
 "pages."
 msgstr ""
-"Dies erscheint als deine Marke / dein Firmenname auf den PayPal-Checkout-"
+"Dies erscheint als Ihre Marke / Ihr Firmenname auf den PayPal-Checkout-"
 "Seiten."
 
 #: src/WC/GatewaySettingsModel.php:140
@@ -148,7 +148,7 @@ msgstr "PayPal Checkout Logo (190x60px)"
 
 #: src/WC/GatewaySettingsModel.php:142
 msgid "Set the URL for a logo to be displayed on the PayPal checkout pages."
-msgstr "Gib die URL für ein Logo auf den PayPal-Checkout-Seiten an."
+msgstr "Geben Sie die URL für ein Logo auf den PayPal-Checkout-Seiten an."
 
 #: src/WC/GatewaySettingsModel.php:153
 msgid "Settings"
@@ -164,9 +164,9 @@ msgid ""
 "account for multiple stores ensure this prefix is unique as PayPal will not "
 "allow orders with the same invoice number."
 msgstr ""
-"Bitte gib ein Präfix für deine Rechnungsnummern ein. Falls du dein PayPal-"
-"Konto für mehrere Shops verwendest, stelle bitte sicher, dass das Präfix "
-"einzigartig ist, sonst wird PayPal keine Bestellungen mit identischer "
+"Bitte geben Sie ein Präfix für Ihre Rechnungsnummern ein. Falls Sie Ihr "
+"PayPal-Konto für mehrere Shops verwenden, stellen Sie bitte sicher, dass das "
+"Präfix einzigartig ist, sonst wird PayPal keine Bestellungen mit identischer "
 "Rechnungsnummer akzeptieren."
 
 #: src/WC/GatewaySettingsModel.php:179
@@ -198,7 +198,7 @@ msgid ""
 "with a debt-free effect can only be paid to the PayPal (Europe) S.àr.l. et "
 "Cie, S.C.A."
 msgstr ""
-"Händler hat die Forderung gegen dich im Rahmen eines laufenden "
+"Händler hat die Forderung gegen Sie im Rahmen eines laufenden "
 "Factoringvertrages an die PayPal (Europe) S.àr.l. et Cie, S.C.A. abgetreten. "
 "Zahlungen mit schuldbefreiender Wirkung können nur an die PayPal (Europe) S."
 "àr.l. et Cie, S.C.A. geleistet werden."
@@ -218,7 +218,7 @@ msgstr ""
 #: src/WC/GatewaySettingsModel.php:208 src/WC/PUI/PaymentInstructionView.php:31
 #: src/WC/PUI/PaymentInstructionView.php:71
 msgid "Please transfer the complete amount to the bank account provided below."
-msgstr "Bitte überweise den Gesamtbetrag auf das unten aufgeführte Konto."
+msgstr "Bitte überweisen Sie den Gesamtbetrag auf das unten aufgeführte Konto."
 
 #: src/WC/IPN/OrderUpdater.php:104
 msgid "IPN payment completed"
@@ -308,11 +308,11 @@ msgstr "Zahlungsreferenz"
 
 #: src/WC/PayPalPlusGateway.php:298
 msgid "Your API credentials are either missing or invalid: %s"
-msgstr "Deine API Zugangsdaten fehlen oder sind nicht korrekt: %s"
+msgstr "Ihre API Zugangsdaten fehlen oder sind nicht korrekt: %s"
 
 #: src/WC/PayPalPlusGateway.php:403
 msgid "Error processing checkout. Please try again. "
-msgstr "Fehler im Bestellvorgang. Versuche es bitte erneut."
+msgstr "Fehler im Bestellvorgang. Versuchen Sie es bitte erneut."
 
 #: src/WC/Payment/PaymentExecutionSuccess.php:52
 msgid "There was an error executing the payment. Payment state: %s"
@@ -341,7 +341,7 @@ msgid ""
 "Thank you for your order. We are now redirecting you to PayPal to make "
 "payment."
 msgstr ""
-"Vielen Dank für deine Bestellung. Wir leiten dich nun für die Bezahlung an "
+"Vielen Dank für Ihre Bestellung. Wir leiten Sie nun für die Bezahlung an "
 "PayPal weiter."
 
 #. Plugin Name of the plugin/theme
