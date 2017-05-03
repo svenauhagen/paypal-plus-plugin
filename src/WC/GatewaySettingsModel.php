@@ -64,9 +64,11 @@ class GatewaySettingsModel {
 				'type'        => 'checkbox',
 				'label'       => __( 'Enable PayPal Sandbox', 'paypalplus-woocommerce' ),
 				'default'     => 'yes',
-				'description' => __(
-					'The PayPal sandbox can be used to test payments. You will need to create a sandbox account to use as a seller in order to test this way.',
-					'paypalplus-woocommerce'
+				'description' => sprintf(
+					__( 'PayPal sandbox can be used to test payments. Sign up for a <a href="%s">developer account</a>.',
+						'paypalplus-woocommerce'
+					),
+					'https://developer.paypal.com/'
 				),
 			],
 			'rest_client_id_sandbox'        => [
