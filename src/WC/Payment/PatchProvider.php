@@ -134,7 +134,7 @@ class PatchProvider {
 	 */
 	public function should_patch_billing() {
 
-		return ! empty( $this->order->shipping_country );
+		return ! empty( $this->order->get_shipping_country() );
 
 	}
 }
