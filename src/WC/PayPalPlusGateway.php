@@ -191,9 +191,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 				new OAuthTokenCredential(
 					$creds['client_id'],
 					$creds['client_secret']
-				)
+				),
+				$this->getRequestID()
 			);
-			$this->auth->resetRequestId();
 			$this->auth->setConfig( [
 				'mode'                                       => ( $this->is_sandbox() ) ? 'SANDBOX' : 'LIVE',
 				'http.headers.PayPal-Partner-Attribution-Id' => 'WooCommerce_Cart_Plus',
@@ -204,7 +204,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 				'cache.FileName'                             => wc_get_log_file_path( 'paypal_plus_cache' ),
 			] );
 		} else {
-			$this->auth->resetRequestId();
+			$this->auth->setRequestId( $this->getRequestID() );
 		}
 
 		return $this->auth;
@@ -231,6 +231,17 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			'client_id'     => $this->get_option( $client_key ),
 			'client_secret' => $this->get_option( $secret_key ),
 		];
+
+	}
+
+	/**
+	 * Returns a unique request ID.
+	 *
+	 * @return string
+	 */
+	private function getRequestID() {
+
+		return home_url() . uniqid();
 
 	}
 
