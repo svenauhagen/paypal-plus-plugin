@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PayPal Plus for WooCommerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/paypal-plus-"
 "plugin\n"
-"POT-Creation-Date: 2017-05-03 11:51+0200\n"
-"PO-Revision-Date: 2017-05-03 12:02+0200\n"
+"POT-Creation-Date: 2017-05-04 16:53+0200\n"
+"PO-Revision-Date: 2017-05-04 16:53+0200\n"
 "Last-Translator: admin <m.meisselbach@inpsyde.com>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -14,14 +14,20 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Poedit 2.0.1\n"
 
-#: paypalplus-woocommerce.php:31
+#: paypalplus-woocommerce.php:32
 msgid "Could not find a working autoloader for PayPal Plus."
 msgstr ""
 "Es konnte kein funktionierender Autoloader für Paypal Plus gefunden werden."
 
-#: paypalplus-woocommerce.php:48
+#: paypalplus-woocommerce.php:49
 msgid "PayPal Plus requires WooCommerce to be active."
 msgstr "WooCommerce muss aktiviert sein, um PayPal Plus benutzen zu können."
+
+#: paypalplus-woocommerce.php:61
+msgid "PayPal Plus requires WooCommerce version 3.0 or higher ."
+msgstr ""
+"WooCommerce Version 3.0 oder höher muss aktiviert sein, um PayPal Plus "
+"benutzen zu können."
 
 #: src/Plugin.php:43 src/WC/GatewaySettingsModel.php:42
 #: src/WC/GatewaySettingsModel.php:51
@@ -183,13 +189,13 @@ msgstr ""
 
 #: src/WC/GatewaySettingsModel.php:189
 msgid "Legal Note for PAY UPON INVOICE Payment"
-msgstr "Rechtlicher Hinweis für die Bezahlung auf Rechnung"
+msgstr "Rechtliche Hinweise für die Bezahlung per Rechnung"
 
 #: src/WC/GatewaySettingsModel.php:191
 msgid "legal note that will be added to the thank you page and emails."
 msgstr ""
-"Rechtliche Hinweise, die auf der Seite \\\"Vielen Dank\\\" und in E-Mails  "
-"eingefügt werden."
+"Rechtliche Hinweise, die zur \"Danke\"-Seite und in E-Mails  eingefügt "
+"werden."
 
 #: src/WC/GatewaySettingsModel.php:195
 msgid ""
@@ -205,20 +211,36 @@ msgstr ""
 
 #: src/WC/GatewaySettingsModel.php:202
 msgid "Pay upon Invoice Instructions"
-msgstr "Anweisungen zum Zahlen per Rechnung"
+msgstr "Anweisungen für die Bezahlung per Rechnung"
 
 #: src/WC/GatewaySettingsModel.php:204
 msgid ""
 "Pay upon Invoice Instructions that will be added to the thank you page and "
 "emails."
 msgstr ""
-"Anweisungen zum Zahlen per Rechnung, die zur „Danke“-Seite und zu E-Mails "
-"hinzugefügt werden."
+"Anweisungen für die Bezahlung per Rechnung, die zur „Danke“-Seite und zu E-"
+"Mails hinzugefügt werden."
 
 #: src/WC/GatewaySettingsModel.php:208 src/WC/PUI/PaymentInstructionView.php:31
 #: src/WC/PUI/PaymentInstructionView.php:71
 msgid "Please transfer the complete amount to the bank account provided below."
 msgstr "Bitte überweisen Sie den Gesamtbetrag auf das unten aufgeführte Konto."
+
+#: src/WC/GatewaySettingsModel.php:227
+msgid "Cart"
+msgstr "Warenkorb"
+
+#: src/WC/GatewaySettingsModel.php:228
+msgid "Checkout"
+msgstr "Kasse"
+
+#: src/WC/GatewaySettingsModel.php:229
+msgid "Account"
+msgstr "Konto"
+
+#: src/WC/GatewaySettingsModel.php:230
+msgid "Shop"
+msgstr "Shop"
 
 #: src/WC/IPN/OrderUpdater.php:104
 msgid "IPN payment completed"
@@ -306,11 +328,11 @@ msgstr "Fälligkeitsdatum der Zahlung"
 msgid "Reference"
 msgstr "Zahlungsreferenz"
 
-#: src/WC/PayPalPlusGateway.php:298
+#: src/WC/PayPalPlusGateway.php:309
 msgid "Your API credentials are either missing or invalid: %s"
 msgstr "Ihre API Zugangsdaten fehlen oder sind nicht korrekt: %s"
 
-#: src/WC/PayPalPlusGateway.php:403
+#: src/WC/PayPalPlusGateway.php:414
 msgid "Error processing checkout. Please try again. "
 msgstr "Fehler im Bestellvorgang. Versuchen Sie es bitte erneut."
 

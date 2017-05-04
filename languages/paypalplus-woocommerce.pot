@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PayPal Plus for WooCommerce 1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/paypal-plus-plugin\n"
-"POT-Creation-Date: 2017-05-03 09:49:27+00:00\n"
+"POT-Creation-Date: 2017-05-04 14:50:25+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,12 +12,16 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: paypalplus-woocommerce.php:31
+#: paypalplus-woocommerce.php:32
 msgid "Could not find a working autoloader for PayPal Plus."
 msgstr ""
 
-#: paypalplus-woocommerce.php:48
+#: paypalplus-woocommerce.php:49
 msgid "PayPal Plus requires WooCommerce to be active."
+msgstr ""
+
+#: paypalplus-woocommerce.php:61
+msgid "PayPal Plus requires WooCommerce version 3.0 or higher ."
 msgstr ""
 
 #: src/Plugin.php:43 src/WC/GatewaySettingsModel.php:42
@@ -174,6 +178,22 @@ msgstr ""
 msgid "Please transfer the complete amount to the bank account provided below."
 msgstr ""
 
+#: src/WC/GatewaySettingsModel.php:227
+msgid "Cart"
+msgstr ""
+
+#: src/WC/GatewaySettingsModel.php:228
+msgid "Checkout"
+msgstr ""
+
+#: src/WC/GatewaySettingsModel.php:229
+msgid "Account"
+msgstr ""
+
+#: src/WC/GatewaySettingsModel.php:230
+msgid "Shop"
+msgstr ""
+
 #: src/WC/IPN/OrderUpdater.php:104
 msgid "IPN payment completed"
 msgstr ""
@@ -252,11 +272,11 @@ msgstr ""
 msgid "Reference"
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:298
+#: src/WC/PayPalPlusGateway.php:309
 msgid "Your API credentials are either missing or invalid: %s"
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:403
+#: src/WC/PayPalPlusGateway.php:414
 msgid "Error processing checkout. Please try again. "
 msgstr ""
 
