@@ -14,6 +14,7 @@ namespace WCPayPalPlus;
 
 add_action( 'plugins_loaded', function () {
 
+	load_plugin_textdomain( 'paypalplus-woocommerce', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
 	/**
 	 * Check if we're already autoloaded by some external autloader
 	 * If not, load our own
@@ -53,7 +54,7 @@ add_action( 'plugins_loaded', function () {
 		return;
 	}
 
-	if ( version_compare( WC()->version, '3.0.0','<=' ) ) {
+	if ( version_compare( WC()->version, '3.0.0', '<=' ) ) {
 		add_action( 'admin_notices', function () {
 
 			$class   = 'notice notice-error';
