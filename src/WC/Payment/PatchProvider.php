@@ -110,13 +110,13 @@ class PatchProvider {
 	public function get_billing_patch() {
 
 		$billing_data = [
-			'recipient_name' => $this->order->shipping_first_name . ' ' . $this->order->shipping_last_name,
-			'line1'          => $this->order->shipping_address_1,
-			'line2'          => $this->order->shipping_address_2,
-			'city'           => $this->order->shipping_city,
-			'state'          => $this->order->shipping_state,
-			'postal_code'    => $this->order->shipping_postcode,
-			'country_code'   => $this->order->shipping_country,
+			'recipient_name' => $this->order->get_shipping_first_name() . ' ' . $this->order->get_shipping_last_name(),
+			'line1'          => $this->order->get_shipping_address_1(),
+			'line2'          => $this->order->get_shipping_address_2(),
+			'city'           => $this->order->get_shipping_city(),
+			'state'          => $this->order->get_shipping_state(),
+			'postal_code'    => $this->order->get_shipping_postcode(),
+			'country_code'   => $this->order->get_shipping_country(),
 		];
 
 		$billing_patch = new Patch();
