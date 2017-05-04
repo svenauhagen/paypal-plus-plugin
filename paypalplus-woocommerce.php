@@ -53,6 +53,18 @@ add_action( 'plugins_loaded', function () {
 		return;
 	}
 
+	if ( version_compare( WC()->version, '3.0.0','<=' ) ) {
+		add_action( 'admin_notices', function () {
+
+			$class   = 'notice notice-error';
+			$message = __( 'PayPal Plus requires WooCommerce version 3.0 or higher .', 'paypalplus-woocommerce' );
+
+			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+		} );
+
+		return;
+	}
+
 	/**
 	 * Now we're good to go.
 	 */
