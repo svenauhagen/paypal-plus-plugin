@@ -193,7 +193,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 					$creds['client_secret']
 				)
 			);
-
+			$this->auth->resetRequestId();
 			$this->auth->setConfig( [
 				'mode'                                       => ( $this->is_sandbox() ) ? 'SANDBOX' : 'LIVE',
 				'http.headers.PayPal-Partner-Attribution-Id' => 'WooCommerce_Cart_Plus',
