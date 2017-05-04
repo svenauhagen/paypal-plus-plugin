@@ -172,7 +172,7 @@ class GatewaySettingsModel {
 					'Please enter a prefix for your invoice numbers. If you use your PayPal account for multiple stores ensure this prefix is unique as PayPal will not allow orders with the same invoice number.',
 					'paypalplus-woocommerce'
 				),
-				'default'     => 'WC-PP-PLUS-',
+				'default'     => $this->get_default_invoice_prefix(),
 				'desc_tip'    => true,
 			],
 			'cancel_url'                    => [
@@ -223,7 +223,7 @@ class GatewaySettingsModel {
 	 */
 	protected function get_cancel_page_options() {
 
-		$keys        = [
+		$keys    = [
 			'cart'     => __( 'Cart', 'paypalplus-woocommerce' ),
 			'checkout' => __( 'Checkout', 'paypalplus-woocommerce' ),
 			'account'  => __( 'Account', 'paypalplus-woocommerce' ),
@@ -235,5 +235,15 @@ class GatewaySettingsModel {
 		}
 
 		return $options;
+	}
+
+	/**
+	 * Returns a generic invoice prefix based on the site title.
+	 *
+	 * @return string
+	 */
+	protected function get_default_invoice_prefix() {
+
+		return 'WC-PPP-' . strtoupper( sanitize_title( get_bloginfo( 'name' ) ) ) . '-';
 	}
 }
