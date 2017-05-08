@@ -90,11 +90,12 @@ Dein PayPal Verkäufer-Konto muss von PayPal für den Kauf auf Rechnung freigesc
  
 == Screenshots ==
  
-1. This screenshot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
-(or jpg, jpeg, gif).
-2. This is the second screenshot
+1. PayPal Plus für WooCommerce - Plugin Einstellungen unter WooCommerce => Einstellungen => Kasse => PayPal Plus.
+2. Die vier PayPal Plus Zahlungsarten: PayPal, Lastschrift, Kreditkarte und Rechnung.
+3. Das PayPal Login-Formular bei Zahlungsweise Paypal.
+4. Das PayPal Plus Formular für Zahlung per Lastschrift.
+5. Das PayPal Plus Formular für Zahlung per Kreditkarte.
+6. Das PayPal Plus Formular für Zahlung per Rechnung.
  
 == Changelog ==
  
