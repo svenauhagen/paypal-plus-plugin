@@ -11,6 +11,35 @@ The official WordPress Plugin for WooCommerce - adds payment via PaypPal, Direct
  
 == Description ==
 
+PayPal Plus für WooCommerce, das offizielle PayPal Plus Plugin, bringt ohne viel Aufwand alle PayPal Plus Zahlungsmöglichkeiten in deinen WooCommerce Shop: PayPal, Kreditkarte, Lastschrift und Rechnung. Das Plugin lädt auf der Kasse-Seite ein von PayPal bereitgestelltes iFrame, das dem Käufer die PayPal Plus Zahlungsarten anbietet. Je nach Auswahl wird der Käufer nach Klick auf den Kaufen-Button zum PayPal-Formular weitergeleitet, oder es werden Formulare für die Eingabe der für die Bezahlung per Lastschrift, per Kreditkarte oder per Rechnung benötigten Daten angezeigt.
+
+= Vorteile = 
+
+* Mehr Zahlunsarten: PayPal Plus bringt die vier beliebtesten Zahlungsarten in deinen Shop: PayPal, Kreditkarte, Rechnung, Lastschrift.
+* Einfachere Integration: alle Zahlungsarten mit nur einem Plugin.
+* Mehr Sicherheit: PayPal Verkäuferschutz schützt dich vor Zahlungsausfällen bei Transaktionen.
+* Erreiche mehr Kunden: mit oder ohne PayPal Konto.
+* Nutzerfreundlicher und mobil optimierter Checkout: von PayPal entwickelt.
+* Transaktionsbetrag wird dir sofort nach Kaufabschluss auf dein PayPal Konto gutgeschrieben.
+* Transparente und gleiche Gebühren für alle Zahlungsarten ohhe Star- oder Monatsgebühren.
+* [PCI Konformität](https://de.wikipedia.org/wiki/Payment_Card_Industry_Data_Security_Standard): unser Plugin lädt auf der Checkout-Seite ein von PayPal selbt gehostetes iFrame, in dem alle Transaktionsdaten eingegeben werden.
+
+= Länder = 
+
+Derzeit ist *PayPal Plus* für Händler mit Firmensitz in Deutschland einsetzbar. Internationale Transaktionen funktionieren dennoch. Für Käufer außerhalb Deutschlands werden die Zahlungsarten auf PayPal und Kreditkarte eingeschränkt.
+
+= Mehr Informationen zu PayPal Plus = 
+
+Du möchtest dich genauer über PayPal Plus informieren? Alle Details fidest du auf den Seiten von [PayPal](https://www.paypal.com/de/webapps/mpp/paypal-plus).
+
+= Support = 
+
+You can find technical support for this plugin in the wordpress.org forum: https://wordpress.org/support/plugin/woo-paypalplus
+
+Please read the FAQ (frequently asked questions) first and make sure you have installed the newest version of the plugin before contacting us.
+
+**Made by [Inpsyde](https://inpsyde.com) &middot; We love WordPress**
+
 == Installation ==
 
 = Minimum Requirements = 
@@ -23,6 +52,8 @@ Weitere Mindestanforderungen richten sich nach den Voraussetzungen für WooComme
 * MySQL 5.6 or greater
 * WordPress 4.4+
 * WP Memory limit of 64 MB or greater (128 MB or higher is preferred)
+
+Darüber hinaus benötigst du ein PaypPal Gäscheftskonto Konto, das für PayPal Plus freigeschaltet ist. [Den Antrag stellst du hier bei PayPal]( https://www.paypal.com/de/webapps/mpp/paypal-plus).
 
 = Automatic Installation = 
 
@@ -57,7 +88,11 @@ Du kannst das Plugin derzeit für Deutschland einsetzen.
 
 = Welche Zahlungsarten kann ich mit PayPal Plus für WooCommerce in meinem Shop einbinden? = 
 
-Du kannst mit unserem Plugin alle von PayPal Plus angebotenen Zahlungsarten einrichten: beahlen mit deinem PayPal-Konto, per Lastschrift, per Kreditkarte und bezahlen per Rechnung.
+Du kannst mit unserem Plugin alle von PayPal Plus angebotenen Zahlungsarten einrichten: bezahlen mit deinem PayPal-Konto, per Lastschrift, per Kreditkarte und bezahlen per Rechnung.
+
+= In meinem Shop wird die Zahlungsart Rechnung nicht angeboten. Was muss ich tun? = 
+
+Dein PayPal Verkäufer-Konto muss von PayPal für den Kauf auf Rechnung freigeschaltet werden. Dies erfolgt erst nach Prüfung durch PayPal und kann ein paar Wochen dauern.
  
 == Screenshots ==
  
