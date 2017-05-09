@@ -7,7 +7,7 @@ Stable tag: 1.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
  
-The official WordPress Plugin for WooCommerce - adds payment via PayPal, Direct debit, Credit card and Pay upon invoice to your WooCommerce Shop.
+The official PayPal Plus Plugin for WooCommerce - adds payment via PayPal, Direct debit, Credit card and Pay upon invoice to your WooCommerce Shop.
  
 == Description ==
 
@@ -24,7 +24,7 @@ On the checkout page, the plugin loads an iFrame which is provided by PayPal. It
 * Userfriendly and responsive checkout: made by PayPal.
 * Transaction amount is directly credited to your PayPal account after transaction
 * Transparent and the same fees for all payment methods - without start- or monthly fees. 
-* [PCI conformity](https://de.wikipedia.org/wiki/Payment_Card_Industry_Data_Security_Standard): On the checkout page, our plugin loads an iFrame being hosted by PayPal in which all transaction data are entered.
+* [PCI conformity](https://wikipedia.org/wiki/Payment_Card_Industry_Data_Security_Standard): On the checkout page, our plugin loads an iFrame being hosted by PayPal in which all transaction data are entered.
 
 = Countries = 
 At the moment, **PayPal Plus** is only available for customers having their registered office in Germany. Nonetheless, international transactions work. Customers not being in Germany can only choose between the payment methods PayPal and Credit card. 
@@ -35,7 +35,7 @@ You want to have more information about PayPal Plus? You can find all details on
 
 = Support = 
 
-You can find technical support for this plugin in the wordpress.org forum: https://wordpress.org/support/plugin/woo-paypalplus
+You can find technical support for this plugin in the wordpress.org forum: [https://wordpress.org/support/plugin/woo-paypalplus](https://wordpress.org/support/plugin/woo-paypalplus)
 
 Please read the FAQ (frequently asked questions) first and make sure you have installed the newest version of the plugin before contacting us.
 
@@ -52,18 +52,21 @@ Further minimum requirements are determined by the requirements for WooCommerce:
 * WordPress 4.4+
 * WP Memory limit of 64 MB or greater (128 MB or higher is preferred)
 
+Furthermore, you need a PayPal business account which is activated for PayPal. [You submit the application to PayPal.](https://www.paypal.com/de/webapps/mpp/paypal-plus).
+
 = Automatic Installation =
 
 This is the easiest way to install the PayPal Plus plugin.
 1. Log into your WordPress installation.
-2. Go to the menu item *plugins* and then to *install*.
+2. Go to the menu item *Plugins* and then to *Install*.
 3. Search for *PayPal Plus for WooCommerce*. In case several plugins are listed, check if *Inpsyde* is the plugin author.
-4. Click *install now* and wait until WordPress reports the successful installation.
-5. Activate the plugin. You can find the settings here: *WooCommerce => settings => checkout => PayPal Plus*.
+4. Click *Install Now* and wait until WordPress reports the successful installation.
+5. Activate the plugin. You can find the settings here: *WooCommerce => Settings => Checkout => PayPal Plus*.
+
 **Attention:** You need WooCommerce 3.0 or higher to use PayPal Plus. Otherwise, the setting page of the plugin is not available. You will get a notification in your WordPress backend if you didn’t activate the correct WooCommerce version.
  
 = Manual Installation =
-In case the automatic installation doesn’t work, download the plugin from here via the *Download*-button. Unpack the archive and load the folder via FTP into the directory `wp-content\plugins` of your WordPress installation. Go to *plugins => installed plugins* and click *activate* on *PayPal Plus für WooCommerce*.
+In case the automatic installation doesn’t work, download the plugin from here via the *Download*-button. Unpack the archive and load the folder via FTP into the directory `wp-content\plugins` of your WordPress installation. Go to *Plugins => Installed plugins* and click *activate* on *PayPal Plus für WooCommerce*.
 
 == Frequently Asked Questions ==
  
