@@ -127,12 +127,6 @@ class WCPayPalPayment {
 	 */
 	private function get_item_list() {
 
-		//$item_list = new ItemList();
-		//foreach ( $this->order_data->get_items() as $order_item ) {
-		//
-		//	$item_list->addItem( $this->order_data->get_item( $order_item ) );
-		//}
-
 		return $this->order_data->get_item_list();
 	}
 
