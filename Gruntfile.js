@@ -97,10 +97,9 @@ module.exports = function( grunt ) {
 							'./vendor/autoload.php',
 							'./vendor/paypal/**/*',
 							'./vendor/psr/**/*',
-							'./CHANGELOG.md',
 							'./LICENSE',
 							'./paypalplus-woocommerce.php',
-							'./README.md',
+							'./readme.txt',
 						]
 					}
 				]
