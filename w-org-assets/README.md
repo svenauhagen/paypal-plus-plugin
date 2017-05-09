@@ -1,1 +1,0 @@
-# PayPal Plus for WooCommerce assets for the wordpress.org repository

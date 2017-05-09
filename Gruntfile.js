@@ -91,15 +91,17 @@ module.exports = function( grunt ) {
 					{
 						expand: true,
 						src   : [
-							'./assets/**/*',
-							'./src/**/*',
-							'./vendor/composer/**/*',
-							'./vendor/autoload.php',
-							'./vendor/paypal/**/*',
-							'./vendor/psr/**/*',
-							'./LICENSE',
-							'./paypalplus-woocommerce.php',
+							'./assets/**/*', // CSS and JS
+							'./src/**/*', // PHP code
+							'./vendor/composer/**/*', // Autoloader
+							'./vendor/autoload.php', // Autoloader
+							'./vendor/paypal/**/*', // Paypal PHP SDK
+							'./vendor/psr/**/*', // Used by PayPal
+							'./LICENSE', // Maybe not needed
+							'./paypalplus-woocommerce.php', // Main plugin file
 							'./readme.txt',
+
+							'!./*/**/README.md',
 						]
 					}
 				]
