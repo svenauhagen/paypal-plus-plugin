@@ -162,4 +162,5 @@ All feedback / bug reports / pull requests are welcome.
 
 ## Licence
 License: GPLv3
+
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
