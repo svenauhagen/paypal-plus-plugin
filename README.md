@@ -78,11 +78,17 @@ Furthermore, you need a PayPal business account which is activated for PayPal. [
 ### Automatic Installation 
 
 This is the easiest way to install the PayPal Plus plugin.
+
 1. Log into your WordPress installation.
+
 2. Go to the menu item *Plugins* and then to *Install*.
+
 3. Search for *PayPal Plus for WooCommerce*. In case several plugins are listed, check if *Inpsyde* is the plugin author.
+
 4. Click *Install Now* and wait until WordPress reports the successful installation.
+
 5. Activate the plugin. You can find the settings here: *WooCommerce => Settings => Checkout => PayPal Plus*.
+
 
 **Attention:** You need WooCommerce 3.0 or higher to use PayPal Plus. Otherwise, the setting page of the plugin is not available. You will get a notification in your WordPress backend if you don’t use the correct WooCommerce version.
  
