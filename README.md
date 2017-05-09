@@ -13,6 +13,8 @@ $ composer require inpsyde/paypalplus-woocommerce
 Don't forget to run `composer install` after cloning the repository
 Then, run `npm install` to set up the asset and release taskrunners.
 
+When working with JavaScript, you'll probably want to have `grunt watch` running to transpile ES6 JS 
+
 ## Create a new release
 
 We're using composer's autoloader. So when developing, you probably have all of its devDependencies loaded and added to the autoloader.
@@ -20,7 +22,7 @@ You don't want those in the release file (it will in fact produce an error), so 
 Or just checkout the production dependencies before creating a release using `composer update --no-dev`
 This will remove all devDependencies, so make sure to roll back to get PHPUnit back.
 
-To create a release, run `grunt compress`. The release will be a timestamped zip file in the `dist/` folder
+To create a release, run `grunt release`. The release will be a timestamped zip file in the `dist/` folder
  
 
 ## Description 

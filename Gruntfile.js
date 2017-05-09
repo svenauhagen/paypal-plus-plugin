@@ -218,5 +218,8 @@ module.exports = function( grunt ) {
 
 	require( 'load-grunt-tasks' )( grunt );
 
-	grunt.registerTask( 'default', [ 'sass:dist', 'watch' ] );
+	grunt.registerTask( 'default', [ 'watch' ] );
+	grunt.registerTask( 'scripts', [ 'browserify:babelify', 'uglify' ] );
+	grunt.registerTask( 'styles', [ 'sass:convert', 'postcss', 'cssmin' ] );
+	grunt.registerTask( 'release', [ 'styles', 'scripts', 'compress' ] );
 };
