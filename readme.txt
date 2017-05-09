@@ -11,27 +11,27 @@ The official WordPress Plugin for WooCommerce - adds payment via PayPal, Direct 
  
 == Description ==
 
-PayPal Plus für WooCommerce, das offizielle [PayPal Plus](https://www.paypal.com/de/webapps/mpp/paypal-plus) Plugin, bringt ohne viel Aufwand alle PayPal Plus Zahlungsmöglichkeiten in deinen WooCommerce Shop: PayPal, Kreditkarte, Lastschrift und Rechnung. 
+PayPal Plus for WooCommerce is the official [PayPal Plus](https://www.paypal.com/de/webapps/mpp/paypal-plus) plugin. Without much effort, it integrates all PayPal Plus payment methods into your WooCommerce shop: PayPal, Direct debit, Credit card and Pay upon invoice
 
-Das Plugin lädt auf der Kasse-Seite ein von PayPal bereitgestelltes iFrame, das dem Käufer die PayPal Plus Zahlungsarten anbietet. Je nach Auswahl wird der Käufer nach Klick auf den Kaufen-Button zum PayPal-Formular weitergeleitet, oder es werden Formulare für die Eingabe der für die Bezahlung per Lastschrift, per Kreditkarte oder per Rechnung benötigten Daten angezeigt.
+On the checkout page, the plugin loads an iFrame which is provided by PayPal. It offers all PayPal Plus payment methods to the buyer. Depending on their choice, the buyers are, after clicking the buy-button, guided to the PayPal form or to forms where they can enter the data to pay via Direct debit, Credit card or upon invoice. 
 
-= Vorteile = 
+= Benefits = 
 
-* Mehr Zahlungsarten: PayPal Plus bringt die vier beliebtesten Zahlungsarten in deinen Shop: PayPal, Kreditkarte, Rechnung, Lastschrift.
-* Einfachere Integration: alle Zahlungsarten mit nur einem Plugin.
-* Mehr Sicherheit: PayPal Verkäuferschutz schützt dich vor Zahlungsausfällen bei allen Transaktionen.
-* Erreiche mehr Kunden: mit oder ohne PayPal Konto.
-* Nutzerfreundlicher und mobil optimierter Checkout: von PayPal entwickelt.
-* Transaktionsbetrag wird dir sofort nach Kaufabschluss auf dein PayPal Konto gutgeschrieben.
-* Transparente und gleiche Gebühren für alle Zahlungsarten ohhe Start- oder Monatsgebühren.
-* [PCI Konformität](https://de.wikipedia.org/wiki/Payment_Card_Industry_Data_Security_Standard): unser Plugin lädt auf der Checkout-Seite ein von PayPal selbt gehostetes iFrame, in dem alle Transaktionsdaten eingegeben werden.
+* More payment methods: PayPal Plus enables to integrate the four most popular payment methods into your shop: PayPal, Direct debit, Credit card, pay upon invoice.
+* Easier integration: all payment methods in only one plugin.
+* More safety: PayPal vendor protection protects against debt defaults for all transactions.
+* Attract more customers: with or without PayPal account.
+* Userfriendly and responsive checkout: made by PayPal.
+* Transaction amount is directly credited to your PayPal account after transaction
+* Transparent and the same fees for all payment methods - without start- or monthly fees. 
+* [PCI conformity](https://de.wikipedia.org/wiki/Payment_Card_Industry_Data_Security_Standard): On the checkout page, our plugin loads an iFrame being hosted by PayPal in which all transaction data are entered.
 
-= Länder = 
-Derzeit ist **PayPal Plus** für Händler mit Firmensitz in Deutschland einsetzbar. Internationale Transaktionen funktionieren dennoch. Für Käufer außerhalb Deutschlands werden die Zahlungsarten auf PayPal und Kreditkarte eingeschränkt.
+= Countries = 
+At the moment, **PayPal Plus** is only available for customers having their registered office in Germany. Nonetheless, international transactions work. Customers not being in Germany can only choose between the payment methods PayPal and Credit card. 
 
-= Mehr Informationen zu PayPal Plus = 
+= More information about PayPal Plus = 
 
-Du möchtest dich genauer über PayPal Plus informieren? Alle Details findest du auf den Seiten von [PayPal](https://www.paypal.com/de/webapps/mpp/paypal-plus).
+You want to have more information about PayPal Plus? You can find all details on PayPal’s pages. [PayPal](https://www.paypal.com/de/webapps/mpp/paypal-plus).
 
 = Support = 
 
@@ -65,7 +65,6 @@ This is the easiest way to install the PayPal Plus plugin.
 = Manual Installation =
 In case the automatic installation doesn’t work, download the plugin from here via the *Download*-button. Unpack the archive and load the folder via FTP into the directory `wp-content\plugins` of your WordPress installation. Go to *plugins => installed plugins* and click *activate* on *PayPal Plus für WooCommerce*.
 
-= Setting the plugin =
 == Frequently Asked Questions ==
  
 = I installed WooCommerce in a lower version. Nevertheless, can I use PayPal Plus for WooCommerce? =
@@ -84,18 +83,20 @@ At the moment, you can use PayPal Plus for WooCommerce only in Germany.
 
 With our plugin, you can integrate all those payment methods offered by PayPal: paying with your PayPal account, via direct debit, via credit card or paying via invoice.
 
-= In meinem Shop wird die Zahlungsart Rechnung nicht angeboten. Was muss ich tun? = 
+= In my shop, the payment method pay upon invoice is not offered. What do I have to do? = 
 
-Dein PayPal Verkäufer-Konto muss von PayPal für den Kauf auf Rechnung freigeschaltet werden. Dies erfolgt erst nach Prüfung durch PayPal und kann ein paar Wochen dauern.
+Your PayPal vendor account needs to be activated by PayPal in order to offer the payment method pay upon invoice. This takes place after verification by PayPal and may last a couple of weeks.
  
 == Screenshots ==
  
-1. PayPal Plus für WooCommerce - Plugin Einstellungen unter WooCommerce => Einstellungen => Kasse => PayPal Plus.
-2. Die vier PayPal Plus Zahlungsarten: PayPal, Lastschrift, Kreditkarte und Rechnung.
-3. Das PayPal Login-Formular bei Zahlungsweise Paypal.
-4. Das PayPal Plus Formular für Zahlung per Lastschrift.
-5. Das PayPal Plus Formular für Zahlung per Kreditkarte.
-6. Das PayPal Plus Formular für Zahlung per Rechnung.
+1. PayPal Plus for WooCommerce - plugin settings among WooCommerce => settings => checkout => PayPal Plus.
+2. The four PayPal Plus payment methods: PayPal, Direct debit, credit card, pay upon invoice..
+3. The PayPal Login form when paying via PayPal.
+4. The PayPal Plus form when paying via Direct debit.
+5. The PayPal Plus form when paying via credit card.
+6. The PayPal Plus form when paying upon invoice.
+ 
+
  
 == Changelog ==
  
@@ -105,4 +106,4 @@ Initial Release
 == Upgrade Notice ==
  
 = 1.0 =
-Dies ist die erste Version. Aktualisiere dein System, wenn Updates verfügbar sind um sicherzustellen, dass das Plugin einwandfrei funktioniert.
+This is the first version. Update your system when updates are available in order to ensure that the plugin works proper.
