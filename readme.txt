@@ -66,7 +66,7 @@ This is the easiest way to install the PayPal Plus plugin.
 **Attention:** You need WooCommerce 3.0 or higher to use PayPal Plus. Otherwise, the setting page of the plugin is not available. You will get a notification in your WordPress backend if you didn’t activate the correct WooCommerce version.
  
 = Manual Installation =
-In case the automatic installation doesn’t work, download the plugin from here via the *Download*-button. Unpack the archive and load the folder via FTP into the directory `wp-content\plugins` of your WordPress installation. Go to *Plugins => Installed plugins* and click *activate* on *PayPal Plus für WooCommerce*.
+In case the automatic installation doesn’t work, download the plugin from here via the *Download*-button. Unpack the archive and load the folder via FTP into the directory `wp-content\plugins` of your WordPress installation. Go to *Plugins => Installed plugins* and click *Activate* on *PayPal Plus für WooCommerce*.
 
 == Frequently Asked Questions ==
  
@@ -92,8 +92,8 @@ Your PayPal vendor account needs to be activated by PayPal in order to offer the
  
 == Screenshots ==
  
-1. PayPal Plus for WooCommerce - plugin settings among WooCommerce => settings => checkout => PayPal Plus.
-2. The four PayPal Plus payment methods: PayPal, Direct debit, credit card, pay upon invoice..
+1. PayPal Plus for WooCommerce - plugin settings among WooCommerce => Settings => Checkout => PayPal Plus.
+2. The four PayPal Plus payment methods: PayPal, Direct debit, credit card, pay upon invoice.
 3. The PayPal Login form when paying via PayPal.
 4. The PayPal Plus form when paying via Direct debit.
 5. The PayPal Plus form when paying via credit card.
