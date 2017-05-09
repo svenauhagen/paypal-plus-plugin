@@ -122,32 +122,7 @@ With our plugin, you can integrate all those payment methods offered by PayPal: 
 
 ### In my shop, the payment method pay upon invoice is not offered. What do I have to do? 
 
-Your PayPal vendor account needs to be activated by PayPal in order to offer the payment method pay upon invoice. This takes place after verification by PayPal and may last a couple of weeks.
- 
-
-## Screenshots 
- 
-### 1. PayPal Plus for WooCommerce - plugin settings among WooCommerce => Settings => Checkout => PayPal Plus.
-[missing image]
-
-### 2. The four PayPal Plus payment methods: PayPal, Direct debit, credit card, pay upon invoice.
-[missing image]
-
-### 3. The PayPal Login form when paying via PayPal.
-[missing image]
-
-### 4. The PayPal Plus form when paying via Direct debit.
-[missing image]
-
-### 5. The PayPal Plus form when paying via credit card.
-[missing image]
-
-### 6. The PayPal Plus form when paying upon invoice.
-[missing image]
-
- 
-
- 
+Your PayPal vendor account needs to be activated by PayPal in order to offer the payment method pay upon invoice. This takes place after verification by PayPal and may last a couple of weeks.  
 
 ## Changelog 
  
