@@ -49,7 +49,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 
 		} else {
 			$notice = sprintf(
-				__( 'There was an error executing the payment. Payment state: %s', 'paypalplus-woocommerce' ),
+				__( 'There was an error executing the payment. Payment state: %s', 'woo-paypalplus' ),
 				$this->data->get_payment_state()
 			);
 			wc_add_notice( $notice, 'error' );
@@ -71,7 +71,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 
 		if ( $sale->getState() === 'pending' ) {
 			$note = sprintf(
-				__( 'PayPal Reason code: %s.', 'paypalplus-woocommerce' ),
+				__( 'PayPal Reason code: %s.', 'woo-paypalplus' ),
 				$sale->getReasonCode()
 			);
 			$order->add_order_note( $note );
@@ -79,10 +79,10 @@ class PaymentExecutionSuccess implements RequestSuccessHandler {
 
 		} elseif ( $sale->getState() === 'completed' && ! $this->data->is_pui() ) {
 
-			$order->add_order_note( __( 'PayPal Plus payment completed', 'paypalplus-woocommerce' ) );
+			$order->add_order_note( __( 'PayPal Plus payment completed', 'woo-paypalplus' ) );
 			$order->payment_complete( $sale_id );
 			$note = sprintf(
-				__( 'PayPal Plus payment approved! Transaction ID: %s', 'paypalplus-woocommerce' ),
+				__( 'PayPal Plus payment approved! Transaction ID: %s', 'woo-paypalplus' ),
 				$sale_id
 			);
 			$order->add_order_note( $note );

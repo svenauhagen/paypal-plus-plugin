@@ -23,7 +23,7 @@ class ReceiptPageView {
 
 		$message = __(
 			'Thank you for your order. We are now redirecting you to PayPal to make payment.',
-			'paypalplus-woocommerce'
+			'woo-paypalplus'
 		);
 		?>
 		<!--suppress JSUnresolvedFunction, JSUnresolvedVariable -->

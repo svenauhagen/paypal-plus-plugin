@@ -306,7 +306,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$this->add_error(
 
 				sprintf(
-					__( 'Your API credentials are either missing or invalid: %s', 'paypalplus-woocommerce' ),
+					__( 'Your API credentials are either missing or invalid: %s', 'woo-paypalplus' ),
 					$verification->get_error_message()
 				)
 			);
@@ -411,7 +411,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$view->render();
 
 		} else {
-			wc_add_notice( __( 'Error processing checkout. Please try again. ', 'paypalplus-woocommerce' ), 'error' );
+			wc_add_notice( __( 'Error processing checkout. Please try again. ', 'woo-paypalplus' ), 'error' );
 			wp_safe_redirect( wc_get_cart_url() );
 			exit;
 		}

@@ -40,7 +40,7 @@ class Plugin {
 
 		$this->gateway = new PayPalPlusGateway(
 			$this->gateway_id,
-			__( 'PayPal Plus', 'paypalplus-woocommerce' )
+			__( 'PayPal Plus', 'woo-paypalplus' )
 		);
 		$this->gateway->register();
 

@@ -29,33 +29,33 @@ class PaymentInstructionView {
 	public function thankyou_page() {
 
 		echo esc_html__( 'Please transfer the complete amount to the bank account provided below.',
-				'paypalplus-woocommerce' ) . PHP_EOL;
+				'woo-paypalplus' ) . PHP_EOL;
 		?>
-		<h2><?php esc_html_e( 'PayPal Bank Details', 'paypalplus-woocommerce' ); ?></h2>
+		<h2><?php esc_html_e( 'PayPal Bank Details', 'woo-paypalplus' ); ?></h2>
 		<table class="shop_table order_details">
 			<tbody>
 			<tr>
-				<th scope="row"><?php esc_html_e( 'Bank name:', 'paypalplus-woocommerce' ); ?></th>
+				<th scope="row"><?php esc_html_e( 'Bank name:', 'woo-paypalplus' ); ?></th>
 				<td><span><?php echo esc_html( $this->data->get_bank_name() ); ?></span></td>
 			</tr>
 			<tr>
-				<th scope="row"><?php esc_html_e( 'Account holder name:', 'paypalplus-woocommerce' ); ?></th>
+				<th scope="row"><?php esc_html_e( 'Account holder name:', 'woo-paypalplus' ); ?></th>
 				<td><span><?php echo esc_html( $this->data->get_account_holder_name() ); ?></span></td>
 			</tr>
 			<tr>
-				<th scope="row"><?php esc_html_e( 'IBAN:', 'paypalplus-woocommerce' ); ?></th>
+				<th scope="row"><?php esc_html_e( 'IBAN:', 'woo-paypalplus' ); ?></th>
 				<td><span><?php echo esc_html( $this->data->get_iban() ); ?></span></td>
 			</tr>
 			<tr>
-				<th scope="row"><?php esc_html_e( 'BIC:', 'paypalplus-woocommerce' ); ?></th>
+				<th scope="row"><?php esc_html_e( 'BIC:', 'woo-paypalplus' ); ?></th>
 				<td><span><?php echo esc_html( $this->data->get_bic() ); ?></span></td>
 			</tr>
 			<tr>
-				<th scope="row"><?php esc_html_e( 'Payment due date:', 'paypalplus-woocommerce' ); ?></th>
+				<th scope="row"><?php esc_html_e( 'Payment due date:', 'woo-paypalplus' ); ?></th>
 				<td><span><?php echo esc_html( $this->data->get_payment_due_date() ) ?></span></td>
 			</tr>
 			<tr>
-				<th scope="row"><?php esc_html_e( 'Reference:', 'paypalplus-woocommerce' ); ?></th>
+				<th scope="row"><?php esc_html_e( 'Reference:', 'woo-paypalplus' ); ?></th>
 				<td><span><?php echo esc_html( $this->data->get_reference_number() ); ?></span></td>
 			</tr>
 			</tbody>
@@ -68,10 +68,10 @@ class PaymentInstructionView {
 	 */
 	public function email_instructions() {
 
-		echo esc_html__( 'Please transfer the complete amount to the bank account provided below.', 'paypalplus-woocommerce'
+		echo esc_html__( 'Please transfer the complete amount to the bank account provided below.', 'woo-paypalplus'
 		     ) . PHP_EOL;
 		echo '<h2 class="wc-bacs-bank-details-heading">' . esc_html( __( 'PayPal Bank Details',
-				'paypalplus-woocommerce' ) ) . '</h2>' . PHP_EOL;
+				'woo-paypalplus' ) ) . '</h2>' . PHP_EOL;
 
 		echo '<ul class="wc-bacs-bank-details order_details bacs_details">' . PHP_EOL;
 
@@ -93,27 +93,27 @@ class PaymentInstructionView {
 
 		return [
 			'bank_name'           => [
-				'label' => __( 'Bank name', 'paypalplus-woocommerce' ),
+				'label' => __( 'Bank name', 'woo-paypalplus' ),
 				'value' => $this->data->get_bank_name(),
 			],
 			'account_holder_name' => [
-				'label' => __( 'Account holder name', 'paypalplus-woocommerce' ),
+				'label' => __( 'Account holder name', 'woo-paypalplus' ),
 				'value' => $this->data->get_account_holder_name(),
 			],
 			'iban'                => [
-				'label' => __( 'IBAN', 'paypalplus-woocommerce' ),
+				'label' => __( 'IBAN', 'woo-paypalplus' ),
 				'value' => $this->data->get_iban(),
 			],
 			'bic'                 => [
-				'label' => __( 'BIC', 'paypalplus-woocommerce' ),
+				'label' => __( 'BIC', 'woo-paypalplus' ),
 				'value' => $this->data->get_bic(),
 			],
 			'payment_due_date'    => [
-				'label' => __( 'Payment due date', 'paypalplus-woocommerce' ),
+				'label' => __( 'Payment due date', 'woo-paypalplus' ),
 				'value' => $this->data->get_payment_due_date(),
 			],
 			'reference_number'    => [
-				'label' => __( 'Reference', 'paypalplus-woocommerce' ),
+				'label' => __( 'Reference', 'woo-paypalplus' ),
 				'value' => $this->data->get_reference_number(),
 			],
 		];

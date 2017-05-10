@@ -109,7 +109,7 @@ class PaymentValidator {
 			$this->last_error = sprintf(
 				__(
 					'Validation error: Invalid transaction type "%s".',
-					'paypalplus-woocommerce'
+					'woo-paypalplus'
 				),
 				$transaction_type
 			);
@@ -134,7 +134,7 @@ class PaymentValidator {
 			$this->last_error = sprintf(
 				__(
 					'Validation error: PayPal currencies do not match (PayPal: %1$1s, WooCommerce: %2$2s).',
-					'paypalplus-woocommerce'
+					'woo-paypalplus'
 				),
 				$currency,
 				$wc_currency
@@ -161,7 +161,7 @@ class PaymentValidator {
 			$this->last_error = sprintf(
 				__(
 					'Validation error: PayPal payment amounts do not match (gross %1$1s, should be %2$2s).',
-					'paypalplus-woocommerce'
+					'woo-paypalplus'
 				),
 				$amount,
 				$wc_total

@@ -6,7 +6,7 @@
  * Author URI:  https://inpsyde.com/
  * Version:     1.0
  * License:     MIT
- * Text Domain: paypalplus-woocommerce
+ * Text Domain: woo-paypalplus
  * Domain Path: /languages/
  */
 
@@ -14,7 +14,7 @@ namespace WCPayPalPlus;
 
 add_action( 'plugins_loaded', function () {
 
-	load_plugin_textdomain( 'paypalplus-woocommerce', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
+	load_plugin_textdomain( 'woo-paypalplus', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
 	/**
 	 * Check if we're already autoloaded by some external autloader
 	 * If not, load our own
@@ -29,7 +29,7 @@ add_action( 'plugins_loaded', function () {
 			add_action( 'admin_notices', function () {
 
 				$class   = 'notice notice-error';
-				$message = __( 'Could not find a working autoloader for PayPal Plus.', 'paypalplus-woocommerce' );
+				$message = __( 'Could not find a working autoloader for PayPal Plus.', 'woo-paypalplus' );
 
 				printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 			} );
@@ -46,7 +46,7 @@ add_action( 'plugins_loaded', function () {
 		add_action( 'admin_notices', function () {
 
 			$class   = 'notice notice-error';
-			$message = __( 'PayPal Plus requires WooCommerce to be active.', 'paypalplus-woocommerce' );
+			$message = __( 'PayPal Plus requires WooCommerce to be active.', 'woo-paypalplus' );
 
 			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 		} );
@@ -58,7 +58,7 @@ add_action( 'plugins_loaded', function () {
 		add_action( 'admin_notices', function () {
 
 			$class   = 'notice notice-error';
-			$message = __( 'PayPal Plus requires WooCommerce version 3.0 or higher .', 'paypalplus-woocommerce' );
+			$message = __( 'PayPal Plus requires WooCommerce version 3.0 or higher .', 'woo-paypalplus' );
 
 			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 		} );
