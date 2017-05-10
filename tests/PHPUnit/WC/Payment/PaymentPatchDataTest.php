@@ -139,8 +139,6 @@ class PaymentPatchDataTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_get_patch_request( \WC_Order $order, $payment_id, $invoice_prefix, $api_context ) {
 
-		$patchBilling = (bool) rand( 0, 1 );
-
 		$patchProvider = \Mockery::mock( PatchProvider::class );
 
 		$patchProvider->shouldReceive( 'get_custom_patch' )
@@ -150,14 +148,8 @@ class PaymentPatchDataTest extends BrainMonkeyWpTestCase {
 		$patchProvider->shouldReceive( 'get_payment_amount_patch' )
 		              ->once();
 
-		$patchProvider->shouldReceive( 'should_patch_billing' )
-		              ->once()
-		              ->andReturn( $patchBilling );
-
-		if ( $patchBilling ) {
-			$patchProvider->shouldReceive( 'get_billing_patch' )
-			              ->once();
-		}
+		$patchProvider->shouldReceive( 'get_billing_patch' )
+		              ->once();
 
 		$testee = new PaymentPatchData(
 			$order,

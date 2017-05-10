@@ -200,24 +200,6 @@ class PatchProviderTest extends BrainMonkeyWpTestCase {
 	}
 
 	/**
-	 * @dataProvider default_test_data
-	 *
-	 * @param \WC_Order $order
-	 */
-	public function test_should_patch_billing( \WC_Order $order ) {
-
-		$testee = new PatchProvider( $order );
-		if ( $should = rand( 0, 1 ) ) {
-			$order->shouldReceive( 'get_shipping_country' )
-			      ->once()
-			      ->andReturn( ( $should ) ? 'Vatican City' : '' );
-		}
-		$result = $testee->should_patch_billing();
-		$this->assertInternalType( 'boolean', $result );
-		$this->assertEquals( $should, $result );
-	}
-
-	/**
 	 *
 	 */
 	public function default_test_data() {

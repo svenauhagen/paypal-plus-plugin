@@ -126,15 +126,4 @@ class PatchProvider {
 
 		return $billing_patch;
 	}
-
-	/**
-	 * Checks if billing should be patched.
-	 *
-	 * @return bool
-	 */
-	public function should_patch_billing() {
-
-		return ! empty( $this->order->get_shipping_country() );
-
-	}
 }
