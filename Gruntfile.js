@@ -95,7 +95,7 @@ module.exports = function( grunt ) {
 							'./src/**/*', // PHP code
 							'./vendor/composer/**/*', // Autoloader
 							'./vendor/autoload.php', // Autoloader
-							'./vendor/paypal/**/*', // Paypal PHP SDK
+							'./vendor/paypal/rest-api-sdk-php/lib/**/*', // Paypal PHP SDK
 							'./vendor/psr/**/*', // Used by PayPal
 							'./LICENSE', // Maybe not needed
 							'./paypalplus-woocommerce.php', // Main plugin file
