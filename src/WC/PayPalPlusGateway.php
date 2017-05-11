@@ -2,6 +2,7 @@
 
 namespace WCPayPalPlus\WC;
 
+use PayPal\Api\Payment;
 use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Rest\ApiContext;
 use WCPayPalPlus\WC\IPN\IPN;
@@ -27,6 +28,9 @@ use WCPayPalPlus\WC\Refund\WCRefund;
  */
 class PayPalPlusGateway extends \WC_Payment_Gateway {
 
+	const PAYMENT_ID_SESSION_KEY = 'ppp_payment_id';
+	const PAYER_ID_SESSION_KEY = 'ppp_payer_id';
+	const APPROVAL_URL_SESSION_KEY = 'ppp_approval_url';
 	/**
 	 * Gateway ID
 	 *
@@ -45,14 +49,12 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	 * @var IPN
 	 */
 	private $ipn;
-
 	/**
 	 * PaymentInstructionRenderer object.
 	 *
 	 * @var PaymentInstructionRenderer
 	 */
 	private $pui;
-
 	/**
 	 * PayPal API Context object.
 	 *
@@ -161,13 +163,13 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		}
 
 		WC()->session->token = $token;
-		$payment_id          = WC()->session->paymentId;
+		$payment_id          = WC()->session->__get( self::PAYMENT_ID_SESSION_KEY );
 
-		WC()->session->PayerID = $payer_id;
-		$order                 = new \WC_Order( WC()->session->ppp_order_id );
-		$data                  = new PaymentExecutionData(
+		WC()->session->__set( self::PAYER_ID_SESSION_KEY, $payer_id );
+		$order = new \WC_Order( WC()->session->ppp_order_id );
+		$data  = new PaymentExecutionData(
 			$order,
-			WC()->session->PayerID,
+			$payer_id,
 			$payment_id,
 			$this->get_api_context()
 		);
@@ -366,24 +368,11 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	public function process_payment( $order_id ) {
 
 		$order = new \WC_Order( $order_id );
-		if ( isset( WC()->session->token ) ) {
-			$this->clear_session_data();
-		}
 
 		return [
 			'result'   => 'success',
 			'redirect' => $order->get_checkout_payment_url( true ),
 		];
-	}
-
-	/**
-	 * Removes all stored session data used by this gateway.
-	 */
-	public function clear_session_data() {
-
-		unset( WC()->session->paymentId );
-		unset( WC()->session->PayerID );
-		unset( WC()->session->approvalurl );
 	}
 
 	/**
@@ -395,7 +384,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		WC()->session->ppp_order_id = $order_id;
 		$order                      = wc_get_order( $order_id );
-		$payment_id                 = WC()->session->paymentId;
+		$payment_id                 = WC()->session->__get( self::PAYMENT_ID_SESSION_KEY );
 		$invoice_prefix             = $this->get_option( 'invoice_prefix' );
 		$api_context                = $this->get_api_context();
 
@@ -411,10 +400,21 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$view->render();
 
 		} else {
+			$this->clear_session_data();
 			wc_add_notice( __( 'Error processing checkout. Please try again. ', 'woo-paypalplus' ), 'error' );
 			wp_safe_redirect( wc_get_cart_url() );
 			exit;
 		}
+	}
+
+	/**
+	 * Removes all stored session data used by this gateway.
+	 */
+	public function clear_session_data() {
+
+		WC()->session->__unset( self::PAYMENT_ID_SESSION_KEY );
+		WC()->session->__unset( self::PAYER_ID_SESSION_KEY );
+		WC()->session->__unset( self::APPROVAL_URL_SESSION_KEY );
 	}
 
 	/**
@@ -458,32 +458,62 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	}
 
 	/**
-	 * Creates a new Payment and returns its approval URL
+	 * Returns the approvalUrl of the payment object.
 	 *
 	 * @return null|string
 	 */
 	private function get_approval_url() {
 
-		if ( empty( WC()->session->approvalurl ) || empty( WC()->session->paymentId ) ) {
+		if ( empty( $url = WC()->session->__get( self::APPROVAL_URL_SESSION_KEY ) ) ) {
 
-			$order = null;
-			$key   = filter_input( INPUT_GET, 'key' );
-			if ( $key ) {
-				$order_id                   = wc_get_order_id_by_order_key( $key );
-				$order                      = new \WC_Order( $order_id );
-				WC()->session->ppp_order_id = $order_id;
-			}
-			$data              = $this->get_payment_data();
-			$wc_paypal_payment = new WCPayPalPayment( $data, $this->get_order_data( $order ) );
-			$payment           = $wc_paypal_payment->create();
-			if ( is_null( $payment ) ) {
-				return null;
-			}
-			WC()->session->paymentId   = $payment->getId();
-			WC()->session->approvalurl = $payment->getApprovalLink();
+			$url = $this->get_payment_object()
+			            ->getApprovalLink();
+
+			$url = htmlspecialchars_decode( $url );
+
+			WC()->session->__set( self::APPROVAL_URL_SESSION_KEY, htmlspecialchars_decode( $url ) );
 		}
 
-		return WC()->session->approvalurl;
+		return $url;
+	}
+
+	/**
+	 * Returns the Payment object that is currently in use.
+	 *
+	 * @return null|Payment
+	 */
+	private function get_payment_object() {
+
+		/**
+		 * CodeSniffer wants a short description here.
+		 *
+		 * @var Payment $payment
+		 */
+		static $payment;
+		if ( ! empty( $id = WC()->session->__get( self::PAYMENT_ID_SESSION_KEY ) ) ) {
+
+			if ( ! is_null( $payment ) && $payment->getId() === $id ) {
+				return $payment;
+			}
+
+			return Payment::get( $id, $this->get_api_context() );
+		}
+		$order = null;
+		$key   = filter_input( INPUT_GET, 'key' );
+		if ( $key ) {
+			$order_id                   = wc_get_order_id_by_order_key( $key );
+			$order                      = new \WC_Order( $order_id );
+			WC()->session->ppp_order_id = $order_id;
+		}
+		$data              = $this->get_payment_data();
+		$wc_paypal_payment = new WCPayPalPayment( $data, $this->get_order_data( $order ) );
+		$payment           = $wc_paypal_payment->create();
+		if ( is_null( $payment ) ) {
+			return null;
+		}
+		WC()->session->__set( self::PAYMENT_ID_SESSION_KEY, $payment->getId() );
+
+		return $payment;
 	}
 
 	/**
@@ -535,7 +565,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	}
 
 	/**
-	 * @param \WC_Order|null $order
+	 * Returns the order data based on the current context (cart or order).
+	 *
+	 * @param \WC_Order|null $order Order object.
 	 *
 	 * @return OrderDataProvider
 	 */
