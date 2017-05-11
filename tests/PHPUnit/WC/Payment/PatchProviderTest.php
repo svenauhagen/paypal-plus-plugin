@@ -129,47 +129,71 @@ class PatchProviderTest extends BrainMonkeyWpTestCase {
 	}
 
 	/**
-	 * @dataProvider default_test_data
+	 * @dataProvider shipping_patch_test_data
 	 *
 	 * @param \WC_Order $order
+	 * @param           $billingAddress
+	 * @param           $shippingAddress
 	 */
-	public function test_get_billing_patch( \WC_Order $order ) {
+	public function test_get_billing_patch( \WC_Order $order, $billingAddress, $shippingAddress ) {
 
-		//TODO Maybe write a dataprovider to try different sets of data
-		$firstName   = '';
-		$lastName    = '';
-		$fullName    = $firstName . ' ' . $lastName;
-		$adress1     = '';
-		$adress2     = '';
-		$city        = '';
-		$state       = '';
-		$postalCode  = '';
-		$countryCode = '';
+		$hasShipping = ! empty( $shippingAddress['country_code'] );
+		$testAddress = ( $hasShipping ) ? $shippingAddress : $billingAddress;
 
-		$order->shouldReceive( 'get_shipping_first_name' )
-		      ->once()
-		      ->andReturn( $firstName );
-		$order->shouldReceive( 'get_shipping_last_name' )
-		      ->once()
-		      ->andReturn( $lastName );
-		$order->shouldReceive( 'get_shipping_address_1' )
-		      ->once()
-		      ->andReturn( $adress1 );
-		$order->shouldReceive( 'get_shipping_address_2' )
-		      ->once()
-		      ->andReturn( $adress2 );
-		$order->shouldReceive( 'get_shipping_city' )
-		      ->once()
-		      ->andReturn( $city );
-		$order->shouldReceive( 'get_shipping_state' )
-		      ->once()
-		      ->andReturn( $state );
-		$order->shouldReceive( 'get_shipping_postcode' )
-		      ->once()
-		      ->andReturn( $postalCode );
 		$order->shouldReceive( 'get_shipping_country' )
-		      ->once()
-		      ->andReturn( $countryCode );
+		      ->andReturn( $shippingAddress['country_code'] );
+
+		if ( ! $hasShipping ) {
+			$order->shouldReceive( 'get_billing_first_name' )
+			      ->once()
+			      ->andReturn( $testAddress['first_name'] );
+			$order->shouldReceive( 'get_billing_last_name' )
+			      ->once()
+			      ->andReturn( $testAddress['last_name'] );
+			$order->shouldReceive( 'get_billing_address_1' )
+			      ->once()
+			      ->andReturn( $testAddress['address_1'] );
+			$order->shouldReceive( 'get_billing_address_2' )
+			      ->once()
+			      ->andReturn( $testAddress['address_2'] );
+			$order->shouldReceive( 'get_billing_city' )
+			      ->once()
+			      ->andReturn( $testAddress['city'] );
+			$order->shouldReceive( 'get_billing_state' )
+			      ->once()
+			      ->andReturn( $testAddress['state'] );
+			$order->shouldReceive( 'get_billing_postcode' )
+			      ->once()
+			      ->andReturn( $testAddress['postal_code'] );
+			$order->shouldReceive( 'get_billing_country' )
+			      ->once()
+			      ->andReturn( $testAddress['country_code'] );
+		} else {
+			$order->shouldReceive( 'get_shipping_first_name' )
+			      ->once()
+			      ->andReturn( $testAddress['first_name'] );
+			$order->shouldReceive( 'get_shipping_last_name' )
+			      ->once()
+			      ->andReturn( $testAddress['last_name'] );
+			$order->shouldReceive( 'get_shipping_address_1' )
+			      ->once()
+			      ->andReturn( $testAddress['address_1'] );
+			$order->shouldReceive( 'get_shipping_address_2' )
+			      ->once()
+			      ->andReturn( $testAddress['address_2'] );
+			$order->shouldReceive( 'get_shipping_city' )
+			      ->once()
+			      ->andReturn( $testAddress['city'] );
+			$order->shouldReceive( 'get_shipping_state' )
+			      ->once()
+			      ->andReturn( $testAddress['state'] );
+			$order->shouldReceive( 'get_shipping_postcode' )
+			      ->once()
+			      ->andReturn( $testAddress['postal_code'] );
+			$order->shouldReceive( 'get_shipping_country' )
+			      ->once()
+			      ->andReturn( $testAddress['country_code'] );
+		}
 
 		$testee = new PatchProvider( $order );
 		$result = $testee->get_billing_patch();
@@ -177,26 +201,57 @@ class PatchProviderTest extends BrainMonkeyWpTestCase {
 		$data = $result->getValue();
 
 		$this->assertArrayHasKey( 'recipient_name', $data );
-		self::assertEquals( $data['recipient_name'], $fullName );
+		self::assertEquals( $data['recipient_name'], $testAddress['first_name'] . ' ' . $testAddress['last_name'] );
 
 		$this->assertArrayHasKey( 'line1', $data );
-		self::assertEquals( $data['line1'], $adress1 );
+		self::assertEquals( $data['line1'], $testAddress['address_1'] );
 
 		$this->assertArrayHasKey( 'line2', $data );
-		self::assertEquals( $data['line2'], $adress2 );
+		self::assertEquals( $data['line2'], $testAddress['address_2'] );
 
 		$this->assertArrayHasKey( 'city', $data );
-		self::assertEquals( $data['city'], $city );
+		self::assertEquals( $data['city'], $testAddress['city'] );
 
 		$this->assertArrayHasKey( 'state', $data );
-		self::assertEquals( $data['state'], $state );
+		self::assertEquals( $data['state'], $testAddress['state'] );
 
 		$this->assertArrayHasKey( 'postal_code', $data );
-		self::assertEquals( $data['postal_code'], $postalCode );
+		self::assertEquals( $data['postal_code'], $testAddress['postal_code'] );
 
 		$this->assertArrayHasKey( 'country_code', $data );
-		self::assertEquals( $data['country_code'], $countryCode );
+		self::assertEquals( $data['country_code'], $testAddress['country_code'] );
 
+	}
+
+	/**
+	 * Determine if two associative arrays are similar
+	 *
+	 * Both arrays must have the same indexes with identical values
+	 * without respect to key ordering
+	 *
+	 * @see http://stackoverflow.com/a/3843768
+	 *
+	 * @param array $a
+	 * @param array $b
+	 *
+	 * @return bool
+	 */
+	function arraysAreSimilar( $a, $b ) {
+
+		// if the indexes don't match, return immediately
+		if ( count( array_diff_assoc( $a, $b ) ) ) {
+			return false;
+		}
+		// we know that the indexes, but maybe not values, match.
+		// compare the values between the two arrays
+		foreach ( $a as $k => $v ) {
+			if ( $v !== $b[ $k ] ) {
+				return false;
+			}
+		}
+
+		// we have identical indexes, and no unequal values
+		return true;
 	}
 
 	/**
@@ -207,6 +262,66 @@ class PatchProviderTest extends BrainMonkeyWpTestCase {
 		$data           = [];
 		$data['test_1'] = [
 			\Mockery::mock( 'WC_Order' ),
+		];
+
+		return $data;
+	}
+
+	public function shipping_patch_test_data() {
+
+		$data = [];
+
+		$data['no_shipping_data'] = [
+			\Mockery::mock( 'WC_Order' ),
+			// - - - - Billing Fields
+			[
+				'first_name'   => 'Max',
+				'last_name'    => 'Mustermann',
+				'address_1'    => 'Musterstraße',
+				'address_2'    => '1',
+				'city'         => 'Musterstadt',
+				'state'        => 'Musterland',
+				'postal_code'  => '0815',
+				'country_code' => 'DE',
+			],
+			// - - - - Shipping Fields
+			[
+				'first_name'   => '',
+				'last_name'    => '',
+				'address_1'    => '',
+				'address_2'    => '',
+				'city'         => '',
+				'state'        => '',
+				'postal_code'  => '',
+				'country_code' => '',
+			],
+		];
+
+		$data['has_shipping_data'] = [
+			\Mockery::mock( 'WC_Order' ),
+
+			// - - - - Billing Fields
+			[
+				'first_name'   => 'Max',
+				'last_name'    => 'Mustermann',
+				'address_1'    => 'Musterstraße',
+				'address_2'    => '1',
+				'city'         => 'Musterstadt',
+				'state'        => 'Musterland',
+				'postal_code'  => '0815',
+				'country_code' => 'DE',
+			],
+			// - - - - Shipping Fields
+			[
+				'first_name'   => 'SHIPPING Max',
+				'last_name'    => 'SHIPPING Mustermann',
+				'address_1'    => 'SHIPPING Musterstraße',
+				'address_2'    => 'SHIPPING 1',
+				'city'         => 'SHIPPING Musterstadt',
+				'state'        => 'SHIPPING Musterland',
+				'postal_code'  => 'SHIPPING 0815',
+				'country_code' => 'SHIPPING DE',
+			],
 		];
 
 		return $data;
