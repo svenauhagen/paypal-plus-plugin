@@ -109,7 +109,54 @@ class PatchProvider {
 	 */
 	public function get_billing_patch() {
 
-		$billing_data = [
+		$billing_data = ( $this->has_shipping_data() ) ? $this->get_shipping_address_data()
+			: $this->get_billing_address_data();
+
+		$billing_patch = new Patch();
+		$billing_patch->setOp( 'add' )
+		              ->setPath( '/transactions/0/item_list/shipping_address' )
+		              ->setValue( $billing_data );
+
+		return $billing_patch;
+	}
+
+	/**
+	 * Checks if there is shipping address data.
+	 *
+	 * @return bool
+	 */
+	private function has_shipping_data() {
+
+		return ! empty( $this->order->get_shipping_country() );
+
+	}
+
+	/**
+	 * Returns the order's shipping address data.
+	 *
+	 * @return array
+	 */
+	private function get_shipping_address_data() {
+
+		return [
+			'recipient_name' => $this->order->get_shipping_first_name() . ' ' . $this->order->get_shipping_last_name(),
+			'line1'          => $this->order->get_shipping_address_1(),
+			'line2'          => $this->order->get_shipping_address_2(),
+			'city'           => $this->order->get_shipping_city(),
+			'state'          => $this->order->get_shipping_state(),
+			'postal_code'    => $this->order->get_shipping_postcode(),
+			'country_code'   => $this->order->get_shipping_country(),
+		];
+	}
+
+	/**
+	 * Returns the order's billing address data.
+	 *
+	 * @return array
+	 */
+	private function get_billing_address_data() {
+
+		return [
 			'recipient_name' => $this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name(),
 			'line1'          => $this->order->get_billing_address_1(),
 			'line2'          => $this->order->get_billing_address_2(),
@@ -118,12 +165,5 @@ class PatchProvider {
 			'postal_code'    => $this->order->get_billing_postcode(),
 			'country_code'   => $this->order->get_billing_country(),
 		];
-
-		$billing_patch = new Patch();
-		$billing_patch->setOp( 'add' )
-		              ->setPath( '/transactions/0/item_list/shipping_address' )
-		              ->setValue( $billing_data );
-
-		return $billing_patch;
 	}
 }
