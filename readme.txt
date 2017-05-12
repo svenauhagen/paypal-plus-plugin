@@ -102,7 +102,10 @@ Your PayPal vendor account needs to be activated by PayPal in order to offer the
 
  
 == Changelog ==
- 
+= 1.0.1 =
+ - Fix address patch request not always being included.
+ - Fix an error with price decimals.
+ - Improve session data handling.
 = 1.0 =
 Initial Release
  
