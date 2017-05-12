@@ -87,7 +87,7 @@ class OrderData extends OrderDataCommon {
 
 		$tax = $this->order->get_total_tax();
 
-		return $tax;
+		return $this->format( $tax );
 	}
 
 	/**

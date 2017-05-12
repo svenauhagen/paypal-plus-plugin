@@ -40,7 +40,7 @@ class CartData extends OrderDataCommon {
 	 */
 	public function get_total_tax() {
 
-		$tax = $this->cart->get_taxes_total( true, false );
+		$tax = $this->format( $this->cart->get_taxes_total( true, false ) );
 
 		return $tax;
 	}

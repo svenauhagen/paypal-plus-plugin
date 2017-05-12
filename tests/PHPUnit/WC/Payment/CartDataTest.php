@@ -10,6 +10,7 @@ namespace WCPayPalPlus\WC\Payment;
 
 use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
+use WCPayPalPlus\Test\PriceFormatter;
 use WCPayPalPlus\Test\WCCartMock;
 
 class CartDataTest extends BrainMonkeyWpTestCase {
@@ -173,9 +174,10 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 			$pricesIncludeTax
 		);
 
-		$data   = new CartData( $cart );
-		$result = $data->get_total_tax();
-		$this->assertSame( $tax, $result );
+		$data     = new CartData( $cart );
+		$result   = $data->get_total_tax();
+		$expected = PriceFormatter::format( $tax );
+		$this->assertSame( $expected, $result );
 
 	}
 
@@ -327,8 +329,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 			$sum += $item->get_price() * $item->get_quantity();
 		}
 
-		$sum += $shipping;
-		$sum += $tax;
+		$sum         += $shipping;
+		$sum         += $tax;
 		$sum         = floatval( number_format( $sum, 2, '.', '' ) );
 		$resultTotal = floatval( number_format( $resultTotal, 2, '.', '' ) );
 		$this->assertSame( $resultTotal, $sum );

@@ -1,4 +1,5 @@
 <?php
+
 namespace WCPayPalPlus\WC\Payment;
 
 use PayPal\Api\Item;
@@ -27,6 +28,8 @@ abstract class OrderDataCommon implements OrderDataProvider {
 		$total += $shipping;
 		$total += $tax;
 
+		$total = $this->format( $total );
+
 		return $total;
 	}
 
@@ -50,12 +53,12 @@ abstract class OrderDataCommon implements OrderDataProvider {
 		foreach ( $items as $item ) {
 			$product_price = $item->getPrice();
 			$item_price    = floatval( $product_price * $item->getQuantity() );
-			$subtotal += $item_price;
+			$subtotal      += $item_price;
 			//$subtotal += $this->round( $item_price );
 		}
 
-		return $subtotal;
-		//return $this->round($subtotal);
+		//return $subtotal;
+		return $this->format( $subtotal );
 	}
 
 	/**

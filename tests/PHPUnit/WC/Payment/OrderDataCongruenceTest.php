@@ -251,8 +251,8 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 
 		$cart = \Mockery::mock( 'WC_Cart' );
 
-		//Functions::expect( 'get_woocommerce_currency' )
-		//         ->once();
+		Functions::expect( 'get_woocommerce_currency' )
+		         ->twice();
 		$cart->shouldReceive( 'get_taxes_total' )
 		     ->andReturn( $tax );
 

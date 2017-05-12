@@ -10,6 +10,7 @@ namespace WCPayPalPlus\WC\Payment;
 
 use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
+use WCPayPalPlus\Test\PriceFormatter;
 use WCPayPalPlus\Test\WCOrderItemMock;
 
 class OrderItemDataTest extends BrainMonkeyWpTestCase {
@@ -24,7 +25,7 @@ class OrderItemDataTest extends BrainMonkeyWpTestCase {
 		Functions::expect( 'get_woocommerce_currency' );
 		$orderItem = WCOrderItemMock::getMock( $data );
 		$testee    = new OrderItemData( $orderItem );
-		$expected  = floatval( number_format( $data['subtotal'] / $testee->get_quantity(), 2, '.', '' ) );
+		$expected  = PriceFormatter::format( $data['subtotal'] / $testee->get_quantity() );
 		$result    = $testee->get_price();
 		$this->assertSame( $expected, $result );
 

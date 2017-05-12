@@ -10,6 +10,7 @@ namespace WCPayPalPlus\WC\Payment;
 
 use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
+use WCPayPalPlus\Test\PriceFormatter;
 
 class CartItemDataTest extends BrainMonkeyWpTestCase {
 
@@ -22,7 +23,7 @@ class CartItemDataTest extends BrainMonkeyWpTestCase {
 
 		Functions::expect( 'get_woocommerce_currency' );
 		$testee   = new CartItemData( $data );
-		$expected = $data['line_subtotal'] / $testee->get_quantity();
+		$expected = PriceFormatter::format( $data['line_subtotal'] / $testee->get_quantity() );
 		$result   = $testee->get_price();
 		$this->assertSame( $expected, $result );
 

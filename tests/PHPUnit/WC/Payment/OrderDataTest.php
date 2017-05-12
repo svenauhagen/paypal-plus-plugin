@@ -50,9 +50,10 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 			$pricesIncludeTax
 		);
 
-		$data  = new OrderData( $order );
-		$total = $data->get_total();
-		$this->assertSame( $cart_total, $total );
+		$data     = new OrderData( $order );
+		$total    = $data->get_total();
+		$expected = Test\PriceFormatter::format( $cart_total );
+		$this->assertSame( $expected, $total );
 
 	}
 
@@ -201,6 +202,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		$pricesIncludeTax
 	) {
 
+		Functions::expect( 'get_woocommerce_currency' )
+		         ->once();
 		$order = Test\WCOrderMock::getMock(
 			'get_total_tax',
 			$rawItems,
@@ -213,9 +216,10 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 			$pricesIncludeTax
 		);
 
-		$data   = new OrderData( $order );
-		$result = $data->get_total_tax();
-		$this->assertSame( $tax, $result );
+		$data     = new OrderData( $order );
+		$result   = $data->get_total_tax();
+		$expected = Test\PriceFormatter::format( $tax );
+		$this->assertSame( $expected, $result );
 
 	}
 
@@ -333,6 +337,38 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 			98.54,
 			// WooCommerce Subtotal (excluding discounts & fees)
 			70.0,
+			// Shipping
+			4.0,
+			// Tax
+			12.54,
+			// Discount total
+			8.0,
+			// Fees
+			[
+				[
+					'name'       => 'foo',
+					'line_total' => 20.0,
+				],
+			],
+			// Prices include tax
+			false,
+		];
+
+		$data['test_4_many digits'] = [
+			// Cart
+			\Mockery::mock( 'WC_Order' ),
+			// Cart Items
+			[
+				[
+					'subtotal'   => 70.5789324,
+					'quantity'   => 2,
+					'product_id' => 2,
+				],
+			],
+			// Cart total
+			99.120000000000005,
+			// WooCommerce Subtotal (excluding discounts & fees)
+			70.5789324,
 			// Shipping
 			4.0,
 			// Tax

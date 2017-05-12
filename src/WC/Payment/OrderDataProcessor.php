@@ -25,7 +25,7 @@ trait OrderDataProcessor {
 			$decimals = 0;
 		}
 
-		return floatval( number_format( $price, $decimals, '.', '' ) );
+		return number_format( $price, $decimals, '.', '' );
 	}
 
 	/**

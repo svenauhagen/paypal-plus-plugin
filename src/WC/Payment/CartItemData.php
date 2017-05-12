@@ -47,8 +47,7 @@ class CartItemData implements OrderItemDataProvider {
 	 */
 	public function get_price() {
 
-		return $this->data['subtotal'] / $this->get_quantity();
-		//return $this->format( $this->data['line_subtotal'] / $this->get_quantity() );
+		return $this->format( $this->data['line_subtotal'] / $this->get_quantity() );
 	}
 
 	/**
