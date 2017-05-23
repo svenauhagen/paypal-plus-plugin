@@ -8,7 +8,7 @@
 
 namespace WCPayPalPlus\WC\Payment;
 
-use PayPal\Rest\ApiContext;
+use Inpsyde\Lib\PayPal\Rest\ApiContext;
 
 /**
  * Class PaymentData

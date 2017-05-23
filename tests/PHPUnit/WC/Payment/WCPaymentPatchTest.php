@@ -9,7 +9,7 @@
 namespace WCPayPalPlus\WC\Payment;
 
 use MonkeryTestCase\BrainMonkeyWpTestCase;
-use PayPal\Api\Payment;
+use Inpsyde\Lib\PayPal\Api\Payment;
 
 class WCPaymentPatchTest extends BrainMonkeyWpTestCase {
 

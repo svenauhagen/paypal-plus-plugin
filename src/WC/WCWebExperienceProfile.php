@@ -8,11 +8,11 @@
 
 namespace WCPayPalPlus\WC;
 
-use PayPal\Api\InputFields;
-use PayPal\Api\Presentation;
-use PayPal\Api\WebProfile;
-use PayPal\Exception\PayPalConnectionException;
-use PayPal\Rest\ApiContext;
+use Inpsyde\Lib\PayPal\Api\InputFields;
+use Inpsyde\Lib\PayPal\Api\Presentation;
+use Inpsyde\Lib\PayPal\Api\WebProfile;
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use Inpsyde\Lib\PayPal\Rest\ApiContext;
 
 /**
  * Class WCWebExperienceProfile

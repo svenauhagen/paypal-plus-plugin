@@ -8,9 +8,9 @@
 
 namespace WCPayPalPlus\WC\Payment;
 
-use PayPal\Api\Payment;
-use PayPal\Api\PaymentExecution;
-use PayPal\Rest\ApiContext;
+use Inpsyde\Lib\PayPal\Api\Payment;
+use Inpsyde\Lib\PayPal\Api\PaymentExecution;
+use Inpsyde\Lib\PayPal\Rest\ApiContext;
 
 /**
  * Class PaymentExecutionData

@@ -8,7 +8,7 @@
 
 namespace WCPayPalPlus\WC\Payment;
 
-use PayPal\Exception\PayPalConnectionException;
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use WCPayPalPlus\WC\RequestSuccessHandler;
 
 /**

@@ -8,8 +8,8 @@
 
 namespace WCPayPalPlus\WC\Refund;
 
-use PayPal\Exception\PayPalConnectionException;
-use PayPal\Rest\ApiContext;
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use Inpsyde\Lib\PayPal\Rest\ApiContext;
 
 /**
  * Class WCRefund

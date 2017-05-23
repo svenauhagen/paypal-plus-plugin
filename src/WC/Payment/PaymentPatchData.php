@@ -8,10 +8,10 @@
 
 namespace WCPayPalPlus\WC\Payment;
 
-use PayPal\Api\Patch;
-use PayPal\Api\PatchRequest;
-use PayPal\Api\Payment;
-use PayPal\Rest\ApiContext;
+use Inpsyde\Lib\PayPal\Api\Patch;
+use Inpsyde\Lib\PayPal\Api\PatchRequest;
+use Inpsyde\Lib\PayPal\Api\Payment;
+use Inpsyde\Lib\PayPal\Rest\ApiContext;
 
 /**
  * Class PaymentPatchData

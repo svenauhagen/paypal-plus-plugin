@@ -10,13 +10,13 @@ namespace WCPayPalPlus\WC\Payment;
 
 use Mockery\Mock;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
-use PayPal\Api\Payment;
-use PayPal\Api\PaymentExecution;
-use PayPal\Api\PaymentInstruction;
-use PayPal\Api\RelatedResources;
-use PayPal\Api\Sale;
-use PayPal\Api\Transaction;
-use PayPal\Rest\ApiContext;
+use Inpsyde\Lib\PayPal\Api\Payment;
+use Inpsyde\Lib\PayPal\Api\PaymentExecution;
+use Inpsyde\Lib\PayPal\Api\PaymentInstruction;
+use Inpsyde\Lib\PayPal\Api\RelatedResources;
+use Inpsyde\Lib\PayPal\Api\Sale;
+use Inpsyde\Lib\PayPal\Api\Transaction;
+use Inpsyde\Lib\PayPal\Rest\ApiContext;
 
 class PaymentExecutionDataTest extends BrainMonkeyWpTestCase {
 

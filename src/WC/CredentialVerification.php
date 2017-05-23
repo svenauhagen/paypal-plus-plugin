@@ -8,10 +8,10 @@
 
 namespace WCPayPalPlus\WC;
 
-use PayPal\Api\Payment;
-use PayPal\Exception\PayPalConnectionException;
-use PayPal\Exception\PayPalInvalidCredentialException;
-use PayPal\Rest\ApiContext;
+use Inpsyde\Lib\PayPal\Api\Payment;
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use Inpsyde\Lib\PayPal\Exception\PayPalInvalidCredentialException;
+use Inpsyde\Lib\PayPal\Rest\ApiContext;
 
 /**
  * Class CredentialVerification

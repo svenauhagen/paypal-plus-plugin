@@ -2,9 +2,9 @@
 
 namespace WCPayPalPlus\WC;
 
-use PayPal\Api\Payment;
-use PayPal\Auth\OAuthTokenCredential;
-use PayPal\Rest\ApiContext;
+use Inpsyde\Lib\PayPal\Api\Payment;
+use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
+use Inpsyde\Lib\PayPal\Rest\ApiContext;
 use WCPayPalPlus\WC\IPN\IPN;
 use WCPayPalPlus\WC\IPN\IPNData;
 use WCPayPalPlus\WC\Payment\CartData;

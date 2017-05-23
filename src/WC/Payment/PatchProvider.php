@@ -8,7 +8,7 @@
 
 namespace WCPayPalPlus\WC\Payment;
 
-use PayPal\Api\Patch;
+use Inpsyde\Lib\PayPal\Api\Patch;
 
 /**
  * Class PatchProvider

@@ -8,8 +8,8 @@
 
 namespace WCPayPalPlus\WC\Payment;
 
-use PayPal\Api\Item;
-use PayPal\Api\ItemList;
+use Inpsyde\Lib\PayPal\Api\Item;
+use Inpsyde\Lib\PayPal\Api\ItemList;
 
 /**
  * Interface OrderDataProvider

@@ -8,14 +8,14 @@
 
 namespace WCPayPalPlus\WC\Payment;
 
-use PayPal\Api\Amount;
-use PayPal\Api\Details;
-use PayPal\Api\ItemList;
-use PayPal\Api\Payer;
-use PayPal\Api\Payment;
-use PayPal\Api\RedirectUrls;
-use PayPal\Api\Transaction;
-use PayPal\Exception\PayPalConnectionException;
+use Inpsyde\Lib\PayPal\Api\Amount;
+use Inpsyde\Lib\PayPal\Api\Details;
+use Inpsyde\Lib\PayPal\Api\ItemList;
+use Inpsyde\Lib\PayPal\Api\Payer;
+use Inpsyde\Lib\PayPal\Api\Payment;
+use Inpsyde\Lib\PayPal\Api\RedirectUrls;
+use Inpsyde\Lib\PayPal\Api\Transaction;
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 
 /**
  * Class WCPayPalPayment

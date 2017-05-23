@@ -10,9 +10,9 @@ namespace WCPayPalPlus\WC\Payment;
 
 use Brain\Monkey\WP\Actions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
-use PayPal\Api\Payment;
-use PayPal\Exception\PayPalConnectionException;
-use PayPal\Rest\ApiContext;
+use Inpsyde\Lib\PayPal\Api\Payment;
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use Inpsyde\Lib\PayPal\Rest\ApiContext;
 
 class WCPaymentExecutionTest extends BrainMonkeyWpTestCase {
 

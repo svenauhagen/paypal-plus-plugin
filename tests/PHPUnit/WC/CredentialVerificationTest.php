@@ -9,8 +9,8 @@
 namespace WCPayPalPlus\WC;
 
 use MonkeryTestCase\BrainMonkeyWpTestCase;
-use PayPal\Auth\OAuthTokenCredential;
-use PayPal\Rest\ApiContext;
+use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
+use Inpsyde\Lib\PayPal\Rest\ApiContext;
 
 class CredentialVerificationTest extends BrainMonkeyWpTestCase {
 

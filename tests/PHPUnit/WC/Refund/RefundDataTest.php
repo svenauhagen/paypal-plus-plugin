@@ -10,8 +10,8 @@ namespace WCPayPalPlus\WC\Refund;
 
 use Brain\Monkey\Functions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
-use PayPal\Api\RefundRequest;
-use PayPal\Rest\ApiContext;
+use Inpsyde\Lib\PayPal\Api\RefundRequest;
+use Inpsyde\Lib\PayPal\Rest\ApiContext;
 use WCPayPalPlus\WC\RequestSuccessHandler;
 
 class RefundDataTest extends BrainMonkeyWpTestCase {

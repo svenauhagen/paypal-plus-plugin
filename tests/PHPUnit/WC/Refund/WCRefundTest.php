@@ -10,11 +10,11 @@ namespace WCPayPalPlus\WC\Refund;
 
 use Brain\Monkey\WP\Actions;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
-use PayPal\Api\DetailedRefund;
-use PayPal\Api\RefundRequest;
-use PayPal\Api\Sale;
-use PayPal\Exception\PayPalConnectionException;
-use PayPal\Rest\ApiContext;
+use Inpsyde\Lib\PayPal\Api\DetailedRefund;
+use Inpsyde\Lib\PayPal\Api\RefundRequest;
+use Inpsyde\Lib\PayPal\Api\Sale;
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use Inpsyde\Lib\PayPal\Rest\ApiContext;
 
 class WCRefundTest extends BrainMonkeyWpTestCase {
 

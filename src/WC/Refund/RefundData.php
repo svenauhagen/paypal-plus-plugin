@@ -8,10 +8,10 @@
 
 namespace WCPayPalPlus\WC\Refund;
 
-use PayPal\Api\Amount;
-use PayPal\Api\RefundRequest;
-use PayPal\Api\Sale;
-use PayPal\Rest\ApiContext;
+use Inpsyde\Lib\PayPal\Api\Amount;
+use Inpsyde\Lib\PayPal\Api\RefundRequest;
+use Inpsyde\Lib\PayPal\Api\Sale;
+use Inpsyde\Lib\PayPal\Rest\ApiContext;
 
 /**
  * Class RefundData

@@ -24,11 +24,13 @@
   "require-dev": {
     "brain/monkey": "^1.3",
     "mockery/mockery": "*",
-    "inpsyde/monkery-test-case": "dev-master"
+    "inpsyde/monkery-test-case": "dev-master",
+    "coenjacobs/mozart": "^0.2.0"
   },
   "autoload": {
     "psr-4": {
-      "WCPayPalPlus\\": "src/"
+      "WCPayPalPlus\\": "src/",
+      "Inpsyde\\Lib\\": "lib/"
     }
   },
   "autoload-dev": {
@@ -36,7 +38,26 @@
       "WCPayPalPlus\\Test\\": "tests/Helper"
     }
   },
-  "config":{
+  "config": {
     "optimize-autoloader": true
+  },
+  "extra": {
+    "mozart": {
+      "dep_namespace": "Inpsyde\\Lib\\",
+      "dep_directory": "/lib/",
+      "classmap_directory": "/lib/__classes/",
+      "classmap_prefix": "InpsydeLib_",
+      "packages": [
+        "paypal/rest-api-sdk-php"
+      ]
+    }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "\"vendor/bin/mozart\" compose"
+    ],
+    "post-update-cmd": [
+      "\"vendor/bin/mozart\" compose"
+    ]
   }
 }
