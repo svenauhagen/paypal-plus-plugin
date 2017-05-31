@@ -114,7 +114,7 @@ class PaymentPatchDataTest extends BrainMonkeyWpTestCase {
 		$invoice_prefix = '';
 		$api_context    = \Mockery::mock( ApiContext::class );
 
-		$saleMock = \Mockery::mock( 'alias:' . 'PayPal\Api\Payment' );
+		$saleMock = \Mockery::mock( 'alias:' . 'Inpsyde\Lib\PayPal\Api\Payment' );
 		$saleMock->shouldReceive( 'get' )
 		         ->once()
 		         ->andReturn( $saleMock );

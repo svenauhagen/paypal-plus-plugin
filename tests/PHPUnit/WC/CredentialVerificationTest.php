@@ -19,7 +19,7 @@ class CredentialVerificationTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_verify() {
 
-		$paymentMock = \Mockery::mock( 'alias:' . 'PayPal\Api\Payment' );
+		$paymentMock = \Mockery::mock( 'alias:' . 'Inpsyde\Lib\PayPal\Api\Payment' );
 		$paymentMock->shouldReceive( 'all' )
 		            ->once();
 

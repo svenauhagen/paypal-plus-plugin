@@ -67,7 +67,7 @@ class RefundDataTest extends BrainMonkeyWpTestCase {
 
 		$testee = new RefundData( $order, $amount, $reason, $context );
 
-		$saleMock = \Mockery::mock( 'alias:' . 'PayPal\Api\Sale' );
+		$saleMock = \Mockery::mock( 'alias:' . 'Inpsyde\Lib\PayPal\Api\Sale' );
 		$saleMock->shouldReceive( 'get' )
 		         ->once()
 		         ->andReturn( $saleMock );

@@ -52,7 +52,7 @@ class CartData extends OrderDataCommon {
 	 */
 	public function get_total_shipping() {
 
-		return $this->cart->shipping_total;
+		return $this->format( $this->cart->shipping_total );
 	}
 
 	/**

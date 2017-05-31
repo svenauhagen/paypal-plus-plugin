@@ -8,7 +8,6 @@
 
 namespace WCPayPalPlus\WC\Payment;
 
-use Mockery\Mock;
 use MonkeryTestCase\BrainMonkeyWpTestCase;
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Api\PaymentExecution;
@@ -29,7 +28,7 @@ class PaymentExecutionDataTest extends BrainMonkeyWpTestCase {
 		$hasInstructions = (bool) rand( 0, 1 );
 		$instruction     = \Mockery::mock( PaymentInstruction::class );
 
-		$payment = \Mockery::mock( 'alias:' . 'PayPal\Api\Payment' );
+		$payment = \Mockery::mock( 'alias:' . 'Inpsyde\Lib\PayPal\Api\Payment' );
 		$payment->shouldReceive( 'get' )
 		        ->once()
 		        ->andReturn( $payment );
@@ -54,7 +53,7 @@ class PaymentExecutionDataTest extends BrainMonkeyWpTestCase {
 	public function test_is_approved() {
 
 		$isApproved = (bool) rand( 0, 1 );
-		$payment    = \Mockery::mock( 'alias:' . 'PayPal\Api\Payment' );
+		$payment    = \Mockery::mock( 'alias:' . 'Inpsyde\Lib\PayPal\Api\Payment' );
 		$payment->shouldReceive( 'get' )
 		        ->once()
 		        ->andReturn( $payment );
@@ -78,7 +77,7 @@ class PaymentExecutionDataTest extends BrainMonkeyWpTestCase {
 
 		$instruction = \Mockery::mock( PaymentInstruction::class );
 
-		$payment = \Mockery::mock( 'alias:' . 'PayPal\Api\Payment' );
+		$payment = \Mockery::mock( 'alias:' . 'Inpsyde\Lib\PayPal\Api\Payment' );
 		$payment->shouldReceive( 'get' )
 		        ->once()
 		        ->andReturn( $payment );
@@ -117,7 +116,7 @@ class PaymentExecutionDataTest extends BrainMonkeyWpTestCase {
 		                ->andReturn( $sale );
 		$transactions = [ $transaction ];
 
-		$payment = \Mockery::mock( 'alias:' . 'PayPal\Api\Payment' );
+		$payment = \Mockery::mock( 'alias:' . 'Inpsyde\Lib\PayPal\Api\Payment' );
 		$payment->shouldReceive( 'get' )
 		        ->once()
 		        ->andReturn( $payment );
@@ -142,7 +141,7 @@ class PaymentExecutionDataTest extends BrainMonkeyWpTestCase {
 	public function test_get_payment_state() {
 
 		$state   = 'fubar';
-		$payment = \Mockery::mock( 'alias:' . 'PayPal\Api\Payment' );
+		$payment = \Mockery::mock( 'alias:' . 'Inpsyde\Lib\PayPal\Api\Payment' );
 		$payment->shouldReceive( 'get' )
 		        ->once()
 		        ->andReturn( $payment );
@@ -165,7 +164,7 @@ class PaymentExecutionDataTest extends BrainMonkeyWpTestCase {
 	 */
 	public function test_get_payment() {
 
-		$payment = \Mockery::mock( 'alias:' . 'PayPal\Api\Payment' );
+		$payment = \Mockery::mock( 'alias:' . 'Inpsyde\Lib\PayPal\Api\Payment' );
 		$payment->shouldReceive( 'get' )
 		        ->once()
 		        ->andReturn( $payment );

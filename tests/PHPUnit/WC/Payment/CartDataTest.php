@@ -202,7 +202,7 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		array $fees,
 		$pricesIncludeTax
 	) {
-
+		Functions::expect( 'get_woocommerce_currency' );
 		$cart = WCCartMock::getMock(
 			'get_total_shipping',
 			$rawItems,
@@ -217,7 +217,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 
 		$data   = new CartData( $cart );
 		$result = $data->get_total_shipping();
-		$this->assertSame( $shipping, $result );
+		$expected = PriceFormatter::format( $shipping );
+		$this->assertSame( $expected, $result );
 
 	}
 

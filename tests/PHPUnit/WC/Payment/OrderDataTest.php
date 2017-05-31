@@ -237,7 +237,8 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		array $fees,
 		$pricesIncludeTax
 	) {
-
+		Functions::expect( 'get_woocommerce_currency' )
+		         ->once();
 		$order  = Test\WCOrderMock::getMock(
 			'get_shipping_total',
 			$rawItems,
@@ -252,9 +253,9 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 		$data   = new OrderData( $order );
 		$result = $data->get_total_shipping();
 
-		//$expected = ( $pricesIncludeTax ) ? $shipping + $tax : $shipping;
+		$expected = Test\PriceFormatter::format( $shipping );
 
-		$this->assertSame( $shipping, $result );
+		$this->assertSame( $expected, $result );
 
 	}
 
