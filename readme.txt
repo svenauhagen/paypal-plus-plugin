@@ -102,7 +102,10 @@ Your PayPal vendor account needs to be activated by PayPal in order to offer the
 
  
 == Changelog ==
-= 1.0.1 =
+= 1.0.3 =
+ - Another fix for price decimals
+ - Move PayPay SDK in dedicated namespace to avoid collisions
+= 1.0.2 =
  - Fix address patch request not always being included.
  - Fix an error with price decimals.
  - Improve session data handling.
