@@ -105,6 +105,7 @@ Your PayPal vendor account needs to be activated by PayPal in order to offer the
 = 1.0.3 =
  - Another fix for price decimals
  - Move PayPay SDK in dedicated namespace to avoid collisions
+ - Check for minimum required PHP version 5.4 and fail gently if it's not met
 = 1.0.2 =
  - Fix address patch request not always being included.
  - Fix an error with price decimals.

@@ -15,6 +15,34 @@ namespace WCPayPalPlus;
 add_action( 'plugins_loaded', function () {
 
 	load_plugin_textdomain( 'woo-paypalplus', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
+
+	/**
+	 * Spawn a little helper to put admin notices on the WP Admin panel.
+	 *
+	 * @param $message
+	 */
+	$admin_notice = function ( $message ) {
+
+		add_action( 'admin_notices', function () use ( $message ) {
+
+			$class = 'notice notice-error';
+			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+		} );
+	};
+
+	$min_php_version = '5.4';
+	if ( ! version_compare( phpversion(), '5.4', '>=' ) ) {
+		$admin_notice(
+			sprintf(
+				__( 'PayPal Plus requires PHP version %1$1s or higher. You are running version %2$2s ' ),
+				$min_php_version,
+				phpversion()
+			)
+		);
+
+		return;
+	}
+
 	/**
 	 * Check if we're already autoloaded by some external autloader
 	 * If not, load our own
@@ -26,13 +54,7 @@ add_action( 'plugins_loaded', function () {
 			require $autoloader;
 		} else {
 
-			add_action( 'admin_notices', function () {
-
-				$class   = 'notice notice-error';
-				$message = __( 'Could not find a working autoloader for PayPal Plus.', 'woo-paypalplus' );
-
-				printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
-			} );
+			$admin_notice( __( 'Could not find a working autoloader for PayPal Plus.', 'woo-paypalplus' ) );
 
 			return;
 		}
@@ -43,13 +65,7 @@ add_action( 'plugins_loaded', function () {
 	 */
 	if ( ! class_exists( 'WooCommerce' ) ) {
 
-		add_action( 'admin_notices', function () {
-
-			$class   = 'notice notice-error';
-			$message = __( 'PayPal Plus requires WooCommerce to be active.', 'woo-paypalplus' );
-
-			printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
-		} );
+		$admin_notice( __( 'PayPal Plus requires WooCommerce to be active.', 'woo-paypalplus' ) );
 
 		return;
 	}
