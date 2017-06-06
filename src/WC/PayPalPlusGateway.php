@@ -155,15 +155,19 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	 */
 	public function execute_payment() {
 
-		$token    = filter_input( INPUT_GET, 'token' );
-		$payer_id = filter_input( INPUT_GET, 'PayerID' );
+		$token      = filter_input( INPUT_GET, 'token' );
+		$payer_id   = filter_input( INPUT_GET, 'PayerID' );
+		$payment_id = filter_input( INPUT_GET, 'paymentId' );
 
-		if ( ! $token || ! $payer_id ) {
+		if ( ! $payment_id ) {
+			$payment_id = WC()->session->__get( self::PAYMENT_ID_SESSION_KEY );
+		}
+
+		if ( ! $token || ! $payer_id || ! $payment_id ) {
 			return;
 		}
 
 		WC()->session->token = $token;
-		$payment_id          = WC()->session->__get( self::PAYMENT_ID_SESSION_KEY );
 
 		WC()->session->__set( self::PAYER_ID_SESSION_KEY, $payer_id );
 		$order = new \WC_Order( WC()->session->ppp_order_id );
@@ -385,8 +389,13 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		WC()->session->ppp_order_id = $order_id;
 		$order                      = wc_get_order( $order_id );
 		$payment_id                 = WC()->session->__get( self::PAYMENT_ID_SESSION_KEY );
-		$invoice_prefix             = $this->get_option( 'invoice_prefix' );
-		$api_context                = $this->get_api_context();
+		if ( ! $payment_id ) {
+			$this->abort_checkout();
+
+			return;
+		}
+		$invoice_prefix = $this->get_option( 'invoice_prefix' );
+		$api_context    = $this->get_api_context();
 
 		$patch_data = new PaymentPatchData(
 			$order,
@@ -400,11 +409,17 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$view->render();
 
 		} else {
-			$this->clear_session_data();
-			wc_add_notice( __( 'Error processing checkout. Please try again. ', 'woo-paypalplus' ), 'error' );
-			wp_safe_redirect( wc_get_cart_url() );
-			exit;
+			$this->abort_checkout();
 		}
+	}
+
+	private function abort_checkout() {
+
+		$this->clear_session_data();
+		wc_add_notice( __( 'Error processing checkout. Please try again. ', 'woo-paypalplus' ), 'error' );
+		wp_safe_redirect( wc_get_cart_url() );
+		exit;
+
 	}
 
 	/**

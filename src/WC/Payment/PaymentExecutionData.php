@@ -87,7 +87,7 @@ class PaymentExecutionData {
 	/**
 	 * Returns the Payment Instruction object, if it exists
 	 *
-	 * @return \PayPal\Api\PaymentInstruction|null
+	 * @return \Inpsyde\Lib\PayPal\Api\PaymentInstruction
 	 */
 	public function get_payment_instruction() {
 
