@@ -55,10 +55,10 @@
   },
   "scripts": {
     "post-install-cmd": [
-      "\"vendor/bin/mozart\" compose"
+      "php -C \"vendor/bin/mozart\" compose"
     ],
     "post-update-cmd": [
-      "\"vendor/bin/mozart\" compose"
+      "php -C \"vendor/bin/mozart\" compose"
     ]
   }
 }
