@@ -22,11 +22,12 @@ abstract class OrderDataCommon implements OrderDataProvider {
 	public function get_total() {
 
 		$total    = $this->get_subtotal();
-		$tax      = $this->get_total_tax();
+		if ( $this->should_include_tax_in_total() ) {
+			$tax      = $this->get_total_tax();
+			$total += $tax;
+		}
 		$shipping = $this->get_total_shipping();
-
 		$total += $shipping;
-		$total += $tax;
 
 		$total = $this->format( $total );
 
@@ -44,20 +45,22 @@ abstract class OrderDataCommon implements OrderDataProvider {
 	 */
 	public function get_subtotal() {
 
-		$subtotal = 0;
-		$items    = $this->get_item_list()
-		                 ->getItems();
-		if ( empty( $items ) ) {
-			return $subtotal;
-		}
-		foreach ( $items as $item ) {
-			$product_price = $item->getPrice();
-			$item_price    = floatval( $product_price * $item->getQuantity() );
-			$subtotal      += $item_price;
-			//$subtotal += $this->round( $item_price );
+		if ( $this->should_include_tax_in_total() ) {
+			$subtotal = 0;
+			$items    = $this->get_item_list()
+			                 ->getItems();
+			if ( empty( $items ) ) {
+				return $subtotal;
+			}
+			foreach ( $items as $item ) {
+				$product_price = $item->getPrice();
+				$item_price    = floatval( $product_price * $item->getQuantity() );
+				$subtotal      += $item_price;
+			}
+		} else {
+			$subtotal = $this->get_subtotal_including_tax();
 		}
 
-		//return $subtotal;
 		return $this->format( $subtotal );
 	}
 
@@ -104,4 +107,23 @@ abstract class OrderDataCommon implements OrderDataProvider {
 
 		return $item;
 	}
+	
+	/**
+		 * Whether to list taxes in addition to the subtotal.
+		 *
+		 * @return bool
+		 */
+	public function should_include_tax_in_total() {
+		return ( ! wc_tax_enabled() || ! wc_prices_include_tax() );
+	}
+	
+	/**
+		 * Get the subtotal including any additional taxes.
+		 *
+		 * This is used when the prices are given already including tax.
+		 *
+		 * @return string
+		 */
+	abstract protected function get_subtotal_including_tax();
+	
 }

@@ -95,4 +95,16 @@ class CartData extends OrderDataCommon {
 		return $this->cart->get_cart_discount_total();
 
 	}
+
+	/**
+		 * Get the subtotal including any additional taxes.
+		 *
+		 * This is used when the prices are given already including tax.
+		 *
+		 * @return string
+		 */
+	protected function get_subtotal_including_tax() {
+		return $this->format( $this->cart->subtotal );
+	}
+
 }

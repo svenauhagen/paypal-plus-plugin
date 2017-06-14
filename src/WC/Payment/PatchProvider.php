@@ -90,9 +90,12 @@ class PatchProvider {
 			'details'  => [
 				'subtotal' => $this->order_data->get_subtotal(),
 				'shipping' => $this->order_data->get_total_shipping(),
-				'tax'      => $this->order_data->get_total_tax(),
 			],
 		];
+		
+		if ( $this->order_data->should_include_tax_in_total() ) {
+			$payment_data['details']['tax'] = $this->order_data->get_total_tax();
+		}
 
 		$replace_patch->setOp( 'replace' )
 		              ->setPath( '/transactions/0/amount' )

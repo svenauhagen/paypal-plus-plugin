@@ -10,6 +10,7 @@ namespace WCPayPalPlus\WC\Payment;
 
 use Inpsyde\Lib\PayPal\Api\Amount;
 use Inpsyde\Lib\PayPal\Api\Details;
+use Inpsyde\Lib\PayPal\Api\Item;
 use Inpsyde\Lib\PayPal\Api\ItemList;
 use Inpsyde\Lib\PayPal\Api\Payer;
 use Inpsyde\Lib\PayPal\Api\Payment;
@@ -127,7 +128,18 @@ class WCPayPalPayment {
 	 */
 	private function get_item_list() {
 
-		return $this->order_data->get_item_list();
+		if ( $this->order_data->should_include_tax_in_total() ) {
+			return $this->order_data->get_item_list();
+		} else {
+			$item_list = new ItemList;
+			$item = new Item;
+			$item->setName( __( 'Order', 'woo-paypalplus' ) )
+			     ->setCurrency( get_woocommerce_currency() )
+			     ->setQuantity( 1 )
+			     ->setPrice( $this->order_data->get_total() );
+			$item_list->addItem( $item );
+			return $item_list;
+		}
 	}
 
 	/**
@@ -138,13 +150,18 @@ class WCPayPalPayment {
 	private function get_details() {
 
 		$shipping  = $this->order_data->get_total_shipping();
-		$tax       = $this->order_data->get_total_tax();
+		if ( $this->order_data->should_include_tax_in_total() ) {
+			$tax       = $this->order_data->get_total_tax();
+		}
 		$sub_total = $this->order_data->get_subtotal();
 
 		$details = new Details();
 		$details->setShipping( $shipping )
-		        ->setTax( $tax )
-		        ->setSubtotal( $sub_total );
+				->setSubtotal( $sub_total );
+		
+		if ( isset( $tax ) ) {
+			$details->setTax( $tax );
+		}
 
 		return $details;
 	}
