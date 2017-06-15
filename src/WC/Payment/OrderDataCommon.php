@@ -22,11 +22,13 @@ abstract class OrderDataCommon implements OrderDataProvider {
 	public function get_total() {
 
 		$total    = $this->get_subtotal();
+		$shipping = $this->get_total_shipping();
 		if ( $this->should_include_tax_in_total() ) {
 			$tax      = $this->get_total_tax();
 			$total += $tax;
+		} else {
+			$shipping += $this->get_shipping_tax();
 		}
-		$shipping = $this->get_total_shipping();
 		$total += $shipping;
 
 		$total = $this->format( $total );
@@ -116,6 +118,13 @@ abstract class OrderDataCommon implements OrderDataProvider {
 	public function should_include_tax_in_total() {
 		return ( ! wc_tax_enabled() || ! wc_prices_include_tax() );
 	}
+	
+	/**
+		 * Get total shipping tax.
+		 *
+		 * @return string
+		 */
+	abstract public function get_shipping_tax();
 	
 	/**
 		 * Get the subtotal including any additional taxes.

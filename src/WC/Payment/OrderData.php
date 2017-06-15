@@ -103,6 +103,15 @@ class OrderData extends OrderDataCommon {
 	}
 	
 	/**
+		 * Get total shipping tax.
+		 *
+		 * @return string
+		 */
+	public function get_shipping_tax() {
+		return $this->format( $this->order->get_shipping_tax() );
+	}
+	
+	/**
 		 * Get the subtotal including any additional taxes.
 		 *
 		 * This is used when the prices are given already including tax.

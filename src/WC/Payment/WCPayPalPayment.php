@@ -136,7 +136,7 @@ class WCPayPalPayment {
 			$item->setName( __( 'Order', 'woo-paypalplus' ) )
 			     ->setCurrency( get_woocommerce_currency() )
 			     ->setQuantity( 1 )
-			     ->setPrice( $this->order_data->get_total() );
+			     ->setPrice( $this->order_data->get_subtotal() );
 			$item_list->addItem( $item );
 			return $item_list;
 		}
@@ -152,6 +152,8 @@ class WCPayPalPayment {
 		$shipping  = $this->order_data->get_total_shipping();
 		if ( $this->order_data->should_include_tax_in_total() ) {
 			$tax       = $this->order_data->get_total_tax();
+		} else {
+			$shipping += $this->order_data->get_shipping_tax();
 		}
 		$sub_total = $this->order_data->get_subtotal();
 

@@ -95,6 +95,8 @@ class PatchProvider {
 		
 		if ( $this->order_data->should_include_tax_in_total() ) {
 			$payment_data['details']['tax'] = $this->order_data->get_total_tax();
+		} else {
+			$payment_data['details']['shipping'] += $this->order_data->get_shipping_tax();
 		}
 
 		$replace_patch->setOp( 'replace' )
