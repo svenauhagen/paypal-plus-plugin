@@ -72,7 +72,8 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	public function __construct( $id, $method_title, IPN $ipn = null ) {
 
 		$this->id           = $id;
-		$this->title        = $method_title;
+		$this->title        = $this->get_option( 'title' );
+		$this->description  = $this->get_option( 'description' );
 		$this->method_title = $method_title;
 		$this->has_fields   = true;
 		$this->supports     = [
