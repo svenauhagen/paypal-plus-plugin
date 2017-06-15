@@ -133,7 +133,7 @@ class WCPayPalPayment {
 		} else {
 			$item_list = new ItemList;
 			$item = new Item;
-			$item->setName( __( 'Order', 'woo-paypalplus' ) )
+			$item->setName( $this->get_order_item_names() )
 			     ->setCurrency( get_woocommerce_currency() )
 			     ->setQuantity( 1 )
 			     ->setPrice( $this->order_data->get_subtotal() );
@@ -190,5 +190,20 @@ class WCPayPalPayment {
 
 		return $transaction;
 
+	}
+	
+	/**
+		 * Gets a name to send to PayPal in the event the line items cannot be sent.
+		 *
+		 * @return string
+		 */
+	private function get_order_item_names() {
+		$item_names = array();
+		
+		foreach ( $this->order_data->get_item_list()->getItems() as $item ) {
+			$item_names[] = $item->getName() . ' x ' . $item->getQuantity();
+		}
+		
+		return implode( ', ', $item_names );
 	}
 }
