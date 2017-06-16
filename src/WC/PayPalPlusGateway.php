@@ -351,7 +351,14 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		ob_start();
 		$this->display_errors();
-
+		
+		$filename = wc_get_log_file_path( 'paypal_plus' );
+		printf(
+			__( '<p>The log for payPal plus is stored in %s, but you can also click the button below to download it now.</p>', 'woo-paypalplus' ),
+			$filename
+		);
+		echo '<p><a href="' . $filename . '" download="' . basename( $filename ) . '" class="button button-primary">' .
+		__( 'Download Now', 'woo-paypalplus' ) . '</a></p>';
 		$output = ob_get_clean();
 		$output .= parent::generate_settings_html( $form_fields, $echo );
 
