@@ -222,9 +222,10 @@ class GatewaySettingsModel {
 			'download_log' => [
 				'title' => __( 'Download Log File', 'woo-paypalplus' ),
 				'type' => 'html',
-				'html' => '<a href="' . $log_url . '" download="' . basename( $logfile ) . '" ' .
+				'html' => '<p>' . __( 'Please download the log file and attach it to your ticket when contacting support.', 'woo-paypalplus' ) .
+					'</p><p><a href="' . $log_url . '" download="' . basename( $logfile ) . '" ' .
 					'class="button button-primary">' .
-					__( 'Download Now', 'woo-paypalplus' ) . '</a>',
+					__( 'Download Now', 'woo-paypalplus' ) . '</a></p>',
 			],
 		];
 
