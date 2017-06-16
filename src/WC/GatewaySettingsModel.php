@@ -148,6 +148,9 @@ class GatewaySettingsModel {
 		];
 
 		// Settings.
+		$upload_dir = wp_upload_dir();
+		$logfile = wc_get_log_file_path( 'paypal_plus' );
+		$log_url = str_replace( $upload_dir['basedir'], $upload_dir['baseurl'], $logfile );
 		$settings += [
 			'settings_section'              => [
 				'title' => __( 'Settings', 'woo-paypalplus' ),
@@ -210,6 +213,18 @@ class GatewaySettingsModel {
 					'woo-paypalplus'
 				),
 				'desc_tip'    => false,
+			],
+			'log_file' => [
+				'title' => __( 'Log File', 'woo-paypalplus' ),
+				'type' => 'html',
+				'html' => $logfile,
+			],
+			'download_log' => [
+				'title' => __( 'Download Log File', 'woo-paypalplus' ),
+				'type' => 'html',
+				'html' => '<a href="' . $log_url . '" download="' . basename( $logfile ) . '" ' .
+					'class="button button-primary">' .
+					__( 'Download Now', 'woo-paypalplus' ) . '</a>',
 			],
 		];
 
