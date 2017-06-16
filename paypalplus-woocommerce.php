@@ -85,5 +85,6 @@ add_action( 'plugins_loaded', function () {
 	/**
 	 * Now we're good to go.
 	 */
-	( new Plugin( __FILE__ ) )->init();
+	$plugin = new Plugin( __FILE__ );
+	$plugin->init();
 } );
