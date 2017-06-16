@@ -214,11 +214,6 @@ class GatewaySettingsModel {
 				),
 				'desc_tip'    => false,
 			],
-			'log_file' => [
-				'title' => __( 'Log File', 'woo-paypalplus' ),
-				'type' => 'html',
-				'html' => $logfile,
-			],
 			'download_log' => [
 				'title' => __( 'Download Log File', 'woo-paypalplus' ),
 				'type' => 'html',
