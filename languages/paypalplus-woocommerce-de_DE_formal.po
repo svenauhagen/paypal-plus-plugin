@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PayPal Plus for WooCommerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/paypal-plus-"
 "plugin\n"
-"POT-Creation-Date: 2017-05-04 16:53+0200\n"
-"PO-Revision-Date: 2017-05-04 16:53+0200\n"
+"POT-Creation-Date: 2017-06-17 22:48+0200\n"
+"PO-Revision-Date: 2017-06-17 22:52+0200\n"
 "Last-Translator: admin <m.meisselbach@inpsyde.com>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -12,18 +12,25 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 2.0.2\n"
 
-#: paypalplus-woocommerce.php:32
+#: paypalplus-woocommerce.php:37
+msgid ""
+"PayPal Plus requires PHP version %1$1s or higher. You are running version "
+"%2$2s "
+msgstr ""
+"PayPal Plus benötigt PHP Version %1$1s oder höher. Sie nutzen Version %2$2s."
+
+#: paypalplus-woocommerce.php:57
 msgid "Could not find a working autoloader for PayPal Plus."
 msgstr ""
 "Es konnte kein funktionierender Autoloader für Paypal Plus gefunden werden."
 
-#: paypalplus-woocommerce.php:49
+#: paypalplus-woocommerce.php:68
 msgid "PayPal Plus requires WooCommerce to be active."
 msgstr "WooCommerce muss aktiviert sein, um PayPal Plus benutzen zu können."
 
-#: paypalplus-woocommerce.php:61
+#: paypalplus-woocommerce.php:77
 msgid "PayPal Plus requires WooCommerce version 3.0 or higher ."
 msgstr ""
 "WooCommerce Version 3.0 oder höher muss aktiviert sein, um PayPal Plus "
@@ -156,15 +163,15 @@ msgstr "PayPal Checkout Logo (190x60px)"
 msgid "Set the URL for a logo to be displayed on the PayPal checkout pages."
 msgstr "Geben Sie die URL für ein Logo auf den PayPal-Checkout-Seiten an."
 
-#: src/WC/GatewaySettingsModel.php:153
+#: src/WC/GatewaySettingsModel.php:156
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: src/WC/GatewaySettingsModel.php:169
+#: src/WC/GatewaySettingsModel.php:172
 msgid "Invoice Prefix"
 msgstr "Rechnungspräfix"
 
-#: src/WC/GatewaySettingsModel.php:171
+#: src/WC/GatewaySettingsModel.php:174
 msgid ""
 "Please enter a prefix for your invoice numbers. If you use your PayPal "
 "account for multiple stores ensure this prefix is unique as PayPal will not "
@@ -175,11 +182,11 @@ msgstr ""
 "Präfix einzigartig ist, sonst wird PayPal keine Bestellungen mit identischer "
 "Rechnungsnummer akzeptieren."
 
-#: src/WC/GatewaySettingsModel.php:179
+#: src/WC/GatewaySettingsModel.php:182
 msgid "Cancel Page"
 msgstr "Bestellung abgebrochen Seite"
 
-#: src/WC/GatewaySettingsModel.php:180
+#: src/WC/GatewaySettingsModel.php:183
 msgid ""
 "Sets the page users will be returned to if they click the Cancel link on the "
 "PayPal checkout pages."
@@ -187,17 +194,17 @@ msgstr ""
 "Besucher, die den Zahlungsvorgang bei PayPal abgebrochen haben werden zur "
 "hier angegebenen Seite weitergeleitet."
 
-#: src/WC/GatewaySettingsModel.php:189
+#: src/WC/GatewaySettingsModel.php:192
 msgid "Legal Note for PAY UPON INVOICE Payment"
 msgstr "Rechtliche Hinweise für die Bezahlung per Rechnung"
 
-#: src/WC/GatewaySettingsModel.php:191
+#: src/WC/GatewaySettingsModel.php:194
 msgid "legal note that will be added to the thank you page and emails."
 msgstr ""
 "Rechtliche Hinweise, die zur \"Danke\"-Seite und in E-Mails  eingefügt "
 "werden."
 
-#: src/WC/GatewaySettingsModel.php:195
+#: src/WC/GatewaySettingsModel.php:198
 msgid ""
 "Dealer has ceeded the claim against you within the framework of an ongoing "
 "factoring contract to the PayPal (Europe) S.àr.l. et Cie, S.C.A.. Payments "
@@ -209,11 +216,11 @@ msgstr ""
 "Zahlungen mit schuldbefreiender Wirkung können nur an die PayPal (Europe) S."
 "àr.l. et Cie, S.C.A. geleistet werden."
 
-#: src/WC/GatewaySettingsModel.php:202
+#: src/WC/GatewaySettingsModel.php:205
 msgid "Pay upon Invoice Instructions"
 msgstr "Anweisungen für die Bezahlung per Rechnung"
 
-#: src/WC/GatewaySettingsModel.php:204
+#: src/WC/GatewaySettingsModel.php:207
 msgid ""
 "Pay upon Invoice Instructions that will be added to the thank you page and "
 "emails."
@@ -221,24 +228,40 @@ msgstr ""
 "Anweisungen für die Bezahlung per Rechnung, die zur „Danke“-Seite und zu E-"
 "Mails hinzugefügt werden."
 
-#: src/WC/GatewaySettingsModel.php:208 src/WC/PUI/PaymentInstructionView.php:31
+#: src/WC/GatewaySettingsModel.php:211 src/WC/PUI/PaymentInstructionView.php:31
 #: src/WC/PUI/PaymentInstructionView.php:71
 msgid "Please transfer the complete amount to the bank account provided below."
 msgstr "Bitte überweisen Sie den Gesamtbetrag auf das unten aufgeführte Konto."
 
-#: src/WC/GatewaySettingsModel.php:227
+#: src/WC/GatewaySettingsModel.php:218
+msgid "Download Log File"
+msgstr "Log-Datei herunterladen"
+
+#: src/WC/GatewaySettingsModel.php:220
+msgid ""
+"Please download the log file and attach it to your ticket when contacting "
+"support."
+msgstr ""
+"Bitte laden Sie die Log-Datei herunter und hängen Sie sie an Ihre Support-"
+"Anfrage an."
+
+#: src/WC/GatewaySettingsModel.php:223
+msgid "Download Now"
+msgstr "Herunterladen"
+
+#: src/WC/GatewaySettingsModel.php:238
 msgid "Cart"
 msgstr "Warenkorb"
 
-#: src/WC/GatewaySettingsModel.php:228
+#: src/WC/GatewaySettingsModel.php:239
 msgid "Checkout"
 msgstr "Kasse"
 
-#: src/WC/GatewaySettingsModel.php:229
+#: src/WC/GatewaySettingsModel.php:240
 msgid "Account"
 msgstr "Konto"
 
-#: src/WC/GatewaySettingsModel.php:230
+#: src/WC/GatewaySettingsModel.php:241
 msgid "Shop"
 msgstr "Shop"
 
@@ -328,11 +351,11 @@ msgstr "Fälligkeitsdatum der Zahlung"
 msgid "Reference"
 msgstr "Zahlungsreferenz"
 
-#: src/WC/PayPalPlusGateway.php:309
+#: src/WC/PayPalPlusGateway.php:316
 msgid "Your API credentials are either missing or invalid: %s"
 msgstr "Ihre API Zugangsdaten fehlen oder sind nicht korrekt: %s"
 
-#: src/WC/PayPalPlusGateway.php:414
+#: src/WC/PayPalPlusGateway.php:448
 msgid "Error processing checkout. Please try again. "
 msgstr "Fehler im Bestellvorgang. Versuchen Sie es bitte erneut."
 
