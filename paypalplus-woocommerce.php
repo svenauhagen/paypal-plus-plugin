@@ -30,8 +30,8 @@ add_action( 'plugins_loaded', function () {
 		} );
 	};
 
-	$min_php_version = '5.4';
-	if ( ! version_compare( phpversion(), '5.4', '>=' ) ) {
+	$min_php_version = '5.6';
+	if ( ! version_compare( phpversion(), $min_php_version, '>=' ) ) {
 		$admin_notice(
 			sprintf(
 				__( 'PayPal Plus requires PHP version %1$1s or higher. You are running version %2$2s ' ),
