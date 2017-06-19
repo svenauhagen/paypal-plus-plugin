@@ -1,9 +1,9 @@
 === PayPal Plus for WooCommerce ===
-Contributors: inpsyde, biont
+Contributors: inpsyde, biont, cocreation
 Tags: paypal, paypal plus, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
 Requires at least: 4.4
 Tested up to: 4.7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
  
@@ -103,9 +103,10 @@ Your PayPal vendor account needs to be activated by PayPal in order to offer the
  
 == Changelog ==
 = 1.0.3 =
+ - Fix to allow working with prices inclusive of tax
+ - Allow changing the display title of the gateway
  - Another fix for price decimals
- - Move PayPay SDK in dedicated namespace to avoid collisions
- - Check for minimum required PHP version 5.4 and fail gently fail if it's not met
+ - Move PayPal SDK in dedicated namespace to avoid collisions
  - Fix a possible shutdown if session data was cleared unexpectedly while performing the payment
 = 1.0.2 =
  - Fix address patch request not always being included.
