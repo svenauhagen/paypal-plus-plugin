@@ -83,7 +83,7 @@ module.exports = function( grunt ) {
 			main: {
 				options: {
 					archive: function() {
-						return 'dist/PayPal Plus for WooCommcerce - ' + new Date().getTime() + '.zip';
+						return 'dist/PayPal Plus for WooCommerce - ' + new Date().getTime() + '.zip';
 					},
 					level  : 6
 				},
