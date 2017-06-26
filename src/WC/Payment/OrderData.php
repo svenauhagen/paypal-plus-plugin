@@ -87,7 +87,7 @@ class OrderData extends OrderDataCommon {
 
 		$tax = $this->order->get_total_tax();
 
-		return $this->format( $tax );
+		return $this->format( $this->round( $tax ) );
 	}
 
 	/**
@@ -97,7 +97,13 @@ class OrderData extends OrderDataCommon {
 	 */
 	public function get_total_shipping() {
 
-		$shipping = $this->format( $this->order->get_shipping_total() );
+		$shipping = $this->order->get_shipping_total();
+
+		if ( $this->get_shipping_tax() && preg_match( '/\.\d{3,}/', $shipping ) ) {
+			$shipping_tax = $this->order->get_shipping_tax();
+			$shipping_total = $this->round( $shipping + $shipping_tax );
+			$shipping = $shipping_total - $this->round( $shipping_tax );
+		}
 
 		return $shipping;
 	}
@@ -108,7 +114,7 @@ class OrderData extends OrderDataCommon {
 		 * @return string
 		 */
 	public function get_shipping_tax() {
-		return $this->format( $this->order->get_shipping_tax() );
+		return $this->format( $this->round( $this->order->get_shipping_tax() ) );
 	}
 	
 	/**

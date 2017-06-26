@@ -40,7 +40,7 @@ class CartData extends OrderDataCommon {
 	 */
 	public function get_total_tax() {
 
-		$tax = $this->format( $this->cart->get_taxes_total( true, false ) );
+		$tax = $this->format( $this->round( $this->cart->get_taxes_total( true, false ) ) );
 
 		return $tax;
 	}
@@ -52,7 +52,17 @@ class CartData extends OrderDataCommon {
 	 */
 	public function get_total_shipping() {
 
-		return $this->format( $this->cart->shipping_total );
+		$shipping = $this->cart->shipping_total;
+
+			// If shipping tax exists, and shipping has more than 2 decimals
+			// Then calculate rounded shipping amount to prevent rounding errors
+		if ( $this->get_shipping_tax() && preg_match( '/\.\d{3,}/', $shipping ) ) {
+			$shipping_tax = $this->cart->shipping_tax_total;
+			$shipping_total = $this->round( $shipping + $shipping_tax );
+			$shipping = $shipping_total - $this->round( $shipping_tax );
+		}
+
+		return $this->format( $this->round( $shipping ) );
 	}
 
 	/**
@@ -102,7 +112,7 @@ class CartData extends OrderDataCommon {
 		 * @return string
 		 */
 	public function get_shipping_tax() {
-		return $this->cart->shipping_tax_total;
+		return $this->format( $this->round( $this->cart->shipping_tax_total ) );
 	}
 
 	/**
