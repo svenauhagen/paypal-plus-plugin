@@ -22,6 +22,9 @@ You don't want those in the release file (it will in fact produce an error), so 
 Or just checkout the production dependencies before creating a release using `composer update --no-dev`
 This will remove all devDependencies, so make sure to roll back to get PHPUnit back.
 
+Since this will also remove "mozart" from the available packages, we require a global installation of mozart for creating a release.
+Please run `composer global require coenjacobs/mozart` to provide a global installation. If you fail to do so, the post-install-cmd of composer will notify you about it.
+
 To create a release, run `grunt release`. The release will be a timestamped zip file in the `dist/` folder
  
 
