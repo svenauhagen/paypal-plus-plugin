@@ -58,12 +58,10 @@
   },
   "scripts": {
     "post-install-cmd": [
-      "echo \"Attempting to use a global installation of composer mozart to namespace the PayPal SDK\"",
-      "php -C \"$(composer config home --global)/vendor/bin/mozart\" compose"
+      "./mozart.sh"
     ],
     "post-update-cmd": [
-      "echo \"Attempting to use a global installation of composer mozart to namespace the PayPal SDK\"",
-      "php -C \"$(composer config home --global)/vendor/bin/mozart\" compose"
+      "./mozart.sh"
     ]
   }
 }
