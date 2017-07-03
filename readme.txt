@@ -103,6 +103,7 @@ Your PayPal vendor account needs to be activated by PayPal in order to offer the
  
 == Changelog ==
 = 1.0.3 =
+ - Allow user to download log
  - Fix to allow working with prices inclusive of tax
  - Allow changing the display title of the gateway
  - Another fix for price decimals
