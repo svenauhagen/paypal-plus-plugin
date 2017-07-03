@@ -2,7 +2,7 @@
 Contributors: inpsyde, biont, cocreation
 Tags: paypal, paypal plus, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
 Requires at least: 4.4
-Tested up to: 4.7.4
+Tested up to: 4.8
 Stable tag: 1.0.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -89,7 +89,23 @@ With our plugin, you can integrate all those payment methods offered by PayPal: 
 = In my shop, the payment method pay upon invoice is not offered. What do I have to do? = 
 
 Your PayPal vendor account needs to be activated by PayPal in order to offer the payment method pay upon invoice. This takes place after verification by PayPal and may last a couple of weeks.
+
+= Can I use PayPal Plus for digital products? =
  
+Yes, it is possible, except when using the payment option "upon invoice".
+ 
+= How can I hide the option to "pay upon invoice"? =
+ 
+As a vendor, you are asked explicitly whether you want to have "invoice" as a payment option or not when signing up for PayPal Plus. 
+ 
+= Does PayPal Plus allow subscription payments? =
+ 
+At the moment, subscription payments are not possible with PayPal Plus.
+ 
+= Is payment by installments possible with PayPal Plus? =
+ 
+Payment by installments is a separate product from PayPal Plus, and therefore requires a separate integration. Moreover, each vendor needs to be activated by PayPal individually. If both integrations, payment by installments and PayPal Plus, are used, payment by installments appears as another payment option under PayPal Plus. But payment by installments can also run as a single integration. In fact, payment by installments is theoretically possible, but there is no functional module for WooCommerce at the moment.
+
 == Screenshots ==
  
 1. PayPal Plus for WooCommerce - plugin settings among WooCommerce => Settings => Checkout => PayPal Plus.
