@@ -4,7 +4,7 @@
  * Description: PayPal Plus - the official WordPress Plugin for WooCommerce
  * Author:      Inpsyde GmbH
  * Author URI:  https://inpsyde.com/
- * Version:     1.0
+ * Version:     1.0.4 beta
  * License:     MIT
  * Text Domain: woo-paypalplus
  * Domain Path: /languages/
