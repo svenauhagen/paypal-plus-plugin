@@ -178,15 +178,12 @@ class WCPayPalPayment {
 	 */
 	private function get_transaction_object( Amount $amount, ItemList $item_list ) {
 
-		// TODO: receive this from IPN Handler/Data.
-		$notify_url = WC()->api_request_url( 'Woo_Paypal_Plus_Gateway' );
-
 		$transaction = new Transaction();
 		$transaction->setAmount( $amount )
 		            ->setItemList( $item_list )
 		            ->setDescription( 'Payment description' )
 		            ->setInvoiceNumber( uniqid() )
-		            ->setNotifyUrl( $notify_url );
+		            ->setNotifyUrl(  $this->payment_data->get_notify_url() );
 
 		return $transaction;
 
