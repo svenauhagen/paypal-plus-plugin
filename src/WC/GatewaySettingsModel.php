@@ -139,9 +139,12 @@ class GatewaySettingsModel {
 			'checkout_logo'       => [
 				'title'       => __( 'PayPal Checkout Logo (190x60px)', 'woo-paypalplus' ),
 				'type'        => 'text',
-				'description' => __(
-					'Set the URL for a logo to be displayed on the PayPal checkout pages.',
-					'woo-paypalplus'
+				'description' => sprintf(
+					__(
+						'Set the absolute URL for a logo to be displayed on the PayPal checkout pages. (E.G., %s)',
+						'woo-paypalplus'
+				),
+					get_site_url() . '/path/to/logo.jpg'
 				),
 				'default'     => '',
 			],
