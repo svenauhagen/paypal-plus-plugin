@@ -123,11 +123,11 @@ class CartData extends OrderDataCommon {
 		 * @return string
 		 */
 	protected function get_subtotal_including_tax() {
-		return $this->format(
-			$this->round( $this->cart->subtotal_ex_tax )
-			+ $this->round( $this->cart->fee_total )
-			+ $this->round( $this->cart->tax_total )
-		);
+		return $this->format($this->round(
+			$this->cart->cart_contents_total
+			+ $this->cart->fee_total
+			+ $this->cart->tax_total
+		) );
 	}
 
 }
