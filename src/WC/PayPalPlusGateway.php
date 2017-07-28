@@ -130,6 +130,16 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		add_action( 'woocommerce_email_customer_details', [ $this, 'add_legal_note' ], 30, 3 );
 
+		if ( $this->default_gateway_override_enabled() ) {
+			( new DefaultGatewayOverride( $this->id ) )->init();
+		}
+
+	}
+
+	private function default_gateway_override_enabled() {
+
+		return $this->get_option( 'disable_gateway_override', 'no' ) === 'no';
+
 	}
 
 	/**
@@ -362,16 +372,17 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		return $output;
 	}
-	
+
 	/**
-		 * Generate html row.
-		 */
+	 * Generate html row.
+	 */
 	public function generate_html_html( $key, $data ) {
+
 		$field_key = $this->get_field_key( $key );
 		$defaults  = [
-			'title'             => '',
-			'class'             => '',
-			'html' => '',
+			'title' => '',
+			'class' => '',
+			'html'  => '',
 		];
 
 		$data = wp_parse_args( $data, $defaults );

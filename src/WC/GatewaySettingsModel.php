@@ -143,7 +143,7 @@ class GatewaySettingsModel {
 					__(
 						'Set the absolute URL for a logo to be displayed on the PayPal checkout pages. (E.G., %s)',
 						'woo-paypalplus'
-				),
+					),
 					get_site_url() . '/path/to/logo.jpg'
 				),
 				'default'     => '',
@@ -152,9 +152,9 @@ class GatewaySettingsModel {
 
 		// Settings.
 		$upload_dir = wp_upload_dir();
-		$logfile = wc_get_log_file_path( 'paypal_plus' );
-		$log_url = str_replace( $upload_dir['basedir'], $upload_dir['baseurl'], $logfile );
-		$settings += [
+		$logfile    = wc_get_log_file_path( 'paypal_plus' );
+		$log_url    = str_replace( $upload_dir['basedir'], $upload_dir['baseurl'], $logfile );
+		$settings   += [
 			'settings_section'              => [
 				'title' => __( 'Settings', 'woo-paypalplus' ),
 				'type'  => 'title',
@@ -217,17 +217,38 @@ class GatewaySettingsModel {
 				),
 				'desc_tip'    => false,
 			],
-			'download_log' => [
+			'download_log'                  => [
 				'title' => __( 'Download Log File', 'woo-paypalplus' ),
-				'type' => 'html',
-				'html' => '<p>' . __( 'Please download the log file and attach it to your ticket when contacting support.', 'woo-paypalplus' ) .
-					'</p><p><a href="' . $log_url . '" download="' . basename( $logfile ) . '" ' .
-					'class="button button-primary">' .
-					__( 'Download Now', 'woo-paypalplus' ) . '</a></p>',
+				'type'  => 'html',
+				'html'  => '<p>' . __( 'Please download the log file and attach it to your ticket when contacting support.',
+						'woo-paypalplus' ) .
+				           '</p><p><a href="' . $log_url . '" download="' . basename( $logfile ) . '" ' .
+				           'class="button button-primary">' .
+				           __( 'Download Now', 'woo-paypalplus' ) . '</a></p>',
+			],
+			'disable_gateway_override'      => [
+				'title'       => __( 'Disable default gateway override', 'woo-paypalplus' ),
+				'type'        => 'checkbox',
+				'label'       => __( 'Disable', 'woo-paypalplus' ),
+				'default'     => 'no',
+				'description' =>
+					__( 'PayPal Plus will be selected as default payment gateway regardless of its position in the list of enabled gateways. You can turn off this behaviour here',
+						'woo-paypalplus'
+					),
 			],
 		];
 
 		return $settings;
+	}
+
+	/**
+	 * Returns a generic invoice prefix based on the site title.
+	 *
+	 * @return string
+	 */
+	protected function get_default_invoice_prefix() {
+
+		return 'WC-PPP-' . strtoupper( sanitize_title( get_bloginfo( 'name' ) ) ) . '-';
 	}
 
 	/**
@@ -249,15 +270,5 @@ class GatewaySettingsModel {
 		}
 
 		return $options;
-	}
-
-	/**
-	 * Returns a generic invoice prefix based on the site title.
-	 *
-	 * @return string
-	 */
-	protected function get_default_invoice_prefix() {
-
-		return 'WC-PPP-' . strtoupper( sanitize_title( get_bloginfo( 'name' ) ) ) . '-';
 	}
 }
