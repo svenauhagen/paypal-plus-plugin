@@ -610,6 +610,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			case 'account':
 				return wc_get_account_endpoint_url( 'dashboard' );
 				break;
+				case 'custom':
+				return esc_url( $this->get_option( 'cancel_custom_url' ) );
+				break;
 			case 'shop':
 			default:
 				return get_permalink( wc_get_page_id( 'shop' ) );

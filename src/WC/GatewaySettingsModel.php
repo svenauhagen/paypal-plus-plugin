@@ -191,6 +191,14 @@ class GatewaySettingsModel {
 				'options'     => $this->get_cancel_page_options(),
 				'default'     => wc_get_page_id( 'checkout' ),
 			],
+			'cancel_custom_url'                    => [
+				'title'       => __( 'Custom Cancelation URL', 'woo-paypalplus' ),
+				'type'        => 'text',
+				'description' => __(
+					'URL to a custom page to be used for cancelation. Please select "custom" above first.',
+					'woo-paypalplus'
+				),
+			],
 			'legal_note'                    => [
 				'title'       => __( 'Legal Note for PAY UPON INVOICE Payment', 'woo-paypalplus' ),
 				'type'        => 'textarea',
@@ -263,6 +271,7 @@ class GatewaySettingsModel {
 			'checkout' => __( 'Checkout', 'woo-paypalplus' ),
 			'account'  => __( 'Account', 'woo-paypalplus' ),
 			'shop'     => __( 'Shop', 'woo-paypalplus' ),
+			'custom'   => __( 'Custom', 'woo-paypalplus' ),
 		];
 		$options = [];
 		foreach ( $keys as $key => $title ) {
