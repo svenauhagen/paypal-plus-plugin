@@ -2,8 +2,8 @@
 Contributors: inpsyde, biont, cocreation
 Tags: paypal, paypal plus, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
 Requires at least: 4.4
-Tested up to: 4.8
-Stable tag: 1.0.3
+Tested up to: 4.8.1
+Stable tag: 1.0.4
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
  
@@ -118,6 +118,10 @@ Payment by installments is a separate product from PayPal Plus, and therefore re
 
  
 == Changelog ==
+= 1.0.4 =
+ - Make PayPal frame always visible
+ - Allow cancelation URL to be set to custom a page
+ - Fix handling of coupons
 = 1.0.3 =
  - Allow user to download log
  - Fix to allow working with prices inclusive of tax
