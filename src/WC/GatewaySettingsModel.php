@@ -228,8 +228,8 @@ class GatewaySettingsModel {
 			'download_log'                  => [
 				'title' => __( 'Download Log File', 'woo-paypalplus' ),
 				'type'  => 'html',
-				'html'  => '<p>' . __( 'Please go to <a href="'.get_home_url().'/wp-admin/admin.php?page=wc-status&tab=logs">WooCommerce => System Status => Logs</a>, select the file <em>paypal_plus-....log</em>, copy the content and attach it to your ticket when contacting support.',
-						'woo-paypalplus' ) .'</p>',
+				'html'  => '<p>' . sprintf( __( 'Please go to <a href="%s">WooCommerce => System Status => Logs</a>, select the file <em>paypal_plus-....log</em>, copy the content and attach it to your ticket when contacting support.',
+						'woo-paypalplus' ), get_admin_url(null,'admin.php') . '?page=wc-status&tab=logs') .'</p>',
 			],
 			'disable_gateway_override'      => [
 				'title'       => __( 'Disable default gateway override', 'woo-paypalplus' ),
