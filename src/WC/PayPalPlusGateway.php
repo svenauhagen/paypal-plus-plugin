@@ -127,7 +127,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		add_action( 'woocommerce_add_to_cart', [ $this, 'clear_session_data' ] );
 		add_action( 'woocommerce_cart_item_removed', [ $this, 'clear_session_data' ] );
 		add_action( 'woocommerce_after_cart_item_quantity_update', [ $this, 'clear_session_data' ] );
-
+		add_action( 'woocommerce_applied_coupon', [ $this, 'clear_session_data' ] );
+		add_action( 'woocommerce_removed_coupon', [ $this, 'clear_session_data' ] );
+		
 		add_action( 'woocommerce_email_customer_details', [ $this, 'add_legal_note' ], 30, 3 );
 
 		if ( $this->default_gateway_override_enabled() ) {
