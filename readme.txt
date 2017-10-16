@@ -3,13 +3,16 @@ Contributors: inpsyde, biont, cocreation
 Tags: paypal, paypal plus, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
 Requires at least: 4.4
 Tested up to: 4.8.1
-Stable tag: 1.0.4
+Stable tag: 1.0.5
+Requires PHP: 5.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
  
 The official PayPal Plus Plugin for WooCommerce - adds payment via PayPal, Direct debit, Credit card and Pay upon invoice to your WooCommerce Shop.
  
 == Description ==
+
+**Save your 100 € bonus now! Integrate PayPal Plus into your shop, generate at least one transaction until October 31st and PayPal will retransfer 100 €! -  [Apply now!](https://www.paypal.com/de/webapps/mpp/paypal-plus)**
 
 PayPal Plus for WooCommerce is the official [PayPal Plus](https://www.paypal.com/de/webapps/mpp/paypal-plus) plugin. Without much effort, it integrates all PayPal Plus payment methods into your WooCommerce shop: PayPal, Direct debit, Credit card and Pay upon invoice
 
@@ -32,6 +35,15 @@ At the moment, **PayPal Plus** is only available for customers having their regi
 = More information about PayPal Plus = 
 
 You want to have more information about PayPal Plus? You can find all details on [PayPal’s pages](https://www.paypal.com/de/webapps/mpp/paypal-plus).
+
+= Official Tutorials =
+
+* PayPal Plus for WooCommerce PDF guide - [download here](https://inpsyde.com/en/paypal-plus-for-woocommerce-pdf-manual/)
+
+* PayPal Plus for WooCommerce - Youtube Video
+
+https://www.youtube.com/watch?v=tFw6_f6oKOo
+
 
 = Support = 
 
@@ -118,6 +130,10 @@ Payment by installments is a separate product from PayPal Plus, and therefore re
 
  
 == Changelog ==
+= 1.0.5 =
+ - Fix checkout error when adding or removing coupons on checkout page
+ - Fix download of log file
+ - Add WC compatibility headers
 = 1.0.4 =
  - Make PayPal frame always visible
  - Allow cancelation URL to be set to custom a page
