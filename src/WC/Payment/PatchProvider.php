@@ -44,8 +44,8 @@ class PatchProvider {
 	 * @return Patch
 	 */
 	public function get_invoice_patch( $invoice_prefix ) {
-
-		$invoice_number = preg_replace( '/[^a-zA-Z0-9]/', '', $this->order->get_id() );
+		
+		$invoice_number = preg_replace( '/[^a-zA-Z0-9]/', '', $this->order->get_order_number() );
 
 		$invoice_patch = new Patch();
 		$invoice_patch->setOp( 'add' )
