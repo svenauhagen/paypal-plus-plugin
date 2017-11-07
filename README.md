@@ -15,6 +15,9 @@ Then, run `npm install` to set up the asset and release taskrunners.
 
 When working with JavaScript, you'll probably want to have `grunt watch` running to transpile ES6 JS 
 
+Important! We require the composer package 'Mozart' to move the PayPal SDK into our own namespace
+This has to be installed globally to create new releases, so please run `composer global require coenjacobs/mozart`
+
 ## Create a new release
 
 We're using composer's autoloader. So when developing, you probably have all of its devDependencies loaded and added to the autoloader.
