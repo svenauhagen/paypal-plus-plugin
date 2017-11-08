@@ -63,10 +63,10 @@ class WCPaymentExecution {
 		} catch ( PayPalConnectionException $ex ) {
 			do_action( 'wc_paypal_plus_log_exception', 'payment_execution_exception', $ex );
 
-			return false;
+			return $ex->getMessage();
 		}
 
-		return true;
+		return '';
 	}
 
 }

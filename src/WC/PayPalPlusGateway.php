@@ -193,7 +193,12 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		$success = new PaymentExecutionSuccess( $data );
 		$payment = new WCPaymentExecution( $data, [ $success ] );
-		$payment->execute();
+		$result = $payment->execute();
+		if ($result) {
+		  \wc_add_notice( sprintf( __( 'There was an error executing the payment. Payment state: %s', 'woo-paypalplus' ), $result ), 'error' );
+		  \wp_safe_redirect( \wc_get_checkout_url() );
+		  die();
+        }
 
 	}
 
