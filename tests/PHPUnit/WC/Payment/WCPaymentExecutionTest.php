@@ -41,7 +41,7 @@ class WCPaymentExecutionTest extends BrainMonkeyWpTestCase {
 
 		$testee = new WCPaymentExecution( $data, [ $success ] );
 		$result = $testee->execute();
-		$this->assertEmpty( $result );
+		$this->assertTrue( $result );
 	}
 
 	public function test_execute_throws_exception() {
@@ -70,7 +70,7 @@ class WCPaymentExecutionTest extends BrainMonkeyWpTestCase {
 		       ->with( 'payment_execution_exception', $exception );
 
 		$testee = new WCPaymentExecution( $data, [ $success ] );
-		$result = $testee->execute();
-		$this->assertNotEmpty( $result );
+		$this->expectException(PayPalConnectionException::class);
+		$testee->execute();
 	}
 }

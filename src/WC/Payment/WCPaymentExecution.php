@@ -8,7 +8,6 @@
 
 namespace WCPayPalPlus\WC\Payment;
 
-use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use WCPayPalPlus\WC\RequestSuccessHandler;
 
 /**
@@ -27,7 +26,7 @@ class WCPaymentExecution {
 	/**
 	 * SuccessHandler object.
 	 *
-	 * @var RequestSuccessHandler
+	 * @var RequestSuccessHandler[]
 	 */
 	private $success_handlers;
 
@@ -54,19 +53,13 @@ class WCPaymentExecution {
 	 */
 	public function execute() {
 
-		try {
-			$payment = $this->data->get_payment();
-			$payment->execute( $this->data->get_payment_execution(), $this->data->get_context() );
-			foreach ( $this->success_handlers as $success_handler ) {
-				$success_handler->execute();
-			}
-		} catch ( PayPalConnectionException $ex ) {
-			do_action( 'wc_paypal_plus_log_exception', 'payment_execution_exception', $ex );
+        $payment = $this->data->get_payment();
+        $payment->execute( $this->data->get_payment_execution(), $this->data->get_context() );
+        foreach ( $this->success_handlers as $success_handler ) {
+            $success_handler->execute();
+        }
 
-			return $ex->getMessage();
-		}
-
-		return '';
+		return true;
 	}
 
 }
