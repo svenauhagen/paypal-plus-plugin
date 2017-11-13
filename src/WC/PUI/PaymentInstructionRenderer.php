@@ -28,11 +28,9 @@ class PaymentInstructionRenderer {
 	/**
 	 * Gather needed data and then render the view, if possible
 	 */
-	public function delegate_thankyou() {
+	public function delegate_thankyou( $order_id ) {
 
-		$order_key = filter_input( INPUT_GET, 'key' );
-
-		$order    = wc_get_order( wc_get_order_id_by_order_key( $order_key ) );
+		$order    = wc_get_order( $order_id );
 		$pui_data = new PaymentInstructionData( $order );
 		if ( ! $pui_data->has_payment_instructions() ) {
 			return;
