@@ -47,7 +47,7 @@ class PaymentInstructionRenderer {
 	public function delegate_thankyou( $order_id ) {
 
 		$order    = wc_get_order( $order_id );
-		$pui_data = new PaymentInstructionData( $order );
+		$pui_data = new PaymentInstructionData( $order, $this->legal_note );
 		if ( ! $pui_data->has_payment_instructions() ) {
 			return;
 		}
