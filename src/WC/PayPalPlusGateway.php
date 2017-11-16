@@ -4,6 +4,7 @@ namespace WCPayPalPlus\WC;
 
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 use WCPayPalPlus\WC\IPN\IPN;
 use WCPayPalPlus\WC\IPN\IPNData;
@@ -192,8 +193,15 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		);
 
 		$success = new PaymentExecutionSuccess( $data );
-		$payment = new WCPaymentExecution( $data, [ $success ] );
-		$payment->execute();
+		try {
+		    $payment = new WCPaymentExecution( $data, [ $success ] );
+		    $payment->execute();
+		} catch ( PayPalConnectionException $ex ) {
+			\do_action( 'wc_paypal_plus_log_exception', 'payment_execution_exception', $ex );
+		    \wc_add_notice( __( 'Error processing checkout. Please check the logs. ', 'woo-paypalplus' ), 'error' );
+		    \wp_safe_redirect( \wc_get_checkout_url() );
+		    die();
+		}
 
 	}
 

@@ -40,6 +40,9 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 
 		Functions::expect( 'WC' )
 		         ->andReturn( (object) [ 'version' => '3.0.0' ] );
+        Functions::expect( 'wc_tax_enabled' )->andReturn(!empty($tax));
+        Functions::expect( 'wc_prices_include_tax' )->andReturn($pricesIncludeTax);
+
 		$order = Test\WCOrderMock::getMock( 'get_total', $rawItems,
 			$cart_total,
 			$cart_subtotal,
@@ -83,6 +86,10 @@ class OrderDataTest extends BrainMonkeyWpTestCase {
 
 		Functions::expect( 'WC' )
 		         ->andReturn( (object) [ 'version' => '3.0.0' ] );
+
+		Functions::expect( 'wc_tax_enabled' )->andReturn(!empty($tax));
+        Functions::expect( 'wc_prices_include_tax' )->andReturn($pricesIncludeTax);
+
 		$order = Test\WCOrderMock::getMock(
 			'get_subtotal',
 			$rawItems,
