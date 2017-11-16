@@ -15,7 +15,23 @@ namespace WCPayPalPlus\WC\PUI;
  */
 class PaymentInstructionRenderer {
 
-	/**
+    /**
+     * @var \WC_Payment_Gateway
+     */
+    private $legal_note;
+
+    /**
+     * PaymentInstructionRenderer constructor.
+     *
+     * @param string $legal_note
+     */
+    public function __construct( $legal_note ) {
+
+        $this->legal_note = $legal_note;
+    }
+
+
+    /**
 	 * Setup required hooks.
 	 */
 	public function register() {
@@ -33,7 +49,7 @@ class PaymentInstructionRenderer {
 		$order_key = filter_input( INPUT_GET, 'key' );
 
 		$order    = wc_get_order( wc_get_order_id_by_order_key( $order_key ) );
-		$pui_data = new PaymentInstructionData( $order );
+		$pui_data = new PaymentInstructionData( $order, $this->legal_note );
 		if ( ! $pui_data->has_payment_instructions() ) {
 			return;
 		}
@@ -51,12 +67,12 @@ class PaymentInstructionRenderer {
 	 */
 	public function delegate_email( \WC_Order $order, $sent_to_admin, $plain_text = false ) {
 
-		$pui_data = new PaymentInstructionData( $order );
+		$pui_data = new PaymentInstructionData( $order, $this->legal_note );
 		if ( ! $pui_data->has_payment_instructions() ) {
 			return;
 		}
 		$pui_view = new PaymentInstructionView( $pui_data );
-		$pui_view->email_instructions();
+		$pui_view->email_instructions( $plain_text );
 	}
 
 	/**
@@ -67,7 +83,7 @@ class PaymentInstructionRenderer {
 	public function delegate_view_order( $order_id ) {
 
 		$order    = wc_get_order( $order_id );
-		$pui_data = new PaymentInstructionData( $order );
+		$pui_data = new PaymentInstructionData( $order, $this->legal_note );
 		if ( ! $pui_data->has_payment_instructions() ) {
 			return;
 		}
