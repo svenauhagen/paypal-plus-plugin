@@ -46,6 +46,8 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 
 		Functions::expect( 'WC' )
 		         ->andReturn( (object) [ 'version' => '3.0.0' ] );
+		Functions::expect( 'wc_tax_enabled' )->andReturn(!empty($tax));
+        Functions::expect( 'wc_prices_include_tax' )->andReturn($pricesIncludeTax);
 
 		$cart = Test\WCCartMock::getMock(
 			'get_total',
@@ -128,6 +130,8 @@ class OrderDataCongruenceTest extends BrainMonkeyWpTestCase {
 
 		Functions::expect( 'WC' )
 		         ->andReturn( (object) [ 'version' => '3.0.0' ] );
+        Functions::expect( 'wc_tax_enabled' )->andReturn(!empty($tax));
+        Functions::expect( 'wc_prices_include_tax' )->andReturn($pricesIncludeTax);
 
 		/**
 		 * Setup CartData Mocks

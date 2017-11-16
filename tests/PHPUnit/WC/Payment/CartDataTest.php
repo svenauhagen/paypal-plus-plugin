@@ -36,7 +36,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		array $fees,
 		$pricesIncludeTax
 	) {
-
+        Functions::expect( 'wc_tax_enabled' )->andReturn(!empty($tax));
+        Functions::expect( 'wc_prices_include_tax' )->andReturn($pricesIncludeTax);
 		$cart  = WCCartMock::getMock(
 			'get_total',
 			$rawItems,
@@ -243,6 +244,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		array $fees,
 		$pricesIncludeTax
 	) {
+        Functions::expect( 'wc_tax_enabled' )->andReturn(!empty($tax));
+        Functions::expect( 'wc_prices_include_tax' )->andReturn($pricesIncludeTax);
 
 		$cart = WCCartMock::getMock(
 			'get_subtotal',
@@ -297,7 +300,8 @@ class CartDataTest extends BrainMonkeyWpTestCase {
 		array $fees,
 		$pricesIncludeTax
 	) {
-
+        Functions::expect( 'wc_tax_enabled' )->andReturn(!empty($tax));
+        Functions::expect( 'wc_prices_include_tax' )->andReturn($pricesIncludeTax);
 		Functions::expect( 'get_woocommerce_currency' );
 		$totalCart   = WCCartMock::getMock(
 			'get_total',
