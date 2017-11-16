@@ -61,27 +61,44 @@ class PaymentInstructionView {
 			</tbody>
 		</table>
 		<?php
+        echo $this->data->get_legal_note();
 	}
 
-	/**
-	 * Renders the instructions table.
-	 */
-	public function email_instructions() {
+    /**
+     * Renders the instructions table.
+     *
+     * @param bool $plain_text
+     */
+	public function email_instructions( $plain_text = false ) {
 
-		echo esc_html__( 'Please transfer the complete amount to the bank account provided below.', 'woo-paypalplus'
-		     ) . PHP_EOL;
-		echo '<h2 class="wc-bacs-bank-details-heading">' . esc_html( __( 'PayPal Bank Details',
-				'woo-paypalplus' ) ) . '</h2>' . PHP_EOL;
+        if ( ! $plain_text ) {
+            echo esc_html__( 'Please transfer the complete amount to the bank account provided below.', 'woo-paypalplus'
+                 ) . PHP_EOL;
+            echo '<h2 class="wc-bacs-bank-details-heading">' . esc_html( __( 'PayPal Bank Details',
+                    'woo-paypalplus' ) ) . '</h2>' . PHP_EOL;
 
-		echo '<ul class="wc-bacs-bank-details order_details bacs_details">' . PHP_EOL;
+            echo '<ul class="wc-bacs-bank-details order_details bacs_details">' . PHP_EOL;
 
-		foreach ( $this->get_account_fields() as $field_key => $field ) {
-			if ( ! empty( $field['value'] ) ) {
-				echo '<li class="' . esc_attr( $field_key ) . '">' . esc_attr( $field['label'] ) . ': <strong>' . wptexturize( $field['value'] ) . '</strong></li>' . PHP_EOL;
-			}
-		}
+            foreach ( $this->get_account_fields() as $field_key => $field ) {
+                if ( ! empty( $field['value'] ) ) {
+                    echo '<li class="' . esc_attr( $field_key ) . '">' . esc_attr( $field['label'] ) . ': <strong>' . wptexturize( $field['value'] ) . '</strong></li>' . PHP_EOL;
+                }
+            }
 
-		echo '</ul>';
+            echo '</ul>';
+            echo $this->data->get_legal_note() . PHP_EOL;
+        } else {
+            echo esc_html__( 'Please transfer the complete amount to the bank account provided below.', 'woo-paypalplus' ) . PHP_EOL;
+            echo esc_html( __( 'PayPal Bank Details', 'woo-paypalplus' ) ) . PHP_EOL;
+
+            foreach ( $this->get_account_fields() as $field_key => $field ) {
+                if ( ! empty( $field['value'] ) ) {
+                    echo ' - ' . esc_attr( $field['label'] ) . ': ' . wptexturize( $field['value'] ) . PHP_EOL;
+                }
+            }
+
+            echo PHP_EOL . esc_html( strip_tags( $this->data->get_legal_note() ) ) . PHP_EOL;
+        }
 	}
 
 	/**

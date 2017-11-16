@@ -52,12 +52,20 @@ class PaymentInstructionData {
 	 */
 	private $order;
 
-	/**
-	 * PaymentInstructionData constructor.
-	 *
-	 * @param \WC_Order $order The WooCommcerce Order object.
-	 */
-	public function __construct( \WC_Order $order ) {
+    /**
+     * The legal note HTML
+     *
+     * @var string
+     */
+	private $legal_note;
+
+    /**
+     * PaymentInstructionData constructor.
+     *
+     * @param \WC_Order $order The WooCommcerce Order object.
+     * @param \WC_Payment_Gateway $legal_note
+     */
+	public function __construct( \WC_Order $order, $legal_note ) {
 
 		$this->order = $order;
 
@@ -67,7 +75,7 @@ class PaymentInstructionData {
 		$this->payment_due_date    = $order->get_meta( 'payment_due_date' );
 		$this->reference_number    = $order->get_meta( 'reference_number' );
 		$this->bic                 = $order->get_meta( 'bank_identifier_code' );
-
+        $this->legal_note          = $legal_note;
 	}
 
 	/**
@@ -149,5 +157,15 @@ class PaymentInstructionData {
 	public function get_reference_number() {
 
 		return $this->reference_number;
+	}
+
+    /**
+	 * Returns the legal note.
+	 *
+	 * @return string
+	 */
+	public function get_legal_note() {
+
+		return wpautop( wptexturize( $this->legal_note ) );
 	}
 }

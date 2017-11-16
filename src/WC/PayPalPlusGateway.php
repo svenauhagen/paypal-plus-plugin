@@ -85,7 +85,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 			$this->is_sandbox()
 		);
 		$this->ipn          = $ipn ?: new IPN( $this->id, $ipn_data );
-		$this->pui          = new PaymentInstructionRenderer();
+		$this->pui          = new PaymentInstructionRenderer( $this->get_option( 'legal_note', '' ) );
 		$this->init_form_fields();
 		$this->init_settings();
 	}
@@ -129,8 +129,6 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		add_action( 'woocommerce_after_cart_item_quantity_update', [ $this, 'clear_session_data' ] );
 		add_action( 'woocommerce_applied_coupon', [ $this, 'clear_session_data' ] );
 		add_action( 'woocommerce_removed_coupon', [ $this, 'clear_session_data' ] );
-		
-		add_action( 'woocommerce_email_customer_details', [ $this, 'add_legal_note' ], 30, 3 );
 
 		if ( $this->default_gateway_override_enabled() ) {
 			( new DefaultGatewayOverride( $this->id ) )->init();
@@ -142,25 +140,6 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		return $this->get_option( 'disable_gateway_override', 'no' ) === 'no';
 
-	}
-
-	/**
-	 * Adds the legal note defined in the settings to the eMail sent to the customer.
-	 *
-	 * @param \WC_Order $order         The order object.
-	 * @param bool      $sent_to_admin Is the eMail sent to admin?.
-	 * @param bool      $plain_text    Render plain text?.
-	 */
-	public function add_legal_note( $order, $sent_to_admin, $plain_text = false ) {
-
-		$instruction_type = get_post_meta( $order->get_id(), 'instruction_type', true );
-		if ( ! empty( $instruction_type ) && 'PAY_UPON_INVOICE' === $instruction_type ) {
-			if ( ! $sent_to_admin && 'paypal_plus' === $order->get_payment_method() ) {
-				if ( $legal_note = $this->get_option( 'legal_note', '' ) ) {
-					echo esc_html( wpautop( wptexturize( $legal_note ) ) );
-				}
-			}
-		}
 	}
 
 	/**
