@@ -55,7 +55,7 @@ class ReceiptPageView {
 					}, 500 );
 				}
 			}
-			jQuery( window ).on('load',( function() {
+			jQuery( window ).on('load', function() {
 				paypal_plus_redirect();
 			} );
 			jQuery( document ).ready( function() {
