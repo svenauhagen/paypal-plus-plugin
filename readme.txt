@@ -130,6 +130,14 @@ Payment by installments is a separate product from PayPal Plus, and therefore re
 
  
 == Changelog ==
+= 1.0.6 =
+ - Fix incompatibility with plugins changing the order number
+ - Fix -1 for error during checkout
+ - Fix legal note text not displaying on thank you page
+ - Fix Internal Server Error with Germanized Pro
+ - Fix redirecting to blank page when credit card is not accepted
+ - Fix incompatibility with jQuery 3.x
+ - Fix legal note is shown with <p> tag in email
 = 1.0.5 =
  - Fix checkout error when adding or removing coupons on checkout page
  - Fix download of log file
