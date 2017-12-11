@@ -137,7 +137,7 @@ Payment by installments is a separate product from PayPal Plus, and therefore re
  - Fix Internal Server Error with Germanized Pro
  - Fix redirecting to blank page when credit card is not accepted
  - Fix incompatibility with jQuery 3.x
- - Fix legal note is shown with <p> tag in email
+ - Fix legal note is shown with paragraph tag in email
 = 1.0.5 =
  - Fix checkout error when adding or removing coupons on checkout page
  - Fix download of log file
