@@ -2,23 +2,23 @@
 Contributors: inpsyde, biont, cocreation
 Tags: paypal, paypal plus, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
 Requires at least: 4.4
-Tested up to: 4.8.2
-Stable tag: 1.0.5
+Tested up to: 4.9
+Stable tag: 1.0.6
 Requires PHP: 5.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
- 
+
 The official PayPal Plus Plugin for WooCommerce - adds payment via PayPal, Direct debit, Credit card and Pay upon invoice to your WooCommerce Shop.
- 
+
 == Description ==
 
 **Save your 100 € bonus now! Integrate PayPal Plus into your shop, generate at least one transaction until October 31st and PayPal will retransfer 100 €! -  [Apply now!](https://www.paypal.com/de/webapps/mpp/paypal-plus)**
 
 PayPal Plus for WooCommerce is the official [PayPal Plus](https://www.paypal.com/de/webapps/mpp/paypal-plus) plugin. Without much effort, it integrates all PayPal Plus payment methods into your WooCommerce shop: PayPal, Direct debit, Credit card and Pay upon invoice
 
-On the checkout page, the plugin loads an iFrame which is provided by PayPal. It offers all PayPal Plus payment methods to the buyer. Depending on their choice, the buyers are, after clicking the buy-button, guided to the PayPal form or to forms where they can enter the data to pay via Direct debit, Credit card or upon invoice. 
+On the checkout page, the plugin loads an iFrame which is provided by PayPal. It offers all PayPal Plus payment methods to the buyer. Depending on their choice, the buyers are, after clicking the buy-button, guided to the PayPal form or to forms where they can enter the data to pay via Direct debit, Credit card or upon invoice.
 
-= Benefits = 
+= Benefits =
 
 * More payment methods: PayPal Plus enables to integrate the four most popular payment methods into your shop: PayPal, Direct debit, Credit card, pay upon invoice.
 * Easier integration: all payment methods in only one plugin.
@@ -26,13 +26,13 @@ On the checkout page, the plugin loads an iFrame which is provided by PayPal. It
 * Attract more customers: with or without PayPal account.
 * Userfriendly and responsive checkout: made by PayPal.
 * Transaction amount is directly credited to your PayPal account after transaction
-* Transparent and the same fees for all payment methods - without signup- or monthly fees. 
+* Transparent and the same fees for all payment methods - without signup- or monthly fees.
 * [PCI conformity](https://wikipedia.org/wiki/Payment_Card_Industry_Data_Security_Standard): On the checkout page, our plugin loads an iFrame being hosted by PayPal in which all transaction data are entered.
 
-= Countries = 
-At the moment, **PayPal Plus** is only available for customers having their registered office in Germany. Nonetheless, international transactions work. Customers not being in Germany can only choose between the payment methods PayPal and Credit card. 
+= Countries =
+At the moment, **PayPal Plus** is only available for customers having their registered office in Germany. Nonetheless, international transactions work. Customers not being in Germany can only choose between the payment methods PayPal and Credit card.
 
-= More information about PayPal Plus = 
+= More information about PayPal Plus =
 
 You want to have more information about PayPal Plus? You can find all details on [PayPal’s pages](https://www.paypal.com/de/webapps/mpp/paypal-plus).
 
@@ -45,7 +45,7 @@ You want to have more information about PayPal Plus? You can find all details on
 https://www.youtube.com/watch?v=tFw6_f6oKOo
 
 
-= Support = 
+= Support =
 
 You can find technical support for this plugin in the wordpress.org forum: [https://wordpress.org/support/plugin/woo-paypalplus](https://wordpress.org/support/plugin/woo-paypalplus)
 
@@ -76,14 +76,14 @@ This is the easiest way to install the PayPal Plus plugin.
 5. Activate the plugin. You can find the settings here: *WooCommerce => Settings => Checkout => PayPal Plus*.
 
 **Attention:** You need WooCommerce 3.0 or higher to use PayPal Plus. Otherwise, the setting page of the plugin is not available. You will get a notification in your WordPress backend if you don’t use the correct WooCommerce version.
- 
+
 = Manual Installation =
 In case the automatic installation doesn’t work, download the plugin from here via the *Download*-button. Unpack the archive and load the folder via FTP into the directory `wp-content\plugins` of your WordPress installation. Go to *Plugins => Installed plugins* and click *Activate* on *PayPal Plus für WooCommerce*.
 
 == Frequently Asked Questions ==
- 
+
 = I installed WooCommerce in a lower version. Nevertheless, can I use PayPal Plus for WooCommerce? =
- 
+
 No, the plugin is only compatible with WooCommerce versions >= 3.0. We advise to make an update. But don’t forget to make a backup of your installation before. For making a backup use our free WordPress backup plugin [BackWPup](https://wordpress.org/plugins/backwpup/).
 
 = What do I have to pay attention to when I use a PayPal account for several shops? =
@@ -98,37 +98,37 @@ At the moment, you can use PayPal Plus for WooCommerce only in Germany.
 
 With our plugin, you can integrate all those payment methods offered by PayPal: paying with your PayPal account, via direct debit, via credit card or paying via invoice.
 
-= In my shop, the payment method pay upon invoice is not offered. What do I have to do? = 
+= In my shop, the payment method pay upon invoice is not offered. What do I have to do? =
 
 Your PayPal vendor account needs to be activated by PayPal in order to offer the payment method pay upon invoice. This takes place after verification by PayPal and may last a couple of weeks.
 
 = Can I use PayPal Plus for digital products? =
- 
+
 Yes, it is possible, except when using the payment option "upon invoice".
- 
+
 = How can I hide the option to "pay upon invoice"? =
- 
-As a vendor, you are asked explicitly whether you want to have "invoice" as a payment option or not when signing up for PayPal Plus. 
- 
+
+As a vendor, you are asked explicitly whether you want to have "invoice" as a payment option or not when signing up for PayPal Plus.
+
 = Does PayPal Plus allow subscription payments? =
- 
+
 At the moment, subscription payments are not possible with PayPal Plus.
- 
+
 = Is payment by installments possible with PayPal Plus? =
- 
+
 Payment by installments is a separate product from PayPal Plus, and therefore requires a separate integration. Moreover, each vendor needs to be activated by PayPal individually. If both integrations, payment by installments and PayPal Plus, are used, payment by installments appears as another payment option under PayPal Plus. But payment by installments can also run as a single integration. In fact, payment by installments is theoretically possible, but there is no functional module for WooCommerce at the moment.
 
 == Screenshots ==
- 
+
 1. PayPal Plus for WooCommerce - plugin settings among WooCommerce => Settings => Checkout => PayPal Plus.
 2. The four PayPal Plus payment methods: PayPal, Direct debit, credit card, pay upon invoice.
 3. The PayPal Login form when paying via PayPal.
 4. The PayPal Plus form when paying via Direct debit.
 5. The PayPal Plus form when paying via credit card.
 6. The PayPal Plus form when paying upon invoice.
- 
 
- 
+
+
 == Changelog ==
 = 1.0.6 =
  - Fix incompatibility with plugins changing the order number
@@ -159,8 +159,8 @@ Payment by installments is a separate product from PayPal Plus, and therefore re
  - Improve session data handling.
 = 1.0 =
 Initial Release
- 
+
 == Upgrade Notice ==
- 
+
 = 1.0 =
 This is the first version. Update your system when updates are available in order to ensure that the plugin works proper.
