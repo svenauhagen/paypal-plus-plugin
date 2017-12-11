@@ -12,8 +12,6 @@ The official PayPal Plus Plugin for WooCommerce - adds payment via PayPal, Direc
 
 == Description ==
 
-**Save your 100 € bonus now! Integrate PayPal Plus into your shop, generate at least one transaction until October 31st and PayPal will retransfer 100 €! -  [Apply now!](https://www.paypal.com/de/webapps/mpp/paypal-plus)**
-
 PayPal Plus for WooCommerce is the official [PayPal Plus](https://www.paypal.com/de/webapps/mpp/paypal-plus) plugin. Without much effort, it integrates all PayPal Plus payment methods into your WooCommerce shop: PayPal, Direct debit, Credit card and Pay upon invoice
 
 On the checkout page, the plugin loads an iFrame which is provided by PayPal. It offers all PayPal Plus payment methods to the buyer. Depending on their choice, the buyers are, after clicking the buy-button, guided to the PayPal form or to forms where they can enter the data to pay via Direct debit, Credit card or upon invoice.
