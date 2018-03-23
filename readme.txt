@@ -76,6 +76,7 @@ This is the easiest way to install the PayPal Plus plugin.
 **Attention:** You need WooCommerce 3.0 or higher to use PayPal Plus. Otherwise, the setting page of the plugin is not available. You will get a notification in your WordPress backend if you don’t use the correct WooCommerce version.
 
 = Manual Installation =
+
 In case the automatic installation doesn’t work, download the plugin from here via the *Download*-button. Unpack the archive and load the folder via FTP into the directory `wp-content\plugins` of your WordPress installation. Go to *Plugins => Installed plugins* and click *Activate* on *PayPal Plus für WooCommerce*.
 
 == Frequently Asked Questions ==
@@ -87,10 +88,6 @@ No, the plugin is only compatible with WooCommerce versions >= 3.0. We advise to
 = What do I have to pay attention to when I use a PayPal account for several shops? =
 
 It’s mandatory to assign a unique invoice prefix for each shop in the *PayPal Plus for WooCommerce* settings. Otherwise, PayPal won’t accept orders with the same invoice number.
-
-= In which countries can I use PayPal Plus for WooCommerce? =
-
-At the moment, you can use PayPal Plus for WooCommerce only in Germany.
 
 = With PayPal Plus for WooCommerce, which payment methods can I integrate into my shop? =
 
@@ -115,6 +112,23 @@ At the moment, subscription payments are not possible with PayPal Plus.
 = Is payment by installments possible with PayPal Plus? =
 
 Payment by installments is a separate product from PayPal Plus, and therefore requires a separate integration. Moreover, each vendor needs to be activated by PayPal individually. If both integrations, payment by installments and PayPal Plus, are used, payment by installments appears as another payment option under PayPal Plus. But payment by installments can also run as a single integration. In fact, payment by installments is theoretically possible, but there is no functional module for WooCommerce at the moment.
+
+= Is it possible to offer payment via credit card or via direct debit only? =
+
+No. The only payment option you can add or remove individually is purchase on account. 
+
+= Do vendors have the same guarantees for all payment options as with the classic PayPal? =
+
+Yes, all PP+ payment options do have the vendor protection. 
+
+= Does a vendor get his money directly no matter the used payment option? =
+
+Vendors usually get the money directly after the transaction, no matter which of the four PP+ payment options has been used. 
+
+= Does PayPal Plus work for international transactions, too? = 
+
+At the moment, PayPal Plus can only be used by vendors in Germany. But their buyers can buy and pay worldwide. 
+
 
 == Screenshots ==
 
