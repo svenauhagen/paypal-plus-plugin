@@ -6,7 +6,7 @@
  * Author URI:  https://inpsyde.com/
  * Version:     1.0.6
  * WC requires at least: 3.0.0
- * WC tested up to: 3.2.5
+ * WC tested up to: 3.3.5
  * License:     MIT
  * Text Domain: woo-paypalplus
  * Domain Path: /languages/
