@@ -469,6 +469,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	 */
 	public function payment_fields() {
 
+		// Call parent method to show the description
+		parent::payment_fields();
+		
 		if ( $this->supports( 'tokenization' ) && is_checkout() ) {
 			$this->tokenization_script();
 			$this->saved_payment_methods();
