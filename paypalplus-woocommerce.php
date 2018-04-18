@@ -4,7 +4,7 @@
  * Description: PayPal Plus - the official WordPress Plugin for WooCommerce
  * Author:      Inpsyde GmbH
  * Author URI:  https://inpsyde.com/
- * Version:     1.0.6
+ * Version:     1.0.7
  * WC requires at least: 3.0.0
  * WC tested up to: 3.3.5
  * License:     MIT
