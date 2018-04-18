@@ -142,6 +142,9 @@ At the moment, PayPal Plus can only be used by vendors in Germany. But their buy
 
 
 == Changelog ==
+= 1.0.7 =
+ - Fix gateway description hidden on checkout page
+ - Fix compatibility with WooCommerce 3.3.5
 = 1.0.6 =
  - Fix incompatibility with plugins changing the order number
  - Fix -1 for error during checkout
