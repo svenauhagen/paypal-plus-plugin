@@ -2,8 +2,8 @@
 Contributors: inpsyde, biont, cocreation
 Tags: paypal, paypal plus, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
 Requires at least: 4.4
-Tested up to: 4.9
-Stable tag: 1.0.6
+Tested up to: 4.9.5
+Stable tag: 1.0.7
 Requires PHP: 5.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
