@@ -280,7 +280,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	 *
 	 * @return bool
 	 */
-	private function can_refund_order( \WC_Order $order ) {
+	public function can_refund_order( \WC_Order $order ) {
 
 		return $order && $order->get_transaction_id();
 	}
