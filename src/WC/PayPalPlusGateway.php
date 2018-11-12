@@ -280,7 +280,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 	 *
 	 * @return bool
 	 */
-	public function can_refund_order( \WC_Order $order ) {
+	public function can_refund_order( $order ) {
 
 		return $order && $order->get_transaction_id();
 	}
@@ -471,7 +471,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		// Call parent method to show the description
 		parent::payment_fields();
-		
+
 		if ( $this->supports( 'tokenization' ) && is_checkout() ) {
 			$this->tokenization_script();
 			$this->saved_payment_methods();
