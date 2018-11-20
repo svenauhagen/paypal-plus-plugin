@@ -15,46 +15,73 @@ use WCPayPalPlus\WC\PayPalPlusGateway;
  *
  * @package WCPayPalPlus
  */
-class Backend implements Controller {
+class Backend implements Controller
+{
+    /**
+     * Gateway class
+     *
+     * @var PayPalPlusGateway
+     */
+    private $gateway;
 
-	/**
-	 * Gateway class
-	 *
-	 * @var PayPalPlusGateway
-	 */
-	private $gateway;
-	/**
-	 * Main Plugin file path
-	 *
-	 * @var string
-	 */
-	private $file;
+    /**
+     * Main Plugin file path
+     *
+     * @var string
+     */
+    private $file;
 
-	/**
-	 * Backend constructor.
-	 *
-	 * @param string            $file    Main plugin filepath.
-	 * @param PayPalPlusGateway $gateway Gateway class.
-	 */
-	public function __construct( $file, PayPalPlusGateway $gateway ) {
+    /**
+     * @var string
+     */
+    private $assetsUrl;
 
-		$this->gateway = $gateway;
-		$this->file    = $file;
-	}
+    /**
+     * @var string
+     */
+    private $assetsPath;
 
-	/**
-	 * Setup hooks
-	 */
-	public function init() {
+    public function __construct($file, PayPalPlusGateway $gateway)
+    {
+        $this->gateway = $gateway;
+        $this->file = $file;
+        $this->assetsPath = untrailingslashit(plugin_dir_path($this->file));
+        $this->assetsUrl = untrailingslashit(plugin_dir_url($this->file));
+    }
 
-		add_action( 'admin_enqueue_scripts', function () {
+    public function init()
+    {
+        add_action('admin_enqueue_scripts', function () {
+            $this->enqueueScripts();
+        });
+    }
 
-			$asset_url    = plugin_dir_url( $this->file );
-			$min          = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '';
-			$admin_script = "{$asset_url}/assets/js/admin{$min}.js";
+    private function enqueueScripts()
+    {
+        $suffix = $this->productionSuffix();
+        $fileUrl = "{$this->assetsUrl}/assets/js/admin{$suffix}.js";
+        wp_enqueue_script(
+            'paypalplus-woocommerce-admin',
+            $fileUrl,
+            ['jquery'],
+            $this->filemtime($fileUrl),
+            true
+        );
+    }
 
-			wp_enqueue_script( 'paypalplus-woocommerce-admin', $admin_script, [ 'jquery' ] );
-		} );
-	}
+    private function productionSuffix()
+    {
+        return (defined('SCRIPT_DEBUG') and SCRIPT_DEBUG) ? '.min' : '';
+    }
 
+    private function filemtime($file)
+    {
+        $filePath = str_replace(
+            $this->assetsUrl,
+            $this->assetsPath,
+            $file
+        );
+
+        return filemtime($filePath);
+    }
 }

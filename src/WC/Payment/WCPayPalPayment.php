@@ -81,10 +81,11 @@ class WCPayPalPayment {
 		$transaction = $payment->getTransactions();
 		$itemslist   = $transaction[0]->getItemList();
 		$items       = $itemslist->getItems();
+
 		try {
 			$payment->create( $this->payment_data->get_api_context() );
-		} catch ( PayPalConnectionException $ex ) {
-			do_action( 'wc_paypal_plus_log_exception', 'create_payment_exception', $ex );
+		} catch ( PayPalConnectionException $exc ) {
+			do_action( 'wc_paypal_plus_log_exception', 'create_payment_exception', $exc );
 			return null;
 		}
 
@@ -160,7 +161,7 @@ class WCPayPalPayment {
 		$details = new Details();
 		$details->setShipping( $shipping )
 				->setSubtotal( $sub_total );
-		
+
 		if ( isset( $tax ) ) {
 			$details->setTax( $tax );
 		}
@@ -188,7 +189,7 @@ class WCPayPalPayment {
 		return $transaction;
 
 	}
-	
+
 	/**
 		 * Gets a name to send to PayPal in the event the line items cannot be sent.
 		 *
@@ -196,11 +197,11 @@ class WCPayPalPayment {
 		 */
 	private function get_order_item_names() {
 		$item_names = array();
-		
+
 		foreach ( $this->order_data->get_item_list()->getItems() as $item ) {
 			$item_names[] = $item->getName() . ' x ' . $item->getQuantity();
 		}
-		
+
 		return implode( ', ', $item_names );
 	}
 }
