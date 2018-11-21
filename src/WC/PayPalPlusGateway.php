@@ -74,7 +74,10 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		$this->id           = $id;
 		$this->title        = $this->get_option( 'title' );
-		$this->description  = $this->get_option( 'description' );
+		$this->description  = $this->method_description = __(
+            'Allow customers to conveniently checkout with different payment options like PayPal, Credit Card or Invoice.',
+            'woo-paypalplus'
+        );
 		$this->method_title = $method_title;
 		$this->has_fields   = true;
 		$this->supports     = [
