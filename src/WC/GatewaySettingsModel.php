@@ -141,10 +141,10 @@ class GatewaySettingsModel {
 				'type'        => 'text',
 				'description' => sprintf(
 					__(
-						'Set the absolute URL for a logo to be displayed on the PayPal checkout pages. (E.G., %s)',
+						'Set the absolute URL for a logo to be displayed on the PayPal checkout pages. (E.G., %s)<br />Max length for the url is set to 127 characters. Also use secure http protocol (https).',
 						'woo-paypalplus'
 					),
-					get_site_url() . '/path/to/logo.jpg'
+					get_site_url('', '', 'https') . '/path/to/logo.jpg'
 				),
 				'default'     => '',
 			],

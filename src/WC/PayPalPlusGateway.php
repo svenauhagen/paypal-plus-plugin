@@ -296,7 +296,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 		if ( $verification->verify() ) {
 			$option_key = $this->get_experience_profile_option_key();
 			$config     = [
-				'checkout_logo' => $this->get_option( 'checkout_logo' ),
+				'checkout_logo' => $this->ensureCheckoutLogoUrl($this->get_option( 'checkout_logo' )),
 				'local_id'      => $this->get_option( $option_key ),
 				'brand_name'    => $this->get_option( 'brand_name' ),
 				'country'       => $this->get_option( 'country' ),
@@ -320,8 +320,45 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
 		// Save again to catch all values we've updated.
 		$this->process_admin_options();
-
 	}
+
+    public function process_admin_options()
+    {
+        $this->data = $this->get_post_data();
+        $checkoutLogoUrl = $this->ensureCheckoutLogoUrl(
+            $this->data['woocommerce_paypal_plus_checkout_logo']
+        );
+
+        $this->data['woocommerce_paypal_plus_checkout_logo'] = $checkoutLogoUrl;
+
+        parent::process_admin_options();
+    }
+
+    private function ensureCheckoutLogoUrl($checkoutLogoUrl)
+    {
+        if ($checkoutLogoUrl === '') {
+            return '';
+        }
+
+        if (strlen($checkoutLogoUrl) > 127) {
+            $this->add_error(
+                __('Checkout Logo cannot contains more than 127 characters.', 'woo-paypalplus')
+            );
+            return '';
+        }
+
+        if (false === strpos($checkoutLogoUrl, 'https')) {
+            $this->add_error(
+                __(
+                    'Checkout Logo must use the http secure protocol HTTPS. EG. (https://my-url)',
+                    'woo-paypalplus'
+                )
+            );
+            return '';
+        }
+
+        return $checkoutLogoUrl;
+    }
 
 	/**
 	 * Returns the option key where the web experience profile ID is stored
