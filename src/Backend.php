@@ -17,43 +17,30 @@ use WCPayPalPlus\WC\PayPalPlusGateway;
  */
 final class Backend implements Controller
 {
-
     /**
-     * Gateway class
-     *
      * @var PayPalPlusGateway
      */
     private $gateway;
+
     /**
-     * Main Plugin file path
-     *
      * @var string
      */
     private $file;
 
-    /**
-     * Backend constructor.
-     *
-     * @param string $file Main plugin filepath.
-     * @param PayPalPlusGateway $gateway Gateway class.
-     */
     public function __construct($file, PayPalPlusGateway $gateway)
     {
         $this->gateway = $gateway;
         $this->file = $file;
     }
 
-    /**
-     * Setup hooksfilemtime
-     */
     public function init()
     {
         add_action('admin_enqueue_scripts', function () {
-            $asset_url = plugin_dir_url($this->file);
+            $assetUrl = plugin_dir_url($this->file);
             $min = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
-            $admin_script = "{$asset_url}/assets/js/admin{$min}.js";
+            $adminScript = "{$assetUrl}/assets/js/admin{$min}.js";
 
-            wp_enqueue_script('paypalplus-woocommerce-admin', $admin_script, ['jquery']);
+            wp_enqueue_script('paypalplus-woocommerce-admin', $adminScript, ['jquery']);
         });
     }
 }
