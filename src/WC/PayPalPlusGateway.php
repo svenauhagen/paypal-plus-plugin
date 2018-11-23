@@ -220,38 +220,13 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
 
         $output = ob_get_clean();
 
-        // Only show iframe if API credentials set
         $credentials = $this->get_api_credentials();
         if ($credentials['client_id']) {
-            wp_enqueue_script(
-                'ppplus-jsbackend',
-                'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
-                [],
-                '1.0',
-                false
-            );
-
             $paypal_payment = new WCPayPalPayment($this->get_payment_data(), new OrderDataTest());
             $payment = $paypal_payment->create();
 
             $payment and $this->sandboxMessage($output);
             !$payment and $this->invalidPaymentMessage($output);
-
-            if ($payment) {
-                $approval_url = $payment->getApprovalLink();
-                $data = [
-                    'app_config' => [
-                        'useraction' => 'commit',
-                        'showLoadingIndicator' => true,
-                        'approvalUrl' => $approval_url,
-                        'placeholder' => 'ppplus',
-                        'mode' => ($this->is_sandbox()) ? 'sandbox' : 'live',
-                        'language' => $this->get_locale(),
-                        'buttonLocation' => 'outside',
-                    ],
-                ];
-                (new PayPalIframeView($data))->render();
-            }
         }
 
         $output .= parent::generate_settings_html($form_fields, $echo);
@@ -442,9 +417,11 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
 
     private function get_approval_url()
     {
-        $url = WC()->session->__get(self::APPROVAL_URL_SESSION_KEY);
+        $url = '';
+        $session = WC()->session;
+        $session and $url = $session->__get(self::APPROVAL_URL_SESSION_KEY);
 
-        if (!WC()->session || !$url) {
+        if (!$url) {
             $payment = $this->get_payment_object();
             if (!$payment) {
                 return '';
