@@ -15,35 +15,29 @@ use WCPayPalPlus\WC\PayPalPlusGateway;
  *
  * @package WCPayPalPlus
  */
-class Common implements Controller {
+final class Common implements Controller
+{
+    /**
+     * @var PayPalPlusGateway
+     */
+    private $gateway;
 
-	/**
-	 * The Payment Gateway.
-	 *
-	 * @var PayPalPlusGateway
-	 */
-	private $gateway;
+    public function __construct(PayPalPlusGateway $gateway)
+    {
+        $this->gateway = $gateway;
+    }
 
-	/**
-	 * Common constructor.
-	 *
-	 * @param PayPalPlusGateway $gateway The Payment Gateway.
-	 */
-	public function __construct( PayPalPlusGateway $gateway ) {
+    public function init()
+    {
+        add_filter('woocommerce_payment_gateways', function ($methods) {
+            $methods[] = $this->gateway;
 
-		$this->gateway = $gateway;
-	}
+            $payPalGatewayIndex = array_search('WC_Gateway_Paypal', $methods, true);
+            if ($payPalGatewayIndex !== false) {
+                unset($methods[$payPalGatewayIndex]);
+            }
 
-	/**
-	 * Setup hooks.
-	 */
-	public function init() {
-
-		add_filter( 'woocommerce_payment_gateways', function ( $methods ) {
-
-			$methods[] = $this->gateway;
-
-			return $methods;
-		} );
-	}
+            return $methods;
+        });
+    }
 }

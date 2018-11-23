@@ -15,7 +15,7 @@ use WCPayPalPlus\WC\PayPalPlusGateway;
  *
  * @package WCPayPalPlus
  */
-class Frontend implements Controller {
+final class Frontend implements Controller {
 
 	/**
 	 * The PPPlus Payment Gateway.

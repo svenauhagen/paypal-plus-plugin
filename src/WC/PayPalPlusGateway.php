@@ -11,7 +11,6 @@ use WCPayPalPlus\WC\IPN\IPNData;
 use WCPayPalPlus\WC\Payment\CartData;
 use WCPayPalPlus\WC\Payment\OrderData;
 use WCPayPalPlus\WC\Payment\OrderDataTest;
-use WCPayPalPlus\WC\Payment\OrderDataProvider;
 use WCPayPalPlus\WC\Payment\PaymentData;
 use WCPayPalPlus\WC\Payment\PaymentExecutionData;
 use WCPayPalPlus\WC\Payment\PaymentExecutionSuccess;
@@ -28,72 +27,72 @@ use WCPayPalPlus\WC\Refund\WCRefund;
  *
  * @package WCPayPalPlus\WC
  */
-class PayPalPlusGateway extends \WC_Payment_Gateway
-{
-    const PAYMENT_ID_SESSION_KEY = 'ppp_payment_id';
-    const PAYER_ID_SESSION_KEY = 'ppp_payer_id';
-    const APPROVAL_URL_SESSION_KEY = 'ppp_approval_url';
+class PayPalPlusGateway extends \WC_Payment_Gateway {
 
-    /**
-     * Gateway ID
-     *
-     * @var string
-     */
-    public $id;
+	const PAYMENT_ID_SESSION_KEY = 'ppp_payment_id';
+	const PAYER_ID_SESSION_KEY = 'ppp_payer_id';
+	const APPROVAL_URL_SESSION_KEY = 'ppp_approval_url';
 
-    /**
-     * Payment Method title.
-     *
-     * @var string
-     */
-    public $method_title;
+	/**
+	 * Gateway ID
+	 *
+	 * @var string
+	 */
+	public $id;
 
-    /**
-     * IPN Handler object.
-     *
-     * @var IPN
-     */
-    private $ipn;
+	/**
+	 * Payment Method title.
+	 *
+	 * @var string
+	 */
+	public $method_title;
 
-    /**
-     * PaymentInstructionRenderer object.
-     *
-     * @var PaymentInstructionRenderer
-     */
-    private $pui;
+	/**
+	 * IPN Handler object.
+	 *
+	 * @var IPN
+	 */
+	private $ipn;
 
-    /**
-     * PayPal API Context object.
-     *
-     * @var ApiContext
-     */
-    private $auth;
+	/**
+	 * PaymentInstructionRenderer object.
+	 *
+	 * @var PaymentInstructionRenderer
+	 */
+	private $pui;
 
-    public function __construct($id, $method_title, IPN $ipn = null)
+	/**
+	 * PayPal API Context object.
+	 *
+	 * @var ApiContext
+	 */
+	private $auth;
+
+    public function __construct($id, $methodTitle, IPN $ipn = null)
     {
         $this->id = $id;
         $this->title = $this->get_option('title');
         $this->description = $this->get_option('description');
-        $this->method_title = $method_title;
+        $this->method_title = $methodTitle;
         $this->has_fields = true;
         $this->supports = [
             'products',
             'refunds',
         ];
-        $ipn_data = new IPNData(
+        $ipnData = new IPNData(
             filter_input_array(INPUT_POST) ?: [],
-            $this->is_sandbox()
+            $this->isSandbox()
         );
-        $this->ipn = $ipn ?: new IPN($this->id, $ipn_data);
+        $this->ipn = $ipn ?: new IPN($this->id, $ipnData);
         $this->pui = new PaymentInstructionRenderer($this->get_option('legal_note', ''));
         $this->init_form_fields();
         $this->init_settings();
     }
 
-    public function init_form_fields()
-    {
-        $this->form_fields = (new GatewaySettingsModel())->get_settings();
-    }
+	public function init_form_fields() {
+
+		$this->form_fields = ( new GatewaySettingsModel() )->get_settings();
+	}
 
     public function register()
     {
@@ -107,14 +106,13 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         );
         add_action('woocommerce_receipt_' . $this->id, [$this, 'render_receipt_page']);
         add_action('woocommerce_api_' . $this->id, [$this, 'execute_payment'], 12);
-
         add_action('woocommerce_add_to_cart', [$this, 'clear_session_data']);
         add_action('woocommerce_cart_item_removed', [$this, 'clear_session_data']);
         add_action('woocommerce_after_cart_item_quantity_update', [$this, 'clear_session_data']);
         add_action('woocommerce_applied_coupon', [$this, 'clear_session_data']);
         add_action('woocommerce_removed_coupon', [$this, 'clear_session_data']);
 
-        if ($this->default_gateway_override_enabled()) {
+        if ($this->defaultGatewayOverrideEnabled()) {
             (new DefaultGatewayOverride($this->id))->init();
         }
     }
@@ -122,54 +120,58 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
     public function execute_payment()
     {
         $token = filter_input(INPUT_GET, 'token');
-        $payer_id = filter_input(INPUT_GET, 'PayerID');
-        $payment_id = filter_input(INPUT_GET, 'paymentId');
+        $payerId = filter_input(INPUT_GET, 'PayerID');
+        $paymentId = filter_input(INPUT_GET, 'paymentId');
 
-        if (!$payment_id) {
-            $payment_id = WC()->session->__get(self::PAYMENT_ID_SESSION_KEY);
+        if (!$paymentId) {
+            $paymentId = WC()->session->__get(self::PAYMENT_ID_SESSION_KEY);
         }
 
-        if (!$token || !$payer_id || !$payment_id) {
+        if (!$token || !$payerId || !$paymentId) {
             return;
         }
 
         WC()->session->token = $token;
 
-        WC()->session->__set(self::PAYER_ID_SESSION_KEY, $payer_id);
-
+        WC()->session->__set(self::PAYER_ID_SESSION_KEY, $payerId);
         $order = new \WC_Order(WC()->session->ppp_order_id);
         $data = new PaymentExecutionData(
             $order,
-            $payer_id,
-            $payment_id,
-            $this->get_api_context()
+            $payerId,
+            $paymentId,
+            $this->apiContext()
         );
 
         $success = new PaymentExecutionSuccess($data);
+
         try {
             $payment = new WCPaymentExecution($data, [$success]);
             $payment->execute();
-        } catch (PayPalConnectionException $ex) {
-            \do_action('wc_paypal_plus_log_exception', 'payment_execution_exception', $ex);
-            \wc_add_notice(
-                __('Error processing checkout. Please check the logs. ',
+        } catch (PayPalConnectionException $exc) {
+            do_action('wc_paypal_plus_log_exception', 'payment_execution_exception', $exc);
+
+            wc_add_notice(
+                __(
+                    'Error processing checkout. Please check the logs. ',
                     'woo-paypalplus'
                 ),
                 'error'
             );
-            \wp_safe_redirect(\wc_get_checkout_url());
+
+            wp_safe_redirect(wc_get_checkout_url());
+
             die();
         }
     }
 
-    public function process_refund($order_id, $amount = null, $reason = '')
+    public function process_refund($orderId, $amount = null, $reason = '')
     {
-        $order = wc_get_order($order_id);
+        $order = wc_get_order($orderId);
         if (!$this->can_refund_order($order)) {
             return false;
         }
-        $refund_data = new RefundData($order, $amount, $reason, $this->get_api_context());
-        $refund = new WCRefund($refund_data, $this->get_api_context());
+        $refundData = new RefundData($order, $amount, $reason, $this->apiContext());
+        $refund = new WCRefund($refundData, $this->apiContext());
 
         return $refund->execute();
     }
@@ -181,22 +183,20 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
 
     public function on_save()
     {
-        // Call regular saving method.
         $this->process_admin_options();
-        $verification = new CredentialVerification($this->get_api_context());
+        $verification = new CredentialVerification($this->apiContext());
+
         if ($verification->verify()) {
-            $option_key = $this->get_experience_profile_option_key();
+            $optionKey = $this->experienceProfileOptionKey();
             $config = [
                 'checkout_logo' => $this->get_option('checkout_logo'),
-                'local_id' => $this->get_option($option_key),
+                'local_id' => $this->get_option($optionKey),
                 'brand_name' => $this->get_option('brand_name'),
                 'country' => $this->get_option('country'),
             ];
 
-            $web_profile = new WCWebExperienceProfile($config, $this->get_api_context());
-
-            $_POST[$this->get_field_key($option_key)] = $web_profile->save_profile();
-
+            $webProfile = new WCWebExperienceProfile($config, $this->apiContext());
+            $_POST[$this->get_field_key($optionKey)] = $webProfile->save_profile();
         } else {
             unset($_POST[$this->get_field_key('enabled')]);
             $this->enabled = 'no';
@@ -209,7 +209,6 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
             );
         }
 
-        // Save again to catch all values we've updated.
         $this->process_admin_options();
     }
 
@@ -220,9 +219,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
 
         $output = ob_get_clean();
 
-        $credentials = $this->get_api_credentials();
+        $credentials = $this->apiCredentials();
         if ($credentials['client_id']) {
-            $paypal_payment = new WCPayPalPayment($this->get_payment_data(), new OrderDataTest());
+            $paypal_payment = new WCPayPalPayment($this->paymentData(), new OrderDataTest());
             $payment = $paypal_payment->create();
 
             $payment and $this->sandboxMessage($output);
@@ -245,6 +244,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
             'class' => '',
             'html' => '',
         ];
+
         $data = wp_parse_args($data, $defaults);
 
         ob_start();
@@ -262,9 +262,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         return ob_get_clean();
     }
 
-    public function process_payment($order_id)
+    public function process_payment($orderId)
     {
-        $order = new \WC_Order($order_id);
+        $order = new \WC_Order($orderId);
 
         return [
             'result' => 'success',
@@ -272,45 +272,47 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         ];
     }
 
-    public function render_receipt_page($order_id)
+    public function render_receipt_page($orderId)
     {
-        WC()->session->ppp_order_id = $order_id;
-        $order = wc_get_order($order_id);
-        $payment_id = WC()->session->__get(self::PAYMENT_ID_SESSION_KEY);
-        if (!$payment_id) {
-            $this->abort_checkout();
+        WC()->session->ppp_order_id = $orderId;
+        $order = wc_get_order($orderId);
+        $paymentId = WC()->session->__get(self::PAYMENT_ID_SESSION_KEY);
+
+        if (!$paymentId) {
+            $this->abortCheckout();
 
             return;
         }
-        $invoice_prefix = $this->get_option('invoice_prefix');
-        $api_context = $this->get_api_context();
 
-        $patch_data = new PaymentPatchData(
+        $invoicePrefix = $this->get_option('invoice_prefix');
+        $apiContext = $this->apiContext();
+        $patchData = new PaymentPatchData(
             $order,
-            $payment_id,
-            $invoice_prefix,
-            $api_context
+            $paymentId,
+            $invoicePrefix,
+            $apiContext
         );
-        $payment = new WCPaymentPatch($patch_data);
+
+        $payment = new WCPaymentPatch($patchData);
         if ($payment->execute()) {
             $view = new ReceiptPageView();
             $view->render();
-
-        } else {
-            $this->abort_checkout();
+            return;
         }
+
+        $this->abortCheckout();
     }
 
     public function clear_session_data()
     {
-        WC()->session->__unset(self::PAYMENT_ID_SESSION_KEY);
-        WC()->session->__unset(self::PAYER_ID_SESSION_KEY);
-        WC()->session->__unset(self::APPROVAL_URL_SESSION_KEY);
+        $session = WC()->session;
+        $session->__unset(self::PAYMENT_ID_SESSION_KEY);
+        $session->__unset(self::PAYER_ID_SESSION_KEY);
+        $session->__unset(self::APPROVAL_URL_SESSION_KEY);
     }
 
     public function payment_fields()
     {
-        // Call parent method to show the description
         parent::payment_fields();
 
         if ($this->supports('tokenization') && is_checkout()) {
@@ -318,9 +320,10 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
             $this->saved_payment_methods();
             $this->form();
             $this->save_payment_method_checkbox();
-        } else {
-            $this->form();
+            return;
         }
+
+        $this->form();
     }
 
     public function form()
@@ -329,11 +332,11 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
             'app_config' => [
                 'useraction' => 'commit',
                 'showLoadingIndicator' => true,
-                'approvalUrl' => $this->get_approval_url(),
+                'approvalUrl' => $this->approvalUrl(),
                 'placeholder' => 'ppplus',
-                'mode' => ($this->is_sandbox()) ? 'sandbox' : 'live',
+                'mode' => ($this->isSandbox()) ? 'sandbox' : 'live',
                 'country' => WC()->customer->get_billing_country(),
-                'language' => $this->get_locale(),
+                'language' => $this->locale(),
                 'buttonLocation' => 'outside',
                 'showPuiOnSandbox' => true,
             ],
@@ -341,27 +344,32 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         (new PayPalIframeView($data))->render();
     }
 
-    private function get_experience_profile_option_key()
+    private function abortCheckout()
     {
-        return ($this->is_sandbox())
-            ? 'sandbox_experience_profile_id'
-            : 'live_experience_profile_id';
+        $this->clear_session_data();
+        wc_add_notice(
+            __('Error processing checkout. Please try again. ', 'woo-paypalplus'),
+            'error'
+        );
+
+        wp_safe_redirect(wc_get_cart_url());
+        exit;
     }
 
-    private function default_gateway_override_enabled()
+    private function defaultGatewayOverrideEnabled()
     {
         return $this->get_option('disable_gateway_override', 'no') === 'no';
     }
 
-    private function is_sandbox()
+    private function isSandbox()
     {
         return $this->get_option('testmode', 'yes') === 'yes';
     }
 
-    private function get_api_context()
+    private function apiContext()
     {
-        if (is_null($this->auth)) {
-            $creds = $this->get_api_credentials();
+        if ($this->auth === null) {
+            $creds = $this->apiCredentials();
             $this->auth = new ApiContext(
                 new OAuthTokenCredential(
                     $creds['client_id'],
@@ -369,11 +377,12 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
                 ),
                 $this->getRequestID()
             );
+
             $this->auth->setConfig([
-                'mode' => ($this->is_sandbox()) ? 'SANDBOX' : 'LIVE',
+                'mode' => $this->isSandbox() ? 'SANDBOX' : 'LIVE',
                 'http.headers.PayPal-Partner-Attribution-Id' => 'WooCommerce_Cart_Plus',
                 'log.LogEnabled' => true,
-                'log.LogLevel' => ($this->is_sandbox()) ? 'DEBUG' : 'INFO',
+                'log.LogLevel' => ($this->isSandbox()) ? 'DEBUG' : 'INFO',
                 'log.FileName' => wc_get_log_file_path('paypal_plus'),
                 'cache.enabled' => true,
                 'cache.FileName' => wc_get_log_file_path('paypal_plus_cache'),
@@ -385,19 +394,19 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         return $this->auth;
     }
 
-    private function get_api_credentials()
+    private function apiCredentials()
     {
-        if (!$this->is_sandbox()) {
-            $client_key = 'rest_client_id';
-            $secret_key = 'rest_secret_id';
-        } else {
-            $client_key = 'rest_client_id_sandbox';
-            $secret_key = 'rest_secret_id_sandbox';
+        $clientKey = 'rest_client_id';
+        $secretKey = 'rest_secret_id';
+
+        if ($this->isSandbox()) {
+            $clientKey = 'rest_client_id_sandbox';
+            $secretKey = 'rest_secret_id_sandbox';
         }
 
         return [
-            'client_id' => $this->get_option($client_key),
-            'client_secret' => $this->get_option($secret_key),
+            'client_id' => $this->get_option($clientKey),
+            'client_secret' => $this->get_option($secretKey),
         ];
     }
 
@@ -406,75 +415,76 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         return home_url() . uniqid();
     }
 
-    private function abort_checkout()
+    private function experienceProfileOptionKey()
     {
-        $this->clear_session_data();
-        wc_add_notice(__('Error processing checkout. Please try again. ', 'woo-paypalplus'),
-            'error');
-        wp_safe_redirect(wc_get_cart_url());
-        exit;
+        return ($this->isSandbox())
+            ? 'sandbox_experience_profile_id'
+            : 'live_experience_profile_id';
     }
 
-    private function get_approval_url()
+    private function approvalUrl()
     {
-        $url = '';
-        $session = WC()->session;
-        $session and $url = $session->__get(self::APPROVAL_URL_SESSION_KEY);
+        $url = WC()->session->__get(self::APPROVAL_URL_SESSION_KEY);
 
-        if (!$url) {
-            $payment = $this->get_payment_object();
-            if (!$payment) {
-                return '';
+        if (empty($url)) {
+            $paymentObject = $this->paymentObject();
+            if ($paymentObject === null) {
+                return $url;
             }
 
-            $url = htmlspecialchars_decode($payment->getApprovalLink());
-            WC()->session->__set(self::APPROVAL_URL_SESSION_KEY, htmlspecialchars_decode($url));
+            $url = $paymentObject->getApprovalLink();
+            $url = htmlspecialchars_decode($url);
+
+            WC()->session->__set(
+                self::APPROVAL_URL_SESSION_KEY,
+                htmlspecialchars_decode($url)
+            );
         }
 
         return $url;
     }
 
-    private function get_payment_object()
+    private function paymentObject()
     {
-        /**
-         * CodeSniffer wants a short description here.
-         *
-         * @var Payment $payment
-         */
         static $payment;
-        if (!empty($id = WC()->session->__get(self::PAYMENT_ID_SESSION_KEY))) {
 
-            if (!is_null($payment) && $payment->getId() === $id) {
-                return $payment;
-            }
-
-            return Payment::get($id, $this->get_api_context());
-        }
         $order = null;
         $key = filter_input(INPUT_GET, 'key');
+        $id = WC()->session->__get(self::PAYMENT_ID_SESSION_KEY);
+
+        if (!empty($id)) {
+            if ($payment !== null && $payment->getId() === $id) {
+                return $payment;
+            }
+            return Payment::get($id, $this->apiContext());
+        }
+
         if ($key) {
             $order_id = wc_get_order_id_by_order_key($key);
             $order = new \WC_Order($order_id);
             WC()->session->ppp_order_id = $order_id;
         }
-        $data = $this->get_payment_data();
-        $wc_paypal_payment = new WCPayPalPayment($data, $this->get_order_data($order));
+
+        $data = $this->paymentData();
+        $wc_paypal_payment = new WCPayPalPayment($data, $this->orderData($order));
         $payment = $wc_paypal_payment->create();
-        if (is_null($payment)) {
+
+        if ($payment === null) {
             return null;
         }
+
         WC()->session->__set(self::PAYMENT_ID_SESSION_KEY, $payment->getId());
 
         return $payment;
     }
 
-    private function get_payment_data()
+    private function paymentData()
     {
         $return_url = WC()->api_request_url($this->id);
-        $cancel_url = $this->get_cancel_url();
+        $cancel_url = $this->cancelUrl();
         $notify_url = $this->ipn->get_notify_url();
-        $web_profile_id = $this->get_option($this->get_experience_profile_option_key());
-        $api_context = $this->get_api_context();
+        $web_profile_id = $this->get_option($this->experienceProfileOptionKey());
+        $api_context = $this->apiContext();
 
         return new PaymentData(
             $return_url,
@@ -485,7 +495,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         );
     }
 
-    private function get_cancel_url()
+    private function cancelUrl()
     {
         switch ($this->get_option('cancel_url')) {
             case 'cart':
@@ -508,16 +518,12 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         }
     }
 
-    private function get_order_data(\WC_Order $order = null)
+    private function orderData(\WC_Order $order = null)
     {
-        if (is_null($order)) {
-            return new CartData(WC()->cart);
-        } else {
-            return new OrderData($order);
-        }
+        return ($order === null) ? new CartData(WC()->cart) : new OrderData($order);
     }
 
-    private function get_locale()
+    private function locale()
     {
         $locale = false;
         if (get_locale() !== '') {
@@ -554,7 +560,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
 
     private function sandboxMessage(&$output)
     {
-        $msgSandbox = $this->is_sandbox()
+        $msgSandbox = $this->isSandbox()
             ? esc_html__(
                 'Note: This is connected to your sandbox account.',
                 'woo-paypalplus'

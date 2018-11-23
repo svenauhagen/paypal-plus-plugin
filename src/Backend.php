@@ -15,21 +15,21 @@ use WCPayPalPlus\WC\PayPalPlusGateway;
  *
  * @package WCPayPalPlus
  */
-class Backend implements Controller
-{
-    /**
-     * Gateway class
-     *
-     * @var PayPalPlusGateway
-     */
-    private $gateway;
+final class Backend implements Controller {
 
-    /**
-     * Main Plugin file path
-     *
-     * @var string
-     */
-    private $file;
+	/**
+	 * Gateway class
+	 *
+	 * @var PayPalPlusGateway
+	 */
+	private $gateway;
+
+	/**
+	 * Main Plugin file path
+	 *
+	 * @var string
+	 */
+	private $file;
 
     /**
      * @var string
