@@ -35,7 +35,10 @@
     "psr-4": {
       "WCPayPalPlus\\": "src/",
       "Inpsyde\\Lib\\": "lib/"
-    }
+    },
+    "files": [
+      "src/inc/functions.php"
+    ]
   },
   "autoload-dev": {
     "psr-4": {
