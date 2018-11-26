@@ -85,7 +85,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
 
     public function init_form_fields()
     {
-        $this->form_fields = (new GatewaySettingsModel())->get_settings();
+        $this->form_fields = (new GatewaySettingsModel())->settings();
     }
 
     public function process_refund($orderId, $amount = null, $reason = '')
@@ -217,9 +217,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
 
     public function on_save()
     {
-        $this->process_admin_options();
         $verification = new CredentialVerification($this->apiContext());
-
         if ($verification->verify()) {
             $optionKey = $this->experienceProfileOptionKey();
             $config = [
@@ -235,7 +233,6 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
             unset($_POST[$this->get_field_key('enabled')]);
             $this->enabled = 'no';
             $this->add_error(
-
                 sprintf(
                     __('Your API credentials are either missing or invalid: %s', 'woo-paypalplus'),
                     $verification->get_error_message()
@@ -244,6 +241,20 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         }
 
         $this->process_admin_options();
+    }
+
+    public function process_admin_options()
+    {
+        $this->data = $this->get_post_data();
+        $checkoutLogoUrl = $this->ensureCheckoutLogoUrl(
+            $this->data['woocommerce_paypal_plus_checkout_logo']
+        );
+
+        if (!$checkoutLogoUrl) {
+            return;
+        }
+
+        parent::process_admin_options();
     }
 
     public function generate_html_html($key, $data)
@@ -309,6 +320,28 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         $session->__unset(self::PAYMENT_ID_SESSION_KEY);
         $session->__unset(self::PAYER_ID_SESSION_KEY);
         $session->__unset(self::APPROVAL_URL_SESSION_KEY);
+    }
+
+    private function ensureCheckoutLogoUrl($checkoutLogoUrl)
+    {
+        if (strlen($checkoutLogoUrl) > 127) {
+            $this->add_error(
+                __('Checkout Logo cannot contains more than 127 characters.', 'woo-paypalplus')
+            );
+            return '';
+        }
+
+        if (false === strpos($checkoutLogoUrl, 'https')) {
+            $this->add_error(
+                __(
+                    'Checkout Logo must use the http secure protocol HTTPS. EG. (https://my-url)',
+                    'woo-paypalplus'
+                )
+            );
+            return '';
+        }
+
+        return $checkoutLogoUrl;
     }
 
     public function form()
