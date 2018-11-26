@@ -15,46 +15,32 @@ use WCPayPalPlus\WC\PayPalPlusGateway;
  *
  * @package WCPayPalPlus
  */
-final class Backend implements Controller {
+final class Backend implements Controller
+{
+    /**
+     * @var PayPalPlusGateway
+     */
+    private $gateway;
 
-	/**
-	 * Gateway class
-	 *
-	 * @var PayPalPlusGateway
-	 */
-	private $gateway;
-	/**
-	 * Main Plugin file path
-	 *
-	 * @var string
-	 */
-	private $file;
+    /**
+     * @var string
+     */
+    private $file;
 
-	/**
-	 * Backend constructor.
-	 *
-	 * @param string            $file    Main plugin filepath.
-	 * @param PayPalPlusGateway $gateway Gateway class.
-	 */
-	public function __construct( $file, PayPalPlusGateway $gateway ) {
+    public function __construct($file, PayPalPlusGateway $gateway)
+    {
+        $this->gateway = $gateway;
+        $this->file = $file;
+    }
 
-		$this->gateway = $gateway;
-		$this->file    = $file;
-	}
+    public function init()
+    {
+        add_action('admin_enqueue_scripts', function () {
+            $assetUrl = plugin_dir_url($this->file);
+            $min = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
+            $adminScript = "{$assetUrl}/assets/js/admin{$min}.js";
 
-	/**
-	 * Setup hooks
-	 */
-	public function init() {
-
-		add_action( 'admin_enqueue_scripts', function () {
-
-			$asset_url    = plugin_dir_url( $this->file );
-			$min          = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '.min' : '';
-			$admin_script = "{$asset_url}/assets/js/admin{$min}.js";
-
-			wp_enqueue_script( 'paypalplus-woocommerce-admin', $admin_script, [ 'jquery' ] );
-		} );
-	}
-
+            wp_enqueue_script('paypalplus-woocommerce-admin', $adminScript, ['jquery']);
+        });
+    }
 }
