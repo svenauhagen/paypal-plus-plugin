@@ -22,57 +22,55 @@ use WCPayPalPlus\WC\PUI\PaymentInstructionRenderer;
 use WCPayPalPlus\WC\Refund\RefundData;
 use WCPayPalPlus\WC\Refund\WCRefund;
 
-/**
- * Class PayPalPlusGateway
- *
- * @package WCPayPalPlus\WC
- */
-class PayPalPlusGateway extends \WC_Payment_Gateway {
+class PayPalPlusGateway extends \WC_Payment_Gateway
+{
+    const PAYMENT_ID_SESSION_KEY = 'ppp_payment_id';
+    const PAYER_ID_SESSION_KEY = 'ppp_payer_id';
+    const APPROVAL_URL_SESSION_KEY = 'ppp_approval_url';
 
-	const PAYMENT_ID_SESSION_KEY = 'ppp_payment_id';
-	const PAYER_ID_SESSION_KEY = 'ppp_payer_id';
-	const APPROVAL_URL_SESSION_KEY = 'ppp_approval_url';
+    /**
+     * Gateway ID
+     *
+     * @var string
+     */
+    public $id;
 
-	/**
-	 * Gateway ID
-	 *
-	 * @var string
-	 */
-	public $id;
+    /**
+     * Payment Method title.
+     *
+     * @var string
+     */
+    public $method_title;
 
-	/**
-	 * Payment Method title.
-	 *
-	 * @var string
-	 */
-	public $method_title;
+    /**
+     * IPN Handler object.
+     *
+     * @var IPN
+     */
+    private $ipn;
 
-	/**
-	 * IPN Handler object.
-	 *
-	 * @var IPN
-	 */
-	private $ipn;
+    /**
+     * PaymentInstructionRenderer object.
+     *
+     * @var PaymentInstructionRenderer
+     */
+    private $pui;
 
-	/**
-	 * PaymentInstructionRenderer object.
-	 *
-	 * @var PaymentInstructionRenderer
-	 */
-	private $pui;
-
-	/**
-	 * PayPal API Context object.
-	 *
-	 * @var ApiContext
-	 */
-	private $auth;
+    /**
+     * PayPal API Context object.
+     *
+     * @var ApiContext
+     */
+    private $auth;
 
     public function __construct($id, $methodTitle, IPN $ipn = null)
     {
         $this->id = $id;
         $this->title = $this->get_option('title');
-        $this->description = $this->get_option('description');
+        $this->description  = $this->method_description = __(
+            'Allow customers to conveniently checkout with different payment options like PayPal, Credit Card or Invoice.',
+            'woo-paypalplus'
+        );
         $this->method_title = $methodTitle;
         $this->has_fields = true;
         $this->supports = [
@@ -89,10 +87,10 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
         $this->init_settings();
     }
 
-	public function init_form_fields() {
-
-		$this->form_fields = ( new GatewaySettingsModel() )->get_settings();
-	}
+    public function init_form_fields()
+    {
+        $this->form_fields = (new GatewaySettingsModel())->settings();
+    }
 
     public function register()
     {
@@ -183,9 +181,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
 
     public function on_save()
     {
-        $this->process_admin_options();
         $verification = new CredentialVerification($this->apiContext());
-
         if ($verification->verify()) {
             $optionKey = $this->experienceProfileOptionKey();
             $config = [
@@ -201,7 +197,6 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
             unset($_POST[$this->get_field_key('enabled')]);
             $this->enabled = 'no';
             $this->add_error(
-
                 sprintf(
                     __('Your API credentials are either missing or invalid: %s', 'woo-paypalplus'),
                     $verification->get_error_message()
@@ -210,6 +205,20 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
         }
 
         $this->process_admin_options();
+    }
+
+    public function process_admin_options()
+    {
+        $this->data = $this->get_post_data();
+        $checkoutLogoUrl = $this->ensureCheckoutLogoUrl(
+            $this->data['woocommerce_paypal_plus_checkout_logo']
+        );
+
+        if (!$checkoutLogoUrl) {
+            return;
+        }
+
+        parent::process_admin_options();
     }
 
     public function generate_settings_html($form_fields = [], $echo = true)
@@ -342,6 +351,28 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
             ],
         ];
         (new PayPalIframeView($data))->render();
+    }
+
+    private function ensureCheckoutLogoUrl($checkoutLogoUrl)
+    {
+        if (strlen($checkoutLogoUrl) > 127) {
+            $this->add_error(
+                __('Checkout Logo cannot contains more than 127 characters.', 'woo-paypalplus')
+            );
+            return '';
+        }
+
+        if (false === strpos($checkoutLogoUrl, 'https')) {
+            $this->add_error(
+                __(
+                    'Checkout Logo must use the http secure protocol HTTPS. EG. (https://my-url)',
+                    'woo-paypalplus'
+                )
+            );
+            return '';
+        }
+
+        return $checkoutLogoUrl;
     }
 
     private function abortCheckout()
@@ -513,7 +544,6 @@ class PayPalPlusGateway extends \WC_Payment_Gateway {
             case 'shop':
             default:
                 return get_permalink(wc_get_page_id('shop'));
-
                 break;
         }
     }

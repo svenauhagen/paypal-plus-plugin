@@ -15,13 +15,20 @@ namespace WCPayPalPlus\WC;
  */
 class GatewaySettingsModel
 {
-    public function get_settings()
+    public function settings()
     {
-        $wcTabsLogUrl = get_admin_url(null, 'admin.php') . '?page=wc-status&tab=logs';
-        $settings = [];
+        $settings =
+            $this->generalSettings()
+            + $this->credentialsSettings()
+            + $this->webProfileSettings()
+            + $this->gatewaySettings();
 
-        // General.
-        $settings += [
+        return $settings;
+    }
+
+    private function generalSettings()
+    {
+        return [
             'enabled' => [
                 'title' => __('Enable/Disable', 'woo-paypalplus'),
                 'type' => 'checkbox',
@@ -47,9 +54,11 @@ class GatewaySettingsModel
                 'default' => '',
             ],
         ];
+    }
 
-        // Credentials.
-        $settings += [
+    private function credentialsSettings()
+    {
+        return [
             'credentials_section' => [
                 'title' => __('Credentials', 'woo-paypalplus'),
                 'type' => 'title',
@@ -123,8 +132,11 @@ class GatewaySettingsModel
                 'class' => 'credential_field readonly',
             ],
         ];
+    }
 
-        $settings += [
+    private function webProfileSettings()
+    {
+        return [
             'web_profile_section' => [
                 'title' => __('Web Profile', 'woo-paypalplus'),
                 'type' => 'title',
@@ -150,11 +162,19 @@ class GatewaySettingsModel
                     get_site_url() . '/path/to/logo.jpg'
                 ),
                 'default' => '',
+                'custom_attributes' => [
+                    'required' => 'required',
+                    'pattern' => '^https://.*',
+                ],
             ],
         ];
+    }
 
-        // Settings.
-        $settings += [
+    private function gatewaySettings()
+    {
+        $wcTabsLogUrl = get_admin_url(null, 'admin.php') . '?page=wc-status&tab=logs';
+
+        return [
             'settings_section' => [
                 'title' => __('Settings', 'woo-paypalplus'),
                 'type' => 'title',
@@ -232,15 +252,12 @@ class GatewaySettingsModel
                 'type' => 'checkbox',
                 'label' => __('Disable', 'woo-paypalplus'),
                 'default' => 'no',
-                'description' =>
-                    __(
-                        'PayPal Plus will be selected as default payment gateway regardless of its position in the list of enabled gateways. You can turn off this behaviour here',
-                        'woo-paypalplus'
-                    ),
+                'description' => __(
+                    'PayPal Plus will be selected as default payment gateway regardless of its position in the list of enabled gateways. You can turn off this behaviour here',
+                    'woo-paypalplus'
+                ),
             ],
         ];
-
-        return $settings;
     }
 
     private function defaultInvoicePrefix()
