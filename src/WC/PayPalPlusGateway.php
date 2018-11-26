@@ -85,7 +85,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
 
     public function init_form_fields()
     {
-        $this->form_fields = (new GatewaySettingsModel())->get_settings();
+        $this->form_fields = (new GatewaySettingsModel())->settings();
     }
 
     public function process_refund($orderId, $amount = null, $reason = '')
