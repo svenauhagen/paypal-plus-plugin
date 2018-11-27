@@ -188,11 +188,8 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
 
     public function process_admin_options()
     {
-        $verification = new CredentialVerification(
-            $this->apiContext(
-                $this->apiCredentialsByRequest()
-            )
-        );
+        $apiContext = $this->apiContext($this->apiCredentialsByRequest());
+        $verification = new CredentialVerification($apiContext);
         $isValidCredential = $verification->verify();
 
         switch ($isValidCredential) {
@@ -204,7 +201,6 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
                     'brand_name' => $this->get_option('brand_name'),
                     'country' => $this->get_option('country'),
                 ];
-                $apiContext = $this->apiContext($this->storedApiCredentials());
                 $webProfile = new WCWebExperienceProfile(
                     $config,
                     $apiContext
