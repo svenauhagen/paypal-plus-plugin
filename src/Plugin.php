@@ -1,6 +1,7 @@
 <?php
 namespace WCPayPalPlus;
 
+use WCPayPalPlus\Notice;
 use WCPayPalPlus\WC\IPN;
 use WCPayPalPlus\WC\PayPalPlusGateway;
 
@@ -45,6 +46,9 @@ class Plugin {
 		$this->gateway->register();
 
 		$this->file = $file;
+
+        $adminNotice = new Notice\Admin();
+        $adminNotice->init();
 	}
 
 	/**

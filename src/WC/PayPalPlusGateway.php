@@ -6,6 +6,7 @@ use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
+use WCPayPalPlus\Notice\Admin;
 use WCPayPalPlus\WC\IPN\IPN;
 use WCPayPalPlus\WC\IPN\IPNData;
 use WCPayPalPlus\WC\Payment\CartData;
@@ -66,7 +67,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
     {
         $this->id = $id;
         $this->title = $this->get_option('title');
-        $this->description  = $this->method_description = __(
+        $this->description = $this->method_description = __(
             'Allow customers to conveniently checkout with different payment options like PayPal, Credit Card or Invoice.',
             'woo-paypalplus'
         );
@@ -115,6 +116,8 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
 
         $output = ob_get_clean();
         $output .= parent::generate_settings_html($formFields, $echo);
+
+        do_action(Admin::ACTION_ADMIN_MESSAGES);
 
         if (!$echo) {
             return $output;
