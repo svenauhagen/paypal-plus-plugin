@@ -242,9 +242,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         $output = ob_get_clean();
 
         $verification = new CredentialVerification(
-            $this->apiContext(
-                $this->apiCredentialsByRequest()
-            )
+            $this->apiContext($this->storedApiCredentials())
         );
         $isValidCredential = $verification->verify();
 
