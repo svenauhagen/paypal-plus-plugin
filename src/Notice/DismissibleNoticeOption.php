@@ -4,7 +4,7 @@ namespace WCPayPalPlus\Notice;
 
 class DismissibleNoticeOption
 {
-    const OPTION_PREFIX = 'backwpup_dinotopt_';
+    const OPTION_PREFIX = 'paypalplus_dinotopt_';
     const FOR_GOOD_ACTION = 'dismiss_admin_notice_for_good';
     const FOR_NOW_ACTION = 'dismiss_admin_notice_for_now';
     const FOR_USER_FOR_GOOD_ACTION = 'dismiss_admin_notice_for_good_user';
