@@ -8,11 +8,15 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
     die;
 }
 
-if (!file_exists($autoloader = __DIR__ . '/vendor/autoload.php')) {
+$autoload = __DIR__ . '/vendor/autoload.php';
+
+if (file_exists($autoload)) {
+    /** @noinspection PhpIncludeInspection */
+    require $autoload;
+}
+if (!class_exists(Plugin::class)) {
     return;
 }
-/** @noinspection PhpIncludeInspection */
-require $autoloader;
 
 $isMultisite = function_exists('get_sites') && is_multisite();
 
