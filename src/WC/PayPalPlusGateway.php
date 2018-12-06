@@ -6,6 +6,7 @@ use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
+use WCPayPalPlus\Notice;
 use WCPayPalPlus\WC\IPN\IPN;
 use WCPayPalPlus\WC\IPN\IPNData;
 use WCPayPalPlus\WC\Payment\CartData;
@@ -239,6 +240,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
     {
         ob_start();
         $this->display_errors();
+        do_action(Notice\Admin::ACTION_ADMIN_MESSAGES);
         $output = ob_get_clean();
 
         $verification = new CredentialVerification(
