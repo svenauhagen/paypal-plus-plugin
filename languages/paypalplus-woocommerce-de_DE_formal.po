@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PayPal Plus for WooCommerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/paypal-plus-"
 "plugin\n"
-"POT-Creation-Date: 2017-06-17 22:48+0200\n"
-"PO-Revision-Date: 2017-06-17 22:52+0200\n"
+"POT-Creation-Date: 2018-12-24 12:21+0100\n"
+"PO-Revision-Date: 2018-12-24 12:21+0100\n"
 "Last-Translator: admin <m.meisselbach@inpsyde.com>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -12,78 +12,83 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 2.0.2\n"
+"X-Generator: Poedit 2.2\n"
 
 #: paypalplus-woocommerce.php:37
+#, php-format
 msgid ""
 "PayPal Plus requires PHP version %1$1s or higher. You are running version "
 "%2$2s "
 msgstr ""
 "PayPal Plus benötigt PHP Version %1$1s oder höher. Sie nutzen Version %2$2s."
 
-#: paypalplus-woocommerce.php:57
+#: paypalplus-woocommerce.php:52
 msgid "Could not find a working autoloader for PayPal Plus."
 msgstr ""
 "Es konnte kein funktionierender Autoloader für Paypal Plus gefunden werden."
 
-#: paypalplus-woocommerce.php:68
+#: paypalplus-woocommerce.php:64
 msgid "PayPal Plus requires WooCommerce to be active."
 msgstr "WooCommerce muss aktiviert sein, um PayPal Plus benutzen zu können."
 
-#: paypalplus-woocommerce.php:77
+#: paypalplus-woocommerce.php:72
 msgid "PayPal Plus requires WooCommerce version 3.0 or higher ."
 msgstr ""
 "WooCommerce Version 3.0 oder höher muss aktiviert sein, um PayPal Plus "
 "benutzen zu können."
 
-#: src/Plugin.php:43 src/WC/GatewaySettingsModel.php:42
-#: src/WC/GatewaySettingsModel.php:51
+#: src/Notice/Admin.php:125
+msgid "Don't show again"
+msgstr ""
+
+#: src/Plugin.php:44 src/WC/GatewaySettingsModel.php:45
 msgid "PayPal Plus"
 msgstr "PayPal Plus"
 
-#: src/WC/GatewaySettingsModel.php:30
+#: src/WC/GatewaySettingsModel.php:33
 msgid "Enable/Disable"
 msgstr "Aktivieren/Deaktivieren"
 
-#: src/WC/GatewaySettingsModel.php:32
+#: src/WC/GatewaySettingsModel.php:35
 msgid "Enable PayPal Plus"
 msgstr "PayPal Plus aktivieren"
 
-#: src/WC/GatewaySettingsModel.php:36
+#: src/WC/GatewaySettingsModel.php:39
 msgid "Title"
 msgstr "Titel"
 
-#: src/WC/GatewaySettingsModel.php:38
+#: src/WC/GatewaySettingsModel.php:42
 msgid ""
 "This controls the name of the payment gateway the user sees during checkout."
 msgstr ""
 "Titel des Zahlungs-Gateways, den der Benutzer während des Zahlungsprozesses "
 "an der Kasse sieht."
 
-#: src/WC/GatewaySettingsModel.php:45
+#: src/WC/GatewaySettingsModel.php:48
 msgid "Description"
 msgstr "Beschreibung"
 
-#: src/WC/GatewaySettingsModel.php:47
+#: src/WC/GatewaySettingsModel.php:51
 msgid ""
 "This controls the payment gateway description the user sees during checkout."
 msgstr ""
 "Beschreibung des Zahlungs-Gateways, die der Benutzer während des "
 "Zahlungsprozesses an der Kasse sieht."
 
-#: src/WC/GatewaySettingsModel.php:58
+#: src/WC/GatewaySettingsModel.php:63
 msgid "Credentials"
 msgstr "Zugangsdaten"
 
-#: src/WC/GatewaySettingsModel.php:63
+#: src/WC/GatewaySettingsModel.php:68
 msgid "PayPal Sandbox"
 msgstr "PayPal Sandbox"
 
-#: src/WC/GatewaySettingsModel.php:65
+#: src/WC/GatewaySettingsModel.php:70
 msgid "Enable PayPal Sandbox"
 msgstr "PayPal Sandbox aktivieren"
 
-#: src/WC/GatewaySettingsModel.php:68
+#: src/WC/GatewaySettingsModel.php:74
+#, php-format
 msgid ""
 "PayPal sandbox can be used to test payments. Sign up for a <a href=\"%s"
 "\">developer account</a>."
@@ -91,27 +96,27 @@ msgstr ""
 "Die PayPal-Sandbox kann verwendet werden, um Zahlungen zu testen. Melden Sie "
 "sich dazu für ein <a href=\"%s\">Entwickler-Konto</a> an."
 
-#: src/WC/GatewaySettingsModel.php:75
+#: src/WC/GatewaySettingsModel.php:81
 msgid "Sandbox Client ID"
 msgstr "Sandbox Client ID"
 
-#: src/WC/GatewaySettingsModel.php:77
+#: src/WC/GatewaySettingsModel.php:84
 msgid "Enter your PayPal REST Sandbox API Client ID."
 msgstr "Geben Sie hier Ihre PayPal REST Sandbox API Client ID ein."
 
-#: src/WC/GatewaySettingsModel.php:82
+#: src/WC/GatewaySettingsModel.php:91
 msgid "Sandbox Secret ID"
 msgstr "Sandbox Secret ID"
 
-#: src/WC/GatewaySettingsModel.php:84
+#: src/WC/GatewaySettingsModel.php:94
 msgid "Enter your PayPal REST Sandbox API Secret ID."
 msgstr "Geben Sie hier Ihre PayPal REST Sandbox API Secret ID ein."
 
-#: src/WC/GatewaySettingsModel.php:89
+#: src/WC/GatewaySettingsModel.php:101
 msgid "Sandbox Experience Profile ID"
 msgstr "Sandbox Experience Profil ID"
 
-#: src/WC/GatewaySettingsModel.php:91 src/WC/GatewaySettingsModel.php:115
+#: src/WC/GatewaySettingsModel.php:104 src/WC/GatewaySettingsModel.php:128
 msgid ""
 "This value will be automatically generated and populated here when you save "
 "your settings."
@@ -119,35 +124,35 @@ msgstr ""
 "Dieser Wert wird automatisch generiert und hier eingetragen, wenn Sie die "
 "Einstellungen speichern."
 
-#: src/WC/GatewaySettingsModel.php:99
+#: src/WC/GatewaySettingsModel.php:111
 msgid "Live Client ID"
 msgstr "Live Client ID"
 
-#: src/WC/GatewaySettingsModel.php:101
+#: src/WC/GatewaySettingsModel.php:113
 msgid "Enter your PayPal REST Live API Client ID."
 msgstr "Geben Sie hier Ihre PayPal Rest Live API Client ID ein."
 
-#: src/WC/GatewaySettingsModel.php:106
+#: src/WC/GatewaySettingsModel.php:118
 msgid "Live Secret ID"
 msgstr "Live Secret ID"
 
-#: src/WC/GatewaySettingsModel.php:108
+#: src/WC/GatewaySettingsModel.php:120
 msgid "Enter your PayPal REST Live API Secret ID."
 msgstr "Geben Sie hier Ihre PayPal Rest Live API Secret ID ein."
 
-#: src/WC/GatewaySettingsModel.php:113
+#: src/WC/GatewaySettingsModel.php:125
 msgid "Experience Profile ID"
 msgstr "Experience Profil ID"
 
-#: src/WC/GatewaySettingsModel.php:126
+#: src/WC/GatewaySettingsModel.php:141
 msgid "Web Profile"
 msgstr "Web Profil"
 
-#: src/WC/GatewaySettingsModel.php:131
+#: src/WC/GatewaySettingsModel.php:146
 msgid "Brand Name"
 msgstr "Firmenname"
 
-#: src/WC/GatewaySettingsModel.php:133
+#: src/WC/GatewaySettingsModel.php:149
 msgid ""
 "This will be displayed as your brand / company name on the PayPal checkout "
 "pages."
@@ -155,23 +160,27 @@ msgstr ""
 "Dies erscheint als Ihre Marke / Ihr Firmenname auf den PayPal-Checkout-"
 "Seiten."
 
-#: src/WC/GatewaySettingsModel.php:140
+#: src/WC/GatewaySettingsModel.php:155
 msgid "PayPal Checkout Logo (190x60px)"
 msgstr "PayPal Checkout Logo (190x60px)"
 
-#: src/WC/GatewaySettingsModel.php:142
-msgid "Set the URL for a logo to be displayed on the PayPal checkout pages."
+#: src/WC/GatewaySettingsModel.php:159
+#, fuzzy, php-format
+#| msgid "Set the URL for a logo to be displayed on the PayPal checkout pages."
+msgid ""
+"Set the absolute URL for a logo to be displayed on the PayPal checkout "
+"pages. <br/> Use https and max 127 characters.(E.G., %s)."
 msgstr "Geben Sie die URL für ein Logo auf den PayPal-Checkout-Seiten an."
 
-#: src/WC/GatewaySettingsModel.php:156
+#: src/WC/GatewaySettingsModel.php:179
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: src/WC/GatewaySettingsModel.php:172
+#: src/WC/GatewaySettingsModel.php:184
 msgid "Invoice Prefix"
 msgstr "Rechnungspräfix"
 
-#: src/WC/GatewaySettingsModel.php:174
+#: src/WC/GatewaySettingsModel.php:187
 msgid ""
 "Please enter a prefix for your invoice numbers. If you use your PayPal "
 "account for multiple stores ensure this prefix is unique as PayPal will not "
@@ -182,11 +191,11 @@ msgstr ""
 "Präfix einzigartig ist, sonst wird PayPal keine Bestellungen mit identischer "
 "Rechnungsnummer akzeptieren."
 
-#: src/WC/GatewaySettingsModel.php:182
+#: src/WC/GatewaySettingsModel.php:194
 msgid "Cancel Page"
 msgstr "Bestellung abgebrochen Seite"
 
-#: src/WC/GatewaySettingsModel.php:183
+#: src/WC/GatewaySettingsModel.php:196
 msgid ""
 "Sets the page users will be returned to if they click the Cancel link on the "
 "PayPal checkout pages."
@@ -194,17 +203,27 @@ msgstr ""
 "Besucher, die den Zahlungsvorgang bei PayPal abgebrochen haben werden zur "
 "hier angegebenen Seite weitergeleitet."
 
-#: src/WC/GatewaySettingsModel.php:192
+#: src/WC/GatewaySettingsModel.php:204
+msgid "Custom Cancelation URL"
+msgstr ""
+
+#: src/WC/GatewaySettingsModel.php:207
+msgid ""
+"URL to a custom page to be used for cancelation. Please select \"custom\" "
+"above first."
+msgstr ""
+
+#: src/WC/GatewaySettingsModel.php:212
 msgid "Legal Note for PAY UPON INVOICE Payment"
 msgstr "Rechtliche Hinweise für die Bezahlung per Rechnung"
 
-#: src/WC/GatewaySettingsModel.php:194
+#: src/WC/GatewaySettingsModel.php:215
 msgid "legal note that will be added to the thank you page and emails."
 msgstr ""
 "Rechtliche Hinweise, die zur \"Danke\"-Seite und in E-Mails  eingefügt "
 "werden."
 
-#: src/WC/GatewaySettingsModel.php:198
+#: src/WC/GatewaySettingsModel.php:219
 msgid ""
 "Dealer has ceeded the claim against you within the framework of an ongoing "
 "factoring contract to the PayPal (Europe) S.àr.l. et Cie, S.C.A.. Payments "
@@ -216,11 +235,11 @@ msgstr ""
 "Zahlungen mit schuldbefreiender Wirkung können nur an die PayPal (Europe) S."
 "àr.l. et Cie, S.C.A. geleistet werden."
 
-#: src/WC/GatewaySettingsModel.php:205
+#: src/WC/GatewaySettingsModel.php:225
 msgid "Pay upon Invoice Instructions"
 msgstr "Anweisungen für die Bezahlung per Rechnung"
 
-#: src/WC/GatewaySettingsModel.php:207
+#: src/WC/GatewaySettingsModel.php:228
 msgid ""
 "Pay upon Invoice Instructions that will be added to the thank you page and "
 "emails."
@@ -228,61 +247,83 @@ msgstr ""
 "Anweisungen für die Bezahlung per Rechnung, die zur „Danke“-Seite und zu E-"
 "Mails hinzugefügt werden."
 
-#: src/WC/GatewaySettingsModel.php:211 src/WC/PUI/PaymentInstructionView.php:31
-#: src/WC/PUI/PaymentInstructionView.php:71
+#: src/WC/GatewaySettingsModel.php:232 src/WC/PUI/PaymentInstructionView.php:31
+#: src/WC/PUI/PaymentInstructionView.php:75
+#: src/WC/PUI/PaymentInstructionView.php:91
 msgid "Please transfer the complete amount to the bank account provided below."
 msgstr "Bitte überweisen Sie den Gesamtbetrag auf das unten aufgeführte Konto."
 
-#: src/WC/GatewaySettingsModel.php:218
+#: src/WC/GatewaySettingsModel.php:238
 msgid "Download Log File"
 msgstr "Log-Datei herunterladen"
 
-#: src/WC/GatewaySettingsModel.php:220
+#: src/WC/GatewaySettingsModel.php:243
+#, php-format
 msgid ""
-"Please download the log file and attach it to your ticket when contacting "
-"support."
+"Please go to <a href=\"%s\">WooCommerce => System Status => Logs</a>, select "
+"the file <em>paypal_plus-....log</em>, copy the content and attach it to "
+"your ticket when contacting support."
 msgstr ""
-"Bitte laden Sie die Log-Datei herunter und hängen Sie sie an Ihre Support-"
-"Anfrage an."
 
-#: src/WC/GatewaySettingsModel.php:223
-msgid "Download Now"
-msgstr "Herunterladen"
+#: src/WC/GatewaySettingsModel.php:251
+msgid "Disable default gateway override"
+msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:238
+#: src/WC/GatewaySettingsModel.php:253
+#, fuzzy
+#| msgid "Enable/Disable"
+msgid "Disable"
+msgstr "Aktivieren/Deaktivieren"
+
+#: src/WC/GatewaySettingsModel.php:256
+msgid ""
+"PayPal Plus will be selected as default payment gateway regardless of its "
+"position in the list of enabled gateways. You can turn off this behaviour "
+"here"
+msgstr ""
+
+#: src/WC/GatewaySettingsModel.php:271
 msgid "Cart"
 msgstr "Warenkorb"
 
-#: src/WC/GatewaySettingsModel.php:239
+#: src/WC/GatewaySettingsModel.php:272
 msgid "Checkout"
 msgstr "Kasse"
 
-#: src/WC/GatewaySettingsModel.php:240
+#: src/WC/GatewaySettingsModel.php:273
 msgid "Account"
 msgstr "Konto"
 
-#: src/WC/GatewaySettingsModel.php:241
+#: src/WC/GatewaySettingsModel.php:274
 msgid "Shop"
 msgstr "Shop"
+
+#: src/WC/GatewaySettingsModel.php:275
+msgid "Custom"
+msgstr ""
 
 #: src/WC/IPN/OrderUpdater.php:104
 msgid "IPN payment completed"
 msgstr "IPN Zahlung abgeschlossen"
 
 #: src/WC/IPN/OrderUpdater.php:116
+#, php-format
 msgid "Payment pending: %s"
 msgstr "Zahlung ausstehend: %s"
 
 #: src/WC/IPN/OrderUpdater.php:191 src/WC/IPN/OrderUpdater.php:225
 #: src/WC/IPN/OrderUpdater.php:240
+#, php-format
 msgid "Payment %s via IPN."
 msgstr "Zahlung %s via IPN."
 
-#: src/WC/IPN/PaymentValidator.php:110
+#: src/WC/IPN/PaymentValidator.php:111
+#, php-format
 msgid "Validation error: Invalid transaction type \"%s\"."
 msgstr "Validierungsfehler: Ungültiger Transaktions-Typ \"%s\"."
 
-#: src/WC/IPN/PaymentValidator.php:135
+#: src/WC/IPN/PaymentValidator.php:136
+#, php-format
 msgid ""
 "Validation error: PayPal currencies do not match (PayPal: %1$1s, "
 "WooCommerce: %2$2s)."
@@ -290,7 +331,8 @@ msgstr ""
 "Validierungsfehler: Paypal-Währungen stimmen nicht überein (PayPal: %1$1s, "
 "WooCommerce: %2$2s)."
 
-#: src/WC/IPN/PaymentValidator.php:162
+#: src/WC/IPN/PaymentValidator.php:163
+#, php-format
 msgid ""
 "Validation error: PayPal payment amounts do not match (gross %1$1s, should "
 "be %2$2s)."
@@ -299,7 +341,8 @@ msgstr ""
 "sollte %2$2s sein)."
 
 #: src/WC/PUI/PaymentInstructionView.php:34
-#: src/WC/PUI/PaymentInstructionView.php:73
+#: src/WC/PUI/PaymentInstructionView.php:77
+#: src/WC/PUI/PaymentInstructionView.php:92
 msgid "PayPal Bank Details"
 msgstr "PayPal Bankverbindung"
 
@@ -327,45 +370,87 @@ msgstr "Fälligkeitsdatum der Zahlung:"
 msgid "Reference:"
 msgstr "Zahlungsreferenz:"
 
-#: src/WC/PUI/PaymentInstructionView.php:96
+#: src/WC/PUI/PaymentInstructionView.php:113
 msgid "Bank name"
 msgstr "Name des Kreditinstituts"
 
-#: src/WC/PUI/PaymentInstructionView.php:100
+#: src/WC/PUI/PaymentInstructionView.php:117
 msgid "Account holder name"
 msgstr "Name des Kontoinhabers"
 
-#: src/WC/PUI/PaymentInstructionView.php:104
+#: src/WC/PUI/PaymentInstructionView.php:121
 msgid "IBAN"
 msgstr "IBAN"
 
-#: src/WC/PUI/PaymentInstructionView.php:108
+#: src/WC/PUI/PaymentInstructionView.php:125
 msgid "BIC"
 msgstr "BIC"
 
-#: src/WC/PUI/PaymentInstructionView.php:112
+#: src/WC/PUI/PaymentInstructionView.php:129
 msgid "Payment due date"
 msgstr "Fälligkeitsdatum der Zahlung"
 
-#: src/WC/PUI/PaymentInstructionView.php:116
+#: src/WC/PUI/PaymentInstructionView.php:133
 msgid "Reference"
 msgstr "Zahlungsreferenz"
 
-#: src/WC/PayPalPlusGateway.php:316
+#: src/WC/PayPalPlusGateway.php:69
+msgid ""
+"Allow customers to conveniently checkout with different payment options like "
+"PayPal, Credit Card or Invoice."
+msgstr ""
+
+#: src/WC/PayPalPlusGateway.php:152
+#, fuzzy
+#| msgid "Error processing checkout. Please try again. "
+msgid "Error processing checkout. Please check the logs. "
+msgstr "Fehler im Bestellvorgang. Versuchen Sie es bitte erneut."
+
+#: src/WC/PayPalPlusGateway.php:218
+#, php-format
 msgid "Your API credentials are either missing or invalid: %s"
 msgstr "Ihre API Zugangsdaten fehlen oder sind nicht korrekt: %s"
 
-#: src/WC/PayPalPlusGateway.php:448
+#: src/WC/PayPalPlusGateway.php:374
+msgid "Checkout Logo cannot contains more than 127 characters."
+msgstr ""
+
+#: src/WC/PayPalPlusGateway.php:382
+msgid ""
+"Checkout Logo must use the http secure protocol HTTPS. EG. (https://my-url)"
+msgstr ""
+
+#: src/WC/PayPalPlusGateway.php:396
 msgid "Error processing checkout. Please try again. "
 msgstr "Fehler im Bestellvorgang. Versuchen Sie es bitte erneut."
 
+#: src/WC/PayPalPlusGateway.php:604
+msgid ""
+"Below you can see if your account is successfully hooked up to use PayPal "
+"Plus."
+msgstr ""
+
+#: src/WC/PayPalPlusGateway.php:617
+msgid "Error connecting to the API. Check that the credentials are correct."
+msgstr ""
+
+#: src/WC/PayPalPlusGateway.php:628
+msgid "Note: This is connected to your sandbox account."
+msgstr ""
+
+#: src/WC/PayPalPlusGateway.php:632
+msgid "Note: This is connected to your live PayPal account."
+msgstr ""
+
 #: src/WC/Payment/PaymentExecutionSuccess.php:52
+#, php-format
 msgid "There was an error executing the payment. Payment state: %s"
 msgstr ""
 "Beim Durchführen der Zahlung ist ein Fehler aufgetreten. Zustand der "
 "Zahlung: %s"
 
 #: src/WC/Payment/PaymentExecutionSuccess.php:74
+#, php-format
 msgid "PayPal Reason code: %s."
 msgstr "PayPal Ursachencode: %s."
 
@@ -374,6 +459,7 @@ msgid "PayPal Plus payment completed"
 msgstr "PayPal Plus Zahlung abgeschlossen"
 
 #: src/WC/Payment/PaymentExecutionSuccess.php:85
+#, php-format
 msgid "PayPal Plus payment approved! Transaction ID: %s"
 msgstr "PayPal Plus Zahlung genehmigt! Transaktions-ID: %s"
 
@@ -381,7 +467,7 @@ msgstr "PayPal Plus Zahlung genehmigt! Transaktions-ID: %s"
 msgid "Awaiting payment"
 msgstr "Zahlung erwartet"
 
-#: src/WC/ReceiptPageView.php:24
+#: src/WC/ReceiptPageView.php:25
 msgid ""
 "Thank you for your order. We are now redirecting you to PayPal to make "
 "payment."
@@ -389,18 +475,24 @@ msgstr ""
 "Vielen Dank für Ihre Bestellung. Wir leiten Sie nun für die Bezahlung an "
 "PayPal weiter."
 
-#. Plugin Name of the plugin/theme
-msgid "PayPal Plus for WooCommerce"
-msgstr "PayPal Plus für WooCommerce"
+#~ msgid ""
+#~ "Please download the log file and attach it to your ticket when contacting "
+#~ "support."
+#~ msgstr ""
+#~ "Bitte laden Sie die Log-Datei herunter und hängen Sie sie an Ihre Support-"
+#~ "Anfrage an."
 
-#. Description of the plugin/theme
-msgid "PayPal Plus - the official WordPress Plugin for WooCommerce"
-msgstr "PayPal Plus - das offizielle WordPress Plugin für WooCommerce"
+#~ msgid "Download Now"
+#~ msgstr "Herunterladen"
 
-#. Author of the plugin/theme
-msgid "Inpsyde GmbH"
-msgstr "Inpsyde GmbH"
+#~ msgid "PayPal Plus for WooCommerce"
+#~ msgstr "PayPal Plus für WooCommerce"
 
-#. Author URI of the plugin/theme
-msgid "https://inpsyde.com/"
-msgstr "https://inpsyde.com/"
+#~ msgid "PayPal Plus - the official WordPress Plugin for WooCommerce"
+#~ msgstr "PayPal Plus - das offizielle WordPress Plugin für WooCommerce"
+
+#~ msgid "Inpsyde GmbH"
+#~ msgstr "Inpsyde GmbH"
+
+#~ msgid "https://inpsyde.com/"
+#~ msgstr "https://inpsyde.com/"
