@@ -2,7 +2,7 @@
 Contributors: inpsyde, biont, cocreation
 Tags: paypal, paypal plus, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
 Requires at least: 4.4
-Tested up to: 4.9.6
+Tested up to: 5.0.2
 Stable tag: 1.0.8
 Requires PHP: 5.6
 License: GPLv3
@@ -115,19 +115,19 @@ Payment by installments is a separate product from PayPal Plus, and therefore re
 
 = Is it possible to offer payment via credit card or via direct debit only? =
 
-No. The only payment option you can add or remove individually is purchase on account. 
+No. The only payment option you can add or remove individually is purchase on account.
 
 = Do vendors have the same guarantees for all payment options as with the classic PayPal? =
 
-Yes, all PP+ payment options do have the vendor protection. 
+Yes, all PP+ payment options do have the vendor protection.
 
 = Does a vendor get his money directly no matter the used payment option? =
 
-Vendors usually get the money directly after the transaction, no matter which of the four PP+ payment options has been used. 
+Vendors usually get the money directly after the transaction, no matter which of the four PP+ payment options has been used.
 
-= Does PayPal Plus work for international transactions, too? = 
+= Does PayPal Plus work for international transactions, too? =
 
-At the moment, PayPal Plus can only be used by vendors in Germany. But their buyers can buy and pay worldwide. 
+At the moment, PayPal Plus can only be used by vendors in Germany. But their buyers can buy and pay worldwide.
 
 
 == Screenshots ==
