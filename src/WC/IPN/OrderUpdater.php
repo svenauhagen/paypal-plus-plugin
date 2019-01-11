@@ -13,248 +13,248 @@ namespace WCPayPalPlus\WC\IPN;
  *
  * @package WCPayPalPlus\WC\IPN
  */
-class OrderUpdater {
+class OrderUpdater
+{
+    /**
+     * WooComcerce Order object
+     *
+     * @var \WC_Order
+     */
+    private $order;
 
-	/**
-	 * WooComcerce Order object
-	 *
-	 * @var \WC_Order
-	 */
-	private $order;
-	/**
-	 * Request Data
-	 *
-	 * @var IPNData
-	 */
-	private $data;
-	/**
-	 * Payment Validation handler
-	 *
-	 * @var PaymentValidator
-	 */
-	private $validator;
+    /**
+     * Request Data
+     *
+     * @var IPNData
+     */
+    private $data;
 
-	/**
-	 * OrderUpdater constructor.
-	 *
-	 * @param \WC_Order        $order     WooCommerce Order.
-	 * @param IPNData          $data      IPN Data.
-	 * @param PaymentValidator $validator Payment validator.
-	 */
-	public function __construct(
-		\WC_Order $order,
-		IPNData $data,
-		PaymentValidator $validator = null
-	) {
+    /**
+     * Payment Validation handler
+     *
+     * @var PaymentValidator
+     */
+    private $validator;
 
-		$this->order     = $order;
-		$this->data      = $data;
-		$this->validator = $validator
-			?: new PaymentValidator(
-				$this->data->get( 'txn_type' ),
-				$this->data->get( 'mc_currency' ),
-				$this->data->get( 'mc_gross' ),
-				$order
-			);
-	}
+    /**
+     * OrderUpdater constructor.
+     *
+     * @param \WC_Order $order WooCommerce Order.
+     * @param IPNData $data IPN Data.
+     * @param PaymentValidator $validator Payment validator.
+     */
+    public function __construct(
+        \WC_Order $order,
+        IPNData $data,
+        PaymentValidator $validator = null
+    ) {
 
-	/**
-	 * Handle a pending payment.
-	 *
-	 * @return bool
-	 */
-	public function payment_status_pending() {
+        $this->order = $order;
+        $this->data = $data;
+        $this->validator = $validator
+            ?: new PaymentValidator(
+                $this->data->get('txn_type'),
+                $this->data->get('mc_currency'),
+                $this->data->get('mc_gross'),
+                $order
+            );
+    }
 
-		return $this->payment_status_completed();
-	}
+    /**
+     * Handle a pending payment.
+     *
+     * @return bool
+     */
+    public function payment_status_pending()
+    {
+        return $this->payment_status_completed();
+    }
 
-	/**
-	 * Handle a completed payment.
-	 *
-	 * @return bool
-	 */
-	public function payment_status_completed() {
+    /**
+     * Handle a completed payment.
+     *
+     * @return bool
+     */
+    public function payment_status_completed()
+    {
+        if ($this->order->has_status('completed')) {
+            do_action(
+                'wc_paypal_plus_log_error',
+                'IPN Error. Payment already completed: ',
+                []
+            );
 
-		if ( $this->order->has_status( 'completed' ) ) {
-			do_action(
-				'wc_paypal_plus_log_error', 'IPN Error. Payment already completed: ',
-				[]
-			);
+            return true;
+        }
 
-			return true;
-		}
+        if (!$this->validator->is_valid_payment()) {
+            $last_error = $this->validator->get_last_error();
+            $this->order->update_status('on-hold', $last_error);
+            do_action(
+                'wc_paypal_plus_log_error',
+                'IPN Error. Payment validation failed: ' . $last_error,
+                []
+            );
 
-		if ( ! $this->validator->is_valid_payment() ) {
-			$last_error = $this->validator->get_last_error();
-			$this->order->update_status( 'on-hold', $last_error );
-			do_action(
-				'wc_paypal_plus_log_error',
-				'IPN Error. Payment validation failed: ' . $last_error,
-				[]
-			);
+            return false;
+        }
 
-			return false;
-		}
+        $this->save_paypal_meta_data();
 
-		$this->save_paypal_meta_data();
+        if ('completed' === $this->data->get_payment_status()) {
+            $transaction_id = wc_clean($this->data->get('txn_id'));
+            $note = __('IPN payment completed', 'woo-paypalplus');
 
-		if ( 'completed' === $this->data->get_payment_status() ) {
+            $this->payment_complete($transaction_id, $note);
 
-			$transaction_id = wc_clean( $this->data->get( 'txn_id' ) );
-			$note           = __( 'IPN payment completed', 'woo-paypalplus' );
+            $fee = $this->data->get('mc_fee');
+            if (!empty($fee)) {
+                update_post_meta($this->order->get_id(), 'PayPal Transaction Fee', wc_clean($fee));
+            }
+            do_action('wc_paypal_plus__log', 'Payment completed successfully ', []);
+        } else {
+            $this->payment_on_hold(
+                sprintf(
+                    __('Payment pending: %s', 'woo-paypalplus'),
+                    $this->data->get('pending_reason')
+                )
+            );
+            do_action('wc_paypal_plus__log', 'Payment put on hold ', []);
+        }
 
-			$this->payment_complete( $transaction_id, $note );
+        return true;
+    }
 
-			if ( ! empty( $fee = $this->data->get( 'mc_fee' ) ) ) {
-				update_post_meta( $this->order->get_id(), 'PayPal Transaction Fee', wc_clean( $fee ) );
-			}
-			do_action( 'wc_paypal_plus__log', 'Payment completed successfully ', [] );
+    /**
+     * Save relevant data from the IPN to the order.
+     */
+    private function save_paypal_meta_data()
+    {
+        $postMeta = [
+            'payer_email' => 'Payer PayPal address',
+            'first_name' => 'Payer first name',
+            'last_name' => 'Payer last name',
+            'payment_type' => 'Payment type',
+        ];
 
-		} else {
-			$this->payment_on_hold(
-				sprintf(
-					__( 'Payment pending: %s', 'woo-paypalplus' ),
-					$this->data->get( 'pending_reason' )
-				)
-			);
-			do_action( 'wc_paypal_plus__log', 'Payment put on hold ', [] );
+        foreach ($postMeta as $key => $name) {
+            $value = $this->data->get($key);
+            if (!empty($value)) {
+                update_post_meta($this->order->get_id(), $name, wc_clean($value));
+            }
+        }
+    }
 
-		}
+    /**
+     * Complete order, add transaction ID and note.
+     *
+     * @param  string $transaction_id The Transaction ID.
+     * @param  string $note Payment note.
+     */
+    private function payment_complete($transaction_id = '', $note = '')
+    {
+        $this->order->add_order_note($note);
+        $this->order->payment_complete($transaction_id);
+    }
 
-		return true;
-	}
+    /**
+     * Hold order and add note.
+     *
+     * @param  string $reason Reason for refunding.
+     */
+    private function payment_on_hold($reason = '')
+    {
+        $this->order->update_status('on-hold', $reason);
+        wc_reduce_stock_levels($this->order->get_id());
+        WC()->cart->empty_cart();
+    }
 
-	/**
-	 * Save relevant data from the IPN to the order.
-	 */
-	private function save_paypal_meta_data() {
+    /**
+     * Handle a denied payment.
+     *
+     * @return bool
+     */
+    public function payment_status_denied()
+    {
+        return $this->payment_status_failed();
+    }
 
-		foreach (
-			[
-				'payer_email'  => 'Payer PayPal address',
-				'first_name'   => 'Payer first name',
-				'last_name'    => 'Payer last name',
-				'payment_type' => 'Payment type',
-			]
-			as $key => $name
-		) {
-			if ( ! empty( $value = $this->data->get( $key ) ) ) {
-				update_post_meta( $this->order->get_id(), $name, wc_clean( $value ) );
-			}
-		}
+    /**
+     * Handle a failed payment.
+     *
+     * @return bool
+     */
+    public function payment_status_failed()
+    {
+        return $this->order->update_status(
+            'failed',
+            sprintf(
+                __('Payment %s via IPN.', 'woo-paypalplus'),
+                wc_clean($this->data->get_payment_status())
+            )
+        );
+    }
 
-	}
+    /**
+     * Handle an expired payment.
+     *
+     * @return bool
+     */
+    public function payment_status_expired()
+    {
+        return $this->payment_status_failed();
+    }
 
-	/**
-	 * Complete order, add transaction ID and note.
-	 *
-	 * @param  string $transaction_id The Transaction ID.
-	 * @param  string $note           Payment note.
-	 */
-	private function payment_complete( $transaction_id = '', $note = '' ) {
+    /**
+     * Handle a voided payment.
+     *
+     * @return bool
+     */
+    public function payment_status_voided()
+    {
+        return $this->payment_status_failed();
+    }
 
-		$this->order->add_order_note( $note );
-		$this->order->payment_complete( $transaction_id );
-	}
+    /**
+     * Handle a refunded order.
+     */
+    public function payment_status_refunded()
+    {
+        if ($this->validator->is_valid_refund()) {
+            $this->order->update_status(
+                'refunded',
+                sprintf(
+                    __('Payment %s via IPN.', 'woo-paypalplus'),
+                    $this->data->get_payment_status()
+                )
+            );
+            do_action('wc_paypal_plus__ipn_payment_update', 'refunded', $this->data);
+        }
+    }
 
-	/**
-	 * Hold order and add note.
-	 *
-	 * @param  string $reason Reason for refunding.
-	 */
-	private function payment_on_hold( $reason = '' ) {
+    /**
+     * Handle a payment reversal.
+     */
+    public function payment_status_reversed()
+    {
+        $this->order->update_status(
+            'on-hold',
+            sprintf(
+                __('Payment %s via IPN.', 'woo-paypalplus'),
+                wc_clean(
+                    $this->data->get_payment_status()
+                )
+            )
+        );
 
-		$this->order->update_status( 'on-hold', $reason );
-		wc_reduce_stock_levels( $this->order->get_id() );
-		WC()->cart->empty_cart();
-	}
+        do_action('wc_paypal_plus__ipn_payment_update', 'reversed', $this->data);
+    }
 
-	/**
-	 * Handle a denied payment.
-	 *
-	 * @return bool
-	 */
-	public function payment_status_denied() {
-
-		return $this->payment_status_failed();
-	}
-
-	/**
-	 * Handle a failed payment.
-	 *
-	 * @return bool
-	 */
-	public function payment_status_failed() {
-
-		return $this->order->update_status( 'failed',
-			sprintf(
-				__( 'Payment %s via IPN.', 'woo-paypalplus' ),
-				wc_clean( $this->data->get_payment_status() )
-			)
-		);
-	}
-
-	/**
-	 * Handle an expired payment.
-	 *
-	 * @return bool
-	 */
-	public function payment_status_expired() {
-
-		return $this->payment_status_failed();
-	}
-
-	/**
-	 * Handle a voided payment.
-	 *
-	 * @return bool
-	 */
-	public function payment_status_voided() {
-
-		return $this->payment_status_failed();
-	}
-
-	/**
-	 * Handle a refunded order.
-	 */
-	public function payment_status_refunded() {
-
-		if ( $this->validator->is_valid_refund() ) {
-			$this->order->update_status(
-				'refunded',
-				sprintf( __( 'Payment %s via IPN.', 'woo-paypalplus' ),
-					$this->data->get_payment_status()
-				)
-			);
-			do_action( 'wc_paypal_plus__ipn_payment_update', 'refunded', $this->data );
-		}
-	}
-
-	/**
-	 * Handle a payment reversal.
-	 */
-	public function payment_status_reversed() {
-
-		$this->order->update_status( 'on-hold',
-			sprintf(
-				__( 'Payment %s via IPN.', 'woo-paypalplus' ),
-				wc_clean(
-					$this->data->get_payment_status()
-				)
-			)
-		);
-
-		do_action( 'wc_paypal_plus__ipn_payment_update', 'reversed', $this->data );
-
-	}
-
-	/**
-	 * Handle a cancelled reversal.
-	 */
-	public function payment_status_canceled_reversal() {
-
-		do_action( 'wc_paypal_plus__ipn_payment_update', 'canceled_reversal', $this->data );
-
-	}
-
+    /**
+     * Handle a cancelled reversal.
+     */
+    public function payment_status_canceled_reversal()
+    {
+        do_action('wc_paypal_plus__ipn_payment_update', 'canceled_reversal', $this->data);
+    }
 }

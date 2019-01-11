@@ -2,6 +2,7 @@
 
 namespace WCPayPalPlus\Exception;
 
-class WCPayPalPlusException extends \Exception {
+class WCPayPalPlusException extends \Exception
+{
 
 }

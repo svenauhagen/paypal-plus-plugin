@@ -130,7 +130,7 @@ class Admin
                 function ($) {
                     $('#ppplus_dismiss_<?php echo esc_js($this->id) ?>').on('click', function (e) {
                         e.preventDefault();
-                        $.post($(this).attr('href'), {isAjax: 1});
+                        $.post($(this).attr('href'), { isAjax: 1 });
                         $('#ppplus_dismiss_<?php echo esc_js($this->id) ?>_notice').hide();
                     });
                 }
