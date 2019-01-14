@@ -13,84 +13,83 @@ namespace WCPayPalPlus\WC\Payment;
  *
  * @package WCPayPalPlus\WC\Payment
  */
-class OrderItemData implements OrderItemDataProvider {
+class OrderItemData implements OrderItemDataProvider
+{
+    use OrderDataProcessor;
 
-	use OrderDataProcessor;
+    /**
+     * Item data.
+     *
+     * @var array
+     */
+    private $data;
 
-	/**
-	 * Item data.
-	 *
-	 * @var array
-	 */
-	private $data;
+    /**
+     * OrderItemData constructor.
+     *
+     * @param \WC_Order_Item $data Item data.
+     */
+    public function __construct(\WC_Order_Item $data)
+    {
+        $this->data = $data->get_data();
+    }
 
-	/**
-	 * OrderItemData constructor.
-	 *
-	 * @param \WC_Order_Item $data Item data.
-	 */
-	public function __construct( \WC_Order_Item $data ) {
+    /**
+     * Returns the item price.
+     *
+     * @return string
+     */
+    public function get_price()
+    {
+        return $this->format($this->data['subtotal'] / $this->get_quantity());
+    }
 
-		$this->data                  = $data->get_data();
+    /**
+     * Returns the item quantity.
+     *
+     * @return int
+     */
+    public function get_quantity()
+    {
+        return intval($this->data['quantity']);
+    }
 
-	}
+    /**
+     * Returns the item name.
+     *
+     * @return string
+     */
+    public function get_name()
+    {
+        $product = $this->get_product();
 
-	/**
-	 * Returns the item price.
-	 *
-	 * @return string
-	 */
-	public function get_price() {
+        return $product->get_title();
+    }
 
-		return $this->format( $this->data['subtotal'] / $this->get_quantity() );
-	}
+    /**
+     * Returns the WC_Product associated with the order item.
+     *
+     * @return \WC_Product
+     */
+    protected function get_product()
+    {
+        return wc_get_product($this->data['product_id']);
+    }
 
-	/**
-	 * Returns the item quantity.
-	 *
-	 * @return int
-	 */
-	public function get_quantity() {
+    /**
+     * Returns the product SKU.
+     * TODO Un-DRY. CartItemData does pretty much the exact same thing
+     *
+     * @return string|null
+     */
+    public function get_sku()
+    {
+        $product = $this->get_product();
+        $sku = $product->get_sku();
+        if ($product instanceof \WC_Product_Variation) {
+            $sku = $product->parent->get_sku();
+        }
 
-		return intval( $this->data['quantity'] );
-	}
-
-	/**
-	 * Returns the item name.
-	 *
-	 * @return string
-	 */
-	public function get_name() {
-
-		$product = $this->get_product();
-
-		return $product->get_title();
-	}
-
-	/**
-	 * Returns the WC_Product associated with the order item.
-	 *
-	 * @return \WC_Product
-	 */
-	protected function get_product() {
-
-		return wc_get_product( $this->data['product_id'] );
-	}
-
-	/**
-	 * Returns the product SKU.
-	 * TODO Un-DRY. CartItemData does pretty much the exact same thing
-	 *
-	 * @return string|null
-	 */
-	public function get_sku() {
-
-		$product = $this->get_product();
-		$sku     = $product->get_sku();
-		if ( $product instanceof \WC_Product_Variation ) {
-			$sku = $product->parent->get_sku();
-		}
-
-		return $sku;
-	}
+        return $sku;
+    }
 }

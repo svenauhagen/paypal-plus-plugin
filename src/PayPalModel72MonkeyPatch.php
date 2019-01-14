@@ -20,6 +20,7 @@ class PayPalModel72MonkeyPatch
 
     public function setHandler()
     {
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler
         set_error_handler(function ($errno, $errstring, $errfile) {
             return $this->isSizeOfModelWarning($errstring, $errfile);
         }, self::LEVELS);

@@ -13,64 +13,64 @@ namespace WCPayPalPlus\WC\Payment;
  *
  * @package WCPayPalPlus\WC\Payment
  */
-class FeeData implements OrderItemDataProvider {
+class FeeData implements OrderItemDataProvider
+{
+    use OrderDataProcessor;
 
-	use OrderDataProcessor;
+    /**
+     * Fee data.
+     *
+     * @var array
+     */
+    private $fee;
 
-	/**
-	 * Fee data.
-	 *
-	 * @var array
-	 */
-	private $fee;
+    /**
+     * FeeData constructor.
+     *
+     * @param object $fee Item data.
+     */
+    public function __construct($fee)
+    {
+        $this->fee = $fee;
+    }
 
-	/**
-	 * FeeData constructor.
-	 *
-	 * @param object $fee Item data.
-	 */
-	public function __construct( $fee ) {
+    /**
+     * Returns the item price.
+     *
+     * @return float
+     */
+    public function get_price()
+    {
+        return $this->fee->amount;
+    }
 
-		$this->fee = $fee;
-	}
+    /**
+     * Returns the item quantity.
+     *
+     * @return int
+     */
+    public function get_quantity()
+    {
+        return 1;
+    }
 
-	/**
-	 * Returns the item price.
-	 *
-	 * @return float
-	 */
-	public function get_price() {
+    /**
+     * Returns the item name.
+     *
+     * @return string
+     */
+    public function get_name()
+    {
+        return $this->fee->name;
+    }
 
-		return $this->fee->amount;
-	}
-
-	/**
-	 * Returns the item quantity.
-	 *
-	 * @return int
-	 */
-	public function get_quantity() {
-
-		return 1;
-	}
-
-	/**
-	 * Returns the item name.
-	 *
-	 * @return string
-	 */
-	public function get_name() {
-
-		return $this->fee->name;
-	}
-
-	/**
-	 * Returns the item SKU.
-	 *
-	 * @return string|null
-	 */
-	public function get_sku() {
-
-		return null;
-	}
+    /**
+     * Returns the item SKU.
+     *
+     * @return string|null
+     */
+    public function get_sku()
+    {
+        return null;
+    }
 }

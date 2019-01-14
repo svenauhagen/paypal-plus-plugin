@@ -15,47 +15,46 @@ use WCPayPalPlus\WC\PayPalPlusGateway;
  *
  * @package WCPayPalPlus
  */
-final class Frontend implements Controller {
+final class Frontend implements Controller
+{
+    /**
+     * The PPPlus Payment Gateway.
+     *
+     * @var PayPalPlusGateway
+     */
+    private $gateway;
 
-	/**
-	 * The PPPlus Payment Gateway.
-	 *
-	 * @var PayPalPlusGateway
-	 */
-	private $gateway;
+    /**
+     * Frontend constructor.
+     *
+     * @param PayPalPlusGateway $gateway The Payment Gateway.
+     */
+    public function __construct(PayPalPlusGateway $gateway)
+    {
+        $this->gateway = $gateway;
+    }
 
-	/**
-	 * Frontend constructor.
-	 *
-	 * @param PayPalPlusGateway $gateway The Payment Gateway.
-	 */
-	public function __construct( PayPalPlusGateway $gateway ) {
+    /**
+     * Initialize the controller and setup all hooks
+     */
+    public function init()
+    {
+        add_action('wp_enqueue_scripts', [$this, 'frontend_scripts'], 100);
+    }
 
-		$this->gateway = $gateway;
-	}
-
-	/**
-	 * Initialize the controller and setup all hooks
-	 */
-	public function init() {
-
-		add_action( 'wp_enqueue_scripts', array( $this, 'frontend_scripts' ), 100 );
-	}
-
-	/**
-	 * Register all needed frontend scripts.
-	 */
-	public function frontend_scripts() {
-
-		if ( is_checkout() || is_checkout_pay_page() ) {
-			wp_enqueue_script(
-				'ppplus-js',
-				'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
-				[],
-				'1.0',
-				false
-			);
-		}
-
-	}
+    /**
+     * Register all needed frontend scripts.
+     */
+    public function frontend_scripts()
+    {
+        if (is_checkout() || is_checkout_pay_page()) {
+            wp_enqueue_script(
+                'ppplus-js',
+                'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
+                [],
+                '1.0',
+                false
+            );
+        }
+    }
 }

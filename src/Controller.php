@@ -13,12 +13,12 @@ namespace WCPayPalPlus;
  *
  * @package WCPayPalPlus
  */
-interface Controller {
-
-	/**
-	 * Initializes the Controller.
-	 *
-	 * @return mixed
-	 */
-	public function init();
+interface Controller
+{
+    /**
+     * Initializes the Controller.
+     *
+     * @return mixed
+     */
+    public function init();
 }

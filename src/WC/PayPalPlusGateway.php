@@ -22,12 +22,15 @@ use WCPayPalPlus\WC\PUI\PaymentInstructionRenderer;
 use WCPayPalPlus\WC\Refund\RefundData;
 use WCPayPalPlus\WC\Refund\WCRefund;
 
+/**
+ * Class PayPalPlusGateway
+ * @package WCPayPalPlus\WC
+ */
 class PayPalPlusGateway extends \WC_Payment_Gateway
 {
     const PAYMENT_ID_SESSION_KEY = 'ppp_payment_id';
     const PAYER_ID_SESSION_KEY = 'ppp_payer_id';
     const APPROVAL_URL_SESSION_KEY = 'ppp_approval_url';
-
     const CLIENT_ID_KEY = 'woocommerce_paypal_plus_rest_client_id';
     const CLIENT_SECRET_ID_KEY = 'woocommerce_paypal_plus_rest_secret_id';
     const CLIENT_ID_KEY_SANDBOX = self::CLIENT_ID_KEY . '_sandbox';
@@ -37,15 +40,21 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
      * Gateway ID
      *
      * @var string
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ForbiddenPublicProperty.Found
      */
     public $id;
+    // phpcs:enable
 
     /**
      * Payment Method title.
      *
      * @var string
+     *
+     * phpcs:disable Inpsyde.CodeQuality.ForbiddenPublicProperty.Found
      */
     public $method_title;
+    // phpcs:enable
 
     /**
      * IPN Handler object.
@@ -61,6 +70,12 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
      */
     private $pui;
 
+    /**
+     * PayPalPlusGateway constructor.
+     * @param $id
+     * @param $methodTitle
+     * @param IPN|null $ipn
+     */
     public function __construct($id, $methodTitle, IPN $ipn = null)
     {
         $this->id = $id;
@@ -85,11 +100,17 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         $this->init_settings();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function init_form_fields()
     {
         $this->form_fields = (new GatewaySettingsModel())->settings();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function register()
     {
         $this->ipn->register();
@@ -113,6 +134,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         }
     }
 
+    /**
+     * @return void
+     */
     public function execute_payment()
     {
         $token = filter_input(INPUT_GET, 'token');
@@ -161,6 +185,12 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         }
     }
 
+    /**
+     * @param int $orderId
+     * @param null $amount
+     * @param string $reason
+     * @return bool
+     */
     public function process_refund($orderId, $amount = null, $reason = '')
     {
         $order = wc_get_order($orderId);
@@ -182,11 +212,18 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         return $refund->execute();
     }
 
+    /**
+     * @param \WC_Order $order
+     * @return bool
+     */
     public function can_refund_order($order)
     {
         return $order && $order->get_transaction_id();
     }
 
+    /**
+     * @return bool|void
+     */
     public function process_admin_options()
     {
         $apiContext = $this->apiContext($this->apiCredentialsByRequest());
@@ -236,6 +273,11 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         parent::process_admin_options();
     }
 
+    /**
+     * @param array $formFields
+     * @param bool $echo
+     * @return false|string
+     */
     public function generate_settings_html($formFields = [], $echo = true)
     {
         ob_start();
@@ -260,6 +302,11 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         return $output;
     }
 
+    /**
+     * @param $key
+     * @param $data
+     * @return false|string
+     */
     public function generate_html_html($key, $data)
     {
         $defaults = [
@@ -285,6 +332,10 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         return ob_get_clean();
     }
 
+    /**
+     * @param int $orderId
+     * @return array
+     */
     public function process_payment($orderId)
     {
         $order = new \WC_Order($orderId);
@@ -295,6 +346,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         ];
     }
 
+    /**
+     * @param $orderId
+     */
     public function render_receipt_page($orderId)
     {
         WC()->session->ppp_order_id = $orderId;
@@ -326,6 +380,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         $this->abortCheckout();
     }
 
+    /**
+     * @return void
+     */
     public function clear_session_data()
     {
         $session = WC()->session;
@@ -334,6 +391,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         $session->__unset(self::APPROVAL_URL_SESSION_KEY);
     }
 
+    /**
+     * @return void
+     */
     public function payment_fields()
     {
         parent::payment_fields();
@@ -349,6 +409,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         $this->form();
     }
 
+    /**
+     * @return void
+     */
     public function form()
     {
         $data = [
@@ -367,6 +430,10 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         (new PayPalIframeView($data))->render();
     }
 
+    /**
+     * @param $checkoutLogoUrl
+     * @return string
+     */
     private function ensureCheckoutLogoUrl($checkoutLogoUrl)
     {
         if (strlen($checkoutLogoUrl) > 127) {
@@ -389,6 +456,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         return $checkoutLogoUrl;
     }
 
+    /**
+     * @return void
+     */
     private function abortCheckout()
     {
         $this->clear_session_data();
@@ -401,16 +471,26 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         exit;
     }
 
+    /**
+     * @return bool
+     */
     private function defaultGatewayOverrideEnabled()
     {
         return $this->get_option('disable_gateway_override', 'no') === 'no';
     }
 
+    /**
+     * @return bool
+     */
     private function isSandbox()
     {
         return $this->get_option('testmode', 'yes') === 'yes';
     }
 
+    /**
+     * @param array $credentials
+     * @return ApiContext|null
+     */
     private function apiContext(array $credentials)
     {
         if (empty($credentials['client_id'])
@@ -440,6 +520,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         return $auth;
     }
 
+    /**
+     * @return array
+     */
     private function storedApiCredentials()
     {
         $clientKey = 'rest_client_id';
@@ -456,6 +539,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         ];
     }
 
+    /**
+     * @return array
+     */
     private function apiCredentialsByRequest()
     {
         $clientIdKey = $this->isSandbox() ? self::CLIENT_ID_KEY_SANDBOX : self::CLIENT_ID_KEY;
@@ -470,11 +556,17 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         ];
     }
 
+    /**
+     * @return string
+     */
     private function getRequestID()
     {
         return home_url() . uniqid();
     }
 
+    /**
+     * @return string
+     */
     private function experienceProfileOptionKey()
     {
         return ($this->isSandbox())
@@ -482,6 +574,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
             : 'live_experience_profile_id';
     }
 
+    /**
+     * @return mixed|string|null
+     */
     private function approvalUrl()
     {
         $url = WC()->session->__get(self::APPROVAL_URL_SESSION_KEY);
@@ -504,6 +599,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         return $url;
     }
 
+    /**
+     * @return Payment|null
+     */
     private function paymentObject()
     {
         static $payment;
@@ -542,6 +640,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         return $payment;
     }
 
+    /**
+     * @return PaymentData
+     */
     private function paymentData()
     {
         $return_url = WC()->api_request_url($this->id);
@@ -559,8 +660,12 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         );
     }
 
+    /**
+     * @return false|string
+     */
     private function cancelUrl()
     {
+        // phpcs:disable Squiz.PHP.NonExecutableCode.Unreachable
         switch ($this->get_option('cancel_url')) {
             case 'cart':
                 return wc_get_cart_url();
@@ -579,13 +684,21 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
                 return get_permalink(wc_get_page_id('shop'));
                 break;
         }
+        // phpcs:enable
     }
 
+    /**
+     * @param \WC_Order|null $order
+     * @return CartData|OrderData
+     */
     private function orderData(\WC_Order $order = null)
     {
         return ($order === null) ? new CartData(WC()->cart) : new OrderData($order);
     }
 
+    /**
+     * @return bool|string
+     */
     private function locale()
     {
         $locale = false;
@@ -596,6 +709,10 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         return $locale;
     }
 
+    /**
+     * @param $output
+     * @param $message
+     */
     private function credentialInformations(&$output, $message)
     {
         $output .= sprintf(
@@ -607,6 +724,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         );
     }
 
+    /**
+     * @param $output
+     */
     private function invalidPaymentMessage(&$output)
     {
         $this->credentialInformations(
@@ -621,6 +741,9 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         );
     }
 
+    /**
+     * @param $output
+     */
     private function sandboxMessage(&$output)
     {
         $msgSandbox = $this->isSandbox()

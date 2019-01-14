@@ -8,15 +8,17 @@
 
 namespace WCPayPalPlus\WC;
 
-interface RequestSuccessHandler {
-	/**
-	 * Allow the implementing class to setup hooks
-	 */
-	public function register();
-	/**
-	 * Handles a successful REST call
-	 *
-	 * @return bool
-	 */
-	public function execute();
+interface RequestSuccessHandler
+{
+    /**
+     * Allow the implementing class to setup hooks
+     */
+    public function register();
+
+    /**
+     * Handles a successful REST call
+     *
+     * @return bool
+     */
+    public function execute();
 }

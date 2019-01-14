@@ -42,7 +42,7 @@ class PayPalIframeView
         <div id="<?php echo esc_attr($id) ?>"></div>
         <script type="application/javascript">
             jQuery(document).ready(function () {
-                if (typeof PAYPAL !== "undefined") {
+                if (typeof PAYPAL !== 'undefined') {
                     var ppp = PAYPAL.apps.PPP( <?php echo wp_json_encode($this->data['app_config']) ?>);
                 }
             });

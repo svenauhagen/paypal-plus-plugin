@@ -8,53 +8,51 @@
 
 namespace WCPayPalPlus\WC\Payment;
 
-trait OrderDataProcessor {
+trait OrderDataProcessor
+{
+    /**
+     * Wrap around number_format() to return country-specific decimal numbers.
+     *
+     * @param float $price The unformatted price.
+     *
+     * @return float
+     */
+    protected function format($price)
+    {
+        $decimals = 2;
 
-	/**
-	 * Wrap around number_format() to return country-specific decimal numbers.
-	 *
-	 * @param float $price The unformatted price.
-	 *
-	 * @return float
-	 */
-	protected function format( $price ) {
+        if ($this->currency_has_decimals()) {
+            $decimals = 0;
+        }
 
-		$decimals = 2;
+        return number_format($price, $decimals, '.', '');
+    }
 
-		if ( $this->currency_has_decimals() ) {
-			$decimals = 0;
-		}
+    /**
+     * Checks if the currency supports decimals.
+     *
+     * @return bool
+     */
+    private function currency_has_decimals()
+    {
+        return in_array(get_woocommerce_currency(), ['HUF', 'JPY', 'TWD'], true);
+    }
 
-		return number_format( $price, $decimals, '.', '' );
-	}
+    /**
+     * Rounds a price to 2 decimals.
+     *
+     * @param float $price The item price.
+     *
+     * @return float
+     */
+    protected function round($price)
+    {
+        $precision = 2;
 
-	/**
-	 * Checks if the currency supports decimals.
-	 *
-	 * @return bool
-	 */
-	private function currency_has_decimals() {
+        if ($this->currency_has_decimals()) {
+            $precision = 0;
+        }
 
-		return in_array( get_woocommerce_currency(), [ 'HUF', 'JPY', 'TWD' ], true );
-
-	}
-
-	/**
-	 * Rounds a price to 2 decimals.
-	 *
-	 * @param float $price The item price.
-	 *
-	 * @return float
-	 */
-	protected function round( $price ) {
-
-		$precision = 2;
-
-		if ( $this->currency_has_decimals() ) {
-			$precision = 0;
-		}
-
-		return round( $price, $precision );
-
-	}
+        return round($price, $precision);
+    }
 }
