@@ -20,8 +20,6 @@
         <exclude name="Inpsyde.CodeQuality.NoAccessors.NoGetter"/>
         <exclude name="Inpsyde.CodeQuality.NoAccessors.NoSetter"/>
         <exclude name="Inpsyde.CodeQuality.ElementNameMinimalLength.TooShort"/>
-        <exclude name="WordPress.VIP.SuperGlobalInputUsage.AccessDetected"/>
-        <exclude name="WordPress.XSS.EscapeOutput.OutputNotEscaped"/>
         <exclude name="Inpsyde.CodeQuality.LineLength.TooLong"/>
         <exclude name="Inpsyde.CodeQuality.NoElse.ElseFound"/>
         <exclude name="Inpsyde.CodeQuality.FunctionLength.TooLong"/>
