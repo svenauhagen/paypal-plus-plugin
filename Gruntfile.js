@@ -100,7 +100,7 @@ module.exports = function( grunt ) {
 							'./LICENSE', // Maybe not needed
 							'./paypalplus-woocommerce.php', // Main plugin file
 							'./readme.txt',
-
+							'./uninstall.php',
 							'!./*/**/README.md',
 						]
 					}
