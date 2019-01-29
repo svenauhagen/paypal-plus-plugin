@@ -91,6 +91,7 @@ module.exports = function( grunt ) {
 					{
 						expand: true,
 						src   : [
+							'./languages/**/*',
 							'./assets/**/*', // CSS and JS
 							'./src/**/*', // PHP code
 							'./vendor/composer/**/*', // Autoloader
