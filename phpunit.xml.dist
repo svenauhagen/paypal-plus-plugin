@@ -8,7 +8,7 @@
 	convertWarningsToExceptions="true"
 	>
 	<testsuites>
-		<testsuite name="PayPal Plus for WooCommerce php unit tests">
+		<testsuite name="PayPal PLUS for WooCommerce php unit tests">
 			<directory suffix="Test.php">./tests/PHPUnit</directory>
 		</testsuite>
 	</testsuites>

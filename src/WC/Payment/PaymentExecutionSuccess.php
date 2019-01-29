@@ -75,10 +75,10 @@ class PaymentExecutionSuccess implements RequestSuccessHandler
             $order->add_order_note($note);
             $order->update_status('on-hold');
         } elseif ($sale->getState() === 'completed' && !$this->data->is_pui()) {
-            $order->add_order_note(__('PayPal Plus payment completed', 'woo-paypalplus'));
+            $order->add_order_note(__('PayPal PLUS payment completed', 'woo-paypalplus'));
             $order->payment_complete($sale_id);
             $note = sprintf(
-                __('PayPal Plus payment approved! Transaction ID: %s', 'woo-paypalplus'),
+                __('PayPal PLUS payment approved! Transaction ID: %s', 'woo-paypalplus'),
                 $sale_id
             );
             $order->add_order_note($note);

@@ -718,7 +718,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
         $output .= sprintf(
             '<div><p>%s</p></div>',
             esc_html__(
-                'Below you can see if your account is successfully hooked up to use PayPal Plus.',
+                'Below you can see if your account is successfully hooked up to use PayPal PLUS.',
                 'woo-paypalplus'
             ) . "<br />{$message}"
         );

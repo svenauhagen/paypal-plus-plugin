@@ -32,7 +32,7 @@ class GatewaySettingsModel
             'enabled' => [
                 'title' => __('Enable/Disable', 'woo-paypalplus'),
                 'type' => 'checkbox',
-                'label' => __('Enable PayPal Plus', 'woo-paypalplus'),
+                'label' => __('Enable PayPal PLUS', 'woo-paypalplus'),
                 'default' => 'no',
             ],
             'title' => [
@@ -42,7 +42,7 @@ class GatewaySettingsModel
                     'This controls the name of the payment gateway the user sees during checkout.',
                     'woo-paypalplus'
                 ),
-                'default' => __('PayPal Plus', 'woo-paypalplus'),
+                'default' => __('PayPal PLUS', 'woo-paypalplus'),
             ],
             'description' => [
                 'title' => __('Description', 'woo-paypalplus'),
@@ -253,7 +253,7 @@ class GatewaySettingsModel
                 'label' => __('Disable', 'woo-paypalplus'),
                 'default' => 'no',
                 'description' => __(
-                    'PayPal Plus will be selected as default payment gateway regardless of its position in the list of enabled gateways. You can turn off this behaviour here',
+                    'PayPal PLUS will be selected as default payment gateway regardless of its position in the list of enabled gateways. You can turn off this behaviour here',
                     'woo-paypalplus'
                 ),
             ],

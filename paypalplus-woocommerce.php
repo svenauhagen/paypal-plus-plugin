@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: PayPal Plus for WooCommerce
+ * Plugin Name: PayPal PLUS for WooCommerce
  * Description: PayPal Plus - the official WordPress Plugin for WooCommerce
  * Author:      Inpsyde GmbH
  * Author URI:  https://inpsyde.com/
@@ -34,7 +34,7 @@ add_action('plugins_loaded', function () {
         $adminNotice(
             sprintf(
                 __(
-                    'PayPal Plus requires PHP version %1$1s or higher. You are running version %2$2s ',
+                    'PayPal PLUS requires PHP version %1$1s or higher. You are running version %2$2s ',
                     'woo-paypalplus'
                 ),
                 $minPhpVersion,
@@ -49,7 +49,7 @@ add_action('plugins_loaded', function () {
         if (! file_exists($autoloader = __DIR__ . '/vendor/autoload.php')) {
             $adminNotice(
                 __(
-                    'Could not find a working autoloader for PayPal Plus.',
+                    'Could not find a working autoloader for PayPal PLUS.',
                     'woo-paypalplus'
                 )
             );
@@ -61,7 +61,7 @@ add_action('plugins_loaded', function () {
     }
 
     if (!class_exists('WooCommerce')) {
-        $adminNotice(__('PayPal Plus requires WooCommerce to be active.', 'woo-paypalplus'));
+        $adminNotice(__('PayPal PLUS requires WooCommerce to be active.', 'woo-paypalplus'));
         return;
     }
 
@@ -69,7 +69,7 @@ add_action('plugins_loaded', function () {
         add_action('admin_notices', function () {
             $class = 'notice notice-error';
             $message = __(
-                'PayPal Plus requires WooCommerce version 3.0 or higher .',
+                'PayPal PLUS requires WooCommerce version 3.0 or higher .',
                 'woo-paypalplus'
             );
 

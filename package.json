@@ -1,10 +1,10 @@
 {
   "name": "paypalplus-woocommerce",
   "version": "0.0.1",
-  "description": "Official WordPress plugin for PayPal Plus",
+  "description": "Official WordPress plugin for PayPal PLUS",
   "keywords": [
     "PayPal",
-    "Plus",
+    "PLUS",
     "WooCommerce",
     "WordPress"
   ],

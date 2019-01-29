@@ -28,7 +28,7 @@ module.exports = function( grunt ) {
 	}
 
 	var baseConfig = {
-		name: 'PayPal Plus for WooCommerce',
+		name: 'PayPal PLUS for WooCommerce',
 
 		pkg: grunt.file.readJSON( 'package.json' ),
 
@@ -83,7 +83,7 @@ module.exports = function( grunt ) {
 			main: {
 				options: {
 					archive: function() {
-						return 'dist/PayPal Plus for WooCommerce - ' + new Date().getTime() + '.zip';
+						return 'dist/paypal-plus-for-woocommerce-' + new Date().getTime() + '.zip';
 					},
 					level  : 6
 				},
