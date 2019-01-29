@@ -42,7 +42,7 @@ class GatewaySettingsModel
                     'This controls the name of the payment gateway the user sees during checkout.',
                     'woo-paypalplus'
                 ),
-                'default' => __('PayPal PLUS', 'woo-paypalplus'),
+                'default' => __('PayPal', 'woo-paypalplus'),
             ],
             'description' => [
                 'title' => __('Description', 'woo-paypalplus'),
