@@ -46,7 +46,7 @@ add_action('plugins_loaded', function () {
     }
 
     if (!class_exists('WCPayPalPlus\\Plugin')) {
-        if (! file_exists($autoloader = __DIR__ . '/vendor/autoload.php')) {
+        if (!file_exists($autoloader = __DIR__ . '/vendor/autoload.php')) {
             $adminNotice(
                 __(
                     'Could not find a working autoloader for PayPal PLUS.',

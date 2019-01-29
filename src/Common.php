@@ -39,5 +39,12 @@ final class Common implements Controller
 
             return $methods;
         });
+        add_action('init', function () {
+            load_plugin_textdomain(
+                'woo-paypalplus',
+                false,
+                basename(dirname(__FILE__)) . '/languages'
+            );
+        });
     }
 }
