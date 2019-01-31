@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/paypal-plus-"
 "plugin\n"
 "POT-Creation-Date: 2019-01-31 17:46+0100\n"
-"PO-Revision-Date: 2019-01-31 18:03+0100\n"
+"PO-Revision-Date: 2019-01-31 18:24+0100\n"
 "Last-Translator: admin <m.meisselbach@inpsyde.com>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -227,7 +227,7 @@ msgstr ""
 #: src/WC/GatewaySettingsModel.php:211
 msgctxt "gateway-setting"
 msgid "Cancel Page"
-msgstr "Bestellung abgebrochen Seite"
+msgstr "Seite für abgebrochene Bestellungen"
 
 #: src/WC/GatewaySettingsModel.php:213
 msgctxt "gateway-setting"
@@ -241,7 +241,7 @@ msgstr ""
 #: src/WC/GatewaySettingsModel.php:222
 msgctxt "gateway-setting"
 msgid "Custom Cancelation URL"
-msgstr "Benutzerdefinierte Cancelation URL"
+msgstr "Benutzerdefinierte Abbruch-URL"
 
 #: src/WC/GatewaySettingsModel.php:225
 msgctxt "gateway-setting"
@@ -314,7 +314,7 @@ msgstr ""
 #: src/WC/GatewaySettingsModel.php:278
 msgctxt "gateway-setting"
 msgid "Disable default gateway override"
-msgstr "Deaktiviere default gateway override"
+msgstr "Als Standard-Zahlungs-Gateway deaktivieren"
 
 #: src/WC/GatewaySettingsModel.php:283
 msgctxt "gateway-setting"
@@ -461,8 +461,8 @@ msgid ""
 "Allow customers to conveniently checkout with different payment options like "
 "PayPal, Direct Debit, Credit Card and Invoice."
 msgstr ""
-"Bieten deinen Kunden Kunden das bequeme Bezahlen mit verschiedenen "
-"Zahlungsoptionen wie PayPal, Lastschrift, Kreditkarte und Rechnung."
+"Biete deinen Kunden das bequeme Bezahlen mit verschiedenen Zahlungsoptionen "
+"wie PayPal, Lastschrift, Kreditkarte und Kauf auf Rechnung an."
 
 #: src/WC/PayPalPlusGateway.php:177
 msgid "Error processing checkout. Please check the logs. "
@@ -475,14 +475,14 @@ msgstr "Deine API Zugangsdaten fehlen oder sind nicht korrekt: %s"
 
 #: src/WC/PayPalPlusGateway.php:442
 msgid "Checkout Logo cannot contains more than 127 characters."
-msgstr "Das Checkout Logo darf nicht länger als 127 Zeichen sein."
+msgstr "Die Logo URL darf nicht länger als 127 Zeichen haben."
 
 #: src/WC/PayPalPlusGateway.php:450
 msgid ""
 "Checkout Logo must use the http secure protocol HTTPS. EG. (https://my-url)"
 msgstr ""
-"Das Checkout Logo muss das sichere Protokoll HTTPS. EG. verwenden (https://"
-"my-url)"
+"Die Logo-URL muss mit dem Protokolltyp HTTPS hinterlegt werden. Z.B. https://"
+"mein-logo.png"
 
 #: src/WC/PayPalPlusGateway.php:467
 msgid "Error processing checkout. Please try again. "
