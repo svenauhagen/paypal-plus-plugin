@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: PayPal Plus for WooCommerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/paypal-plus-"
 "plugin\n"
-"POT-Creation-Date: 2019-01-29 17:23+0100\n"
-"PO-Revision-Date: 2019-01-29 17:33+0100\n"
+"POT-Creation-Date: 2019-01-31 17:46+0100\n"
+"PO-Revision-Date: 2019-01-31 18:03+0100\n"
 "Last-Translator: admin <m.meisselbach@inpsyde.com>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -456,38 +456,39 @@ msgid "Reference"
 msgstr "Zahlungsreferenz"
 
 #: src/WC/PayPalPlusGateway.php:84
+msgctxt "gateway-settings"
 msgid ""
 "Allow customers to conveniently checkout with different payment options like "
-"PayPal, Credit Card or Invoice."
+"PayPal, Direct Debit, Credit Card and Invoice."
 msgstr ""
-"Bieten Sie Ihren Käufern mit PayPal PLUS die vier beliebtesten Zahlarten: "
-"PayPal, Lastschrift, Kreditkarte und Kauf auf Rechnung an."
+"Bieten deinen Kunden Kunden das bequeme Bezahlen mit verschiedenen "
+"Zahlungsoptionen wie PayPal, Lastschrift, Kreditkarte und Rechnung."
 
-#: src/WC/PayPalPlusGateway.php:176
+#: src/WC/PayPalPlusGateway.php:177
 msgid "Error processing checkout. Please check the logs. "
 msgstr "Fehler im Bestellvorgang. Versuche es bitte erneut. "
 
-#: src/WC/PayPalPlusGateway.php:255
+#: src/WC/PayPalPlusGateway.php:256
 #, php-format
 msgid "Your API credentials are either missing or invalid: %s"
 msgstr "Deine API Zugangsdaten fehlen oder sind nicht korrekt: %s"
 
-#: src/WC/PayPalPlusGateway.php:441
+#: src/WC/PayPalPlusGateway.php:442
 msgid "Checkout Logo cannot contains more than 127 characters."
 msgstr "Das Checkout Logo darf nicht länger als 127 Zeichen sein."
 
-#: src/WC/PayPalPlusGateway.php:449
+#: src/WC/PayPalPlusGateway.php:450
 msgid ""
 "Checkout Logo must use the http secure protocol HTTPS. EG. (https://my-url)"
 msgstr ""
 "Das Checkout Logo muss das sichere Protokoll HTTPS. EG. verwenden (https://"
 "my-url)"
 
-#: src/WC/PayPalPlusGateway.php:466
+#: src/WC/PayPalPlusGateway.php:467
 msgid "Error processing checkout. Please try again. "
 msgstr "Fehler im Bestellvorgang. Versuche es bitte erneut. "
 
-#: src/WC/PayPalPlusGateway.php:721
+#: src/WC/PayPalPlusGateway.php:722
 msgid ""
 "Below you can see if your account is successfully hooked up to use PayPal "
 "PLUS."
@@ -495,17 +496,17 @@ msgstr ""
 "Unten siehst du, ob dein Konto erfolgreich für die Nutzung von PayPalPlus "
 "verbunden wurde."
 
-#: src/WC/PayPalPlusGateway.php:737
+#: src/WC/PayPalPlusGateway.php:738
 msgid "Error connecting to the API. Check that the credentials are correct."
 msgstr ""
 "Fehler bei der Verbindung zur API. Überprüfe, ob die Anmeldedaten korrekt "
 "sind."
 
-#: src/WC/PayPalPlusGateway.php:751
+#: src/WC/PayPalPlusGateway.php:752
 msgid "Note: This is connected to your sandbox account."
 msgstr "Hinweis: Du bist mit deinem Sandbox Account verbunden."
 
-#: src/WC/PayPalPlusGateway.php:755
+#: src/WC/PayPalPlusGateway.php:756
 msgid "Note: This is connected to your live PayPal account."
 msgstr "Hinweis: Du bist mit deinem PayPal live Account verbunden."
 

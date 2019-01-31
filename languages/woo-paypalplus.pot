@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: PayPal Plus for WooCommerce 1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/paypal-plus-"
 "plugin\n"
-"POT-Creation-Date: 2019-01-29 17:23+0100\n"
+"POT-Creation-Date: 2019-01-31 17:46+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -425,48 +425,49 @@ msgid "Reference"
 msgstr ""
 
 #: src/WC/PayPalPlusGateway.php:84
+msgctxt "gateway-settings"
 msgid ""
 "Allow customers to conveniently checkout with different payment options like "
-"PayPal, Credit Card or Invoice."
+"PayPal, Direct Debit, Credit Card and Invoice."
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:176
+#: src/WC/PayPalPlusGateway.php:177
 msgid "Error processing checkout. Please check the logs. "
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:255
+#: src/WC/PayPalPlusGateway.php:256
 #, php-format
 msgid "Your API credentials are either missing or invalid: %s"
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:441
+#: src/WC/PayPalPlusGateway.php:442
 msgid "Checkout Logo cannot contains more than 127 characters."
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:449
+#: src/WC/PayPalPlusGateway.php:450
 msgid ""
 "Checkout Logo must use the http secure protocol HTTPS. EG. (https://my-url)"
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:466
+#: src/WC/PayPalPlusGateway.php:467
 msgid "Error processing checkout. Please try again. "
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:721
+#: src/WC/PayPalPlusGateway.php:722
 msgid ""
 "Below you can see if your account is successfully hooked up to use PayPal "
 "PLUS."
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:737
+#: src/WC/PayPalPlusGateway.php:738
 msgid "Error connecting to the API. Check that the credentials are correct."
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:751
+#: src/WC/PayPalPlusGateway.php:752
 msgid "Note: This is connected to your sandbox account."
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:755
+#: src/WC/PayPalPlusGateway.php:756
 msgid "Note: This is connected to your live PayPal account."
 msgstr ""
 
