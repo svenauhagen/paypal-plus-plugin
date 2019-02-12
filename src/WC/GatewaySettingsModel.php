@@ -43,7 +43,7 @@ class GatewaySettingsModel
                     'gateway-settings',
                     'woo-paypalplus'
                 ),
-                'default' => _x('PayPal', 'gateway-setting', 'woo-paypalplus'),
+                'default' => _x('PayPal, Direct Debit, Credit Card and Invoice (if available)', 'gateway-setting', 'woo-paypalplus'),
             ],
             'description' => [
                 'title' => _x('Description', 'gateway-setting', 'woo-paypalplus'),
@@ -52,7 +52,7 @@ class GatewaySettingsModel
                     'This controls the payment gateway description the user sees during checkout.',
                     'woo-paypalplus'
                 ),
-                'default' => '',
+                'default' => 'Please choose a payment method:',
             ],
         ];
     }

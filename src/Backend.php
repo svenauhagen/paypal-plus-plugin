@@ -39,8 +39,10 @@ final class Backend implements Controller
             $assetUrl = plugin_dir_url($this->file);
             $min = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
             $adminScript = "{$assetUrl}/assets/js/admin{$min}.js";
+            $adminStyle = "{$assetUrl}/assets/css/admin{$min}.css";
 
             wp_enqueue_script('paypalplus-woocommerce-admin', $adminScript, ['jquery']);
+            wp_enqueue_style('paypalplus-woocommerce-admin', $adminStyle, []);
         });
     }
 }
