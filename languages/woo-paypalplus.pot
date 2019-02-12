@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: PayPal Plus for WooCommerce 1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/paypal-plus-"
 "plugin\n"
-"POT-Creation-Date: 2019-02-04 16:09+0100\n"
+"POT-Creation-Date: 2019-02-12 10:42+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -73,37 +73,43 @@ msgid ""
 "This controls the name of the payment gateway the user sees during checkout."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:46
+#: src/WC/GatewaySettingsModel.php:47
 msgctxt "gateway-setting"
-msgid "PayPal"
+msgid "PayPal, Direct Debit, Credit Card and Invoice (if available)"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:49
+#: src/WC/GatewaySettingsModel.php:53
 msgctxt "gateway-setting"
 msgid "Description"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:52
+#: src/WC/GatewaySettingsModel.php:56
+msgctxt "gateway-setting"
 msgid ""
 "This controls the payment gateway description the user sees during checkout."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:64
+#: src/WC/GatewaySettingsModel.php:61
+msgctxt "gateway-setting"
+msgid "Please choose a payment method:"
+msgstr ""
+
+#: src/WC/GatewaySettingsModel.php:73
 msgctxt "gateway-setting"
 msgid "Credentials"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:69
+#: src/WC/GatewaySettingsModel.php:78
 msgctxt "gateway-setting"
 msgid "PayPal Sandbox"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:71
+#: src/WC/GatewaySettingsModel.php:80
 msgctxt "gateway-setting"
 msgid "Enable PayPal Sandbox"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:75
+#: src/WC/GatewaySettingsModel.php:84
 #, php-format
 msgctxt "gateway-setting"
 msgid ""
@@ -111,85 +117,85 @@ msgid ""
 "\">developer account</a>."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:83
+#: src/WC/GatewaySettingsModel.php:92
 msgctxt "gateway-setting"
 msgid "Sandbox Client ID"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:86
+#: src/WC/GatewaySettingsModel.php:95
 msgctxt "gateway-setting"
 msgid "Enter your PayPal REST Sandbox API Client ID."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:94
+#: src/WC/GatewaySettingsModel.php:103
 msgctxt "gateway-setting"
 msgid "Sandbox Secret ID"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:97
+#: src/WC/GatewaySettingsModel.php:106
 msgctxt "gateway-setting"
 msgid "Enter your PayPal REST Sandbox API Secret ID."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:105
+#: src/WC/GatewaySettingsModel.php:114
 msgctxt "gateway-setting"
 msgid "Sandbox Experience Profile ID"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:108 src/WC/GatewaySettingsModel.php:141
+#: src/WC/GatewaySettingsModel.php:117 src/WC/GatewaySettingsModel.php:150
 msgctxt "gateway-setting"
 msgid ""
 "This value will be automatically generated and populated here when you save "
 "your settings."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:116
+#: src/WC/GatewaySettingsModel.php:125
 msgctxt "gateway-setting"
 msgid "Live Client ID"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:119
+#: src/WC/GatewaySettingsModel.php:128
 msgctxt "gateway-setting"
 msgid "Enter your PayPal REST Live API Client ID."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:127
+#: src/WC/GatewaySettingsModel.php:136
 msgctxt "gateway-setting"
 msgid "Live Secret ID"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:130
+#: src/WC/GatewaySettingsModel.php:139
 msgctxt "gateway-setting"
 msgid "Enter your PayPal REST Live API Secret ID."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:138
+#: src/WC/GatewaySettingsModel.php:147
 msgctxt "gateway-setting"
 msgid "Experience Profile ID"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:155
+#: src/WC/GatewaySettingsModel.php:164
 msgctxt "gateway-setting"
 msgid "Web Profile"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:160
+#: src/WC/GatewaySettingsModel.php:169
 msgctxt "gateway-setting"
 msgid "Brand Name"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:163
+#: src/WC/GatewaySettingsModel.php:172
 msgctxt "gateway-setting"
 msgid ""
 "This will be displayed as your brand / company name on the PayPal checkout "
 "pages."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:170
+#: src/WC/GatewaySettingsModel.php:179
 msgid "PayPal Checkout Logo (190x60px)"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:174
+#: src/WC/GatewaySettingsModel.php:183
 #, php-format
 msgctxt "gateway-setting"
 msgid ""
@@ -197,17 +203,17 @@ msgid ""
 "pages. <br/> Use https and max 127 characters.(E.G., %s)."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:195
+#: src/WC/GatewaySettingsModel.php:204
 msgctxt "gateway-setting"
 msgid "Settings"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:200
+#: src/WC/GatewaySettingsModel.php:209
 msgctxt "gateway-setting"
 msgid "Invoice Prefix"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:203
+#: src/WC/GatewaySettingsModel.php:212
 msgctxt "gateway-setting"
 msgid ""
 "Please enter a prefix for your invoice numbers. If you use your PayPal "
@@ -215,40 +221,40 @@ msgid ""
 "allow orders with the same invoice number."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:211
+#: src/WC/GatewaySettingsModel.php:220
 msgctxt "gateway-setting"
 msgid "Cancel Page"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:213
+#: src/WC/GatewaySettingsModel.php:222
 msgctxt "gateway-setting"
 msgid ""
 "Sets the page users will be returned to if they click the Cancel link on the "
 "PayPal checkout pages."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:222
+#: src/WC/GatewaySettingsModel.php:231
 msgctxt "gateway-setting"
 msgid "Custom Cancelation URL"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:225
+#: src/WC/GatewaySettingsModel.php:234
 msgctxt "gateway-setting"
 msgid ""
 "URL to a custom page to be used for cancelation. Please select \"custom\" "
 "above first."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:232
+#: src/WC/GatewaySettingsModel.php:241
 msgctxt "gateway-setting"
 msgid "Legal Note for PAY UPON INVOICE Payment"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:238
+#: src/WC/GatewaySettingsModel.php:247
 msgid "legal note that will be added to the thank you page and emails."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:242
+#: src/WC/GatewaySettingsModel.php:251
 msgid ""
 "Dealer has ceeded the claim against you within the framework of an ongoing "
 "factoring contract to the PayPal (Europe) S.àr.l. et Cie, S.C.A.. Payments "
@@ -256,29 +262,29 @@ msgid ""
 "Cie, S.C.A."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:248
+#: src/WC/GatewaySettingsModel.php:257
 msgctxt "gateway-setting"
 msgid "Pay upon Invoice Instructions"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:251
+#: src/WC/GatewaySettingsModel.php:260
 msgctxt "gateway-setting"
 msgid ""
 "Pay upon Invoice Instructions that will be added to the thank you page and "
 "emails."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:256
+#: src/WC/GatewaySettingsModel.php:265
 msgctxt "gateway-setting"
 msgid "Please transfer the complete amount to the bank account provided below."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:263
+#: src/WC/GatewaySettingsModel.php:272
 msgctxt "gateway-setting"
 msgid "Download Log File"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:268
+#: src/WC/GatewaySettingsModel.php:277
 #, php-format
 msgctxt "gateway-setting"
 msgid ""
@@ -287,17 +293,17 @@ msgid ""
 "your ticket when contacting support."
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:278
+#: src/WC/GatewaySettingsModel.php:287
 msgctxt "gateway-setting"
 msgid "Disable default gateway override"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:283
+#: src/WC/GatewaySettingsModel.php:292
 msgctxt "gateway-setting"
 msgid "Disable"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:286
+#: src/WC/GatewaySettingsModel.php:295
 msgctxt "gateway-setting"
 msgid ""
 "PayPal PLUS will be selected as default payment gateway regardless of its "
@@ -305,27 +311,27 @@ msgid ""
 "here"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:302
+#: src/WC/GatewaySettingsModel.php:311
 msgctxt "gateway-setting"
 msgid "Cart"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:303
+#: src/WC/GatewaySettingsModel.php:312
 msgctxt "gateway-setting"
 msgid "Checkout"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:304
+#: src/WC/GatewaySettingsModel.php:313
 msgctxt "gateway-setting"
 msgid "Account"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:305
+#: src/WC/GatewaySettingsModel.php:314
 msgctxt "gateway-setting"
 msgid "Shop"
 msgstr ""
 
-#: src/WC/GatewaySettingsModel.php:306
+#: src/WC/GatewaySettingsModel.php:315
 msgctxt "gateway-setting"
 msgid "Custom"
 msgstr ""
@@ -424,50 +430,50 @@ msgstr ""
 msgid "Reference"
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:84
+#: src/WC/PayPalPlusGateway.php:85
 msgctxt "gateway-settings"
 msgid ""
 "Allow customers to conveniently checkout with different payment options like "
 "PayPal, Direct Debit, Credit Card and Invoice (if available)."
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:177
+#: src/WC/PayPalPlusGateway.php:181
 msgid "Error processing checkout. Please check the logs. "
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:256
+#: src/WC/PayPalPlusGateway.php:260
 #, php-format
 msgid "Your API credentials are either missing or invalid: %s"
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:442
+#: src/WC/PayPalPlusGateway.php:446
 msgid "Checkout Logo cannot contains more than 127 characters."
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:450
+#: src/WC/PayPalPlusGateway.php:454
 msgid ""
 "Checkout Logo must use the http secure protocol HTTPS. EG. (https://my-url)"
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:467
+#: src/WC/PayPalPlusGateway.php:471
 msgid "Error processing checkout. Please try again. "
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:722
+#: src/WC/PayPalPlusGateway.php:726
 msgid ""
 "Below you can see if your account is successfully hooked up to use PayPal "
 "PLUS."
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:738
+#: src/WC/PayPalPlusGateway.php:742
 msgid "Error connecting to the API. Check that the credentials are correct."
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:752
+#: src/WC/PayPalPlusGateway.php:756
 msgid "Note: This is connected to your sandbox account."
 msgstr ""
 
-#: src/WC/PayPalPlusGateway.php:756
+#: src/WC/PayPalPlusGateway.php:760
 msgid "Note: This is connected to your live PayPal account."
 msgstr ""
 
