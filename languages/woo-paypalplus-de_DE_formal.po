@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/paypal-plus-"
 "plugin\n"
 "POT-Creation-Date: 2019-02-04 15:57+0100\n"
-"PO-Revision-Date: 2019-02-12 15:56+0100\n"
+"PO-Revision-Date: 2019-02-12 16:13+0100\n"
 "Last-Translator: admin <m.meisselbach@inpsyde.com>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -20,21 +20,21 @@ msgid ""
 "PayPal PLUS requires PHP version %1$1s or higher. You are running version "
 "%2$2s "
 msgstr ""
-"PayPal Plus benötigt PHP Version %1$1s oder höher. Sie nutzen Version %2$2s "
+"PayPal PLUS benötigt PHP Version %1$1s oder höher. Sie nutzen Version %2$2s "
 
 #: paypalplus-woocommerce.php:52
 msgid "Could not find a working autoloader for PayPal PLUS."
 msgstr ""
-"Es konnte kein funktionierender Autoloader für Paypal Plus gefunden werden."
+"Es konnte kein funktionierender Autoloader für Paypal PLUS gefunden werden."
 
 #: paypalplus-woocommerce.php:64
 msgid "PayPal PLUS requires WooCommerce to be active."
-msgstr "WooCommerce muss aktiviert sein, um PayPal Plus benutzen zu können."
+msgstr "WooCommerce muss aktiviert sein, um PayPal PLUS benutzen zu können."
 
 #: paypalplus-woocommerce.php:72
 msgid "PayPal PLUS requires WooCommerce version 3.0 or higher ."
 msgstr ""
-"WooCommerce Version 3.0 oder höher muss aktiviert sein, um PayPal Plus "
+"WooCommerce Version 3.0 oder höher muss aktiviert sein, um PayPal PLUS "
 "benutzen zu können."
 
 #: src/Notice/Admin.php:125
@@ -53,7 +53,7 @@ msgstr "Aktivieren/Deaktivieren"
 #: src/WC/GatewaySettingsModel.php:35
 msgctxt "gateway-settings"
 msgid "Enable PayPal PLUS"
-msgstr "PayPal Plus aktivieren"
+msgstr "PayPal PLUS aktivieren"
 
 #: src/WC/GatewaySettingsModel.php:39
 msgctxt "gateway-settings"
@@ -328,7 +328,7 @@ msgid ""
 "position in the list of enabled gateways. You can turn off this behaviour "
 "here"
 msgstr ""
-"PayPal Plus wird als Standard-Zahlungs-Gateway ausgewählt, unabhängig von "
+"PayPal PLUS wird als Standard-Zahlungs-Gateway ausgewählt, unabhängig von "
 "seiner Position in der Liste der aktivierten Gateways. Sie können dieses "
 "Verhalten hier deaktivieren"
 
@@ -494,7 +494,7 @@ msgid ""
 "Below you can see if your account is successfully hooked up to use PayPal "
 "PLUS."
 msgstr ""
-"Unten sehen Sie, ob Ihr Konto erfolgreich für die Nutzung von PayPalPlus "
+"Unten sehen Sie, ob Ihr Konto erfolgreich für die Nutzung von PayPal PLUS "
 "verbunden wurde."
 
 #: src/WC/PayPalPlusGateway.php:738
@@ -525,12 +525,12 @@ msgstr "PayPal Ursachencode: %s."
 
 #: src/WC/Payment/PaymentExecutionSuccess.php:78
 msgid "PayPal PLUS payment completed"
-msgstr "PayPal Plus Zahlung abgeschlossen"
+msgstr "PayPal PLUS Zahlung abgeschlossen"
 
 #: src/WC/Payment/PaymentExecutionSuccess.php:81
 #, php-format
 msgid "PayPal PLUS payment approved! Transaction ID: %s"
-msgstr "PayPal Plus Zahlung genehmigt! Transaktions-ID: %s"
+msgstr "PayPal PLUS Zahlung genehmigt! Transaktions-ID: %s"
 
 #: src/WC/Payment/PaymentExecutionSuccess.php:87
 msgid "Awaiting payment"
