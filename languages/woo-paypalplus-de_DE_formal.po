@@ -4,7 +4,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/paypal-plus-"
 "plugin\n"
 "POT-Creation-Date: 2019-02-04 15:57+0100\n"
-"PO-Revision-Date: 2019-02-04 16:09+0100\n"
+"PO-Revision-Date: 2019-02-12 15:56+0100\n"
 "Last-Translator: admin <m.meisselbach@inpsyde.com>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -43,7 +43,7 @@ msgstr "Nicht wieder anzeigen"
 
 #: src/Plugin.php:44
 msgid "PayPal PLUS"
-msgstr "Zahlungsdienstleister PayPal"
+msgstr ""
 
 #: src/WC/GatewaySettingsModel.php:33
 msgctxt "gateway-settings"
