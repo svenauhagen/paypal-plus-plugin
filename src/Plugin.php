@@ -14,17 +14,12 @@ use WCPayPalPlus\WC\PayPalPlusGateway;
 class Plugin
 {
     /**
-     * Plugin filename.
-     *
-     * @var string
-     */
-    private $file;
-    /**
      * Gateway ID.
      *
      * @var string
      */
     private $gateway_id = 'paypal_plus';
+
     /**
      * Payment Gateway object.
      *
@@ -34,10 +29,8 @@ class Plugin
 
     /**
      * Plugin constructor.
-     *
-     * @param string $file Plugin filename.
      */
-    public function __construct($file)
+    public function __construct()
     {
         $this->gateway = new PayPalPlusGateway(
             $this->gateway_id,
@@ -45,43 +38,18 @@ class Plugin
         );
         $this->gateway->register();
 
-        $this->file = $file;
+        add_filter('woocommerce_payment_gateways', function ($methods) {
+            $methods[] = $this->gateway;
+
+            $payPalGatewayIndex = array_search('WC_Gateway_Paypal', $methods, true);
+            if ($payPalGatewayIndex !== false) {
+                unset($methods[$payPalGatewayIndex]);
+            }
+
+            return $methods;
+        });
 
         $adminNotice = new Notice\Admin();
         $adminNotice->init();
-    }
-
-    /**
-     * Initialize the Plugin and configure all needed controllers.
-     */
-    public function init()
-    {
-        $this
-            ->get_common_controller()
-            ->init();
-
-        $this
-            ->get_request_controller()
-            ->init();
-    }
-
-    /**
-     * Returns the Controller that runs both on frontend and backend.
-     *
-     * @return Controller
-     */
-    public function get_common_controller()
-    {
-        return new Common($this->gateway);
-    }
-
-    /**
-     * Returns either a BackendController or a FrontendController, based on is_admin().
-     *
-     * @return Controller
-     */
-    private function get_request_controller()
-    {
-        return is_admin() ? new Backend($this->file, $this->gateway) : new Frontend($this->gateway);
     }
 }

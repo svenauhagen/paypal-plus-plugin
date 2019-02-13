@@ -8,13 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus;
+namespace WCPayPalPlus\Service\Exception;
 
-if (defined(__NAMESPACE__ . '\\FUNCTIONS_LOADED')) {
-    return;
+/**
+ * Exception to be thrown when a value that has already been set is to be manipulated.
+ */
+class InvalidValueAccess extends ContainerException
+{
+
 }
-
-const FUNCTIONS_LOADED = 1;
-
-require_once __DIR__ . '/utils.php';
-require_once __DIR__ . '/option.php';
