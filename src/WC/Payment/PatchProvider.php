@@ -97,6 +97,14 @@ class PatchProvider
             $payment_data['details']['tax'] = $this->order_data->get_total_tax();
         } else {
             $payment_data['details']['shipping'] += $this->order_data->get_shipping_tax();
+            // TODO Temporary workaround just for hotfix.
+            //      PPP already have OrderDataProcessor that take care of this formatting, but
+            //      it doesn't take into account the WooCommerce settings + it doesn't use
+            //      WooCommerce function for formatting. This will change next release.
+            $payment_data['details']['shipping'] = wc_format_decimal(
+                $payment_data['details']['shipping'],
+                wc_get_price_decimals()
+            );
         }
 
         $replace_patch
