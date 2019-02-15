@@ -35,13 +35,6 @@ class Data
     private $paypal_url;
 
     /**
-     * Order update handler
-     *
-     * @var OrderUpdater
-     */
-    private $updater;
-
-    /**
      * IPNData constructor.
      *
      * @param array $request Request data.
