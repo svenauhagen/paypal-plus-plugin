@@ -62,7 +62,7 @@ class Ipn
     public function valid_response()
     {
         $payment_status = $this->ipnData->paymentStatus();
-        $updater = $this->ipnData->orderUpdater();
+        $updater = OrderUpdaterFactory::create($this->ipnData);
 
         if (method_exists($updater, 'payment_status_' . $payment_status)) {
             do_action(
