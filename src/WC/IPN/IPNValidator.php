@@ -15,37 +15,11 @@ namespace WCPayPalPlus\WC\IPN;
  */
 class IPNValidator
 {
-    /**
-     * Request data.
-     *
-     * @var array
-     */
-    private $request_data;
-    /**
-     * URL for remote calls
-     *
-     * @var string
-     */
-    private $paypal_url;
-    /**
-     * The user agent
-     *
-     * @var string
-     */
-    private $user_agent;
+    private $ipnData;
 
-    /**
-     * IPNValidator constructor.
-     *
-     * @param array $request_data Request Data array.
-     * @param string $paypal_url URL to use in PayPal calls.
-     * @param string $user_agent User Agent to use in payPal calls.
-     */
-    public function __construct(array $request_data, $paypal_url, $user_agent)
+    public function __construct(IPNData $ipnData)
     {
-        $this->request_data = $request_data;
-        $this->paypal_url = $paypal_url;
-        $this->user_agent = $user_agent;
+        $this->ipnData = $ipnData;
     }
 
     /**
@@ -59,15 +33,15 @@ class IPNValidator
             return true;
         }
         $params = [
-            'body' => ['cmd' => '_notify-validate'] + $this->request_data,
+            'body' => ['cmd' => '_notify-validate'] + $this->data->get_all(),
             'timeout' => 60,
             'httpversion' => '1.1',
             'compress' => false,
             'decompress' => false,
-            'user-agent' => $this->user_agent,
+            'user-agent' => $this->data->get_user_agent(),
         ];
 
-        $response = wp_safe_remote_post($this->paypal_url, $params);
+        $response = wp_safe_remote_post($this->data->get_paypal_url(), $params);
 
         if ($response instanceof \WP_Error) {
             return false;

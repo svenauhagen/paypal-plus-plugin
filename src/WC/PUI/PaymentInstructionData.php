@@ -69,7 +69,7 @@ class PaymentInstructionData
      * PaymentInstructionData constructor.
      *
      * @param \WC_Order $order The WooCommcerce Order object.
-     * @param \WC_Payment_Gateway $legal_note
+     * @param string $legal_note
      */
     public function __construct(\WC_Order $order, $legal_note)
     {

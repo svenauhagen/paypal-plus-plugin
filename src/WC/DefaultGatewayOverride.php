@@ -2,6 +2,8 @@
 
 namespace WCPayPalPlus\WC;
 
+use WCPayPalPlus\Setting;
+
 /**
  * Class DefaultGatewayOverride
  *
@@ -11,37 +13,26 @@ namespace WCPayPalPlus\WC;
  */
 class DefaultGatewayOverride
 {
-    /**
-     * @var string
-     */
-    private $gateway_id = 'paypal_plus';
+    const SESSION_CHECK_KEY = '_ppp_default_override_flag';
+    const SESSION_CHECK_ACTIVATE = '1';
 
-    /**
-     * @var string
-     */
-    private $session_check_key = '_ppp_default_override_flag';
+    private $repository;
 
-    /**
-     * DefaultGatewayOverride constructor.
-     *
-     * @param string $gateway_id
-     */
-    public function __construct($gateway_id)
+    public function __construct(Setting\PlusRepository $repository)
     {
-        $this->gateway_id = $gateway_id;
+        $this->repository = $repository;
     }
 
-    /**
-     * Override the gateway if this is a vaild request
-     */
-    public function init()
+    public function maybeOverride()
     {
-        add_action('wp', function () {
-            if ($this->is_valid_request()) {
-                $this->override_gateway();
-                $this->set_session_flag();
-            }
-        });
+        if (!$this->isValidRequest()
+            || !$this->repository->isDefaultGatewayOverrideEnabled()
+        ) {
+            return;
+        }
+
+        $this->setChosenPaymentMethod(PayPalPlusGateway::GATEWAY_ID);
+        $this->setSessionFlag();
     }
 
     /**
@@ -49,7 +40,7 @@ class DefaultGatewayOverride
      *
      * @return bool
      */
-    public function is_valid_request()
+    public function isValidRequest()
     {
         if (is_ajax()) {
             return false;
@@ -64,7 +55,7 @@ class DefaultGatewayOverride
             return false;
         }
 
-        if ($this->get_session_flag()) {
+        if ($this->getSessionFlag()) {
             return false;
         }
 
@@ -76,24 +67,28 @@ class DefaultGatewayOverride
      *
      * @return array|string
      */
-    private function get_session_flag()
+    private function getSessionFlag()
     {
-        return WC()->session->get($this->session_check_key);
+        return WC()->session->get(self::SESSION_CHECK_KEY);
     }
 
     /**
      * Set the gateway override
+     *
+     * @param string $paymentMethod
      */
-    private function override_gateway()
+    private function setChosenPaymentMethod($paymentMethod)
     {
-        WC()->session->set('chosen_payment_method', $this->gateway_id);
+        assert(is_string($paymentMethod));
+
+        WC()->session->set('chosen_payment_method', $paymentMethod);
     }
 
     /**
      * Set our private session flag
      */
-    private function set_session_flag()
+    private function setSessionFlag()
     {
-        WC()->session->set($this->session_check_key, '1');
+        WC()->session->set(self::SESSION_CHECK_KEY, self::SESSION_CHECK_ACTIVATE);
     }
 }

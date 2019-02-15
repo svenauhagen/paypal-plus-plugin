@@ -101,7 +101,7 @@ class OrderUpdater
 
         $this->save_paypal_meta_data();
 
-        if ('completed' === $this->data->get_payment_status()) {
+        if ('completed' === $this->data->paymentStatus()) {
             $transaction_id = wc_clean($this->data->get('txn_id'));
             $note = __('IPN payment completed', 'woo-paypalplus');
 
@@ -190,7 +190,7 @@ class OrderUpdater
             'failed',
             sprintf(
                 __('Payment %s via IPN.', 'woo-paypalplus'),
-                wc_clean($this->data->get_payment_status())
+                wc_clean($this->data->paymentStatus())
             )
         );
     }
@@ -225,7 +225,7 @@ class OrderUpdater
                 'refunded',
                 sprintf(
                     __('Payment %s via IPN.', 'woo-paypalplus'),
-                    $this->data->get_payment_status()
+                    $this->data->paymentStatus()
                 )
             );
             do_action('wc_paypal_plus__ipn_payment_update', 'refunded', $this->data);
@@ -242,7 +242,7 @@ class OrderUpdater
             sprintf(
                 __('Payment %s via IPN.', 'woo-paypalplus'),
                 wc_clean(
-                    $this->data->get_payment_status()
+                    $this->data->paymentStatus()
                 )
             )
         );

@@ -13,100 +13,44 @@ namespace WCPayPalPlus\WC\IPN;
  */
 class IPN
 {
-    /**
-     * ID of this Payment gateway
-     *
-     * @var string
-     */
-    private $gateway_id;
+    const IPN_ENDPOINT_SUFFIX = '_ipn';
 
     /**
      * IPN Data Provider
      *
      * @var IPNData
      */
-    private $data;
+    private $ipnData;
 
     /**
      * IPN Validator class
      *
      * @var IPNValidator
      */
-    private $validator;
+    private $ipnValidator;
 
-    /**
-     * Constructor.
-     *
-     * @param string $gateway_id The Gateway ID.
-     *
-     * @param IPNData $data IPN Data provider.
-     *
-     * @param IPNValidator $validator IPN Data Validator.
-     */
-    public function __construct(
-        $gateway_id,
-        IPNData $data = null,
-        IPNValidator $validator = null
-    ) {
-
-        $this->gateway_id = $gateway_id;
-        $this->data = $data ?: new IPNData(filter_input_array(INPUT_POST) ?: []);
-
-        $this->validator = $validator
-            ?: new IPNValidator(
-                $this->data->get_all(),
-                $this->data->get_paypal_url(),
-                $this->data->get_user_agent()
-            );
-    }
-
-    /**
-     * Register WP/WC Hooks
-     */
-    public function register()
+    public function __construct(IPNData $ipnData, IPNValidator $validator)
     {
-        return add_action(
-            'woocommerce_api_' . $this->get_api_endpoint(),
-            [$this, 'check_response']
-        );
-    }
-
-    /**
-     * Returns the endpoint used for IPN requests
-     *
-     * @return string
-     */
-    private function get_api_endpoint()
-    {
-        return $this->gateway_id . '_ipn';
-    }
-
-    /**
-     * Returns the Notification URL
-     *
-     * @return string
-     */
-    public function get_notify_url()
-    {
-        return WC()->api_request_url($this->get_api_endpoint());
+        $this->ipnData = $ipnData;
+        $this->ipnValidator = $validator;
     }
 
     /**
      * Check for PayPal IPN Response.
      */
-    public function check_response()
+    public function checkResponse()
     {
-        $order = $this->data->get_woocommerce_order();
+        $order = $this->ipnData->woocommerceOrder();
 
         if ($order
-            && $this->validator->validate()
-            && !empty($this->data->get('custom'))
+            && $this->ipnValidator->validate()
+            && !empty($this->ipnData->get('custom'))
         ) {
             $this->valid_response();
             exit;
         }
 
-        do_action('wc_paypal_plus_log_error', 'Invalid IPN call', $this->data->get_all());
+        do_action('wc_paypal_plus_log_error', 'Invalid IPN call', $this->ipnData->all());
         wp_die('PayPal IPN Request Failure', 'PayPal IPN', ['response' => 500]);
     }
 
@@ -115,13 +59,14 @@ class IPN
      */
     public function valid_response()
     {
-        $payment_status = $this->data->get_payment_status();
-        $updater = $this->data->get_order_updater();
+        $payment_status = $this->ipnData->paymentStatus();
+        $updater = $this->ipnData->orderUpdater();
+
         if (method_exists($updater, 'payment_status_' . $payment_status)) {
             do_action(
                 'wc_paypal_plus_log',
                 'Processing IPN. payment status: ' . $payment_status,
-                $this->data->get_all()
+                $this->ipnData->all()
             );
             $updater->{"payment_status_{$payment_status}"}();
 

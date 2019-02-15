@@ -27,7 +27,7 @@ class PaymentInstructionView
     /**
      * Render the instructions table on the thank you page
      */
-    public function thankyou_page()
+    public function thankyouPage()
     {
         esc_html_e(
             'Please transfer the complete amount to the bank account provided below.',
@@ -72,11 +72,11 @@ class PaymentInstructionView
     /**
      * Renders the instructions table.
      *
-     * @param bool $plain_text
+     * @param bool $plainText
      */
-    public function email_instructions($plain_text = false)
+    public function emailInstructions($plainText = false)
     {
-        if (!$plain_text) {
+        if (!$plainText) {
             esc_html_e(
                 'Please transfer the complete amount to the bank account provided below.',
                 'woo-paypalplus'
@@ -93,7 +93,7 @@ class PaymentInstructionView
             echo PHP_EOL;
 
             echo '<ul class="wc-bacs-bank-details order_details bacs_details">' . PHP_EOL;
-            foreach ($this->get_account_fields() as $field_key => $field) {
+            foreach ($this->getAccountFields() as $field_key => $field) {
                 if (!empty($field['value'])) {
                     echo '<li class="' . esc_attr($field_key) . '">' . esc_attr($field['label']) . ': <strong>' . wptexturize($field['value']) . '</strong></li>' . PHP_EOL;
                 }
@@ -110,7 +110,7 @@ class PaymentInstructionView
             esc_html_e('PayPal Bank Details', 'woo-paypalplus');
             echo PHP_EOL;
 
-            foreach ($this->get_account_fields() as $field_key => $field) {
+            foreach ($this->getAccountFields() as $field_key => $field) {
                 if (!empty($field['value'])) {
                     echo ' - ' . esc_attr($field['label']) . ': ' . wptexturize($field['value']) . PHP_EOL;
                 }
@@ -125,7 +125,7 @@ class PaymentInstructionView
      *
      * @return array
      */
-    private function get_account_fields()
+    private function getAccountFields()
     {
         return [
             'bank_name' => [

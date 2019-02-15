@@ -15,6 +15,9 @@ namespace WCPayPalPlus\WC\IPN;
  */
 class IPNData
 {
+    const PAYPAL_SANDBOX_URL = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+    const PAYPAL_LIVE_URL = 'https://www.paypal.com/cgi-bin/webscr';
+
     /**
      * Request data
      *
@@ -28,13 +31,6 @@ class IPNData
      * @var string
      */
     private $paypal_url;
-
-    /**
-     * Sandbox flag
-     *
-     * @var bool
-     */
-    private $sandbox;
 
     /**
      * Order update handler
@@ -52,10 +48,7 @@ class IPNData
     public function __construct(array $request = [], $sandbox = true)
     {
         $this->request = $request;
-        $this->paypal_url = $sandbox
-            ? 'https://www.sandbox.paypal.com/cgi-bin/webscr'
-            : 'https://www.paypal.com/cgi-bin/webscr';
-        $this->sandbox = $sandbox;
+        $this->paypal_url = $sandbox ? self::PAYPAL_SANDBOX_URL : self::PAYPAL_LIVE_URL;
     }
 
     /**
@@ -63,7 +56,7 @@ class IPNData
      *
      * @return string
      */
-    public function get_paypal_url()
+    public function paypalUrl()
     {
         return $this->paypal_url;
     }
@@ -73,7 +66,7 @@ class IPNData
      *
      * @return string
      */
-    public function get_payment_status()
+    public function paymentStatus()
     {
         return strtolower($this->get('payment_status'));
     }
@@ -112,10 +105,10 @@ class IPNData
      *
      * @return OrderUpdater
      */
-    public function get_order_updater()
+    public function orderUpdater()
     {
-        if (is_null($this->updater)) {
-            $this->updater = new OrderUpdater($this->get_woocommerce_order(), $this);
+        if ($this->updater === null) {
+            $this->updater = new OrderUpdater($this->woocommerceOrder(), $this);
         }
 
         return $this->updater;
@@ -128,7 +121,7 @@ class IPNData
      *
      * @return \WC_Order
      */
-    public function get_woocommerce_order()
+    public function woocommerceOrder()
     {
         $raw_custom = $this->get('custom', false);
         if (!$raw_custom) {
@@ -160,7 +153,7 @@ class IPNData
      *
      * @return array
      */
-    public function get_all()
+    public function all()
     {
         return $this->request;
     }
@@ -170,7 +163,7 @@ class IPNData
      *
      * @return string
      */
-    public function get_user_agent()
+    public function userAgent()
     {
         return 'WooCommerce/' . WC()->version;
     }

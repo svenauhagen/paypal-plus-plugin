@@ -121,7 +121,9 @@ $bootstrap = \Closure::bind(function () {
 
             $providers = new ServiceProvidersCollection();
             $providers
-                ->add(new Assets\ServiceProvider());
+                ->add(new Notice\ServiceProvider())
+                ->add(new Assets\ServiceProvider())
+                ->add(new WC\ServiceProvider());
 
             $payPalPlus = new PayPalPlus($container, $providers);
 
@@ -145,9 +147,6 @@ $bootstrap = \Closure::bind(function () {
                 throw $thr;
             }
         }
-
-        // TODO Remove this after refactor.
-        new Plugin();
 
         return $bootstrapped;
     }
