@@ -106,12 +106,7 @@ class Data
         return new OrderUpdater(
             $order,
             $this,
-            new PaymentValidator(
-                $this->get('txn_type'),
-                $this->get('mc_currency'),
-                $this->get('mc_gross'),
-                $order
-            )
+            new PaymentValidator($this, $order)
         );
     }
 
