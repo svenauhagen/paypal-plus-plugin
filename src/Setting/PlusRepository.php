@@ -1,4 +1,4 @@
-<?php
+<?php # -*- coding: utf-8 -*-
 /*
  * This file is part of the PayPal PLUS for WooCommerce package.
  *
