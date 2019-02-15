@@ -8,7 +8,7 @@ use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 use WCPayPalPlus\Notice;
 use WCPayPalPlus\Setting\PlusRepository;
-use WCPayPalPlus\WC\IPN\IPN;
+use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\WC\Payment\CartData;
 use WCPayPalPlus\WC\Payment\OrderData;
 use WCPayPalPlus\WC\Payment\PaymentData;
@@ -18,7 +18,6 @@ use WCPayPalPlus\WC\Payment\PaymentPatchData;
 use WCPayPalPlus\WC\Payment\WCPaymentExecution;
 use WCPayPalPlus\WC\Payment\WCPaymentPatch;
 use WCPayPalPlus\WC\Payment\WCPayPalPayment;
-use WCPayPalPlus\WC\PUI\PaymentInstructionRenderer;
 use WCPayPalPlus\WC\Refund\RefundData;
 use WCPayPalPlus\WC\Refund\WCRefund;
 
@@ -595,7 +594,7 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
     {
         $return_url = WC()->api_request_url($this->id);
         $cancel_url = $this->cancelUrl();
-        $notify_url = WC()->api_request_url(self::GATEWAY_ID . IPN::IPN_ENDPOINT_SUFFIX);
+        $notify_url = WC()->api_request_url(self::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX);
         $web_profile_id = $this->get_option($this->experienceProfileOptionKey());
         $api_context = $this->apiContext($this->storedApiCredentials());
 

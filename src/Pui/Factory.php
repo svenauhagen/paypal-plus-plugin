@@ -8,23 +8,23 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC\PUI;
+namespace WCPayPalPlus\Pui;
 
 /**
  * Class PaymentInstructionDataFactory
- * @package WCPayPalPlus\WC\PUI
+ * @package WCPayPalPlus\Pui
  */
-class PaymentInstructionFactory
+class Factory
 {
     public static function createData(\WC_Order $order, $legalNote)
     {
         assert(is_string($legalNote));
 
-        return new PaymentInstructionData($order, $legalNote);
+        return new Data($order, $legalNote);
     }
 
-    public static function createViewFromData(PaymentInstructionData $data)
+    public static function createViewFromData(Data $data)
     {
-        return new PaymentInstructionView($data);
+        return new View($data);
     }
 }

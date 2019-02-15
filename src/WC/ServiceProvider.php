@@ -13,10 +13,7 @@ namespace WCPayPalPlus\WC;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\PlusRepository;
-use WCPayPalPlus\WC\IPN\IPN;
-use WCPayPalPlus\WC\IPN\IPNData;
-use WCPayPalPlus\WC\IPN\IPNValidator;
-use WCPayPalPlus\WC\PUI\PaymentInstructionRenderer;
+use WCPayPalPlus\Pui\Renderer;
 
 /**
  * Class ServiceProvider
@@ -31,28 +28,6 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[PayPalPlusGateway::class]
             );
         };
-        $container[IPNData::class] = function (Container $container) {
-            return new IPNData(
-                filter_input_array(INPUT_POST) ?: [],
-                $container[PlusRepository::class]->isSandboxed()
-            );
-        };
-        $container[IPNValidator::class] = function (Container $container) {
-            return new IPNValidator(
-                $container[IPNData::class]
-            );
-        };
-        $container[IPN::class] = function (Container $container) {
-            return new IPN(
-                $container[IPNData::class],
-                $container[IPNValidator::class]
-            );
-        };
-        $container[PaymentInstructionRenderer::class] = function (Container $container) {
-            return new PaymentInstructionRenderer(
-                $container[PlusRepository::class]
-            );
-        };
         $container[PayPalPlusGateway::class] = function (Container $container) {
             return new PayPalPlusGateway();
         };
@@ -64,13 +39,6 @@ class ServiceProvider implements BootstrappableServiceProvider
     }
 
     public function bootstrap(Container $container)
-    {
-        $this->bootstrapWooCommerceGateway($container);
-        $this->bootstrapIPN($container);
-        $this->bootstrapPUI($container);
-    }
-
-    private function bootstrapWooCommerceGateway(Container $container)
     {
         $payPalPlusGatewayId = PayPalPlusGateway::GATEWAY_ID;
         $payPalPlusGateway = $container[PayPalPlusGateway::class];
@@ -125,22 +93,5 @@ class ServiceProvider implements BootstrappableServiceProvider
             'woocommerce_removed_coupon',
             [$payPalPlusGateway, 'clear_session_data']
         );
-    }
-
-    private function bootstrapIPN(Container $container)
-    {
-        add_action(
-            'woocommerce_api_' . PayPalPlusGateway::GATEWAY_ID . IPN::IPN_ENDPOINT_SUFFIX,
-            [$container[IPN::class], 'checkResponse']
-        );
-    }
-
-    private function bootstrapPUI(Container $container)
-    {
-        $pui = $container[PaymentInstructionRenderer::class];
-
-        add_action('woocommerce_thankyou_paypal_plus', [$pui, 'delegate_thankyou'], 10, 1);
-        add_action('woocommerce_email_before_order_table', [$pui, 'delegate_email'], 10, 3);
-        add_action('woocommerce_view_order', [$pui, 'delegate_view_order'], 10, 1);
     }
 }

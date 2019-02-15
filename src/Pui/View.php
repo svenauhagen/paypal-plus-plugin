@@ -1,25 +1,25 @@
 <?php
 
-namespace WCPayPalPlus\WC\PUI;
+namespace WCPayPalPlus\Pui;
 
 /**
  * Class PaymentInstructionView
  */
-class PaymentInstructionView
+class View
 {
     /**
      * PUI data
      *
-     * @var PaymentInstructionData
+     * @var Data
      */
     private $data;
 
     /**
      * PaymentInstructionView constructor.
      *
-     * @param PaymentInstructionData $data PUI Data provider.
+     * @param Data $data PUI Data provider.
      */
-    public function __construct(PaymentInstructionData $data)
+    public function __construct(Data $data)
     {
         $this->data = $data;
     }
@@ -40,33 +40,33 @@ class PaymentInstructionView
             <tbody>
             <tr>
                 <th scope="row"><?php esc_html_e('Bank name:', 'woo-paypalplus'); ?></th>
-                <td><span><?php echo esc_html($this->data->get_bank_name()); ?></span></td>
+                <td><span><?php echo esc_html($this->data->bankName()); ?></span></td>
             </tr>
             <tr>
                 <th scope="row"><?php esc_html_e('Account holder name:', 'woo-paypalplus'); ?></th>
-                <td><span><?php echo esc_html($this->data->get_account_holder_name()); ?></span>
+                <td><span><?php echo esc_html($this->data->accountHolderName()); ?></span>
                 </td>
             </tr>
             <tr>
                 <th scope="row"><?php esc_html_e('IBAN:', 'woo-paypalplus'); ?></th>
-                <td><span><?php echo esc_html($this->data->get_iban()); ?></span></td>
+                <td><span><?php echo esc_html($this->data->iban()); ?></span></td>
             </tr>
             <tr>
                 <th scope="row"><?php esc_html_e('BIC:', 'woo-paypalplus'); ?></th>
-                <td><span><?php echo esc_html($this->data->get_bic()); ?></span></td>
+                <td><span><?php echo esc_html($this->data->bic()); ?></span></td>
             </tr>
             <tr>
                 <th scope="row"><?php esc_html_e('Payment due date:', 'woo-paypalplus'); ?></th>
-                <td><span><?php echo esc_html($this->data->get_payment_due_date()) ?></span></td>
+                <td><span><?php echo esc_html($this->data->paymentDueDate()) ?></span></td>
             </tr>
             <tr>
                 <th scope="row"><?php esc_html_e('Reference:', 'woo-paypalplus'); ?></th>
-                <td><span><?php echo esc_html($this->data->get_reference_number()); ?></span></td>
+                <td><span><?php echo esc_html($this->data->referenceNumber()); ?></span></td>
             </tr>
             </tbody>
         </table>
         <?php
-        echo $this->data->get_legal_note();
+        echo $this->data->legalNote();
     }
 
     /**
@@ -100,7 +100,7 @@ class PaymentInstructionView
             }
             echo '</ul>';
 
-            echo $this->data->get_legal_note() . PHP_EOL;
+            echo $this->data->legalNote() . PHP_EOL;
         } else {
             esc_html_e(
                 'Please transfer the complete amount to the bank account provided below.',
@@ -116,7 +116,7 @@ class PaymentInstructionView
                 }
             }
 
-            echo PHP_EOL . esc_html(strip_tags($this->data->get_legal_note())) . PHP_EOL;
+            echo PHP_EOL . esc_html(strip_tags($this->data->legalNote())) . PHP_EOL;
         }
     }
 
@@ -130,27 +130,27 @@ class PaymentInstructionView
         return [
             'bank_name' => [
                 'label' => __('Bank name', 'woo-paypalplus'),
-                'value' => $this->data->get_bank_name(),
+                'value' => $this->data->bankName(),
             ],
             'account_holder_name' => [
                 'label' => __('Account holder name', 'woo-paypalplus'),
-                'value' => $this->data->get_account_holder_name(),
+                'value' => $this->data->accountHolderName(),
             ],
             'iban' => [
                 'label' => __('IBAN', 'woo-paypalplus'),
-                'value' => $this->data->get_iban(),
+                'value' => $this->data->iban(),
             ],
             'bic' => [
                 'label' => __('BIC', 'woo-paypalplus'),
-                'value' => $this->data->get_bic(),
+                'value' => $this->data->bic(),
             ],
             'payment_due_date' => [
                 'label' => __('Payment due date', 'woo-paypalplus'),
-                'value' => $this->data->get_payment_due_date(),
+                'value' => $this->data->paymentDueDate(),
             ],
             'reference_number' => [
                 'label' => __('Reference', 'woo-paypalplus'),
-                'value' => $this->data->get_reference_number(),
+                'value' => $this->data->referenceNumber(),
             ],
         ];
     }

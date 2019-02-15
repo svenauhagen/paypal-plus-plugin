@@ -6,18 +6,18 @@
  * Time: 17:32
  */
 
-namespace WCPayPalPlus\WC\IPN;
+namespace WCPayPalPlus\Ipn;
 
 /**
  * Class IPNValidator
  *
- * @package WCPayPalPlus\WC\IPN
+ * @package WCPayPalPlus\Ipn
  */
-class IPNValidator
+class Validator
 {
     private $ipnData;
 
-    public function __construct(IPNData $ipnData)
+    public function __construct(Data $ipnData)
     {
         $this->ipnData = $ipnData;
     }

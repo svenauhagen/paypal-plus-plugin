@@ -6,30 +6,30 @@
  * Time: 10:46
  */
 
-namespace WCPayPalPlus\WC\IPN;
+namespace WCPayPalPlus\Ipn;
 
 /**
  * Handles responses from PayPal IPN.
  */
-class IPN
+class Ipn
 {
     const IPN_ENDPOINT_SUFFIX = '_ipn';
 
     /**
      * IPN Data Provider
      *
-     * @var IPNData
+     * @var Data
      */
     private $ipnData;
 
     /**
      * IPN Validator class
      *
-     * @var IPNValidator
+     * @var Validator
      */
     private $ipnValidator;
 
-    public function __construct(IPNData $ipnData, IPNValidator $validator)
+    public function __construct(Data $ipnData, Validator $validator)
     {
         $this->ipnData = $ipnData;
         $this->ipnValidator = $validator;

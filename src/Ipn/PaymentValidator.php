@@ -6,12 +6,12 @@
  * Time: 10:24
  */
 
-namespace WCPayPalPlus\WC\IPN;
+namespace WCPayPalPlus\Ipn;
 
 /**
  * Class PaymentValidator
  *
- * @package WCPayPalPlus\WC\IPN
+ * @package WCPayPalPlus\Ipn
  */
 class PaymentValidator
 {

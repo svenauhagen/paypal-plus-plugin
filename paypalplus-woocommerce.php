@@ -1,4 +1,4 @@
-<?php
+<?php # -*- coding: utf-8 -*-
 /**
  * Plugin Name: PayPal PLUS for WooCommerce
  * Description: PayPal Plus - the official WordPress Plugin for WooCommerce
@@ -123,7 +123,9 @@ $bootstrap = \Closure::bind(function () {
             $providers
                 ->add(new Notice\ServiceProvider())
                 ->add(new Assets\ServiceProvider())
-                ->add(new WC\ServiceProvider());
+                ->add(new WC\ServiceProvider())
+                ->add(new Ipn\ServiceProvider())
+                ->add(new Pui\ServiceProvider());
 
             $payPalPlus = new PayPalPlus($container, $providers);
 

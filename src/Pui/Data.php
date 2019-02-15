@@ -1,13 +1,13 @@
 <?php
 
-namespace WCPayPalPlus\WC\PUI;
+namespace WCPayPalPlus\Pui;
 
 /**
  * Class PaymentInstructionData
  *
- * @package WCPayPalPlus\WC\PUI
+ * @package WCPayPalPlus\Pui
  */
-class PaymentInstructionData
+class Data
 {
     /**
      * Bank name.
@@ -89,7 +89,7 @@ class PaymentInstructionData
      *
      * @return int
      */
-    public function get_order_id()
+    public function orderId()
     {
         return $this->order->get_id();
     }
@@ -100,7 +100,7 @@ class PaymentInstructionData
      *
      * @return bool
      */
-    public function has_payment_instructions()
+    public function hasPaymentInstructions()
     {
         return !empty($this->iban) && !empty($this->bic);
     }
@@ -110,7 +110,7 @@ class PaymentInstructionData
      *
      * @return string
      */
-    public function get_bank_name()
+    public function bankName()
     {
         return $this->bank_name;
     }
@@ -120,7 +120,7 @@ class PaymentInstructionData
      *
      * @return string
      */
-    public function get_account_holder_name()
+    public function accountHolderName()
     {
         return $this->account_holder_name;
     }
@@ -130,7 +130,7 @@ class PaymentInstructionData
      *
      * @return string
      */
-    public function get_iban()
+    public function iban()
     {
         return $this->iban;
     }
@@ -140,7 +140,7 @@ class PaymentInstructionData
      *
      * @return string
      */
-    public function get_payment_due_date()
+    public function paymentDueDate()
     {
         return date_i18n(get_option('date_format'), strtotime($this->payment_due_date));
     }
@@ -150,7 +150,7 @@ class PaymentInstructionData
      *
      * @return string
      */
-    public function get_bic()
+    public function bic()
     {
         return $this->bic;
     }
@@ -160,7 +160,7 @@ class PaymentInstructionData
      *
      * @return string
      */
-    public function get_reference_number()
+    public function referenceNumber()
     {
         return $this->reference_number;
     }
@@ -170,7 +170,7 @@ class PaymentInstructionData
      *
      * @return string
      */
-    public function get_legal_note()
+    public function legalNote()
     {
         return wpautop(wptexturize($this->legal_note));
     }

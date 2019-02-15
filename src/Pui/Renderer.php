@@ -6,16 +6,16 @@
  * Time: 15:22
  */
 
-namespace WCPayPalPlus\WC\PUI;
+namespace WCPayPalPlus\Pui;
 
 use WCPayPalPlus\Setting\PlusRepository;
 
 /**
  * Class PaymentInstructionRenderer
  *
- * @package WCPayPalPlus\WC\PUI
+ * @package WCPayPalPlus\Pui
  */
-class PaymentInstructionRenderer
+class Renderer
 {
     private $settingRepository;
 
@@ -27,19 +27,19 @@ class PaymentInstructionRenderer
     /**
      * Gather needed data and then render the view, if possible
      */
-    public function delegate_thankyou($order_id)
+    public function delegateThankyou($orderId)
     {
-        $order = wc_get_order($order_id);
-        $puiData = PaymentInstructionFactory::createData(
+        $order = wc_get_order($orderId);
+        $puiData = Factory::createData(
             $order,
             $this->settingRepository->legalNotes()
         );
 
-        if (!$puiData->has_payment_instructions()) {
+        if (!$puiData->hasPaymentInstructions()) {
             return;
         }
 
-        $puiView = PaymentInstructionFactory::createViewFromData($puiData);
+        $puiView = Factory::createViewFromData($puiData);
         $puiView->thankyouPage();
     }
 
@@ -50,39 +50,39 @@ class PaymentInstructionRenderer
      * @param bool $sentToAdmin Will the eMail be sent to the site admin?.
      * @param bool $plain_text Should we render as plain text?.
      */
-    public function delegate_email(\WC_Order $order, $sentToAdmin, $plain_text = false)
+    public function delegateEmail(\WC_Order $order, $sentToAdmin, $plain_text = false)
     {
-        $puiData = PaymentInstructionFactory::createData(
+        $puiData = Factory::createData(
             $order,
             $this->settingRepository->legalNotes()
         );
 
-        if (!$puiData->has_payment_instructions()) {
+        if (!$puiData->hasPaymentInstructions()) {
             return;
         }
 
-        $puiView = PaymentInstructionFactory::createViewFromData($puiData);
+        $puiView = Factory::createViewFromData($puiData);
         $puiView->emailInstructions($plain_text);
     }
 
     /**
      * Gather needed data and then render the view, if possible.
      *
-     * @param int $order_id WooCommerce order ID.
+     * @param int $orderId WooCommerce order ID.
      */
-    public function delegate_view_order($order_id)
+    public function delegateViewOrder($orderId)
     {
-        $order = wc_get_order($order_id);
-        $puiData = PaymentInstructionFactory::createData(
+        $order = wc_get_order($orderId);
+        $puiData = Factory::createData(
             $order,
             $this->settingRepository->legalNotes()
         );
 
-        if (!$puiData->has_payment_instructions()) {
+        if (!$puiData->hasPaymentInstructions()) {
             return;
         }
 
-        $puiView = PaymentInstructionFactory::createViewFromData($puiData);
+        $puiView = Factory::createViewFromData($puiData);
         $puiView->thankyouPage();
     }
 }

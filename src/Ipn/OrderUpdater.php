@@ -6,12 +6,12 @@
  * Time: 10:01
  */
 
-namespace WCPayPalPlus\WC\IPN;
+namespace WCPayPalPlus\Ipn;
 
 /**
  * Class OrderUpdater
  *
- * @package WCPayPalPlus\WC\IPN
+ * @package WCPayPalPlus\Ipn
  */
 class OrderUpdater
 {
@@ -25,7 +25,7 @@ class OrderUpdater
     /**
      * Request Data
      *
-     * @var IPNData
+     * @var Data
      */
     private $data;
 
@@ -40,24 +40,14 @@ class OrderUpdater
      * OrderUpdater constructor.
      *
      * @param \WC_Order $order WooCommerce Order.
-     * @param IPNData $data IPN Data.
+     * @param Data $data IPN Data.
      * @param PaymentValidator $validator Payment validator.
      */
-    public function __construct(
-        \WC_Order $order,
-        IPNData $data,
-        PaymentValidator $validator = null
-    ) {
-
+    public function __construct(\WC_Order $order, Data $data, PaymentValidator $validator)
+    {
         $this->order = $order;
         $this->data = $data;
-        $this->validator = $validator
-            ?: new PaymentValidator(
-                $this->data->get('txn_type'),
-                $this->data->get('mc_currency'),
-                $this->data->get('mc_gross'),
-                $order
-            );
+        $this->validator = $validator;
     }
 
     /**

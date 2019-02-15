@@ -6,14 +6,14 @@
  * Time: 16:43
  */
 
-namespace WCPayPalPlus\WC\IPN;
+namespace WCPayPalPlus\Ipn;
 
 /**
  * Class IPNData
  *
- * @package WCPayPalPlus\WC\IPN
+ * @package WCPayPalPlus\Ipn
  */
-class IPNData
+class Data
 {
     const PAYPAL_SANDBOX_URL = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
     const PAYPAL_LIVE_URL = 'https://www.paypal.com/cgi-bin/webscr';
@@ -107,11 +107,17 @@ class IPNData
      */
     public function orderUpdater()
     {
-        if ($this->updater === null) {
-            $this->updater = new OrderUpdater($this->woocommerceOrder(), $this);
-        }
-
-        return $this->updater;
+        $order = $this->woocommerceOrder();
+        return new OrderUpdater(
+            $order,
+            $this,
+            new PaymentValidator(
+                $this->get('txn_type'),
+                $this->get('mc_currency'),
+                $this->get('mc_gross'),
+                $order
+            )
+        );
     }
 
     /**
