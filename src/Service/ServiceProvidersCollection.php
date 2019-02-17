@@ -59,19 +59,18 @@ class ServiceProvidersCollection implements \Countable
      * and passes on potential further arguments.
      *
      * @param string $methodName
-     * @param array ...$args
+     * @param mixed ...$args
      */
-    public function applyMethod($methodName)
+    public function applyMethod($methodName, ...$args)
     {
         assert(is_string($methodName));
-        $args = array_slice(func_get_args(), 1);
 
         $this->storage->rewind();
 
         while ($this->storage->valid()) {
             /** @var callable $method */
             $method = [$this->storage->current(), $methodName];
-            call_user_func_array($method, $args);
+            $method(...$args);
 
             $this->storage->next();
         }
@@ -82,16 +81,14 @@ class ServiceProvidersCollection implements \Countable
      * and passes along potential further arguments.
      *
      * @param callable $callback
-     * @param array ...$args
+     * @param mixed ...$args
      */
-    public function applyCallback(callable $callback)
+    public function applyCallback(callable $callback, ...$args)
     {
-        $args = array_slice(func_get_args(), 1);
-
         $this->storage->rewind();
 
         while ($this->storage->valid()) {
-            call_user_func_array($callback, [$this->storage->current()] + $args);
+            $callback($this->storage->current(), ...$args);
             $this->storage->next();
         }
     }
@@ -101,20 +98,19 @@ class ServiceProvidersCollection implements \Countable
      * contains the providers that passed the filtering.
      *
      * @param callable $callback
-     * @param array ...$args
+     * @param mixed ...$args
      * @return ServiceProvidersCollection
      */
-    public function filter(callable $callback)
+    public function filter(callable $callback, ...$args)
     {
         $collection = new static();
-        $args = array_slice(func_get_args(), 1);
 
         $this->storage->rewind();
         while ($this->storage->valid()) {
             /** @var ServiceProvider $provider */
             $provider = $this->storage->current();
 
-            $callbackResponse = call_user_func_array($callback, [$provider] + $args);
+            $callbackResponse = $callback($provider, ...$args);
             if ($callbackResponse) {
                 $collection->add($provider);
             }
@@ -130,18 +126,17 @@ class ServiceProvidersCollection implements \Countable
      * contains the providers obtained.
      *
      * @param callable $callback
-     * @param array ...$args
+     * @param mixed ...$args
      * @return ServiceProvidersCollection
      * @throws \UnexpectedValueException If a given callback did not return a service provider instance.
      */
-    public function map(callable $callback)
+    public function map(callable $callback, ...$args)
     {
         $collection = new static();
-        $args = array_slice(func_get_args(), 1);
 
         $this->storage->rewind();
         while ($this->storage->valid()) {
-            $provider = call_user_func_array($callback, [$this->storage->current()] + $args);
+            $provider = $callback($this->storage->current(), ...$args);
             if (!$provider instanceof ServiceProvider) {
                 throw new \UnexpectedValueException(
                     __METHOD__ . ' expects transformation callbacks to return a service provider instance.'
