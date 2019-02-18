@@ -19,7 +19,7 @@
     }
   ],
   "require": {
-    "paypal/rest-api-sdk-php": "^1.14.0"
+    "paypal/rest-api-sdk-php": "~1.14.0"
   },
   "require-dev": {
     "brain/monkey": "^1.3",
