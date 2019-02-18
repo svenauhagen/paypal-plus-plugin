@@ -148,6 +148,8 @@ $bootstrap = \Closure::bind(function () {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 throw $thr;
             }
+
+            return false;
         }
 
         return $bootstrapped;
