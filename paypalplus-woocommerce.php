@@ -78,7 +78,6 @@ add_action('plugins_loaded', function () {
         return;
     }
 
-    (new PayPalModel72MonkeyPatch)->setHandler();
 
     $plugin = new Plugin(__FILE__);
     $plugin->init();
