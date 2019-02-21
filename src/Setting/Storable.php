@@ -10,12 +10,13 @@
 
 namespace WCPayPalPlus\Setting;
 
-/**
- * Interface Repository
- * @package WCPayPalPlus\Setting
- */
-interface Repository
+interface Storable
 {
     const OPTION_ON = 'yes';
     const OPTION_OFF = 'no';
+
+    /**
+     * @return bool
+     */
+    public function isSandboxed();
 }

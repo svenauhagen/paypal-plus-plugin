@@ -10,6 +10,8 @@
 
 namespace WCPayPalPlus\Ipn;
 
+use WCPayPalPlus\Setting;
+
 /**
  * Class IPNData
  *
@@ -35,15 +37,22 @@ class Data
     private $paypal_url;
 
     /**
-     * IPNData constructor.
-     *
-     * @param array $request Request data.
-     * @param bool $sandbox Flag to set sandbox mode.
+     * @var Setting\Storable
      */
-    public function __construct(array $request = [], $sandbox = true)
+    private $settingRepository;
+
+    /**
+     * Data constructor.
+     * @param array $request
+     * @param Setting\Storable $settingRepository
+     */
+    public function __construct(array $request, Setting\Storable $settingRepository)
     {
         $this->request = $request;
-        $this->paypal_url = $sandbox ? self::PAYPAL_SANDBOX_URL : self::PAYPAL_LIVE_URL;
+        $this->settingRepository = $settingRepository;
+        $this->paypal_url = $this->settingRepository->isSandboxed()
+            ? self::PAYPAL_SANDBOX_URL
+            : self::PAYPAL_LIVE_URL;
     }
 
     /**

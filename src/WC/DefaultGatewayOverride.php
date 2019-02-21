@@ -18,7 +18,7 @@ class DefaultGatewayOverride
 
     private $repository;
 
-    public function __construct(Setting\PlusRepository $repository)
+    public function __construct(Setting\PlusStorable $repository)
     {
         $this->repository = $repository;
     }
@@ -31,7 +31,7 @@ class DefaultGatewayOverride
             return;
         }
 
-        $this->setChosenPaymentMethod(PayPalPlusGateway::GATEWAY_ID);
+        $this->setChosenPaymentMethod(PlusGateway::GATEWAY_ID);
         $this->setSessionFlag();
     }
 

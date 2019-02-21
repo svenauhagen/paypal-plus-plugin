@@ -7,8 +7,9 @@ use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 use WCPayPalPlus\Notice;
-use WCPayPalPlus\Setting\PlusRepository;
 use WCPayPalPlus\Ipn\Ipn;
+use WCPayPalPlus\Setting\PlusRepositoryHelper;
+use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\WC\Payment\CartData;
 use WCPayPalPlus\WC\Payment\OrderData;
 use WCPayPalPlus\WC\Payment\PaymentData;
@@ -25,8 +26,10 @@ use WCPayPalPlus\WC\Refund\WCRefund;
  * Class PayPalPlusGateway
  * @package WCPayPalPlus\WC
  */
-class PayPalPlusGateway extends \WC_Payment_Gateway
+class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
 {
+    use PlusRepositoryHelper;
+
     const GATEWAY_ID = 'paypal_plus';
     const GATEWAY_TITLE_METHOD = 'PayPal PLUS';
 
@@ -59,8 +62,17 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
     public $method_title;
     // phpcs:enable
 
+    /**
+     * @var PlusGateway
+     */
+    private $gateway;
+
+    /**
+     * PayPalPlusGateway constructor.
+     */
     public function __construct()
     {
+        $this->gateway = $this;
         $this->id = self::GATEWAY_ID;
         $this->title = $this->get_option('title');
         $this->method_title = self::GATEWAY_TITLE_METHOD;
@@ -427,14 +439,6 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
     }
 
     /**
-     * @return bool
-     */
-    private function isSandbox()
-    {
-        return $this->get_option('testmode', 'yes') === 'yes';
-    }
-
-    /**
      * @param array $credentials
      * @return ApiContext|null
      */
@@ -707,15 +711,5 @@ class PayPalPlusGateway extends \WC_Payment_Gateway
             $output,
             sprintf('<strong>%s</strong>', $msgSandbox)
         );
-    }
-
-    private function isSandboxed()
-    {
-        $option = $this->get_option(
-            PlusRepository::OPTION_TEST_MODE_NAME,
-            PlusRepository::OPTION_ON
-        );
-
-        return $option === PlusRepository::OPTION_ON;
     }
 }
