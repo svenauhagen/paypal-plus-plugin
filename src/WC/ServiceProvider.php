@@ -12,8 +12,7 @@ namespace WCPayPalPlus\WC;
 
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
-use WCPayPalPlus\Setting\PlusRepository;
-use WCPayPalPlus\Pui\Renderer;
+use WCPayPalPlus\Setting;
 
 /**
  * Class ServiceProvider
@@ -23,25 +22,25 @@ class ServiceProvider implements BootstrappableServiceProvider
 {
     public function register(Container $container)
     {
-        $container[PlusRepository::class] = function (Container $container) {
-            return new PlusRepository(
-                $container[PayPalPlusGateway::class]
+        $container[Setting\PlusStorable::class] = function (Container $container) {
+            return new Setting\PlusRepository(
+                $container[PlusGateway::class]
             );
         };
-        $container[PayPalPlusGateway::class] = function (Container $container) {
-            return new PayPalPlusGateway();
+        $container[PlusGateway::class] = function (Container $container) {
+            return new PlusGateway();
         };
         $container[DefaultGatewayOverride::class] = function (Container $container) {
             return new DefaultGatewayOverride(
-                $container[PlusRepository::class]
+                $container[Setting\PlusStorable::class]
             );
         };
     }
 
     public function bootstrap(Container $container)
     {
-        $payPalPlusGatewayId = PayPalPlusGateway::GATEWAY_ID;
-        $payPalPlusGateway = $container[PayPalPlusGateway::class];
+        $payPalPlusGatewayId = PlusGateway::GATEWAY_ID;
+        $payPalPlusGateway = $container[PlusGateway::class];
 
         add_action(
             'wp_loaded',
@@ -49,7 +48,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         );
 
         add_filter('woocommerce_payment_gateways', function ($methods) use ($payPalPlusGateway) {
-            $methods[PayPalPlusGateway::class] = $payPalPlusGateway;
+            $methods[PlusGateway::class] = $payPalPlusGateway;
 
             $payPalGatewayIndex = array_search('WC_Gateway_Paypal', $methods, true);
             if ($payPalGatewayIndex !== false) {

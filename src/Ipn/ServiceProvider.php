@@ -10,11 +10,10 @@
 
 namespace WCPayPalPlus\Ipn;
 
-use WCPayPalPlus\Pui\Renderer;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
-use WCPayPalPlus\Setting\PlusRepository;
-use WCPayPalPlus\WC\PayPalPlusGateway;
+use WCPayPalPlus\Setting;
+use WCPayPalPlus\WC\PlusGateway;
 
 /**
  * Class ServiceProvider
@@ -27,7 +26,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         $container[Data::class] = function (Container $container) {
             return new Data(
                 filter_input_array(INPUT_POST) ?: [],
-                $container[PlusRepository::class]->isSandboxed()
+                $container[Setting\PlusStorable::class]
             );
         };
         $container[Validator::class] = function (Container $container) {
@@ -46,7 +45,7 @@ class ServiceProvider implements BootstrappableServiceProvider
     public function bootstrap(Container $container)
     {
         add_action(
-            'woocommerce_api_' . PayPalPlusGateway::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX,
+            'woocommerce_api_' . PlusGateway::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX,
             [$container[Ipn::class], 'checkResponse']
         );
     }

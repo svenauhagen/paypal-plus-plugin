@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Pui;
 
-use WCPayPalPlus\Setting\PlusRepository;
+use WCPayPalPlus\Setting;
 
 /**
  * Class PaymentInstructionRenderer
@@ -19,9 +19,16 @@ use WCPayPalPlus\Setting\PlusRepository;
  */
 class Renderer
 {
+    /**
+     * @var Setting\PlusStorable
+     */
     private $settingRepository;
 
-    public function __construct(PlusRepository $settingRepository)
+    /**
+     * Renderer constructor.
+     * @param Setting\PlusStorable $settingRepository
+     */
+    public function __construct(Setting\PlusStorable $settingRepository)
     {
         $this->settingRepository = $settingRepository;
     }

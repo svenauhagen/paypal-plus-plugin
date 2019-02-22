@@ -12,7 +12,7 @@ namespace WCPayPalPlus\Pui;
 
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
-use WCPayPalPlus\Setting\PlusRepository;
+use WCPayPalPlus\Setting;
 
 /**
  * Class ServiceProvider
@@ -24,7 +24,7 @@ class ServiceProvider implements BootstrappableServiceProvider
     {
         $container[Renderer::class] = function (Container $container) {
             return new Renderer(
-                $container[PlusRepository::class]
+                $container[Setting\PlusStorable::class]
             );
         };
     }
