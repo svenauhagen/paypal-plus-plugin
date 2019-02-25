@@ -1,6 +1,7 @@
 .idea
-/lib/
-/vendor/
+composer.lock
 phpunit.xml
+/lib/__classes
+/vendor/
 /node_modules/
 /dist/
