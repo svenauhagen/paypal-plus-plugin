@@ -57,10 +57,10 @@ class WCRefund
         try {
             $refunded_sale = $sale->refundSale($refund, $this->context);
             if ('completed' === $refunded_sale->state) {
-                $this->refund_data->get_success_handler($refunded_sale->getId())
+                $this
+                    ->refund_data
+                    ->get_success_handler($refunded_sale->getId())
                     ->execute();
-            } else {
-                // Todo: handle this properly.
             }
         } catch (PayPalConnectionException $ex) {
             do_action('wc_paypal_plus_log_exception', 'refund_exception', $ex);

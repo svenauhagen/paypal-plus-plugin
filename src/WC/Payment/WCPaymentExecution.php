@@ -41,10 +41,6 @@ class WCPaymentExecution
     {
         $this->data = $data;
         $this->success_handlers = $success_handlers;
-
-        foreach ($this->success_handlers as $success_handler) {
-            $success_handler->register();
-        }
     }
 
     /**

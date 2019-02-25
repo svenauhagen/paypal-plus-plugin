@@ -45,8 +45,6 @@ class OrderDiscountData implements OrderItemDataProvider
 
     /**
      * Returns the item quantity.
-     * TODO Can you have more than one of the same discount on an order?
-     * If not, maybe hardcode 'return 1;' here.
      *
      * @return int
      */
