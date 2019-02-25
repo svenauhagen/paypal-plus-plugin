@@ -1,20 +1,27 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 07.12.16
- * Time: 16:43
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC\IPN;
+namespace WCPayPalPlus\Ipn;
+
+use WCPayPalPlus\Setting;
 
 /**
  * Class IPNData
  *
- * @package WCPayPalPlus\WC\IPN
+ * @package WCPayPalPlus\Ipn
  */
-class IPNData
+class Data
 {
+    const PAYPAL_SANDBOX_URL = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+    const PAYPAL_LIVE_URL = 'https://www.paypal.com/cgi-bin/webscr';
+
     /**
      * Request data
      *
@@ -30,32 +37,22 @@ class IPNData
     private $paypal_url;
 
     /**
-     * Sandbox flag
-     *
-     * @var bool
+     * @var Setting\Storable
      */
-    private $sandbox;
+    private $settingRepository;
 
     /**
-     * Order update handler
-     *
-     * @var OrderUpdater
+     * Data constructor.
+     * @param array $request
+     * @param Setting\Storable $settingRepository
      */
-    private $updater;
-
-    /**
-     * IPNData constructor.
-     *
-     * @param array $request Request data.
-     * @param bool $sandbox Flag to set sandbox mode.
-     */
-    public function __construct(array $request = [], $sandbox = true)
+    public function __construct(array $request, Setting\Storable $settingRepository)
     {
         $this->request = $request;
-        $this->paypal_url = $sandbox
-            ? 'https://www.sandbox.paypal.com/cgi-bin/webscr'
-            : 'https://www.paypal.com/cgi-bin/webscr';
-        $this->sandbox = $sandbox;
+        $this->settingRepository = $settingRepository;
+        $this->paypal_url = $this->settingRepository->isSandboxed()
+            ? self::PAYPAL_SANDBOX_URL
+            : self::PAYPAL_LIVE_URL;
     }
 
     /**
@@ -63,7 +60,7 @@ class IPNData
      *
      * @return string
      */
-    public function get_paypal_url()
+    public function paypalUrl()
     {
         return $this->paypal_url;
     }
@@ -73,7 +70,7 @@ class IPNData
      *
      * @return string
      */
-    public function get_payment_status()
+    public function paymentStatus()
     {
         return strtolower($this->get('payment_status'));
     }
@@ -108,27 +105,13 @@ class IPNData
     }
 
     /**
-     * Returns the Order Update handler
-     *
-     * @return OrderUpdater
-     */
-    public function get_order_updater()
-    {
-        if (is_null($this->updater)) {
-            $this->updater = new OrderUpdater($this->get_woocommerce_order(), $this);
-        }
-
-        return $this->updater;
-    }
-
-    /**
      * Get the order from the PayPal 'Custom' variable.
      * TODO Passing and decoding custom data should by handled by one set of objects.
      * TODO Right now, this is implemented in 2 completely separate places
      *
      * @return \WC_Order
      */
-    public function get_woocommerce_order()
+    public function woocommerceOrder()
     {
         $raw_custom = $this->get('custom', false);
         if (!$raw_custom) {
@@ -160,7 +143,7 @@ class IPNData
      *
      * @return array
      */
-    public function get_all()
+    public function all()
     {
         return $this->request;
     }
@@ -170,7 +153,7 @@ class IPNData
      *
      * @return string
      */
-    public function get_user_agent()
+    public function userAgent()
     {
         return 'WooCommerce/' . WC()->version;
     }

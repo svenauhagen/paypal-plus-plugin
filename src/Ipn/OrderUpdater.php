@@ -1,17 +1,19 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 08.12.16
- * Time: 10:01
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC\IPN;
+namespace WCPayPalPlus\Ipn;
 
 /**
  * Class OrderUpdater
  *
- * @package WCPayPalPlus\WC\IPN
+ * @package WCPayPalPlus\Ipn
  */
 class OrderUpdater
 {
@@ -25,7 +27,7 @@ class OrderUpdater
     /**
      * Request Data
      *
-     * @var IPNData
+     * @var Data
      */
     private $data;
 
@@ -40,24 +42,14 @@ class OrderUpdater
      * OrderUpdater constructor.
      *
      * @param \WC_Order $order WooCommerce Order.
-     * @param IPNData $data IPN Data.
+     * @param Data $data IPN Data.
      * @param PaymentValidator $validator Payment validator.
      */
-    public function __construct(
-        \WC_Order $order,
-        IPNData $data,
-        PaymentValidator $validator = null
-    ) {
-
+    public function __construct(\WC_Order $order, Data $data, PaymentValidator $validator)
+    {
         $this->order = $order;
         $this->data = $data;
-        $this->validator = $validator
-            ?: new PaymentValidator(
-                $this->data->get('txn_type'),
-                $this->data->get('mc_currency'),
-                $this->data->get('mc_gross'),
-                $order
-            );
+        $this->validator = $validator;
     }
 
     /**
@@ -101,7 +93,7 @@ class OrderUpdater
 
         $this->save_paypal_meta_data();
 
-        if ('completed' === $this->data->get_payment_status()) {
+        if ('completed' === $this->data->paymentStatus()) {
             $transaction_id = wc_clean($this->data->get('txn_id'));
             $note = __('IPN payment completed', 'woo-paypalplus');
 
@@ -190,7 +182,7 @@ class OrderUpdater
             'failed',
             sprintf(
                 __('Payment %s via IPN.', 'woo-paypalplus'),
-                wc_clean($this->data->get_payment_status())
+                wc_clean($this->data->paymentStatus())
             )
         );
     }
@@ -225,7 +217,7 @@ class OrderUpdater
                 'refunded',
                 sprintf(
                     __('Payment %s via IPN.', 'woo-paypalplus'),
-                    $this->data->get_payment_status()
+                    $this->data->paymentStatus()
                 )
             );
             do_action('wc_paypal_plus__ipn_payment_update', 'refunded', $this->data);
@@ -242,7 +234,7 @@ class OrderUpdater
             sprintf(
                 __('Payment %s via IPN.', 'woo-paypalplus'),
                 wc_clean(
-                    $this->data->get_payment_status()
+                    $this->data->paymentStatus()
                 )
             )
         );

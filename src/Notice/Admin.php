@@ -60,9 +60,8 @@ class Admin
     /**
      * Initialize
      */
-    public function init()
+    public function setupActions()
     {
-        add_action(self::ACTION_ADMIN_MESSAGES, [$this, 'display'], 20);
         DismissibleNoticeOption::setupActions(
             false,
             $this->id

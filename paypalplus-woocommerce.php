@@ -1,4 +1,4 @@
-<?php
+<?php # -*- coding: utf-8 -*-
 /**
  * Plugin Name: PayPal PLUS for WooCommerce
  * Description: PayPal Plus - the official WordPress Plugin for WooCommerce
@@ -14,71 +14,159 @@
 
 namespace WCPayPalPlus;
 
-add_action('plugins_loaded', function () {
+use WCPayPalPlus\Service\Container;
+use WCPayPalPlus\Service\ServiceProvidersCollection;
 
-    $minPhpVersion = '5.6';
-    $adminNotice = function ($message) {
+const ACTION_ACTIVATION = 'wcpaypalplus.activation';
+const ACTION_ADD_SERVICE_PROVIDERS = 'wcpaypalplus.add_service_providers';
+const ACTION_LOG = 'wcpaypalplus.log';
+
+$bootstrap = \Closure::bind(function () {
+
+    /**
+     * @return bool
+     */
+    function autoload()
+    {
+        $autoloader = __DIR__ . '/vendor/autoload.php';
+        if (file_exists($autoloader)) {
+            /** @noinspection PhpIncludeInspection */
+            require $autoloader;
+        }
+
+        return class_exists(PayPalPlus::class);
+    }
+
+    /**
+     * Admin Message
+     * @param $message
+     */
+    function adminNotice($message)
+    {
         add_action('admin_notices', function () use ($message) {
             $class = 'notice notice-error';
             printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), esc_html($message));
         });
-    };
-
-    load_plugin_textdomain(
-        'woo-paypalplus',
-        false,
-        plugin_basename(dirname(__FILE__)) . '/languages'
-    );
-
-    if (!version_compare(phpversion(), $minPhpVersion, '>=')) {
-        $adminNotice(
-            sprintf(
-                __(
-                    'PayPal PLUS requires PHP version %1$1s or higher. You are running version %2$2s ',
-                    'woo-paypalplus'
-                ),
-                $minPhpVersion,
-                phpversion()
-            )
-        );
-
-        return;
     }
 
-    if (!class_exists('WCPayPalPlus\\Plugin')) {
-        if (!file_exists($autoloader = __DIR__ . '/vendor/autoload.php')) {
-            $adminNotice(
+    /**
+     * @return bool
+     */
+    function versionCheck()
+    {
+        $minPhpVersion = '5.6';
+        if (PHP_VERSION < $minPhpVersion) {
+            adminNotice(
+                sprintf(
+                    __(
+                        'PayPal PLUS requires PHP version %1$1s or higher. You are running version %2$2s ',
+                        'woo-paypalplus'
+                    ),
+                    $minPhpVersion,
+                    phpversion()
+                )
+            );
+
+            return false;
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    function wooCommerceCheck()
+    {
+        if (!function_exists('WC')) {
+            adminNotice(__('PayPal PLUS requires WooCommerce to be active.', 'woo-paypalplus'));
+            return false;
+        }
+
+        if (version_compare(WC()->version, '3.0.0', '<')) {
+            adminNotice(
                 __(
-                    'Could not find a working autoloader for PayPal PLUS.',
+                    'PayPal PLUS requires WooCommerce version 3.0 or higher .',
                     'woo-paypalplus'
                 )
             );
-            return;
+            return false;
         }
 
-        /** @noinspection PhpIncludeInspection */
-        require $autoloader;
+        return true;
     }
 
-    if (!class_exists('WooCommerce')) {
-        $adminNotice(__('PayPal PLUS requires WooCommerce to be active.', 'woo-paypalplus'));
-        return;
-    }
+    /**
+     * Bootstraps PayPal PLUS for WooCommerce
+     *
+     * @return bool
+     *
+     * @wp-hook plugins_loaded
+     * @throws \Throwable
+     * @return bool
+     */
+    function bootstrap()
+    {
+        $bootstrapped = false;
 
-    if (version_compare(WC()->version, '3.0.0', '<=')) {
-        add_action('admin_notices', function () {
-            $class = 'notice notice-error';
-            $message = __(
-                'PayPal PLUS requires WooCommerce version 3.0 or higher .',
-                'woo-paypalplus'
+        if (!wooCommerceCheck()) {
+            return false;
+        }
+
+        try {
+            /** @var Container $container */
+            $container = resolve();
+            $container = $container->shareValue(
+                PluginProperties::class,
+                new PluginProperties(__FILE__)
             );
 
-            printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), esc_html($message));
-        });
+            $providers = new ServiceProvidersCollection();
+            $providers
+                ->add(new Notice\ServiceProvider())
+                ->add(new Assets\ServiceProvider())
+                ->add(new WC\ServiceProvider())
+                ->add(new Ipn\ServiceProvider())
+                ->add(new Pui\ServiceProvider());
+
+            $payPalPlus = new PayPalPlus($container, $providers);
+
+            /**
+             * Fires right before MultilingualPress gets bootstrapped.
+             *
+             * Hook here to add custom service providers via
+             * `ServiceProviderCollection::add_service_provider()`.
+             *
+             * @param ServiceProvidersCollection $providers
+             */
+            do_action(ACTION_ADD_SERVICE_PROVIDERS, $providers);
+
+            $bootstrapped = $payPalPlus->bootstrap();
+
+            unset($providers);
+        } catch (\Throwable $thr) {
+            do_action(ACTION_LOG, 'error', $thr->getMessage(), compact($thr));
+
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                throw $thr;
+            }
+
+            return false;
+        }
+
+        return $bootstrapped;
+    }
+
+    if (!autoload()) {
         return;
     }
 
 
-    $plugin = new Plugin(__FILE__);
-    $plugin->init();
-});
+//    load_plugin_textdomain(
+//        'woo-paypalplus',
+//        false,
+//        plugin_basename(dirname(__FILE__)) . '/languages'
+//    );
+
+    add_action('plugins_loaded', __NAMESPACE__ . '\\bootstrap', 0);
+}, null);
+
+$bootstrap();

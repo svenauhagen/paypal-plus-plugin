@@ -8,13 +8,15 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus;
+namespace WCPayPalPlus\Setting;
 
-if (defined(__NAMESPACE__ . '\\FUNCTIONS_LOADED')) {
-    return;
+interface Storable
+{
+    const OPTION_ON = 'yes';
+    const OPTION_OFF = 'no';
+
+    /**
+     * @return bool
+     */
+    public function isSandboxed();
 }
-
-const FUNCTIONS_LOADED = 1;
-
-require_once __DIR__ . '/utils.php';
-require_once __DIR__ . '/option.php';

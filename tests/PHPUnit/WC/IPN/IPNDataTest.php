@@ -16,12 +16,12 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 	public function test_get_paypal_url() {
 
 		$testee  = new IPNData( [], true );
-		$result1 = $testee->get_paypal_url();
+		$result1 = $testee->paypalUrl();
 		$this->assertInternalType( 'string', $result1 );
 		$this->assertNotEmpty( 'string', $result1 );
 
 		$testee  = new IPNData( [], false );
-		$result2 = $testee->get_paypal_url();
+		$result2 = $testee->paypalUrl();
 		$this->assertInternalType( 'string', $result2 );
 		$this->assertNotEmpty( 'string', $result2 );
 
@@ -39,7 +39,7 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 
 		$expected = ( isset( $request['payment_status'] ) ) ? strtolower( $request['payment_status'] ) : '';
 		$testee   = new IPNData( $request, $sandbox );
-		$result   = $testee->get_payment_status();
+		$result   = $testee->paymentStatus();
 		$this->assertSame( $expected, $result );
 	}
 
@@ -71,7 +71,7 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 
 		$testee = new IPNData( $request, $sandbox );
 
-		$result = $testee->get_all();
+		$result = $testee->all();
 		$this->assertEquals( $request, $result );
 	}
 
@@ -91,7 +91,7 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 
 		$testee = new IPNData( $request, $sandbox );
 
-		$result = $testee->get_user_agent();
+		$result = $testee->userAgent();
 		$this->assertInternalType( 'string', $result );
 		$this->assertNotEmpty( $result );
 	}
@@ -132,7 +132,7 @@ class IPNDataTest extends BrainMonkeyWpTestCase {
 		}
 		$testee = new IPNData( $request );
 
-		$result = $testee->get_woocommerce_order();
+		$result = $testee->woocommerceOrder();
 
 		if ( ! isset( $request['custom'] ) ) {
 			$this->assertNull( $result );

@@ -1,20 +1,35 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 08.12.16
- * Time: 10:24
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC\IPN;
+namespace WCPayPalPlus\Ipn;
 
 /**
  * Class PaymentValidator
  *
- * @package WCPayPalPlus\WC\IPN
+ * @package WCPayPalPlus\Ipn
  */
 class PaymentValidator
 {
+    const TRANSACTION_TYPE_DATA_KEY = 'txn_type';
+    const CURRENCY_DATA_KEY = 'mc_currency';
+    const AMOUNT_DATA_KEY = 'mc_gross';
+
+    const ACCEPTED_TRANSACTIONS_TYPES = [
+        'cart',
+        'instant',
+        'express_checkout',
+        'web_accept',
+        'masspay',
+        'send_money',
+    ];
+
     /**
      * The last error that occurred during validation
      *
@@ -23,70 +38,18 @@ class PaymentValidator
     private $last_error;
 
     /**
-     * The transaction types to validate against
-     *
-     * @var array|NULL
-     */
-    private $accepted_transaction_types;
-
-    /**
      * WooCommerce Order object
      *
      * @var \WC_Order
      */
     private $order;
 
-    /**
-     * The actual transaction type of the PayPal Payment
-     *
-     * @var string
-     */
-    private $transaction_type;
+    private $ipnData;
 
-    /**
-     * The currency used by the PayPal Payment
-     *
-     * @var string
-     */
-    private $currency;
-
-    /**
-     * The payment amount.
-     *
-     * @var float
-     */
-    private $amount;
-
-    /**
-     * PaymentValidator constructor.
-     *
-     * @param string $transaction_type The transaction type.
-     * @param string $currency The currency used.
-     * @param float $amount The payment amount.
-     * @param \WC_Order $order The WooCommerce order.
-     * @param array $accepted_transaction_types Optional. An array of accepted transaction types.
-     */
-    public function __construct(
-        $transaction_type,
-        $currency,
-        $amount,
-        \WC_Order $order,
-        array $accepted_transaction_types = null
-    ) {
-
-        $this->transaction_type = $transaction_type;
-        $this->currency = $currency;
-        $this->amount = $amount;
+    public function __construct(Data $ipnData, \WC_Order $order)
+    {
+        $this->ipnData = $ipnData;
         $this->order = $order;
-        $this->accepted_transaction_types = $accepted_transaction_types
-            ?: [
-                'cart',
-                'instant',
-                'express_checkout',
-                'web_accept',
-                'masspay',
-                'send_money',
-            ];
     }
 
     /**
@@ -96,9 +59,13 @@ class PaymentValidator
      */
     public function is_valid_payment()
     {
-        return ($this->validate_transaction_type($this->transaction_type)
-            && $this->validate_currency($this->currency)
-            && $this->validate_payment_amount($this->amount));
+        $transactionType = $this->ipnData->get(self::TRANSACTION_TYPE_DATA_KEY);
+        $currency = $this->ipnData->get(self::CURRENCY_DATA_KEY);
+        $amount = $this->ipnData->get(self::AMOUNT_DATA_KEY);
+
+        return ($this->validate_transaction_type($transactionType)
+            && $this->validate_currency($currency)
+            && $this->validate_payment_amount($amount));
     }
 
     /**
@@ -110,7 +77,7 @@ class PaymentValidator
      */
     private function validate_transaction_type($transaction_type)
     {
-        if (!in_array(strtolower($transaction_type), $this->accepted_transaction_types, true)) {
+        if (!in_array(strtolower($transaction_type), self::ACCEPTED_TRANSACTIONS_TYPES, true)) {
             $this->last_error = sprintf(
                 __(
                     'Validation error: Invalid transaction type "%s".',
@@ -185,13 +152,20 @@ class PaymentValidator
      */
     public function is_valid_refund()
     {
+        $currency = $this->ipnData->get(self::CURRENCY_DATA_KEY);
+
         $wc_total = number_format(
             $this->sanitize_string_amount($this->order->get_total()),
             2,
             '.',
             ''
         );
-        $pp_total = number_format($this->sanitize_string_amount($this->amount) * -1, 2, '.', '');
+        $pp_total = number_format(
+            $this->sanitize_string_amount($currency) * -1,
+            2,
+            '.',
+            ''
+        );
 
         return ($pp_total === $wc_total);
     }
