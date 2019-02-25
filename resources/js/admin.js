@@ -1,6 +1,7 @@
-jQuery(document).ready( function ($) {
+jQuery(document).ready( ($)=> {
 
-	jQuery('.paypal_plus_order_cancellations').change( function () {
+
+	jQuery('.paypal_plus_order_cancellations').change( ()=> {
 		var email_notify_order_cancellations = jQuery('.paypal_plus_email_notify_order_cancellations').closest('tr');
 		if (jQuery(this).val() !== 'disabled') {
 			email_notify_order_cancellations.show();
@@ -27,4 +28,4 @@ jQuery(document).ready( function ($) {
 		}
 	} ).change();
 
-}(jQuery));
+});

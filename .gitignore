@@ -1,7 +1,6 @@
 .idea
-composer.lock
-phpunit.xml
-/lib/__classes
+/lib/
 /vendor/
+phpunit.xml
 /node_modules/
 /dist/
