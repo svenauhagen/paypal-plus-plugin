@@ -72,7 +72,6 @@ class WCWebExperienceProfile
             /**
              * Something went wrong fetching the existing profile.
              * It could have been deleted externally or the Credentials have changed,
-             * TODO Invalidate local ID when credentials change (out of scope for this class)
              */
             if (is_null($web_profile)) {
                 $web_profile = new WebProfile();

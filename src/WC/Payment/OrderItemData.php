@@ -78,7 +78,6 @@ class OrderItemData implements OrderItemDataProvider
 
     /**
      * Returns the product SKU.
-     * TODO Un-DRY. CartItemData does pretty much the exact same thing
      *
      * @return string|null
      */

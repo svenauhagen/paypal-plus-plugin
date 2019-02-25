@@ -16,8 +16,7 @@ namespace WCPayPalPlus\WC;
 class ReceiptPageView
 {
     /**
-     * Setup the Recipt page JS
-     * TODO: This could be done in a separate js file, leveraging wp_localize_script()
+     * Setup the Receipt page JS
      */
     public function render()
     {
