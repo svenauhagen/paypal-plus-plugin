@@ -160,7 +160,6 @@ $bootstrap = \Closure::bind(function () {
         return;
     }
 
-    (new PayPalModel72MonkeyPatch)->setHandler();
 
 //    load_plugin_textdomain(
 //        'woo-paypalplus',
