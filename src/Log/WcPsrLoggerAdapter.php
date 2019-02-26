@@ -20,7 +20,7 @@ class WcPsrLoggerAdapter extends AbstractLogger
     /**
      * @var array
      */
-    private $psrWcLoggingLevels = array(
+    private $psrWcLoggingLevels = [
         LogLevel::EMERGENCY => \WC_Log_Levels::EMERGENCY,
         LogLevel::ALERT => \WC_Log_Levels::ALERT,
         LogLevel::CRITICAL => \WC_Log_Levels::CRITICAL,
@@ -28,8 +28,8 @@ class WcPsrLoggerAdapter extends AbstractLogger
         LogLevel::WARNING => \WC_Log_Levels::WARNING,
         LogLevel::NOTICE => \WC_Log_Levels::NOTICE,
         LogLevel::INFO => \WC_Log_Levels::INFO,
-        LogLevel::DEBUG => \WC_Log_Levels::DEBUG
-    );
+        LogLevel::DEBUG => \WC_Log_Levels::DEBUG,
+    ];
 
     /**
      * @var \WC_Logger_Interface
@@ -68,11 +68,11 @@ class WcPsrLoggerAdapter extends AbstractLogger
      *
      * @return void
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = [])
     {
         $wcLevel = $level;
         if (isset($this->psrWcLoggingLevels[$level])) {
-           $wcLevel = $this->psrWcLoggingLevels[$level];
+            $wcLevel = $this->psrWcLoggingLevels[$level];
         }
 
         if (\WC_Log_Levels::get_level_severity($wcLevel) < \WC_Log_Levels::get_level_severity($this->loggingLevel)) {

@@ -15,7 +15,6 @@ use Inpsyde\Lib\Psr\Log\LoggerInterface;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 
-
 /**
  * Class ServiceProvider
  * @package WCPayPalPlus\Log
@@ -24,14 +23,20 @@ class ServiceProvider implements BootstrappableServiceProvider
 {
     public function register(Container $container)
     {
-
-        $container[LoggerInterface::class] = function () {
-            return new WcPsrLoggerAdapter(
-                \wc_get_logger(),
-                (\defined(\WP_DEBUG) && \WP_DEBUG) ? \WC_Log_Levels::DEBUG : \WC_Log_Levels::INFO
-            );
+        $container['is_wp_debug'] = function () {
+            return (\defined(\WP_DEBUG) && \WP_DEBUG);
         };
 
+        $container['is_script_debug'] = function () {
+            return (\defined(\SCRIPT_DEBUG) && \SCRIPT_DEBUG);
+        };
+
+        $container[LoggerInterface::class] = function ($container) {
+            return new WcPsrLoggerAdapter(
+                \wc_get_logger(),
+                $container['is_wp_debug'] ? \WC_Log_Levels::DEBUG : \WC_Log_Levels::INFO
+            );
+        };
     }
 
     public function bootstrap(Container $container)
