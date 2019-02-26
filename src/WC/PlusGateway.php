@@ -461,9 +461,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
         $auth->setConfig([
             'mode' => $this->isSandboxed() ? 'SANDBOX' : 'LIVE',
             'http.headers.PayPal-Partner-Attribution-Id' => 'WooCommerce_Cart_Plus',
-            'log.LogEnabled' => true,
-            'log.LogLevel' => $this->isSandboxed() ? 'DEBUG' : 'INFO',
-            'log.FileName' => wc_get_log_file_path('paypal_plus'),
+            'log.LogLevel' => $this->isSandboxed() ? \WC_Log_Levels::DEBUG : \WC_Log_Levels::INFO,
             'cache.enabled' => true,
             'cache.FileName' => wc_get_log_file_path('paypal_plus_cache'),
         ]);
