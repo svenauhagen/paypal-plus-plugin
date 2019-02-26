@@ -53,7 +53,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler
             wc_add_notice($notice, 'error');
             $redirect_url = wc_get_cart_url();
         }
-        // Todo: Refactor so that we can properly test this class.
+
         wp_safe_redirect($redirect_url);
         exit;
     }
@@ -173,13 +173,5 @@ class PaymentExecutionSuccess implements RequestSuccessHandler
             'country' => $payment->payer->payer_info->billing_address->country_code,
         ];
         $order->set_address($billing_address, $type = 'billing');
-    }
-
-    /**
-     * Allow the implementing class to setup hooks
-     */
-    public function register()
-    {
-        // Nothing to do.
     }
 }
