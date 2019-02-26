@@ -24,8 +24,7 @@ class AssetManager
     public function enqueueAdminScripts()
     {
         $assetUrl = untrailingslashit($this->pluginProperties->dirUrl());
-        $min = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
-        $adminScript = "{$assetUrl}/public/js/admin{$min}.js";
+        $adminScript = "{$assetUrl}/public/js/admin.min.js";
 
         wp_enqueue_script('paypalplus-woocommerce-admin', $adminScript, ['jquery']);
     }
@@ -33,8 +32,7 @@ class AssetManager
     public function enqueueAdminStyles()
     {
         $assetUrl = untrailingslashit($this->pluginProperties->dirUrl());
-        $min = (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG) ? '' : '.min';
-        $adminStyle = "{$assetUrl}/public/css/admin{$min}.css";
+        $adminStyle = "{$assetUrl}/public/css/admin.min.css";
 
         wp_enqueue_style('paypalplus-woocommerce-admin', $adminStyle, []);
     }

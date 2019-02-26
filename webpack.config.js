@@ -20,14 +20,14 @@ module.exports = [
         },
         output: {
             path: resolve('public/js'),
-            filename: '[name].js'
+            filename: '[name].min.js'
         },
         module: {
             rules: [
                 {
                     test: /\.js$/,
                     include: [
-                        resolve('/public/js/admin.js'),
+                        resolve('/public/js/admin.min.js'),
                     ],
                     use: {
                         loader: 'babel-loader',
