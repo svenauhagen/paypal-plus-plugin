@@ -10,7 +10,6 @@
 
 namespace WCPayPalPlus\Log;
 
-use Inpsyde\Lib\PayPal\Core\PayPalConfigManager;
 use Inpsyde\Lib\Psr\Log\LoggerInterface;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
@@ -41,7 +40,5 @@ class ServiceProvider implements BootstrappableServiceProvider
 
     public function bootstrap(Container $container)
     {
-        $sdkConfig = PayPalConfigManager::getInstance();
-        $sdkConfig->addConfigs(['log.AdapterFactory' => PayPalSdkLogFactory::class]);
     }
 }
