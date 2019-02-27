@@ -43,7 +43,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler
         if ($this->data->is_approved()) {
             $this->update_order();
 
-            WC()->cart->empty_cart();
+            wc()->cart->empty_cart();
             $redirect_url = $order->get_checkout_order_received_url();
         } else {
             $notice = sprintf(
@@ -82,7 +82,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler
                 $sale_id
             );
             $order->add_order_note($note);
-            WC()->cart->empty_cart();
+            wc()->cart->empty_cart();
         } else {
             $order->update_status('on-hold', __('Awaiting payment', 'woo-paypalplus'));
             wc_reduce_stock_levels($order->get_id());

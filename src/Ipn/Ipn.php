@@ -10,6 +10,9 @@
 
 namespace WCPayPalPlus\Ipn;
 
+use const WCPayPalPlus\ACTION_LOG;
+use WCPayPalPlus\OrderFactory;
+
 /**
  * Handles responses from PayPal IPN.
  */
@@ -22,7 +25,7 @@ class Ipn
      *
      * @var Data
      */
-    private $ipnData;
+    private $ipnRequest;
 
     /**
      * IPN Validator class
@@ -31,28 +34,50 @@ class Ipn
      */
     private $ipnValidator;
 
-    public function __construct(Data $ipnData, Validator $validator)
+    /**
+     * @var Data
+     */
+    private $ipnData;
+
+    /**
+     * Ipn constructor.
+     * @param Data $ipnData
+     * @param Request $ipnRequest
+     * @param Validator $validator
+     */
+    public function __construct(Data $ipnData, Request $ipnRequest, Validator $validator)
     {
         $this->ipnData = $ipnData;
+        $this->ipnRequest = $ipnRequest;
         $this->ipnValidator = $validator;
     }
 
     /**
-     * Check for PayPal IPN Response.
+     * @return void
+     * @throws \Exception
      */
     public function checkResponse()
     {
-        $order = $this->ipnData->woocommerceOrder();
+        try {
+            // Ensure an order exists
+            OrderFactory::createByIpnRequest($this->ipnRequest);
+        } catch (\Exception $exc) {
+            do_action(ACTION_LOG, 'error', $exc->getMessage(), compact($exc));
 
-        if ($order
-            && $this->ipnValidator->validate()
-            && !empty($this->ipnData->get('custom'))
-        ) {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                throw $exc;
+            }
+
+            return;
+        }
+
+        if ($this->ipnValidator->validate()) {
             $this->valid_response();
             exit;
         }
 
-        do_action('wc_paypal_plus_log_error', 'Invalid IPN call', $this->ipnData->all());
+        do_action('wc_paypal_plus_log_error', 'Invalid IPN call', $this->ipnRequest->all());
+        // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
         wp_die('PayPal IPN Request Failure', 'PayPal IPN', ['response' => 500]);
     }
 
@@ -61,14 +86,14 @@ class Ipn
      */
     public function valid_response()
     {
-        $payment_status = $this->ipnData->paymentStatus();
-        $updater = OrderUpdaterFactory::create($this->ipnData);
+        $payment_status = $this->ipnRequest->get(Request::KEY_PAYMENT_STATUS);
+        $updater = OrderUpdaterFactory::create($this->ipnData, $this->ipnRequest);
 
         if (method_exists($updater, 'payment_status_' . $payment_status)) {
             do_action(
                 'wc_paypal_plus_log',
                 'Processing IPN. payment status: ' . $payment_status,
-                $this->ipnData->all()
+                $this->ipnRequest->all()
             );
             $updater->{"payment_status_{$payment_status}"}();
 
