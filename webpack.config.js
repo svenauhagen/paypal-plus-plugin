@@ -18,6 +18,7 @@ module.exports = [
         entry: {
             admin: './resources/js/admin.js',
             front: './resources/js/front.js',
+            paypalRedirect: './resources/js/payPalRedirect.js'
         },
         output: {
             path: resolve('public/js'),
@@ -29,6 +30,8 @@ module.exports = [
                     test: /\.js$/,
                     include: [
                         resolve('/public/js/admin.min.js'),
+                        resolve('/public/js/front.min.js'),
+                        resolve('/public/js/payPalRedirect.min.js'),
                     ],
                     use: {
                         loader: 'babel-loader',

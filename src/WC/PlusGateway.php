@@ -73,20 +73,13 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
     private $frameView;
 
     /**
-     * @var ReceiptPageView
-     */
-    private $receiptPageView;
-
-    /**
      * PlusGateway constructor.
      * @param PlusFrameView $frameView
-     * @param ReceiptPageView $receiptPageView
      */
-    public function __construct(PlusFrameView $frameView, ReceiptPageView $receiptPageView)
+    public function __construct(PlusFrameView $frameView)
     {
         $this->gateway = $this;
         $this->frameView = $frameView;
-        $this->receiptPageView = $receiptPageView;
         $this->id = self::GATEWAY_ID;
         $this->title = $this->get_option('title');
         $this->method_title = self::GATEWAY_TITLE_METHOD;
@@ -310,7 +303,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
 
         $payment = new WCPaymentPatch($patchData);
         if ($payment->execute()) {
-            $this->receiptPageView->render();
+            wp_enqueue_script('paypalplus-woocommerce-plus-paypal-redirect');
             return;
         }
 

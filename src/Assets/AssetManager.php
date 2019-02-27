@@ -79,14 +79,7 @@ class AssetManager
             true
         );
 
-        if (is_checkout() || is_checkout_pay_page()) {
-            wp_enqueue_script(
-                'ppplus-js',
-                'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
-                [],
-                null
-            );
-        }
+        $this->enqueuePayPalScripts();
     }
 
     /**
@@ -103,6 +96,55 @@ class AssetManager
             filemtime("{$assetPath}/public/css/front.min.css"),
             'screen'
         );
+    }
+
+    /**
+     * Enqueue PayPal Specific Scripts
+     */
+    private function enqueuePayPalScripts()
+    {
+        list($assetPath, $assetUrl) = $this->assetUrlPath();
+
+        wp_register_script(
+            'paypalplus-woocommerce-plus-paypal-redirect',
+            "{$assetUrl}/public/js/payPalRedirect.min.js",
+            ['jquery'],
+            filemtime("{$assetPath}/public/js/payPalRedirect.min.js"),
+            true
+        );
+        $this->loadScriptsData(
+            'paypalplus-woocommerce-plus-paypal-redirect',
+            'payPalRedirect',
+            [
+                'message' => __(
+                    'Thank you for your order. We are now redirecting you to PayPal to make payment.',
+                    'woo-paypalplus'
+                ),
+            ]
+        );
+
+        if (is_checkout() || is_checkout_pay_page()) {
+            wp_enqueue_script(
+                'ppplus-js',
+                'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
+                [],
+                null
+            );
+        }
+    }
+
+    /**
+     * Localize Scripts
+     * @param $handle
+     * @param $objName
+     * @param array $data
+     */
+    private function loadScriptsData($handle, $objName, array $data)
+    {
+        assert(is_string($handle));
+        assert(is_string($objName));
+
+        wp_localize_script($handle, $objName, $data);
     }
 
     /**

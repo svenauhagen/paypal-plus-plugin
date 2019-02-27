@@ -29,8 +29,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[PlusGateway::class] = function (Container $container) {
             return new PlusGateway(
-                $container[PlusFrameView::class],
-                $container[ReceiptPageView::class]
+                $container[PlusFrameView::class]
             );
         };
         $container[DefaultGatewayOverride::class] = function (Container $container) {
@@ -40,9 +39,6 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[PlusFrameView::class] = function () {
             return new PlusFrameView();
-        };
-        $container[ReceiptPageView::class] = function () {
-            return new ReceiptPageView();
         };
     }
 
