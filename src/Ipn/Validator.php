@@ -17,11 +17,25 @@ namespace WCPayPalPlus\Ipn;
  */
 class Validator
 {
+    /**
+     * @var Request
+     */
+    private $ipnRequest;
+
+    /**
+     * @var Data
+     */
     private $ipnData;
 
-    public function __construct(Data $ipnData)
+    /**
+     * Validator constructor.
+     * @param Data $ipnData
+     * @param Request $ipnRequest
+     */
+    public function __construct(Data $ipnData, Request $ipnRequest)
     {
         $this->ipnData = $ipnData;
+        $this->ipnRequest = $ipnRequest;
     }
 
     /**
@@ -31,19 +45,16 @@ class Validator
      */
     public function validate()
     {
-        if (defined('PPP_DEBUG') and PPP_DEBUG) {
-            return true;
-        }
         $params = [
-            'body' => ['cmd' => '_notify-validate'] + $this->data->get_all(),
+            'body' => ['cmd' => '_notify-validate'] + $this->ipnRequest->all(),
             'timeout' => 60,
             'httpversion' => '1.1',
             'compress' => false,
             'decompress' => false,
-            'user-agent' => $this->data->get_user_agent(),
+            'user-agent' => $this->ipnData->userAgent(),
         ];
 
-        $response = wp_safe_remote_post($this->data->get_paypal_url(), $params);
+        $response = wp_safe_remote_post($this->ipnData->paypalUrl(), $params);
 
         if ($response instanceof \WP_Error) {
             return false;
@@ -51,7 +62,8 @@ class Validator
         if (!isset($response['response']['code'])) {
             return false;
         }
-        if ($response['response']['code'] >= 200 && $response['response']['code'] < 300
+        if ($response['response']['code'] >= 200
+            && $response['response']['code'] < 300
             && strstr($response['body'], 'VERIFIED')
         ) {
             return true;

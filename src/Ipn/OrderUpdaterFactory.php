@@ -10,19 +10,29 @@
 
 namespace WCPayPalPlus\Ipn;
 
+use WCPayPalPlus\OrderFactory;
+
 /**
  * Class OrderUpdaterFactory
  * @package WCPayPalPlus\Ipn
  */
 class OrderUpdaterFactory
 {
-    public static function create(Data $data)
+    /**
+     * @param Data $ipnData
+     * @param Request $ipnRequest
+     * @return OrderUpdater
+     * @throws \DomainException
+     */
+    public static function create(Data $ipnData, Request $ipnRequest)
     {
-        $order = $data->woocommerceOrder();
+        $order = OrderFactory::createByIpnRequest($ipnRequest);
+        $paymentValidator = new PaymentValidator($ipnData, $order);
         return new OrderUpdater(
             $order,
-            $data,
-            new PaymentValidator($data, $order)
+            $ipnData,
+            $ipnRequest,
+            $paymentValidator
         );
     }
 }

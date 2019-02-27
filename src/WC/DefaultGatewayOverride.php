@@ -69,7 +69,7 @@ class DefaultGatewayOverride
      */
     private function getSessionFlag()
     {
-        return WC()->session->get(self::SESSION_CHECK_KEY);
+        return wc()->session->get(self::SESSION_CHECK_KEY);
     }
 
     /**
@@ -81,7 +81,7 @@ class DefaultGatewayOverride
     {
         assert(is_string($paymentMethod));
 
-        WC()->session->set('chosen_payment_method', $paymentMethod);
+        wc()->session->set('chosen_payment_method', $paymentMethod);
     }
 
     /**
@@ -89,6 +89,6 @@ class DefaultGatewayOverride
      */
     private function setSessionFlag()
     {
-        WC()->session->set(self::SESSION_CHECK_KEY, self::SESSION_CHECK_ACTIVATE);
+        wc()->session->set(self::SESSION_CHECK_KEY, self::SESSION_CHECK_ACTIVATE);
     }
 }

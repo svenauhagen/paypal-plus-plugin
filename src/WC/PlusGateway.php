@@ -262,7 +262,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
                 'approvalUrl' => $this->approvalUrl(),
                 'placeholder' => 'ppplus',
                 'mode' => $this->isSandboxed() ? 'sandbox' : 'live',
-                'country' => WC()->customer->get_billing_country(),
+                'country' => wc()->customer->get_billing_country(),
                 'language' => $this->locale(),
                 'buttonLocation' => 'outside',
                 'showPuiOnSandbox' => true,
@@ -276,9 +276,9 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
      */
     public function render_receipt_page($orderId)
     {
-        WC()->session->ppp_order_id = $orderId;
+        wc()->session->ppp_order_id = $orderId;
         $order = wc_get_order($orderId);
-        $paymentId = WC()->session->__get(self::PAYMENT_ID_SESSION_KEY);
+        $paymentId = wc()->session->__get(self::PAYMENT_ID_SESSION_KEY);
 
         if (!$paymentId) {
             $this->abortCheckout();
@@ -309,7 +309,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
      */
     public function clear_session_data()
     {
-        $session = WC()->session;
+        $session = wc()->session;
         $session->__unset(self::PAYMENT_ID_SESSION_KEY);
         $session->__unset(self::PAYER_ID_SESSION_KEY);
         $session->__unset(self::APPROVAL_URL_SESSION_KEY);
@@ -355,17 +355,17 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
         $paymentId = filter_input(INPUT_GET, 'paymentId');
 
         if (!$paymentId) {
-            $paymentId = WC()->session->__get(self::PAYMENT_ID_SESSION_KEY);
+            $paymentId = wc()->session->__get(self::PAYMENT_ID_SESSION_KEY);
         }
 
         if (!$token || !$payerId || !$paymentId) {
             return;
         }
 
-        WC()->session->token = $token;
+        wc()->session->token = $token;
 
-        WC()->session->__set(self::PAYER_ID_SESSION_KEY, $payerId);
-        $order = new \WC_Order(WC()->session->ppp_order_id);
+        wc()->session->__set(self::PAYER_ID_SESSION_KEY, $payerId);
+        $order = new \WC_Order(wc()->session->ppp_order_id);
         $data = new PaymentExecutionData(
             $order,
             $payerId,
@@ -465,7 +465,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
      */
     private function approvalUrl()
     {
-        $url = WC()->session->__get(self::APPROVAL_URL_SESSION_KEY);
+        $url = wc()->session->__get(self::APPROVAL_URL_SESSION_KEY);
 
         if (empty($url)) {
             $paymentObject = $this->paymentObject();
@@ -476,7 +476,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
             $url = $paymentObject->getApprovalLink();
             $url = htmlspecialchars_decode($url);
 
-            WC()->session->__set(
+            wc()->session->__set(
                 self::APPROVAL_URL_SESSION_KEY,
                 htmlspecialchars_decode($url)
             );
@@ -494,7 +494,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
 
         $order = null;
         $key = filter_input(INPUT_GET, 'key');
-        $wcSession = WC()->session;
+        $wcSession = wc()->session;
         $id = $wcSession->__get(self::PAYMENT_ID_SESSION_KEY);
 
         if (!empty($id)) {
@@ -529,9 +529,9 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
      */
     private function paymentData()
     {
-        $return_url = WC()->api_request_url($this->id);
+        $return_url = wc()->api_request_url($this->id);
         $cancel_url = $this->cancelUrl();
-        $notify_url = WC()->api_request_url(self::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX);
+        $notify_url = wc()->api_request_url(self::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX);
         $web_profile_id = $this->get_option($this->experienceProfileOptionKey());
 
         return new PaymentData(
@@ -576,7 +576,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
      */
     private function orderData(\WC_Order $order = null)
     {
-        return ($order === null) ? new CartData(WC()->cart) : new OrderData($order);
+        return ($order === null) ? new CartData(wc()->cart) : new OrderData($order);
     }
 
     /**
