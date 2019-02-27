@@ -68,11 +68,25 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
     private $gateway;
 
     /**
-     * PayPalPlusGateway constructor.
+     * @var PlusFrameView
      */
-    public function __construct()
+    private $frameView;
+
+    /**
+     * @var ReceiptPageView
+     */
+    private $receiptPageView;
+
+    /**
+     * PlusGateway constructor.
+     * @param PlusFrameView $frameView
+     * @param ReceiptPageView $receiptPageView
+     */
+    public function __construct(PlusFrameView $frameView, ReceiptPageView $receiptPageView)
     {
         $this->gateway = $this;
+        $this->frameView = $frameView;
+        $this->receiptPageView = $receiptPageView;
         $this->id = self::GATEWAY_ID;
         $this->title = $this->get_option('title');
         $this->method_title = self::GATEWAY_TITLE_METHOD;
@@ -256,19 +270,18 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
     public function form()
     {
         $data = [
-            'app_config' => [
-                'useraction' => 'commit',
-                'showLoadingIndicator' => true,
-                'approvalUrl' => $this->approvalUrl(),
-                'placeholder' => 'ppplus',
-                'mode' => $this->isSandboxed() ? 'sandbox' : 'live',
-                'country' => WC()->customer->get_billing_country(),
-                'language' => $this->locale(),
-                'buttonLocation' => 'outside',
-                'showPuiOnSandbox' => true,
-            ],
+            'useraction' => 'commit',
+            'showLoadingIndicator' => true,
+            'approvalUrl' => $this->approvalUrl(),
+            'placeholder' => 'ppplus',
+            'mode' => $this->isSandboxed() ? 'sandbox' : 'live',
+            'country' => WC()->customer->get_billing_country(),
+            'language' => $this->locale(),
+            'buttonLocation' => 'outside',
+            'showPuiOnSandbox' => true,
         ];
-        (new PayPalIframeView($data))->render();
+
+        $this->frameView->render($data);
     }
 
     /**
@@ -297,8 +310,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
 
         $payment = new WCPaymentPatch($patchData);
         if ($payment->execute()) {
-            $view = new ReceiptPageView();
-            $view->render();
+            $this->receiptPageView->render();
             return;
         }
 

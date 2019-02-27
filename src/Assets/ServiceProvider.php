@@ -44,5 +44,9 @@ class ServiceProvider implements BootstrappableServiceProvider
             'wp_enqueue_scripts',
             [$container[AssetManager::class], 'enqueueFrontEndScripts']
         );
+        add_action(
+            'wp_enqueue_scripts',
+            [$container[AssetManager::class], 'enqueueFrontendStyles']
+        );
     }
 }

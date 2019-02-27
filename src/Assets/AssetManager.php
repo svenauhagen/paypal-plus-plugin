@@ -12,33 +12,73 @@ namespace WCPayPalPlus\Assets;
 
 use WCPayPalPlus\PluginProperties;
 
+/**
+ * Class AssetManager
+ * @package WCPayPalPlus\Assets
+ */
 class AssetManager
 {
+    /**
+     * @var PluginProperties
+     */
     private $pluginProperties;
 
+    /**
+     * AssetManager constructor.
+     * @param PluginProperties $pluginProperties
+     */
     public function __construct(PluginProperties $pluginProperties)
     {
         $this->pluginProperties = $pluginProperties;
     }
 
+    /**
+     * Enqueue Admin Scripts
+     */
     public function enqueueAdminScripts()
     {
-        $assetUrl = untrailingslashit($this->pluginProperties->dirUrl());
-        $adminScript = "{$assetUrl}/public/js/admin.min.js";
+        list($assetPath, $assetUrl) = $this->assetUrlPath();
 
-        wp_enqueue_script('paypalplus-woocommerce-admin', $adminScript, ['jquery']);
+        wp_enqueue_script(
+            'paypalplus-woocommerce-admin',
+            "{$assetUrl}/public/js/admin.min.js",
+            [],
+            filemtime("{$assetPath}/public/js/admin.min.js"),
+            true
+        );
     }
 
+    /**
+     * Enqueue Admin Styles
+     */
     public function enqueueAdminStyles()
     {
-        $assetUrl = untrailingslashit($this->pluginProperties->dirUrl());
-        $adminStyle = "{$assetUrl}/public/css/admin.min.css";
+        list($assetPath, $assetUrl) = $this->assetUrlPath();
 
-        wp_enqueue_style('paypalplus-woocommerce-admin', $adminStyle, []);
+        wp_enqueue_style(
+            'paypalplus-woocommerce-admin',
+            "{$assetUrl}/public/css/admin.min.css",
+            [],
+            filemtime("{$assetPath}/public/css/admin.min.css"),
+            'screen'
+        );
     }
 
+    /**
+     * Enqueue Frontend Scripts
+     */
     public function enqueueFrontEndScripts()
     {
+        list($assetPath, $assetUrl) = $this->assetUrlPath();
+
+        wp_enqueue_script(
+            'paypalplus-woocommerce-front',
+            "{$assetUrl}/public/js/front.min.js",
+            ['jquery'],
+            filemtime("{$assetPath}/public/js/front.min.js"),
+            true
+        );
+
         if (is_checkout() || is_checkout_pay_page()) {
             wp_enqueue_script(
                 'ppplus-js',
@@ -47,5 +87,37 @@ class AssetManager
                 null
             );
         }
+    }
+
+    /**
+     * Enqueue Frontend Styles
+     */
+    public function enqueueFrontendStyles()
+    {
+        list($assetPath, $assetUrl) = $this->assetUrlPath();
+
+        wp_enqueue_style(
+            'paypalplus-woocommerce-front',
+            "{$assetUrl}/public/css/front.min.css",
+            [],
+            filemtime("{$assetPath}/public/css/front.min.css"),
+            'screen'
+        );
+    }
+
+    /**
+     * Retrieve the assets and url path for scripts
+     *
+     * @return array
+     */
+    private function assetUrlPath()
+    {
+        $assetPath = untrailingslashit($this->pluginProperties->dirPath());
+        $assetUrl = untrailingslashit($this->pluginProperties->dirUrl());
+
+        return [
+            $assetPath,
+            $assetUrl,
+        ];
     }
 }

@@ -1,9 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 22.11.16
- * Time: 17:36
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace WCPayPalPlus\WC;
@@ -25,9 +27,8 @@ class ReceiptPageView
             'woo-paypalplus'
         );
         ?>
-        <!--suppress JSUnresolvedFunction, JSUnresolvedVariable -->
         <script>
-            function paypal_plus_redirect()
+            function plusRedirect()
             {
                 jQuery.blockUI({
                     message: "<?php echo esc_js($message);?>",
@@ -47,20 +48,19 @@ class ReceiptPageView
                         lineHeight: '24px'
                     }
                 });
+
                 if (typeof PAYPAL != 'undefined') {
                     PAYPAL.apps.PPP.doCheckout();
-                } else {
-                    setTimeout(function () {
-                        PAYPAL.apps.PPP.doCheckout();
-                    }, 500);
+                    return;
                 }
+
+                setTimeout(function () {
+                    PAYPAL.apps.PPP.doCheckout();
+                }, 500);
             }
 
-            jQuery(window).on('load', function () {
-                paypal_plus_redirect();
-            });
-            jQuery(document).ready(function () {
-                paypal_plus_redirect();
+            window.addEventListener('load', function () {
+                plusRedirect();
             });
         </script>
         <?php

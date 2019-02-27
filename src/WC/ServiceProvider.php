@@ -28,12 +28,21 @@ class ServiceProvider implements BootstrappableServiceProvider
             );
         };
         $container[PlusGateway::class] = function (Container $container) {
-            return new PlusGateway();
+            return new PlusGateway(
+                $container[PlusFrameView::class],
+                $container[ReceiptPageView::class]
+            );
         };
         $container[DefaultGatewayOverride::class] = function (Container $container) {
             return new DefaultGatewayOverride(
                 $container[Setting\PlusStorable::class]
             );
+        };
+        $container[PlusFrameView::class] = function () {
+            return new PlusFrameView();
+        };
+        $container[ReceiptPageView::class] = function () {
+            return new ReceiptPageView();
         };
     }
 

@@ -16,7 +16,8 @@ module.exports = [
         mode: 'production',
         devtool: 'source-map',
         entry: {
-            admin: './resources/js/admin.js'
+            admin: './resources/js/admin.js',
+            front: './resources/js/front.js',
         },
         output: {
             path: resolve('public/js'),
