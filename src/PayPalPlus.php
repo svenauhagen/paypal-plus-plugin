@@ -12,6 +12,7 @@ namespace WCPayPalPlus;
 
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
+use WCPayPalPlus\Service\IntegrationServiceProvider;
 use WCPayPalPlus\Service\ServiceProvider;
 use WCPayPalPlus\Service\ServiceProvidersCollection;
 
@@ -62,6 +63,13 @@ class PayPalPlus
 
         // Lock the container. Nothing can be registered after that.
         $this->container->lock();
+
+        $integrations = $this->serviceProviders->filter(
+            function (ServiceProvider $provider) {
+                return $provider instanceof IntegrationServiceProvider;
+            }
+        );
+        $integrations->applyMethod('integrate', $this->container);
 
         $bootstrappable = $this->serviceProviders->filter(
             function (ServiceProvider $provider) {
