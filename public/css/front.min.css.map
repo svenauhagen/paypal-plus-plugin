@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAII,0BAAO,CACH,MAAM,CAAE,eAAe,CACvB,KAAK,CAAE,eAAe,CACtB,MAAM,CAAE,eAAe",
+"sources": ["../../resources/scss/partials/plus-paywall.scss"],
+"names": [],
+"file": "front.min.css"
+}

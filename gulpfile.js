@@ -71,10 +71,10 @@ function copyPackageFiles(done)
     return new Promise(() => {
         pump(
             gulp.src([
-                './assets/**/*',
                 './languages/**/*',
                 './lib/**/*',
                 '!./lib/__classes',
+                './public/**/*',
                 './src/**/*',
                 './LICENSE',
                 './paypalplus-woocommerce.php',

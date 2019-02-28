@@ -119,6 +119,9 @@ class GatewaySettingsModel
                     'woo-paypalplus'
                 ),
                 'default' => '',
+                'custom_attributes' => [
+                    'readonly' => 'readonly',
+                ],
                 'class' => 'credential_field readonly',
             ],
             'rest_client_id' => [
@@ -152,6 +155,9 @@ class GatewaySettingsModel
                     'woo-paypalplus'
                 ),
                 'default' => '',
+                'custom_attributes' => [
+                    'readonly' => 'readonly',
+                ],
                 'class' => 'credential_field readonly',
             ],
         ];
