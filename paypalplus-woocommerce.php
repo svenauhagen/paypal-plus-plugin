@@ -1,4 +1,6 @@
 <?php # -*- coding: utf-8 -*-
+// phpcs:disable
+
 /**
  * Plugin Name: PayPal PLUS for WooCommerce
  * Description: PayPal Plus - the official WordPress Plugin for WooCommerce
@@ -63,12 +65,14 @@ $bootstrap = \Closure::bind(function () {
                         'woo-paypalplus'
                     ),
                     $minPhpVersion,
-                    phpversion()
+                    PHP_VERSION
                 )
             );
 
             return false;
         }
+
+        return true;
     }
 
     /**
@@ -81,7 +85,7 @@ $bootstrap = \Closure::bind(function () {
             return false;
         }
 
-        if (version_compare(WC()->version, '3.0.0', '<')) {
+        if (version_compare(wc()->version, '3.0.0', '<')) {
             adminNotice(
                 __(
                     'PayPal PLUS requires WooCommerce version 3.0 or higher .',
@@ -100,17 +104,19 @@ $bootstrap = \Closure::bind(function () {
      * @return bool
      *
      * @wp-hook plugins_loaded
-     * @throws \Throwable
+     * @throws \Exception
      * @return bool
      */
     function bootstrap()
     {
-        $bootstrapped = false;
-
+        if (!versionCheck()) {
+            return false;
+        }
         if (!wooCommerceCheck()) {
             return false;
         }
 
+        /** @noinspection BadExceptionsProcessingInspection */
         try {
             /** @var Container $container */
             $container = resolve();
@@ -125,7 +131,9 @@ $bootstrap = \Closure::bind(function () {
                 ->add(new Assets\ServiceProvider())
                 ->add(new WC\ServiceProvider())
                 ->add(new Ipn\ServiceProvider())
-                ->add(new Pui\ServiceProvider());
+                ->add(new Pui\ServiceProvider())
+                ->add(new Log\ServiceProvider())
+                ->add(new Api\ServiceProvider());
 
             $payPalPlus = new PayPalPlus($container, $providers);
 
@@ -142,14 +150,14 @@ $bootstrap = \Closure::bind(function () {
             $bootstrapped = $payPalPlus->bootstrap();
 
             unset($providers);
-        } catch (\Throwable $thr) {
-            do_action(ACTION_LOG, 'error', $thr->getMessage(), compact($thr));
+        } catch (\Exception $exc) {
+            do_action(ACTION_LOG, 'error', $exc->getMessage(), compact($exc));
 
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                throw $thr;
+                throw $exc;
             }
 
-            return false;
+            $bootstrapped = false;
         }
 
         return $bootstrapped;
