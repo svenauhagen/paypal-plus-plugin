@@ -5,6 +5,7 @@ namespace WCPayPalPlus\WC;
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use const WCPayPalPlus\ACTION_LOG;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Notice;
 use WCPayPalPlus\Ipn\Ipn;
@@ -384,7 +385,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
             $payment = new WCPaymentExecution($data, [$success]);
             $payment->execute();
         } catch (PayPalConnectionException $exc) {
-            do_action('wc_paypal_plus_log_exception', 'payment_execution_exception', $exc);
+            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'payment_execution_exception: ' . $exc->getMessage(), compact($exc));
 
             wc_add_notice(
                 __(

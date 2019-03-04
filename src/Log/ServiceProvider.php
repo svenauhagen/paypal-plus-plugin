@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\Log;
 
 use Inpsyde\Lib\Psr\Log\LoggerInterface;
+use const WCPayPalPlus\ACTION_LOG;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 
@@ -40,5 +41,8 @@ class ServiceProvider implements BootstrappableServiceProvider
 
     public function bootstrap(Container $container)
     {
+        add_action(ACTION_LOG, function ($level, $message, $context) use ($container) {
+            $container[LoggerInterface::class]->log($level, $message, $context);
+        });
     }
 }

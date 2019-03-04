@@ -17,6 +17,7 @@ use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Api\RedirectUrls;
 use Inpsyde\Lib\PayPal\Api\Transaction;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use const WCPayPalPlus\ACTION_LOG;
 
 /**
  * Class WCPayPalPayment
@@ -87,7 +88,7 @@ class WCPayPalPayment
         try {
             $payment->create($this->payment_data->get_api_context());
         } catch (PayPalConnectionException $exc) {
-            do_action('wc_paypal_plus_log_exception', 'create_payment_exception', $exc);
+            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'create_payment_exception: ' . $exc->getMessage(), compact($exc));
             return null;
         }
 

@@ -12,6 +12,7 @@ use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\PayPal\Exception\PayPalInvalidCredentialException;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
+use const WCPayPalPlus\ACTION_LOG;
 
 /**
  * Class CredentialVerification
@@ -64,12 +65,12 @@ class CredentialVerification
             $params = ['count' => 1];
             Payment::all($params, $api_context);
         } catch (PayPalInvalidCredentialException $ex) {
-            do_action('wc_paypal_plus_log_exception', 'credential_exception', $ex);
+            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'credential_exception:' . $ex->getMessage(), compact($ex));
             $this->error = $ex->getMessage();
 
             return false;
         } catch (PayPalConnectionException $ex) {
-            do_action('wc_paypal_plus_log_exception', 'credential_exception', $ex);
+            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'credential_exception:' . $ex->getMessage(), compact($ex));
             $this->error = $ex->getMessage();
 
             return false;
