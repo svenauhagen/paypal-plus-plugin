@@ -3,7 +3,6 @@
 namespace WCPayPalPlus\WC;
 
 use Inpsyde\Lib\PayPal\Api\Payment;
-use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use const WCPayPalPlus\ACTION_LOG;
 use WCPayPalPlus\Api\ApiContextFactory;
@@ -123,7 +122,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
             return false;
         }
 
-        $apiContext = ApiContextFactory::get();
+        $apiContext = ApiContextFactory::getFromConfiguration();
         $refundData = new RefundData(
             $order,
             $amount,
@@ -150,7 +149,13 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
      */
     public function process_admin_options()
     {
-        $apiContext = ApiContextFactory::get($this->apiCredentialsByRequest());
+        $clientIdKey = $this->isSandboxed() ? self::CLIENT_ID_KEY_SANDBOX : self::CLIENT_ID_KEY;
+        $clientSecret = $this->isSandboxed() ? self::CLIENT_SECRET_ID_KEY_SANDBOX : self::CLIENT_SECRET_ID_KEY;
+
+        $clientId = (string)filter_input(INPUT_POST, $clientIdKey, FILTER_SANITIZE_STRING);
+        $clientSecret = (string)filter_input(INPUT_POST, $clientSecret, FILTER_SANITIZE_STRING);
+
+        $apiContext = ApiContextFactory::getFromCredentials($clientId, $clientSecret);
         $verification = new CredentialVerification($apiContext);
         $isValidCredential = $verification->verify();
 
@@ -210,7 +215,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
         $output = ob_get_clean();
 
         $verification = new CredentialVerification(
-            ApiContextFactory::get()
+            ApiContextFactory::getFromConfiguration()
         );
         $isValidCredential = $verification->verify();
 
@@ -298,7 +303,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
             $order,
             $paymentId,
             $invoicePrefix,
-            ApiContextFactory::get()
+            ApiContextFactory::getFromConfiguration()
         );
 
         $payment = new WCPaymentPatch($patchData);
@@ -376,7 +381,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
             $order,
             $payerId,
             $paymentId,
-            ApiContextFactory::get()
+            ApiContextFactory::getFromConfiguration()
         );
 
         $success = new PaymentExecutionSuccess($data);
@@ -443,20 +448,6 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * @return OAuthTokenCredential
-     */
-    private function apiCredentialsByRequest()
-    {
-        $clientIdKey = $this->isSandboxed() ? self::CLIENT_ID_KEY_SANDBOX : self::CLIENT_ID_KEY;
-        $clientSecret = $this->isSandboxed() ? self::CLIENT_SECRET_ID_KEY_SANDBOX : self::CLIENT_SECRET_ID_KEY;
-
-        $clientId = (string)filter_input(INPUT_POST, $clientIdKey, FILTER_SANITIZE_STRING);
-        $clientSecret = (string)filter_input(INPUT_POST, $clientSecret, FILTER_SANITIZE_STRING);
-
-        return new OAuthTokenCredential($clientId, $clientSecret);
-    }
-
-    /**
      * @return string
      */
     private function experienceProfileOptionKey()
@@ -508,7 +499,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
                 return $payment;
             }
 
-            return Payment::get($id, ApiContextFactory::get());
+            return Payment::get($id, ApiContextFactory::getFromConfiguration());
         }
 
         if ($key) {
@@ -545,7 +536,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
             $cancel_url,
             $notify_url,
             $web_profile_id,
-            ApiContextFactory::get()
+            ApiContextFactory::getFromConfiguration()
         );
     }
 
