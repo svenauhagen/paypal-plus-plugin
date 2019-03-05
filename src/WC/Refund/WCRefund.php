@@ -10,6 +10,7 @@ namespace WCPayPalPlus\WC\Refund;
 
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
+use const WCPayPalPlus\ACTION_LOG;
 
 /**
  * Class WCRefund
@@ -63,7 +64,7 @@ class WCRefund
                     ->execute();
             }
         } catch (PayPalConnectionException $ex) {
-            do_action('wc_paypal_plus_log_exception', 'refund_exception', $ex);
+            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'refund_exception: ' . $ex->getMessage(), compact($ex));
 
             return false;
         }

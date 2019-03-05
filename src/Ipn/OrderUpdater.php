@@ -10,6 +10,8 @@
 
 namespace WCPayPalPlus\Ipn;
 
+use const WCPayPalPlus\ACTION_LOG;
+
 /**
  * Class OrderUpdater
  *
@@ -86,8 +88,9 @@ class OrderUpdater
     {
         if ($this->order->has_status(self::ORDER_STATUS_COMPLETED)) {
             do_action(
-                'wc_paypal_plus_log_error',
-                'IPN Error. Payment already completed: ',
+                ACTION_LOG,
+                \WC_Log_Levels::ERROR,
+                'IPN Error. Payment already completed. ',
                 []
             );
 
@@ -98,7 +101,8 @@ class OrderUpdater
             $last_error = $this->validator->get_last_error();
             $this->order->update_status(self::ORDER_STATUS_ON_HOLD, $last_error);
             do_action(
-                'wc_paypal_plus_log_error',
+                ACTION_LOG,
+                \WC_Log_Levels::ERROR,
                 'IPN Error. Payment validation failed: ' . $last_error,
                 []
             );
@@ -120,7 +124,7 @@ class OrderUpdater
                 update_post_meta($this->order->get_id(), 'PayPal Transaction Fee', wc_clean($fee));
             }
 
-            do_action('wc_paypal_plus__log', 'Payment completed successfully ', []);
+            do_action(ACTION_LOG, \WC_Log_Levels::INFO, 'Payment completed successfully ', []);
 
             return true;
         }
@@ -131,7 +135,7 @@ class OrderUpdater
                 $this->ipnRequest->get(Request::KEY_PENDING_REASON)
             )
         );
-        do_action('wc_paypal_plus__log', 'Payment put on hold ', []);
+        do_action(ACTION_LOG, \WC_Log_Levels::INFO, 'Payment put on hold ', []);
 
         return true;
     }
