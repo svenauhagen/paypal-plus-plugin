@@ -62,7 +62,7 @@ class Ipn
             // Ensure an order exists
             OrderFactory::createByIpnRequest($this->ipnRequest);
         } catch (\Exception $exc) {
-            do_action(ACTION_LOG, 'error', $exc->getMessage(), compact($exc));
+            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, $exc->getMessage(), compact($exc));
 
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 throw $exc;
@@ -76,7 +76,7 @@ class Ipn
             exit;
         }
 
-        do_action('wc_paypal_plus_log_error', 'Invalid IPN call', $this->ipnRequest->all());
+        do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'Invalid IPN call', $this->ipnRequest->all());
         // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
         wp_die('PayPal IPN Request Failure', 'PayPal IPN', ['response' => 500]);
     }
@@ -91,7 +91,8 @@ class Ipn
 
         if (method_exists($updater, 'payment_status_' . $payment_status)) {
             do_action(
-                'wc_paypal_plus_log',
+                ACTION_LOG,
+                \WC_Log_Levels::INFO,
                 'Processing IPN. payment status: ' . $payment_status,
                 $this->ipnRequest->all()
             );

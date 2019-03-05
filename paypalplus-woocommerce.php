@@ -151,7 +151,7 @@ $bootstrap = \Closure::bind(function () {
 
             unset($providers);
         } catch (\Exception $exc) {
-            do_action(ACTION_LOG, 'error', $exc->getMessage(), compact($exc));
+            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, $exc->getMessage(), compact($exc));
 
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 throw $exc;
