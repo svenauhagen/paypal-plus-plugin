@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\Assets;
 
+use WCPayPalPlus\ExpressCheckout\AjaxHandler;
 use WCPayPalPlus\PluginProperties;
 
 /**
@@ -18,10 +19,7 @@ use WCPayPalPlus\PluginProperties;
  */
 class AssetManager
 {
-    /**
-     * @var PluginProperties
-     */
-    private $pluginProperties;
+    use AssetManagerTrait;
 
     /**
      * AssetManager constructor.
@@ -74,12 +72,23 @@ class AssetManager
         wp_enqueue_script(
             'paypalplus-woocommerce-front',
             "{$assetUrl}/public/js/front.min.js",
-            ['jquery'],
+            ['underscore', 'jquery', 'ppplus-express-checkout'],
             filemtime("{$assetPath}/public/js/front.min.js"),
             true
         );
+        $this->loadScriptsData(
+            'paypalplus-woocommerce-front',
+            'wooPayPalPlusExpressCheckout',
+            [
+                'validContexts' => AjaxHandler::VALID_CONTEXTS,
+                'request' => [
+                    'action' => AjaxHandler::ACTION,
+                    'ajaxUrl' => home_url('/wp-admin/admin-ajax.php'),
+                ],
+            ]
+        );
 
-        $this->enqueuePayPalScripts();
+        $this->enqueuePayPalFrontEndScripts();
     }
 
     /**
@@ -101,7 +110,7 @@ class AssetManager
     /**
      * Enqueue PayPal Specific Scripts
      */
-    private function enqueuePayPalScripts()
+    private function enqueuePayPalFrontEndScripts()
     {
         list($assetPath, $assetUrl) = $this->assetUrlPath();
 
@@ -122,15 +131,6 @@ class AssetManager
                 ),
             ]
         );
-
-        if (is_checkout() || is_checkout_pay_page()) {
-            wp_enqueue_script(
-                'ppplus-js',
-                'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
-                [],
-                null
-            );
-        }
     }
 
     /**

@@ -22,6 +22,9 @@ class ServiceProvider implements BootstrappableServiceProvider
 {
     public function register(Container $container)
     {
+        $container[\WooCommerce::class] = function () {
+            return wc();
+        };
         $container[Setting\PlusStorable::class] = function (Container $container) {
             return new Setting\PlusRepository(
                 $container[PlusGateway::class]

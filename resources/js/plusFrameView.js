@@ -22,7 +22,7 @@ function appConfigurationFromElement(frameElement)
  * Setup the PayPal Application
  * @returns {*}
  */
-export function initializePayPalApp()
+export function bootstrapPayPalApp()
 {
     const frameElement = document.querySelector(`#${FRAME_SELECTOR}`);
     const appConfiguration = appConfigurationFromElement(frameElement);

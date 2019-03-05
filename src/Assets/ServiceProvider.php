@@ -16,6 +16,9 @@ use WCPayPalPlus\Service\Container;
 
 class ServiceProvider implements BootstrappableServiceProvider
 {
+    /**
+     * @inheritdoc
+     */
     public function register(Container $container)
     {
         $container[AssetManager::class] = function (Container $container) {
@@ -23,8 +26,20 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[PluginProperties::class]
             );
         };
+        $container[PayPalSdkScriptArguments::class] = function () {
+            return new PayPalSdkScriptArguments();
+        };
+        $container[PayPalAssetManager::class] = function (Container $container) {
+            return new PayPalAssetManager(
+                $container[PluginProperties::class],
+                $container[PayPalSdkScriptArguments::class]
+            );
+        };
     }
 
+    /**
+     * @inheritdoc
+     */
     public function bootstrap(Container $container)
     {
         if (is_admin()) {
@@ -39,6 +54,11 @@ class ServiceProvider implements BootstrappableServiceProvider
 
             return;
         }
+
+        add_action(
+            'wp_enqueue_scripts',
+            [$container[PayPalAssetManager::class], 'enqueueFrontEndScripts']
+        );
 
         add_action(
             'wp_enqueue_scripts',

@@ -14,7 +14,7 @@ function resolve(part)
 module.exports = [
     {
         mode: 'production',
-        devtool: 'source-map',
+        devtool: 'eval-source-map',
         entry: {
             admin: './resources/js/admin.js',
             front: './resources/js/front.js',

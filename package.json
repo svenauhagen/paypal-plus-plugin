@@ -53,5 +53,8 @@
     "raw-loader": "^1.0.0",
     "webpack": "^4.29.5",
     "webpack-cli": "^3.2.3"
+  },
+  "dependencies": {
+    "underscore": "^1.9.1"
   }
 }
