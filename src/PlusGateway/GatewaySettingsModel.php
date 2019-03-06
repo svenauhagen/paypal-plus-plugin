@@ -1,12 +1,14 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 03.11.16
- * Time: 15:34
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC;
+namespace WCPayPalPlus\PlusGateway;
 
 /**
  * Class GatewaySettingsModel
@@ -17,6 +19,7 @@ class GatewaySettingsModel
 {
     public function settings()
     {
+        /** @noinspection AdditionOperationOnArraysInspection */
         $settings =
             $this->generalSettings()
             + $this->credentialsSettings()

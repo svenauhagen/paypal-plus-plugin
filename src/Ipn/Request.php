@@ -11,7 +11,9 @@
 namespace WCPayPalPlus\Ipn;
 
 /**
- * Class IpnRequest
+ * Class Request
+ *
+ * TODO Request Could be moved outside of the Ipn package, isn't tight with that
  *
  * @method custom
  * @method paymentStatus

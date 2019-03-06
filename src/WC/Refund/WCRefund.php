@@ -8,9 +8,10 @@
 
 namespace WCPayPalPlus\WC\Refund;
 
+use const WCPayPalPlus\ACTION_LOG;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
-use const WCPayPalPlus\ACTION_LOG;
+use WCPayPalPlus\Order\OrderStatuses;
 
 /**
  * Class WCRefund
@@ -34,15 +35,25 @@ class WCRefund
     private $refund_data;
 
     /**
-     * WCRefund constructor.
-     *
-     * @param RefundData $refund_data RefundData object.
-     * @param ApiContext $context PayPal Api Context object.
+     * @var OrderStatuses
      */
-    public function __construct(RefundData $refund_data, ApiContext $context)
-    {
+    private $orderStatuses;
+
+    /**
+     * WCRefund constructor.
+     * @param RefundData $refund_data
+     * @param ApiContext $context
+     * @param OrderStatuses $orderStatuses
+     */
+    public function __construct(
+        RefundData $refund_data,
+        ApiContext $context,
+        OrderStatuses $orderStatuses
+    ) {
+
         $this->context = $context;
         $this->refund_data = $refund_data;
+        $this->orderStatuses = $orderStatuses;
     }
 
     /**
@@ -56,15 +67,23 @@ class WCRefund
         $refund = $this->refund_data->get_refund();
 
         try {
-            $refunded_sale = $sale->refundSale($refund, $this->context);
-            if ('completed' === $refunded_sale->state) {
-                $this
-                    ->refund_data
-                    ->get_success_handler($refunded_sale->getId())
-                    ->execute();
-            }
+            $refundedSale = $sale->refundSale($refund, $this->context);
+            $isOrderCompleted = $this->orderStatuses->orderStatusIs(
+                $refundedSale->state,
+                OrderStatuses::ORDER_STATUS_COMPLETED
+            );
+
+            $isOrderCompleted and $this
+                ->refund_data
+                ->get_success_handler($refundedSale->getId())
+                ->execute();
         } catch (PayPalConnectionException $ex) {
-            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'refund_exception: ' . $ex->getMessage(), compact($ex));
+            do_action(
+                ACTION_LOG,
+                \WC_Log_Levels::ERROR,
+                'refund_exception: ' . $ex->getMessage(),
+                compact($ex)
+            );
 
             return false;
         }

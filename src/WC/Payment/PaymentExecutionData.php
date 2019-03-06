@@ -22,7 +22,7 @@ class PaymentExecutionData
     /**
      * Paypal Payment object.
      *
-     * @var Payment
+     * @var PaymentCreator
      */
     private $payment;
 
@@ -102,7 +102,7 @@ class PaymentExecutionData
     /**
      * Fetches and returns a PayPayl Payment object
      *
-     * @return Payment
+     * @return PaymentCreator
      */
     public function get_payment()
     {

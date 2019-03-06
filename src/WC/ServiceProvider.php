@@ -1,4 +1,4 @@
-<?php
+<?php # -*- coding: utf-8 -*-
 /*
  * This file is part of the PayPal PLUS for WooCommerce package.
  *
@@ -10,92 +10,48 @@
 
 namespace WCPayPalPlus\WC;
 
-use WCPayPalPlus\Service\BootstrappableServiceProvider;
+use WCPayPalPlus\Order\OrderFactory;
+use WCPayPalPlus\Order\OrderStatuses;
+use WCPayPalPlus\PlusGateway\Gateway;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting;
+use WCPayPalPlus\WC\Payment\PaymentExecutionFactory;
+use WCPayPalPlus\WC\Payment\PaymentCreatorFactory;
+use WCPayPalPlus\WC\Payment\PaymentPatchFactory;
+use WCPayPalPlus\WC\Refund\RefundFactory;
+use WCPayPalPlus\Service;
 
 /**
  * Class ServiceProvider
  * @package WCPayPalPlus\WC
  */
-class ServiceProvider implements BootstrappableServiceProvider
+class ServiceProvider implements Service\ServiceProvider
 {
+    /**
+     * @inheritdoc
+     */
     public function register(Container $container)
     {
         $container[Setting\PlusStorable::class] = function (Container $container) {
-            return new Setting\PlusRepository(
-                $container[PlusGateway::class]
+            return $container[Gateway::class];
+        };
+
+        $container[RefundFactory::class] = function (Container $container) {
+            return new RefundFactory(
+                $container[OrderStatuses::class]
             );
         };
-        $container[PlusGateway::class] = function (Container $container) {
-            return new PlusGateway(
-                $container[PlusFrameView::class]
+
+        $container[PaymentCreatorFactory::class] = function (Container $container) {
+            return new PaymentCreatorFactory(
+                $container[OrderFactory::class]
             );
         };
-        $container[DefaultGatewayOverride::class] = function (Container $container) {
-            return new DefaultGatewayOverride(
-                $container[Setting\PlusStorable::class]
-            );
+        $container[PaymentExecutionFactory::class] = function () {
+            return new PaymentExecutionFactory();
         };
-        $container[PlusFrameView::class] = function () {
-            return new PlusFrameView();
+        $container[PaymentPatchFactory::class] = function () {
+            return new PaymentPatchFactory();
         };
-    }
-
-    public function bootstrap(Container $container)
-    {
-        $payPalPlusGatewayId = PlusGateway::GATEWAY_ID;
-        $payPalPlusGateway = $container[PlusGateway::class];
-
-        add_action(
-            'wp_loaded',
-            [$container[DefaultGatewayOverride::class], 'maybeOverride']
-        );
-
-        add_filter('woocommerce_payment_gateways', function ($methods) use ($payPalPlusGateway) {
-            $methods[PlusGateway::class] = $payPalPlusGateway;
-
-            $payPalGatewayIndex = array_search('WC_Gateway_Paypal', $methods, true);
-            if ($payPalGatewayIndex !== false) {
-                unset($methods[$payPalGatewayIndex]);
-            }
-
-            return $methods;
-        });
-
-        add_action(
-            "woocommerce_update_options_payment_gateways_{$payPalPlusGatewayId}",
-            [$payPalPlusGateway, 'process_admin_options'],
-            10
-        );
-        add_action(
-            'woocommerce_receipt_' . $payPalPlusGatewayId,
-            [$payPalPlusGateway, 'render_receipt_page']
-        );
-        add_action(
-            'woocommerce_api_' . $payPalPlusGatewayId,
-            [$payPalPlusGateway, 'execute_payment'],
-            12
-        );
-        add_action(
-            'woocommerce_add_to_cart',
-            [$payPalPlusGateway, 'clear_session_data']
-        );
-        add_action(
-            'woocommerce_cart_item_removed',
-            [$payPalPlusGateway, 'clear_session_data']
-        );
-        add_action(
-            'woocommerce_after_cart_item_quantity_update',
-            [$payPalPlusGateway, 'clear_session_data']
-        );
-        add_action(
-            'woocommerce_applied_coupon',
-            [$payPalPlusGateway, 'clear_session_data']
-        );
-        add_action(
-            'woocommerce_removed_coupon',
-            [$payPalPlusGateway, 'clear_session_data']
-        );
     }
 }

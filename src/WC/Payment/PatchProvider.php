@@ -1,14 +1,17 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 05.12.16
- * Time: 10:50
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace WCPayPalPlus\WC\Payment;
 
 use Inpsyde\Lib\PayPal\Api\Patch;
+use WC_Order;
 
 /**
  * Class PatchProvider
@@ -17,23 +20,36 @@ use Inpsyde\Lib\PayPal\Api\Patch;
  */
 class PatchProvider
 {
+    const RECEIPT_NAME = 'recipient_name';
+    const LINE_ONE = 'line1';
+    const LINE_TWO = 'line2';
+    const CITY = 'city';
+    const STATE = 'state';
+    const POSTAL_CODE = 'postal_code';
+    const COUNTRY_CODE = 'country_code';
+
     /**
      * WooCommerce Order object.
      *
-     * @var \WC_Order
+     * @var WC_Order
      */
     private $order;
 
     /**
+     * @var OrderData
+     */
+    private $orderData;
+
+    /**
      * PatchProvider constructor.
      *
-     * @param \WC_Order $order WooCommerce Order object.
-     * @param OrderData $order_data Order data provider.
+     * @param WC_Order $order WooCommerce Order object.
+     * @param OrderData $orderData Order data provider.
      */
-    public function __construct(\WC_Order $order, OrderData $order_data = null)
+    public function __construct(WC_Order $order, OrderData $orderData)
     {
         $this->order = $order;
-        $this->order_data = $order_data ?: new OrderData($this->order);
+        $this->orderData = $orderData;
     }
 
     /**
@@ -85,18 +101,18 @@ class PatchProvider
         $replace_patch = new Patch();
 
         $payment_data = [
-            'total' => $this->order_data->get_total(),
+            'total' => $this->orderData->get_total(),
             'currency' => get_woocommerce_currency(),
             'details' => [
-                'subtotal' => $this->order_data->get_subtotal(),
-                'shipping' => $this->order_data->get_total_shipping(),
+                'subtotal' => $this->orderData->get_subtotal(),
+                'shipping' => $this->orderData->get_total_shipping(),
             ],
         ];
 
-        if ($this->order_data->should_include_tax_in_total()) {
-            $payment_data['details']['tax'] = $this->order_data->get_total_tax();
+        if ($this->orderData->should_include_tax_in_total()) {
+            $payment_data['details']['tax'] = $this->orderData->get_total_tax();
         } else {
-            $payment_data['details']['shipping'] += $this->order_data->get_shipping_tax();
+            $payment_data['details']['shipping'] += $this->orderData->get_shipping_tax();
             $payment_data['details']['shipping'] = wc_format_decimal(
                 $payment_data['details']['shipping'],
                 wc_get_price_decimals()
@@ -118,7 +134,8 @@ class PatchProvider
      */
     public function get_billing_patch()
     {
-        $billing_data = ($this->has_shipping_data()) ? $this->get_shipping_address_data()
+        $billing_data = $this->has_shipping_data()
+            ? $this->get_shipping_address_data()
             : $this->get_billing_address_data();
 
         $billing_patch = new Patch();
@@ -148,13 +165,13 @@ class PatchProvider
     private function get_shipping_address_data()
     {
         return [
-            'recipient_name' => $this->order->get_shipping_first_name() . ' ' . $this->order->get_shipping_last_name(),
-            'line1' => $this->order->get_shipping_address_1(),
-            'line2' => $this->order->get_shipping_address_2(),
-            'city' => $this->order->get_shipping_city(),
-            'state' => $this->order->get_shipping_state(),
-            'postal_code' => $this->order->get_shipping_postcode(),
-            'country_code' => $this->order->get_shipping_country(),
+            self::RECEIPT_NAME => $this->order->get_shipping_first_name() . ' ' . $this->order->get_shipping_last_name(),
+            self::LINE_ONE => $this->order->get_shipping_address_1(),
+            self::LINE_TWO => $this->order->get_shipping_address_2(),
+            self::CITY => $this->order->get_shipping_city(),
+            self::STATE => $this->order->get_shipping_state(),
+            self::POSTAL_CODE => $this->order->get_shipping_postcode(),
+            self::COUNTRY_CODE => $this->order->get_shipping_country(),
         ];
     }
 
@@ -166,13 +183,13 @@ class PatchProvider
     private function get_billing_address_data()
     {
         return [
-            'recipient_name' => $this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name(),
-            'line1' => $this->order->get_billing_address_1(),
-            'line2' => $this->order->get_billing_address_2(),
-            'city' => $this->order->get_billing_city(),
-            'state' => $this->order->get_billing_state(),
-            'postal_code' => $this->order->get_billing_postcode(),
-            'country_code' => $this->order->get_billing_country(),
+            self::RECEIPT_NAME => $this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name(),
+            self::LINE_ONE => $this->order->get_billing_address_1(),
+            self::LINE_TWO => $this->order->get_billing_address_2(),
+            self::CITY => $this->order->get_billing_city(),
+            self::STATE => $this->order->get_billing_state(),
+            self::POSTAL_CODE => $this->order->get_billing_postcode(),
+            self::COUNTRY_CODE => $this->order->get_billing_country(),
         ];
     }
 }

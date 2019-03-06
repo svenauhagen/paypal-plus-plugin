@@ -1,33 +1,37 @@
-<?php
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-namespace WCPayPalPlus\WC;
+namespace WCPayPalPlus\PlusGateway;
 
-use Inpsyde\Lib\PayPal\Api\Payment;
-use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
-use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use Inpsyde\Lib\PayPal\Api;
 use const WCPayPalPlus\ACTION_LOG;
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use WCPayPalPlus\Api\ApiContextFactory;
+use WCPayPalPlus\Api\CredentialProvider;
+use WCPayPalPlus\Api\CredentialValidator;
+use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Notice;
-use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\Setting\PlusRepositoryHelper;
 use WCPayPalPlus\Setting\PlusStorable;
-use WCPayPalPlus\WC\Payment\CartData;
-use WCPayPalPlus\WC\Payment\OrderData;
-use WCPayPalPlus\WC\Payment\PaymentData;
-use WCPayPalPlus\WC\Payment\PaymentExecutionData;
-use WCPayPalPlus\WC\Payment\PaymentExecutionSuccess;
-use WCPayPalPlus\WC\Payment\PaymentPatchData;
-use WCPayPalPlus\WC\Payment\WCPaymentExecution;
-use WCPayPalPlus\WC\Payment\WCPaymentPatch;
-use WCPayPalPlus\WC\Payment\WCPayPalPayment;
-use WCPayPalPlus\WC\Refund\RefundData;
-use WCPayPalPlus\WC\Refund\WCRefund;
+use WCPayPalPlus\WC\Payment\PaymentExecutionFactory;
+use WCPayPalPlus\WC\Payment\PaymentCreatorFactory;
+use WCPayPalPlus\WC\Payment\PaymentPatchFactory;
+use WCPayPalPlus\WC\Refund\RefundFactory;
+use WCPayPalPlus\WC\WCWebExperienceProfile;
+use WC_Order_Refund;
 
 /**
- * Class PayPalPlusGateway
+ * Class Gateway
  * @package WCPayPalPlus\WC
  */
-class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
+class Gateway extends \WC_Payment_Gateway implements PlusStorable
 {
     use PlusRepositoryHelper;
 
@@ -38,49 +42,85 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
     const PAYER_ID_SESSION_KEY = 'ppp_payer_id';
     const APPROVAL_URL_SESSION_KEY = 'ppp_approval_url';
 
-    const CLIENT_ID_KEY = 'woocommerce_paypal_plus_rest_client_id';
-    const CLIENT_SECRET_ID_KEY = 'woocommerce_paypal_plus_rest_secret_id';
-    const CLIENT_ID_KEY_SANDBOX = self::CLIENT_ID_KEY . '_sandbox';
-    const CLIENT_SECRET_ID_KEY_SANDBOX = self::CLIENT_SECRET_ID_KEY . '_sandbox';
-
-    /**
-     * Gateway ID
-     *
-     * @var string
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ForbiddenPublicProperty.Found
-     */
-    public $id;
-    // phpcs:enable
-
-    /**
-     * Payment Method title.
-     *
-     * @var string
-     *
-     * phpcs:disable Inpsyde.CodeQuality.ForbiddenPublicProperty.Found
-     */
-    public $method_title;
-    // phpcs:enable
-
-    /**
-     * @var PlusGateway
-     */
-    private $gateway;
-
     /**
      * @var PlusFrameView
      */
     private $frameView;
 
     /**
+     * @var CredentialProvider
+     */
+    private $credentialProvider;
+
+    /**
+     * @var CredentialValidator
+     */
+    private $credentialValidator;
+
+    /**
+     * @var GatewaySettingsModel
+     */
+    private $settingsModel;
+
+    /**
+     * @var RefundFactory
+     */
+    private $refundFactory;
+
+    /**
+     * @var PaymentPatchFactory
+     */
+    private $paymentPatchFactory;
+
+    /**
+     * @var OrderFactory
+     */
+    private $orderFactory;
+
+    /**
+     * @var PaymentExecutionFactory
+     */
+    private $paymentExecutionFactory;
+
+    /**
+     * @var PaymentCreatorFactory
+     */
+    private $paymentCreatorFactory;
+
+    /**
      * PlusGateway constructor.
      * @param PlusFrameView $frameView
+     * @param CredentialProvider $credentialProvider
+     * @param CredentialValidator $credentialValidator
+     * @param GatewaySettingsModel $settingsModel
+     * @param RefundFactory $refundFactory
+     * @param PaymentPatchFactory $paymentPatchFactory
+     * @param OrderFactory $orderFactory
+     * @param PaymentExecutionFactory $paymentExecutionFactory
+     * @param PaymentCreatorFactory $paymentCreatorFactory
      */
-    public function __construct(PlusFrameView $frameView)
-    {
-        $this->gateway = $this;
+    public function __construct(
+        PlusFrameView $frameView,
+        CredentialProvider $credentialProvider,
+        CredentialValidator $credentialValidator,
+        GatewaySettingsModel $settingsModel,
+        RefundFactory $refundFactory,
+        PaymentPatchFactory $paymentPatchFactory,
+        OrderFactory $orderFactory,
+        PaymentExecutionFactory $paymentExecutionFactory,
+        PaymentCreatorFactory $paymentCreatorFactory
+    ) {
+
         $this->frameView = $frameView;
+        $this->credentialProvider = $credentialProvider;
+        $this->credentialValidator = $credentialValidator;
+        $this->settingsModel = $settingsModel;
+        $this->refundFactory = $refundFactory;
+        $this->paymentPatchFactory = $paymentPatchFactory;
+        $this->orderFactory = $orderFactory;
+        $this->paymentExecutionFactory = $paymentExecutionFactory;
+        $this->paymentCreatorFactory = $paymentCreatorFactory;
+
         $this->id = self::GATEWAY_ID;
         $this->title = $this->get_option('title');
         $this->method_title = self::GATEWAY_TITLE_METHOD;
@@ -106,7 +146,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
      */
     public function init_form_fields()
     {
-        $this->form_fields = (new GatewaySettingsModel())->settings();
+        $this->form_fields = $this->settingsModel->settings();
     }
 
     /**
@@ -117,21 +157,18 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
      */
     public function process_refund($orderId, $amount = null, $reason = '')
     {
-        $order = wc_get_order($orderId);
+        $order = $this->orderFactory->createById($orderId);
+
+        if (!$order instanceof WC_Order_Refund) {
+            return false;
+        }
 
         if (!$this->can_refund_order($order)) {
             return false;
         }
 
         $apiContext = ApiContextFactory::get();
-        $refundData = new RefundData(
-            $order,
-            $amount,
-            $reason,
-            $apiContext
-        );
-
-        $refund = new WCRefund($refundData, $apiContext);
+        $refund = $this->refundFactory->create($orderId, $amount, $reason, $apiContext);
 
         return $refund->execute();
     }
@@ -150,16 +187,15 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
      */
     public function process_admin_options()
     {
-        $apiContext = ApiContextFactory::get($this->apiCredentialsByRequest());
-        $verification = new CredentialVerification($apiContext);
-        $isValidCredential = $verification->verify();
+        $credentials = $this->credentialProvider->byRequest($this->isSandboxed());
+        $apiContext = ApiContextFactory::get($credentials);
+        list($maybeValid, $message) = $this->credentialValidator->ensureCredential($apiContext);
 
-        switch ($isValidCredential) {
+        switch ($maybeValid) {
             case true:
-                $optionKey = $this->experienceProfileOptionKey();
                 $config = [
                     'checkout_logo' => $this->get_option('checkout_logo'),
-                    'local_id' => $this->get_option($optionKey),
+                    'local_id' => $this->experienceProfileId(),
                     'brand_name' => $this->get_option('brand_name'),
                     'country' => $this->get_option('country'),
                 ];
@@ -167,21 +203,21 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
                     $config,
                     $apiContext
                 );
+                $optionKey = $this->experienceProfileKey();
                 $_POST[$this->get_field_key($optionKey)] = $webProfile->save_profile();
                 break;
             case false:
                 // phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected
                 unset($_POST[$this->get_field_key('enabled')]);
                 $this->enabled = 'no';
-                $this->add_error(
-                    sprintf(
-                        __(
-                            'Your API credentials are either missing or invalid: %s',
-                            'woo-paypalplus'
-                        ),
-                        $verification->get_error_message()
-                    )
-                );
+
+                $this->add_error(sprintf(
+                    __(
+                        'Your API credentials are either missing or invalid: %s',
+                        'woo-paypalplus'
+                    ),
+                    $message
+                ));
                 break;
         }
 
@@ -209,13 +245,10 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
         do_action(Notice\Admin::ACTION_ADMIN_MESSAGES);
         $output = ob_get_clean();
 
-        $verification = new CredentialVerification(
-            ApiContextFactory::get()
-        );
-        $isValidCredential = $verification->verify();
+        list($isValid) = $this->credentialValidator->ensureCredential(ApiContextFactory::get());
 
-        $isValidCredential and $this->sandboxMessage($output);
-        !$isValidCredential and $this->invalidPaymentMessage($output);
+        $isValid and $this->sandboxMessage($output);
+        !$isValid and $this->invalidPaymentMessage($output);
 
         $output .= parent::generate_settings_html($formFields, $echo);
 
@@ -263,13 +296,15 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
      */
     public function form()
     {
+        $paymentUrl = $this->createPayment();
+
         $data = [
             'useraction' => 'commit',
             'showLoadingIndicator' => true,
-            'approvalUrl' => $this->approvalUrl(),
+            'approvalUrl' => $paymentUrl,
             'placeholder' => 'ppplus',
             'mode' => $this->isSandboxed() ? 'sandbox' : 'live',
-            'country' => WC()->customer->get_billing_country(),
+            'country' => wc()->customer->get_billing_country(),
             'language' => $this->locale(),
             'buttonLocation' => 'outside',
             'showPuiOnSandbox' => true,
@@ -284,7 +319,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
     public function render_receipt_page($orderId)
     {
         wc()->session->ppp_order_id = $orderId;
-        $order = wc_get_order($orderId);
+        $order = $this->orderFactory->createById($orderId);
         $paymentId = wc()->session->__get(self::PAYMENT_ID_SESSION_KEY);
 
         if (!$paymentId) {
@@ -293,15 +328,13 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
             return;
         }
 
-        $invoicePrefix = $this->get_option('invoice_prefix');
-        $patchData = new PaymentPatchData(
+        $payment = $this->paymentPatchFactory->create(
             $order,
             $paymentId,
-            $invoicePrefix,
+            $this->invoicePrefix(),
             ApiContextFactory::get()
         );
 
-        $payment = new WCPaymentPatch($patchData);
         if ($payment->execute()) {
             wp_enqueue_script('paypalplus-woocommerce-plus-paypal-redirect');
             return;
@@ -322,10 +355,11 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * @param $key
-     * @param $data
+     * @param string $key
+     * @param string|array|object $data
      * @return false|string
      */
+    /** @noinspection PhpUnusedParameterInspection */
     public function generate_html_html($key, $data)
     {
         $defaults = [
@@ -342,8 +376,8 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
             <th scope="row" class="titledesc">
                 <?php echo wp_kses_post($data['title']); ?>
             </th>
-            <td class="forminp <?php echo $data['class'] ?>">
-                <?php echo $data['html'] ?>
+            <td class="forminp <?= sanitize_html_class($data['class']) ?>">
+                <?= $data['html'] ?>
             </td>
         </tr>
         <?php
@@ -356,9 +390,9 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
      */
     public function execute_payment()
     {
-        $token = filter_input(INPUT_GET, 'token');
-        $payerId = filter_input(INPUT_GET, 'PayerID');
-        $paymentId = filter_input(INPUT_GET, 'paymentId');
+        $token = filter_input(INPUT_GET, 'token', FILTER_SANITIZE_STRING);
+        $payerId = filter_input(INPUT_GET, 'PayerID', FILTER_SANITIZE_STRING);
+        $paymentId = filter_input(INPUT_GET, 'paymentId', FILTER_SANITIZE_STRING);
 
         if (!$paymentId) {
             $paymentId = wc()->session->__get(self::PAYMENT_ID_SESSION_KEY);
@@ -371,21 +405,23 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
         wc()->session->token = $token;
 
         wc()->session->__set(self::PAYER_ID_SESSION_KEY, $payerId);
-        $order = new \WC_Order(wc()->session->ppp_order_id);
-        $data = new PaymentExecutionData(
-            $order,
-            $payerId,
-            $paymentId,
-            ApiContextFactory::get()
-        );
-
-        $success = new PaymentExecutionSuccess($data);
+        $order = $this->orderFactory->createById(wc()->session->ppp_order_id);
 
         try {
-            $payment = new WCPaymentExecution($data, [$success]);
+            $payment = $this->paymentExecutionFactory->create(
+                $order,
+                $payerId,
+                $paymentId,
+                ApiContextFactory::get()
+            );
             $payment->execute();
         } catch (PayPalConnectionException $exc) {
-            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'payment_execution_exception: ' . $exc->getMessage(), compact($exc));
+            do_action(
+                ACTION_LOG,
+                \WC_Log_Levels::ERROR,
+                'payment_execution_exception: ' . $exc->getMessage(),
+                compact($exc)
+            );
 
             wc_add_notice(
                 __(
@@ -414,7 +450,7 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
             return '';
         }
 
-        if (false === strpos($checkoutLogoUrl, 'https')) {
+        if (strpos($checkoutLogoUrl, 'https') === false) {
             $this->add_error(
                 __(
                     'Checkout Logo must use the http secure protocol HTTPS. EG. (https://my-url)',
@@ -443,146 +479,43 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * @return OAuthTokenCredential
-     */
-    private function apiCredentialsByRequest()
-    {
-        $clientIdKey = $this->isSandboxed() ? self::CLIENT_ID_KEY_SANDBOX : self::CLIENT_ID_KEY;
-        $clientSecret = $this->isSandboxed() ? self::CLIENT_SECRET_ID_KEY_SANDBOX : self::CLIENT_SECRET_ID_KEY;
-
-        $clientId = (string)filter_input(INPUT_POST, $clientIdKey, FILTER_SANITIZE_STRING);
-        $clientSecret = (string)filter_input(INPUT_POST, $clientSecret, FILTER_SANITIZE_STRING);
-
-        return new OAuthTokenCredential($clientId, $clientSecret);
-    }
-
-    /**
+     * TODO Set the URL and the Payment ID into the Wc Session should be abstracted
+     *      and a method to clean up both at once without making possible to delete only one of them
+     *      should be implemented. See also `self::clear_session_data`
+     *
      * @return string
      */
-    private function experienceProfileOptionKey()
+    private function createPayment()
     {
-        return ($this->isSandboxed())
-            ? 'sandbox_experience_profile_id'
-            : 'live_experience_profile_id';
-    }
+        $session = wc()->session;
+        $url = (string)wc()->session->__get(self::APPROVAL_URL_SESSION_KEY);
 
-    /**
-     * @return mixed|string|null
-     */
-    private function approvalUrl()
-    {
-        $url = wc()->session->__get(self::APPROVAL_URL_SESSION_KEY);
+        if (!$url) {
+            try {
+                $paymentCreator = $this->paymentCreatorFactory->create(
+                    $this,
+                    $this,
+                    $session
+                );
+                $paymentCreator = $paymentCreator->create();
+            } catch (\Exception $exc) {
+                do_action(
+                    ACTION_LOG,
+                    \WC_Log_Levels::ERROR,
+                    'create_payment_exception: ' . $exc->getMessage(),
+                    compact($exc)
+                );
 
-        if (empty($url)) {
-            $paymentObject = $this->paymentObject();
-            if ($paymentObject === null) {
                 return $url;
             }
 
-            $url = $paymentObject->getApprovalLink();
-            $url = htmlspecialchars_decode($url);
+            $session->__set(self::PAYMENT_ID_SESSION_KEY, $paymentCreator->getId());
 
-            wc()->session->__set(
-                self::APPROVAL_URL_SESSION_KEY,
-                htmlspecialchars_decode($url)
-            );
+            $url = htmlspecialchars_decode($paymentCreator->getApprovalLink());
+            wc()->session->__set(self::APPROVAL_URL_SESSION_KEY, $url);
         }
 
         return $url;
-    }
-
-    /**
-     * @return Payment|null
-     */
-    private function paymentObject()
-    {
-        static $payment;
-
-        $order = null;
-        $key = filter_input(INPUT_GET, 'key');
-        $wcSession = wc()->session;
-        $id = $wcSession->__get(self::PAYMENT_ID_SESSION_KEY);
-
-        if (!empty($id)) {
-            if ($payment !== null && $payment->getId() === $id) {
-                return $payment;
-            }
-
-            return Payment::get($id, ApiContextFactory::get());
-        }
-
-        if ($key) {
-            $order_id = wc_get_order_id_by_order_key($key);
-            $order = new \WC_Order($order_id);
-            $wcSession->ppp_order_id = $order_id;
-        }
-
-        $data = $this->paymentData();
-        $wc_paypal_payment = new WCPayPalPayment($data, $this->orderData($order));
-        $payment = $wc_paypal_payment->create();
-
-        if ($payment === null) {
-            return null;
-        }
-
-        $wcSession->__set(self::PAYMENT_ID_SESSION_KEY, $payment->getId());
-
-        return $payment;
-    }
-
-    /**
-     * @return PaymentData
-     */
-    private function paymentData()
-    {
-        $return_url = wc()->api_request_url($this->id);
-        $cancel_url = $this->cancelUrl();
-        $notify_url = wc()->api_request_url(self::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX);
-        $web_profile_id = $this->get_option($this->experienceProfileOptionKey());
-
-        return new PaymentData(
-            $return_url,
-            $cancel_url,
-            $notify_url,
-            $web_profile_id,
-            ApiContextFactory::get()
-        );
-    }
-
-    /**
-     * @return false|string
-     */
-    private function cancelUrl()
-    {
-        // phpcs:disable Squiz.PHP.NonExecutableCode.Unreachable
-        switch ($this->get_option('cancel_url')) {
-            case 'cart':
-                return wc_get_cart_url();
-                break;
-            case 'checkout':
-                return wc_get_checkout_url();
-                break;
-            case 'account':
-                return wc_get_account_endpoint_url('dashboard');
-                break;
-            case 'custom':
-                return esc_url($this->get_option('cancel_custom_url'));
-                break;
-            case 'shop':
-            default:
-                return get_permalink(wc_get_page_id('shop'));
-                break;
-        }
-        // phpcs:enable
-    }
-
-    /**
-     * @param \WC_Order|null $order
-     * @return CartData|OrderData
-     */
-    private function orderData(\WC_Order $order = null)
-    {
-        return ($order === null) ? new CartData(wc()->cart) : new OrderData($order);
     }
 
     /**
@@ -649,5 +582,15 @@ class PlusGateway extends \WC_Payment_Gateway implements PlusStorable
             $output,
             sprintf('<strong>%s</strong>', $msgSandbox)
         );
+    }
+
+    /**
+     * @return string
+     */
+    private function experienceProfileKey()
+    {
+        return $this->isSandboxed()
+            ? PlusStorable::OPTION_PROFILE_ID_SANDBOX_NAME
+            : PlusStorable::OPTION_PROFILE_ID_LIVE_NAME;
     }
 }

@@ -1,9 +1,11 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 02.12.16
- * Time: 10:23
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace WCPayPalPlus\WC\Refund;
@@ -12,6 +14,7 @@ use Inpsyde\Lib\PayPal\Api\Amount;
 use Inpsyde\Lib\PayPal\Api\RefundRequest;
 use Inpsyde\Lib\PayPal\Api\Sale;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
+use WC_Order_Refund;
 
 /**
  * Class RefundData
@@ -52,15 +55,15 @@ class RefundData
     /**
      * RefundData constructor.
      *
-     * @param \WC_Order $order WooCommcerce Order object.
+     * @param WC_Order_Refund $order WooCommerce Order object.
      * @param float $amount Refund amount.
      * @param string $reason Refund reason.
      * @param ApiContext $context PayPal API Context object.
      */
-    public function __construct(\WC_Order $order, $amount, $reason, ApiContext $context)
+    public function __construct(WC_Order_Refund $order, $amount, $reason, ApiContext $context)
     {
         $this->order = $order;
-        $this->amount = floatval($amount);
+        $this->amount = (float)$amount;
         $this->context = $context;
         $this->reason = $reason;
     }

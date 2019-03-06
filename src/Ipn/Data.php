@@ -15,6 +15,8 @@ use WCPayPalPlus\Setting;
 /**
  * Class IPNData
  *
+ * TODO Data could be removed in favor of moving methods into the settings Repository.
+ *
  * @package WCPayPalPlus\Ipn
  */
 class Data

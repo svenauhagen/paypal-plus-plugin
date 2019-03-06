@@ -1,18 +1,16 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 02.12.16
- * Time: 17:16
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace WCPayPalPlus\WC\Payment;
 
-/**
- * Class OrderData
- *
- * @package WCPayPalPlus\WC\Payment
- */
+use WC_Order;
 
 /**
  * Class OrderData
@@ -33,9 +31,9 @@ class OrderData extends OrderDataCommon
     /**
      * OrderData constructor.
      *
-     * @param \WC_Order $order WooCommerce order object.
+     * @param WC_Order $order WooCommerce order object.
      */
-    public function __construct(\WC_Order $order)
+    public function __construct(WC_Order $order)
     {
         $this->order = $order;
     }
@@ -131,7 +129,7 @@ class OrderData extends OrderDataCommon
      *
      * @return string
      */
-    protected function get_subtotal_including_tax()
+    public function get_subtotal_including_tax()
     {
         $shipping_diff = $this->round(
             $this->order->get_shipping_total() + $this->order->get_shipping_tax()
