@@ -10,7 +10,6 @@
 
 namespace WCPayPalPlus\PlusGateway;
 
-use Inpsyde\Lib\PayPal\Api;
 use const WCPayPalPlus\ACTION_LOG;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use WCPayPalPlus\Api\ApiContextFactory;
@@ -22,7 +21,6 @@ use WCPayPalPlus\Setting\PlusRepositoryHelper;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\WC\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\WC\Payment\PaymentCreatorFactory;
-use WCPayPalPlus\WC\Payment\PaymentPatchFactory;
 use WCPayPalPlus\WC\Payment\Session;
 use WCPayPalPlus\WC\Refund\RefundFactory;
 use WCPayPalPlus\WC\WCWebExperienceProfile;

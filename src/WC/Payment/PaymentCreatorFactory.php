@@ -16,7 +16,6 @@ use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\PlusGateway\Gateway;
 use WC_Payment_Gateway;
-use WC_Session;
 use WC_Order;
 use WC_Order_Refund;
 use RuntimeException;
