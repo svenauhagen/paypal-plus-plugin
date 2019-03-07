@@ -10,6 +10,8 @@
 
 namespace WCPayPalPlus;
 
+use Exception;
+
 /**
  * @method string basename()
  * @method string dirPath()
@@ -71,16 +73,17 @@ class PluginProperties implements \ArrayAccess
     }
 
     /**
-     * @param string $name
+     * @param $name
      * @param array $args
-     * @return string
+     * @return mixed
+     * @throws Exception
      */
     public function __call($name, array $args = [])
     {
         assert(is_string($name));
 
         if (!array_key_exists($name, $this->properties)) {
-            throw new \Error(
+            throw new Exception(
                 sprintf(
                     'Call to undefined method %s::%s()',
                     __CLASS__,
