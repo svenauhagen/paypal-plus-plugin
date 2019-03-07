@@ -24,7 +24,7 @@ class PaymentPatchFactory
      * @param string $paymentId
      * @param string $invoicePrefix
      * @param ApiContext $context
-     * @return WCPaymentPatch
+     * @return PaymentPatcher
      */
     public function create(WC_Order $order, $paymentId, $invoicePrefix, ApiContext $context)
     {
@@ -42,7 +42,6 @@ class PaymentPatchFactory
             $patchProvider
         );
 
-        // TODO May be we want to rename the class by removing the WC Prefix
-        return new WCPaymentPatch($patchData);
+        return new PaymentPatcher($patchData);
     }
 }

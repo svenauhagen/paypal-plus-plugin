@@ -12,11 +12,11 @@ use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use const WCPayPalPlus\ACTION_LOG;
 
 /**
- * Class WCPaymentPatch
+ * Class PaymentPatcher
  *
  * @package WCPayPalPlus\WC\Payment
  */
-class WCPaymentPatch
+class PaymentPatcher
 {
     /**
      * Patch data object.
@@ -26,7 +26,7 @@ class WCPaymentPatch
     private $patch_data;
 
     /**
-     * WCPaymentPatch constructor.
+     * PaymentPatcher constructor.
      *
      * @param PaymentPatchData $patch_data You guessed it: The Patch data.
      */
