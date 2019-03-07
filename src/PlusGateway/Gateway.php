@@ -162,7 +162,7 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
             return false;
         }
 
-        $apiContext = ApiContextFactory::get();
+        $apiContext = ApiContextFactory::getFromConfiguration();
         $refund = $this->refundFactory->create($order, $amount, $reason, $apiContext);
 
         return $refund->execute();
@@ -183,7 +183,7 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
     public function process_admin_options()
     {
         $credentials = $this->credentialProvider->byRequest($this->isSandboxed());
-        $apiContext = ApiContextFactory::get($credentials);
+        $apiContext = ApiContextFactory::getFromCredentials($credentials);
         list($maybeValid, $message) = $this->credentialValidator->ensureCredential($apiContext);
 
         switch ($maybeValid) {
@@ -240,7 +240,9 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
         do_action(Notice\Admin::ACTION_ADMIN_MESSAGES);
         $output = ob_get_clean();
 
-        list($isValid) = $this->credentialValidator->ensureCredential(ApiContextFactory::get());
+        list($isValid) = $this->credentialValidator->ensureCredential(
+            ApiContextFactory::getFromConfiguration()
+        );
 
         $isValid and $this->sandboxMessage($output);
         !$isValid and $this->invalidPaymentMessage($output);
@@ -344,7 +346,7 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
                 $order,
                 $payerId,
                 $paymentId,
-                ApiContextFactory::get()
+                ApiContextFactory::getFromConfiguration()
             );
             $payment->execute();
         } catch (PayPalConnectionException $exc) {

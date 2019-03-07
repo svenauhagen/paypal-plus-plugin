@@ -81,7 +81,7 @@ class ReceiptPageRender
             $order,
             $paymentId,
             $this->settingRepository->invoicePrefix(),
-            ApiContextFactory::get()
+            ApiContextFactory::getFromConfiguration()
         );
 
         if ($paymentPatcher->execute()) {

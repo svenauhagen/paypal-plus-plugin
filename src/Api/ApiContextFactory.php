@@ -35,19 +35,12 @@ class ApiContextFactory
     /**
      * Get PayPal apiContext with credentials
      *
-     * @param string $clientId
-     * @param string $clientSecret
-     *
+     * @param OAuthTokenCredential $credential
      * @return ApiContext
      */
-    public static function getFromCredentials($clientId, $clientSecret)
+    public static function getFromCredentials(OAuthTokenCredential $credential)
     {
-        \assert(\is_string($clientId) && \is_string($clientSecret));
-
-        return new ApiContext(
-            new OAuthTokenCredential($clientId, $clientSecret),
-            self::requestId()
-        );
+        return new ApiContext($credential, self::requestId());
     }
 
     /**

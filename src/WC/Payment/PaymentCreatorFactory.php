@@ -66,7 +66,7 @@ class PaymentCreatorFactory
             $cancelUrl,
             $notifyUrl,
             $experienceProfile,
-            ApiContextFactory::get()
+            ApiContextFactory::getFromConfiguration()
         );
 
         return new PaymentCreator($paymentData, $orderData);
