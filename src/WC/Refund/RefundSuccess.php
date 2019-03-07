@@ -56,7 +56,7 @@ class RefundSuccess implements RequestSuccessHandler
             $this->order->add_order_note('Reason for Refund :' . $this->reason);
         }
         $max_remaining_refund = wc_format_decimal($this->order->get_total() - $this->order->get_total_refunded());
-        if (!$max_remaining_refund > 0) {
+        if ($max_remaining_refund <= 0) {
             $this->order->update_status('refunded');
         }
 
