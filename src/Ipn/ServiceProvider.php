@@ -12,6 +12,7 @@ namespace WCPayPalPlus\Ipn;
 
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Order\OrderUpdaterFactory;
+use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting;
@@ -28,9 +29,6 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function register(Container $container)
     {
-        $container[Request::class] = function () {
-            return new Request(filter_input_array(INPUT_POST) ?: []);
-        };
         $container[IpnVerifier::class] = function (Container $container) {
             return new IpnVerifier(
                 $container[Request::class],

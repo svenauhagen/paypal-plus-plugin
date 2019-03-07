@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\Ipn;
 
 use const WCPayPalPlus\ACTION_LOG;
+use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Setting\Storable;
 use WP_Error;
 use RuntimeException;

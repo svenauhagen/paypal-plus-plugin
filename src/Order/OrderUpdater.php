@@ -12,7 +12,7 @@ namespace WCPayPalPlus\Order;
 
 use const WCPayPalPlus\ACTION_LOG;
 use WCPayPalPlus\Ipn\PaymentValidator;
-use WCPayPalPlus\Ipn\Request;
+use WCPayPalPlus\Request\Request;
 use WC_Order;
 use WCPayPalPlus\Setting\Storable;
 

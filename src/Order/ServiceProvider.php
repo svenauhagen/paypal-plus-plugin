@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Order;
 
-use WCPayPalPlus\Ipn\Request;
+use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service;
 use WCPayPalPlus\Setting\PlusStorable;

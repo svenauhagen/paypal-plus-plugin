@@ -130,6 +130,7 @@ $bootstrap = \Closure::bind(function () {
                 ->add(new Notice\ServiceProvider())
                 ->add(new Assets\ServiceProvider())
                 ->add(new Setting\ServiceProvider())
+                ->add(new Request\ServiceProvider())
                 ->add(new WC\ServiceProvider())
                 ->add(new Ipn\ServiceProvider())
                 ->add(new Pui\ServiceProvider())

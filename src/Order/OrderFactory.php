@@ -15,7 +15,7 @@ use DomainException;
 use WC_Order;
 use WC_Order_Refund;
 use Exception;
-use WCPayPalPlus\Ipn\Request;
+use WCPayPalPlus\Request\Request;
 
 /**
  * Class OrderFactory
@@ -24,13 +24,13 @@ use WCPayPalPlus\Ipn\Request;
 class OrderFactory
 {
     /**
-     * @param Request $ipnRequest
+     * @param Request $request
      * @return WC_Order|WC_Order_Refund
      * @throws Exception
      */
-    public function createByIpnRequest(Request $ipnRequest)
+    public function createByRequest(Request $request)
     {
-        list($orderId, $orderKey) = $this->customOrderData($ipnRequest);
+        list($orderId, $orderKey) = $this->customOrderData($request);
 
         $order = $this->createById($orderId);
         $order or $order = $this->createByOrderKey($orderKey);
@@ -70,14 +70,14 @@ class OrderFactory
     }
 
     /**
-     * @param Request $ipnRequest
+     * @param Request $request
      * @return array
      * @throws DomainException
      * @throws UnexpectedValueException
      */
-    private function customOrderData(Request $ipnRequest)
+    private function customOrderData(Request $request)
     {
-        $data = $ipnRequest->get(Request::KEY_CUSTOM);
+        $data = $request->get(Request::KEY_CUSTOM);
         if (!$data) {
             throw new DomainException('Invalid Custom Data');
         }

@@ -14,6 +14,7 @@ use const WCPayPalPlus\ACTION_LOG;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Order\OrderUpdaterFactory;
 use Exception;
+use WCPayPalPlus\Request\Request;
 
 /**
  * Handles responses from PayPal IPN.
@@ -74,7 +75,7 @@ class Ipn
     {
         try {
             // Ensure an order exists
-            $this->orderFactory->createByIpnRequest($this->request);
+            $this->orderFactory->createByRequest($this->request);
         } catch (Exception $exc) {
             do_action(ACTION_LOG, \WC_Log_Levels::ERROR, $exc->getMessage(), compact($exc));
 

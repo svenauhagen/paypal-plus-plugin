@@ -8,15 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\Ipn;
+namespace WCPayPalPlus\Request;
 
 /**
  * Class Request
- *
- * TODO Request Could be moved outside of the Ipn package, isn't tight with that
- *
- * @method custom
- * @method paymentStatus
  *
  * @package WCPayPalPlus\Ipn
  */

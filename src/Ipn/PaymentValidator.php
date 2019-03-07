@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\Ipn;
 
 use WC_Order;
+use WCPayPalPlus\Request\Request;
 
 /**
  * Class PaymentValidator
