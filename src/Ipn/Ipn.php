@@ -13,6 +13,7 @@ namespace WCPayPalPlus\Ipn;
 use const WCPayPalPlus\ACTION_LOG;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Order\OrderUpdaterFactory;
+use Exception;
 
 /**
  * Handles responses from PayPal IPN.
@@ -24,16 +25,16 @@ class Ipn
     /**
      * IPN Data Provider
      *
-     * @var Data
+     * @var Request
      */
     private $request;
 
     /**
      * IPN Validator class
      *
-     * @var Validator
+     * @var IpnVerifier
      */
-    private $ipnValidator;
+    private $ipnVerifier;
 
     /**
      * @var OrderUpdaterFactory
@@ -48,33 +49,33 @@ class Ipn
     /**
      * Ipn constructor.
      * @param Request $request
-     * @param Validator $validator
+     * @param IpnVerifier $ipnVerifier
      * @param OrderUpdaterFactory $orderUpdaterFactory
      * @param OrderFactory $orderFactory
      */
     public function __construct(
         Request $request,
-        Validator $validator,
+        IpnVerifier $ipnVerifier,
         OrderUpdaterFactory $orderUpdaterFactory,
         OrderFactory $orderFactory
     ) {
 
         $this->request = $request;
-        $this->ipnValidator = $validator;
+        $this->ipnVerifier = $ipnVerifier;
         $this->orderUpdaterFactory = $orderUpdaterFactory;
         $this->orderFactory = $orderFactory;
     }
 
     /**
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function checkResponse()
     {
         try {
             // Ensure an order exists
             $this->orderFactory->createByIpnRequest($this->request);
-        } catch (\Exception $exc) {
+        } catch (Exception $exc) {
             do_action(ACTION_LOG, \WC_Log_Levels::ERROR, $exc->getMessage(), compact($exc));
 
             if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -84,7 +85,7 @@ class Ipn
             return;
         }
 
-        if ($this->ipnValidator->validate()) {
+        if ($this->ipnVerifier->isVerified()) {
             $this->valid_response();
             exit;
         }

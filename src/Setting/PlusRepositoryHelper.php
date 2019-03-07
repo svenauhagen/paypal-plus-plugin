@@ -100,4 +100,20 @@ trait PlusRepositoryHelper
     {
         return $this->get_option('invoice_prefix', '');
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function paypalUrl()
+    {
+        return $this->isSandboxed() ? self::PAYPAL_SANDBOX_URL : self::PAYPAL_LIVE_URL;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function userAgent()
+    {
+        return 'WooCommerce/' . wc()->version;
+    }
 }

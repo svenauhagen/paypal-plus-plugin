@@ -11,10 +11,10 @@
 namespace WCPayPalPlus\Order;
 
 use const WCPayPalPlus\ACTION_LOG;
-use WCPayPalPlus\Ipn\Data;
 use WCPayPalPlus\Ipn\PaymentValidator;
 use WCPayPalPlus\Ipn\Request;
 use WC_Order;
+use WCPayPalPlus\Setting\Storable;
 
 /**
  * Class OrderUpdater
@@ -29,13 +29,6 @@ class OrderUpdater
      * @var WC_Order
      */
     private $order;
-
-    /**
-     * Request Data
-     *
-     * @var Data
-     */
-    private $ipnData;
 
     /**
      * Payment Validation handler
@@ -55,23 +48,28 @@ class OrderUpdater
     private $orderStatuses;
 
     /**
+     * @var Storable
+     */
+    private $settingRepository;
+
+    /**
      * OrderUpdater constructor.
      * @param WC_Order $order
-     * @param Data $ipnData
+     * @param Storable $settingRepository
      * @param Request $request
      * @param PaymentValidator $validator
      * @param OrderStatuses $orderStatuses
      */
     public function __construct(
         WC_Order $order,
-        Data $ipnData,
+        Storable $settingRepository,
         Request $request,
         PaymentValidator $validator,
         OrderStatuses $orderStatuses
     ) {
 
         $this->order = $order;
-        $this->ipnData = $ipnData;
+        $this->settingRepository = $settingRepository;
         $this->request = $request;
         $this->validator = $validator;
         $this->orderStatuses = $orderStatuses;
@@ -257,7 +255,7 @@ class OrderUpdater
             do_action(
                 'wc_paypal_plus__ipn_payment_update',
                 OrderStatuses::ORDER_STATUS_REFUNDED,
-                $this->ipnData
+                $this->settingRepository
             );
         }
     }
@@ -277,7 +275,7 @@ class OrderUpdater
             )
         );
 
-        do_action('wc_paypal_plus__ipn_payment_update', 'reversed', $this->ipnData);
+        do_action('wc_paypal_plus__ipn_payment_update', 'reversed', $this->settingRepository);
     }
 
     /**
@@ -285,6 +283,6 @@ class OrderUpdater
      */
     public function payment_status_canceled_reversal()
     {
-        do_action('wc_paypal_plus__ipn_payment_update', 'canceled_reversal', $this->ipnData);
+        do_action('wc_paypal_plus__ipn_payment_update', 'canceled_reversal', $this->settingRepository);
     }
 }

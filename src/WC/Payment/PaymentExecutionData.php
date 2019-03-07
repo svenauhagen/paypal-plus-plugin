@@ -1,9 +1,11 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 02.12.16
- * Time: 18:25
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace WCPayPalPlus\WC\Payment;
@@ -19,13 +21,6 @@ use Inpsyde\Lib\PayPal\Rest\ApiContext;
  */
 class PaymentExecutionData
 {
-    /**
-     * Paypal Payment object.
-     *
-     * @var PaymentCreator
-     */
-    private $payment;
-
     /**
      * The payer ID.
      *
@@ -100,17 +95,21 @@ class PaymentExecutionData
     }
 
     /**
-     * Fetches and returns a PayPayl Payment object
+     * Fetches and returns a PayPal Payment object
      *
-     * @return PaymentCreator
+     * @return Payment
      */
     public function get_payment()
     {
-        if (is_null($this->payment)) {
-            $this->payment = Payment::get($this->payment_id, $this->context);
+        static $payment = null;
+
+        if ($payment !== null) {
+            return $payment;
         }
 
-        return $this->payment;
+        $payment or $payment = Payment::get($this->payment_id, $this->context);
+
+        return $payment;
     }
 
     /**

@@ -12,9 +12,7 @@ namespace WCPayPalPlus\WC;
 
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Order\OrderStatuses;
-use WCPayPalPlus\PlusGateway\Gateway;
 use WCPayPalPlus\Service\Container;
-use WCPayPalPlus\Setting;
 use WCPayPalPlus\WC\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\WC\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\WC\Payment\PaymentPatchFactory;
@@ -32,10 +30,6 @@ class ServiceProvider implements Service\ServiceProvider
      */
     public function register(Container $container)
     {
-        $container[Setting\PlusStorable::class] = function (Container $container) {
-            return $container[Gateway::class];
-        };
-
         $container[RefundFactory::class] = function (Container $container) {
             return new RefundFactory(
                 $container[OrderStatuses::class]

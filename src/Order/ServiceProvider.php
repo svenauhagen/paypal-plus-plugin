@@ -10,10 +10,10 @@
 
 namespace WCPayPalPlus\Order;
 
-use WCPayPalPlus\Ipn\Data;
 use WCPayPalPlus\Ipn\Request;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service;
+use WCPayPalPlus\Setting\PlusStorable;
 
 /**
  * Class ServiceProvider
@@ -37,7 +37,7 @@ class ServiceProvider implements Service\ServiceProvider
                 $container[OrderStatuses::class],
                 $container[OrderFactory::class],
                 $container[Request::class],
-                $container[Data::class]
+                $container[PlusStorable::class]
             );
         };
     }

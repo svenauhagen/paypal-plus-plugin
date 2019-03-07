@@ -31,21 +31,16 @@ class ServiceProvider implements BootstrappableServiceProvider
         $container[Request::class] = function () {
             return new Request(filter_input_array(INPUT_POST) ?: []);
         };
-        $container[Data::class] = function (Container $container) {
-            return new Data(
-                $container[Setting\PlusStorable::class]
-            );
-        };
-        $container[Validator::class] = function (Container $container) {
-            return new Validator(
-                $container[Data::class],
-                $container[Request::class]
+        $container[IpnVerifier::class] = function (Container $container) {
+            return new IpnVerifier(
+                $container[Request::class],
+                $container[Setting\Storable::class]
             );
         };
         $container[Ipn::class] = function (Container $container) {
             return new Ipn(
                 $container[Request::class],
-                $container[Validator::class],
+                $container[IpnVerifier::class],
                 $container[OrderUpdaterFactory::class],
                 $container[OrderFactory::class]
             );

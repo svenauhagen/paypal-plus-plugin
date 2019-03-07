@@ -10,9 +10,9 @@
 
 namespace WCPayPalPlus\Order;
 
-use WCPayPalPlus\Ipn\Data;
 use WCPayPalPlus\Ipn\PaymentValidator;
 use WCPayPalPlus\Ipn\Request;
+use WCPayPalPlus\Setting\Storable;
 
 /**
  * Class OrderUpdaterFactory
@@ -36,28 +36,28 @@ class OrderUpdaterFactory
     private $ipnRequest;
 
     /**
-     * @var Data
+     * @var Storable
      */
-    private $ipnData;
+    private $settingRepository;
 
     /**
      * OrderUpdaterFactory constructor.
      * @param OrderStatuses $orderStatuses
      * @param OrderFactory $orderFactory
      * @param Request $ipnRequest
-     * @param Data $ipnData
+     * @param Storable $settingRepository
      */
     public function __construct(
         OrderStatuses $orderStatuses,
         OrderFactory $orderFactory,
         Request $ipnRequest,
-        Data $ipnData
+        Storable $settingRepository
     ) {
 
         $this->orderStatuses = $orderStatuses;
         $this->orderFactory = $orderFactory;
         $this->ipnRequest = $ipnRequest;
-        $this->ipnData = $ipnData;
+        $this->settingRepository = $settingRepository;
     }
 
     /**
@@ -67,11 +67,11 @@ class OrderUpdaterFactory
     public function create()
     {
         $order = $this->orderFactory->createByIpnRequest($this->ipnRequest);
-        $paymentValidator = new PaymentValidator($this->ipnData, $order);
+        $paymentValidator = new PaymentValidator($this->ipnRequest, $order);
 
         return new OrderUpdater(
             $order,
-            $this->ipnData,
+            $this->settingRepository,
             $this->ipnRequest,
             $paymentValidator,
             $this->orderStatuses
