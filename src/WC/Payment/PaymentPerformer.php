@@ -34,7 +34,7 @@ class PaymentPerformer
     private $successHandlers;
 
     /**
-     * WCPaymentExecution constructor.
+     * PaymentPerformer constructor.
      *
      * @param PaymentExecutionData $data PaymentExecutionData object.
      * @param RequestSuccessHandler[] $successHandlers Array of SuccessHandler objects.
