@@ -86,7 +86,7 @@ class Ipn
         }
 
         if ($this->ipnVerifier->isVerified()) {
-            $this->valid_response();
+            $this->isValidResponse();
             exit;
         }
 
@@ -96,11 +96,11 @@ class Ipn
     }
 
     /**
-     * TODO Could be private
-     *
      * There was a valid response.
+     *
+     * @return bool
      */
-    public function valid_response()
+    private function isValidResponse()
     {
         $payment_status = $this->request->get(Request::KEY_PAYMENT_STATUS);
         $updater = $this->orderUpdaterFactory->create();
