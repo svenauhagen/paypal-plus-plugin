@@ -43,6 +43,6 @@ class ServiceProvider implements BootstrappableServiceProvider
     {
         add_action(ACTION_LOG, function ($level, $message, $context) use ($container) {
             $container[LoggerInterface::class]->log($level, $message, $context);
-        });
+        }, 10, 3);
     }
 }

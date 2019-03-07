@@ -56,21 +56,19 @@ class ServiceProvider implements IntegrationServiceProvider
             ]
         );
 
-        if (\class_exists(PayPalSdkLogFactory::class)) {
-            $container[PayPalConfigManager::class]->addConfigs(
-                [
-                    'log.LogEnabled' => 1,
-                    'log.LogLevel' => $container[PlusStorable::class]->isSandboxed()
-                        ? \WC_Log_Levels::DEBUG : \WC_Log_Levels::INFO,
-                    'log.AdapterFactory' => PayPalSdkLogFactory::class,
-                ]
-            );
-        }
+        $container[PayPalConfigManager::class]->addConfigs(
+            [
+                'log.LogEnabled' => '1',
+                'log.LogLevel' => $container[PlusStorable::class]->isSandboxed()
+                    ? \WC_Log_Levels::DEBUG : \WC_Log_Levels::INFO,
+                'log.AdapterFactory' => PayPalSdkLogFactory::class,
+            ]
+        );
 
         if (\is_writable(\get_temp_dir())) {
             $container[PayPalConfigManager::class]->addConfigs(
                 [
-                    'cache.enabled' => true,
+                    'cache.enabled' => 'true',
                     'cache.FileName' => \get_temp_dir() . '/.ppp_auth.cache',
                 ]
             );
