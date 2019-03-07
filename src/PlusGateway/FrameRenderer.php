@@ -11,11 +11,11 @@
 namespace WCPayPalPlus\PlusGateway;
 
 /**
- * Class PayPalIframeView
+ * Class FrameRenderer
  *
  * @package WCPayPalPlus\WC
  */
-class PlusFrameView
+class FrameRenderer
 {
     /**
      * Render the Paywall iframe

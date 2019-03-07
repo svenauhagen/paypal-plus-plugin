@@ -32,8 +32,8 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function register(Container $container)
     {
-        $container[PlusFrameView::class] = function () {
-            return new PlusFrameView();
+        $container[FrameRenderer::class] = function () {
+            return new FrameRenderer();
         };
         $container[GatewaySettingsModel::class] = function () {
             return new GatewaySettingsModel();
@@ -45,7 +45,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[Gateway::class] = function (Container $container) {
             return new Gateway(
-                $container[PlusFrameView::class],
+                $container[FrameRenderer::class],
                 $container[CredentialProvider::class],
                 $container[CredentialValidator::class],
                 $container[GatewaySettingsModel::class],

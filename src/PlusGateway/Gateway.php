@@ -38,7 +38,7 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
     const GATEWAY_TITLE_METHOD = 'PayPal PLUS';
 
     /**
-     * @var PlusFrameView
+     * @var FrameRenderer
      */
     private $frameView;
 
@@ -84,7 +84,7 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
 
     /**
      * Gateway constructor.
-     * @param PlusFrameView $frameView
+     * @param FrameRenderer $frameView
      * @param CredentialProvider $credentialProvider
      * @param CredentialValidator $credentialValidator
      * @param GatewaySettingsModel $settingsModel
@@ -95,7 +95,7 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
      * @param Session $paymentSession
      */
     public function __construct(
-        PlusFrameView $frameView,
+        FrameRenderer $frameView,
         CredentialProvider $credentialProvider,
         CredentialValidator $credentialValidator,
         GatewaySettingsModel $settingsModel,

@@ -17,10 +17,10 @@ use WCPayPalPlus\WC\Payment\PaymentPatchFactory;
 use WCPayPalPlus\WC\Payment\Session;
 
 /**
- * Class ReceiptPageRender
+ * Class ReceiptPageRenderer
  * @package WCPayPalPlus\WC
  */
-class ReceiptPageRender
+class ReceiptPageRenderer
 {
     /**
      * @var OrderFactory
