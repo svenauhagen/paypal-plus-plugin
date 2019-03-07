@@ -98,7 +98,7 @@ class PaymentPatchData
     /**
      * Fetches an existing Payment object via API call
      *
-     * @return PaymentCreator
+     * @return Payment
      */
     public function get_payment()
     {
