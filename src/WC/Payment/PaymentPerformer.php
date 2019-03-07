@@ -13,11 +13,11 @@ namespace WCPayPalPlus\WC\Payment;
 use WCPayPalPlus\WC\RequestSuccessHandler;
 
 /**
- * Class WCPaymentExecution
+ * Class PaymentPerformer
  *
  * @package WCPayPalPlus\WC\Payment
  */
-class WCPaymentExecution
+class PaymentPerformer
 {
     /**
      * PaymentExecutionData object.

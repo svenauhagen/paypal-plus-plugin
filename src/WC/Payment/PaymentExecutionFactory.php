@@ -24,7 +24,7 @@ class PaymentExecutionFactory
      * @param string $payerId
      * @param string $paymentId
      * @param ApiContext $apiContext
-     * @return WCPaymentExecution
+     * @return PaymentPerformer
      */
     public function create(WC_Order $order, $payerId, $paymentId, $apiContext)
     {
@@ -40,7 +40,6 @@ class PaymentExecutionFactory
 
         $success = new PaymentExecutionSuccess($data);
 
-        // TODO May be we want to rename the class by removing the WC Prefix
-        return new WCPaymentExecution($data, $success);
+        return new PaymentPerformer($data, $success);
     }
 }
