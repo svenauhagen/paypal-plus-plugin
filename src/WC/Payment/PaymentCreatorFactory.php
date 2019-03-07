@@ -45,10 +45,10 @@ class PaymentCreatorFactory
     /**
      * @param PlusStorable $settings
      * @param WC_Payment_Gateway $gateway
-     * @param WC_Session $session
+     * @param Session $session
      * @return PaymentCreator
      */
-    public function create(PlusStorable $settings, WC_Payment_Gateway $gateway, WC_Session $session)
+    public function create(PlusStorable $settings, WC_Payment_Gateway $gateway, Session $session)
     {
         try {
             $orderData = $this->retrieveOrderByRequest($session);
@@ -74,11 +74,11 @@ class PaymentCreatorFactory
     }
 
     /**
-     * @param $session
+     * @param Session $session
      * @return WC_Order|WC_Order_Refund
      * @throws \RuntimeException
      */
-    public function retrieveOrderByRequest(WC_Session $session)
+    public function retrieveOrderByRequest(Session $session)
     {
         $key = filter_input(INPUT_GET, 'key');
 
@@ -87,7 +87,9 @@ class PaymentCreatorFactory
         }
 
         $order = $this->orderFactory->createByOrderKey($key);
-        $session->ppp_order_id = $order->get_id();
+
+        // TODO Understand why the ppp_order_id is set twice.
+        $session->set(Session::ORDER_ID, $order->get_id());
 
         return $order;
     }

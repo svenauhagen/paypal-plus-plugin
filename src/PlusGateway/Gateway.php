@@ -23,6 +23,7 @@ use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\WC\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\WC\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\WC\Payment\PaymentPatchFactory;
+use WCPayPalPlus\WC\Payment\Session;
 use WCPayPalPlus\WC\Refund\RefundFactory;
 use WCPayPalPlus\WC\WCWebExperienceProfile;
 use WC_Order_Refund;
@@ -37,10 +38,6 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
 
     const GATEWAY_ID = 'paypal_plus';
     const GATEWAY_TITLE_METHOD = 'PayPal PLUS';
-
-    const PAYMENT_ID_SESSION_KEY = 'ppp_payment_id';
-    const PAYER_ID_SESSION_KEY = 'ppp_payer_id';
-    const APPROVAL_URL_SESSION_KEY = 'ppp_approval_url';
 
     /**
      * @var PlusFrameView
@@ -68,11 +65,6 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
     private $refundFactory;
 
     /**
-     * @var PaymentPatchFactory
-     */
-    private $paymentPatchFactory;
-
-    /**
      * @var OrderFactory
      */
     private $orderFactory;
@@ -88,16 +80,21 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
     private $paymentCreatorFactory;
 
     /**
-     * PlusGateway constructor.
+     * @var Session
+     */
+    private $paymentSession;
+
+    /**
+     * Gateway constructor.
      * @param PlusFrameView $frameView
      * @param CredentialProvider $credentialProvider
      * @param CredentialValidator $credentialValidator
      * @param GatewaySettingsModel $settingsModel
      * @param RefundFactory $refundFactory
-     * @param PaymentPatchFactory $paymentPatchFactory
      * @param OrderFactory $orderFactory
      * @param PaymentExecutionFactory $paymentExecutionFactory
      * @param PaymentCreatorFactory $paymentCreatorFactory
+     * @param Session $paymentSession
      */
     public function __construct(
         PlusFrameView $frameView,
@@ -105,10 +102,10 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
         CredentialValidator $credentialValidator,
         GatewaySettingsModel $settingsModel,
         RefundFactory $refundFactory,
-        PaymentPatchFactory $paymentPatchFactory,
         OrderFactory $orderFactory,
         PaymentExecutionFactory $paymentExecutionFactory,
-        PaymentCreatorFactory $paymentCreatorFactory
+        PaymentCreatorFactory $paymentCreatorFactory,
+        Session $paymentSession
     ) {
 
         $this->frameView = $frameView;
@@ -116,10 +113,10 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
         $this->credentialValidator = $credentialValidator;
         $this->settingsModel = $settingsModel;
         $this->refundFactory = $refundFactory;
-        $this->paymentPatchFactory = $paymentPatchFactory;
         $this->orderFactory = $orderFactory;
         $this->paymentExecutionFactory = $paymentExecutionFactory;
         $this->paymentCreatorFactory = $paymentCreatorFactory;
+        $this->paymentSession = $paymentSession;
 
         $this->id = self::GATEWAY_ID;
         $this->title = $this->get_option('title');
@@ -292,69 +289,6 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * @return void
-     */
-    public function form()
-    {
-        $paymentUrl = $this->createPayment();
-
-        $data = [
-            'useraction' => 'commit',
-            'showLoadingIndicator' => true,
-            'approvalUrl' => $paymentUrl,
-            'placeholder' => 'ppplus',
-            'mode' => $this->isSandboxed() ? 'sandbox' : 'live',
-            'country' => wc()->customer->get_billing_country(),
-            'language' => $this->locale(),
-            'buttonLocation' => 'outside',
-            'showPuiOnSandbox' => true,
-        ];
-
-        $this->frameView->render($data);
-    }
-
-    /**
-     * @param $orderId
-     */
-    public function render_receipt_page($orderId)
-    {
-        wc()->session->ppp_order_id = $orderId;
-        $order = $this->orderFactory->createById($orderId);
-        $paymentId = wc()->session->__get(self::PAYMENT_ID_SESSION_KEY);
-
-        if (!$paymentId) {
-            $this->abortCheckout();
-
-            return;
-        }
-
-        $payment = $this->paymentPatchFactory->create(
-            $order,
-            $paymentId,
-            $this->invoicePrefix(),
-            ApiContextFactory::get()
-        );
-
-        if ($payment->execute()) {
-            wp_enqueue_script('paypalplus-woocommerce-plus-paypal-redirect');
-            return;
-        }
-
-        $this->abortCheckout();
-    }
-
-    /**
-     * @return void
-     */
-    public function clear_session_data()
-    {
-        $session = wc()->session;
-        $session->__unset(self::PAYMENT_ID_SESSION_KEY);
-        $session->__unset(self::PAYER_ID_SESSION_KEY);
-        $session->__unset(self::APPROVAL_URL_SESSION_KEY);
-    }
-
-    /**
      * @param string $key
      * @param string|array|object $data
      * @return false|string
@@ -393,19 +327,19 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
         $token = filter_input(INPUT_GET, 'token', FILTER_SANITIZE_STRING);
         $payerId = filter_input(INPUT_GET, 'PayerID', FILTER_SANITIZE_STRING);
         $paymentId = filter_input(INPUT_GET, 'paymentId', FILTER_SANITIZE_STRING);
+        $orderId = $this->paymentSession->get(Session::ORDER_ID);
 
         if (!$paymentId) {
-            $paymentId = wc()->session->__get(self::PAYMENT_ID_SESSION_KEY);
+            $paymentId = $this->paymentSession->get(Session::PAYMENT_ID);
         }
-
-        if (!$token || !$payerId || !$paymentId) {
+        if (!$token || !$payerId || !$paymentId || !$orderId) {
             return;
         }
 
-        wc()->session->token = $token;
+        $this->paymentSession->set(Session::TOKEN, $token);
+        $this->paymentSession->set(Session::PAYER_ID, $payerId);
 
-        wc()->session->__set(self::PAYER_ID_SESSION_KEY, $payerId);
-        $order = $this->orderFactory->createById(wc()->session->ppp_order_id);
+        $order = $this->orderFactory->createById($orderId);
 
         try {
             $payment = $this->paymentExecutionFactory->create(
@@ -438,6 +372,28 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
     }
 
     /**
+     * @return void
+     */
+    private function form()
+    {
+        $paymentUrl = $this->createPayment();
+
+        $data = [
+            'useraction' => 'commit',
+            'showLoadingIndicator' => true,
+            'approvalUrl' => $paymentUrl,
+            'placeholder' => 'ppplus',
+            'mode' => $this->isSandboxed() ? 'sandbox' : 'live',
+            'country' => wc()->customer->get_billing_country(),
+            'language' => $this->locale(),
+            'buttonLocation' => 'outside',
+            'showPuiOnSandbox' => true,
+        ];
+
+        $this->frameView->render($data);
+    }
+
+    /**
      * @param $checkoutLogoUrl
      * @return string
      */
@@ -464,38 +420,18 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * @return void
-     */
-    private function abortCheckout()
-    {
-        $this->clear_session_data();
-        wc_add_notice(
-            __('Error processing checkout. Please try again. ', 'woo-paypalplus'),
-            'error'
-        );
-
-        wp_safe_redirect(wc_get_cart_url());
-        exit;
-    }
-
-    /**
-     * TODO Set the URL and the Payment ID into the Wc Session should be abstracted
-     *      and a method to clean up both at once without making possible to delete only one of them
-     *      should be implemented. See also `self::clear_session_data`
-     *
      * @return string
      */
     private function createPayment()
     {
-        $session = wc()->session;
-        $url = (string)wc()->session->__get(self::APPROVAL_URL_SESSION_KEY);
+        $url = (string)$this->paymentSession->get(Session::APPROVAL_URL);
 
         if (!$url) {
             try {
                 $paymentCreator = $this->paymentCreatorFactory->create(
                     $this,
                     $this,
-                    $session
+                    $this->paymentSession
                 );
                 $paymentCreator = $paymentCreator->create();
             } catch (\Exception $exc) {
@@ -509,10 +445,10 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
                 return $url;
             }
 
-            $session->__set(self::PAYMENT_ID_SESSION_KEY, $paymentCreator->getId());
+            $this->paymentSession->set(Session::PAYMENT_ID, $paymentCreator->getId());
 
             $url = htmlspecialchars_decode($paymentCreator->getApprovalLink());
-            wc()->session->__set(self::APPROVAL_URL_SESSION_KEY, $url);
+            $this->paymentSession->set(Session::APPROVAL_URL, $url);
         }
 
         return $url;

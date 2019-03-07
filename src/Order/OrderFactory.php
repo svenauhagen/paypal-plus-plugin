@@ -16,6 +16,7 @@ use WC_Order;
 use WC_Order_Refund;
 use Exception;
 use WCPayPalPlus\Request\Request;
+use RuntimeException;
 
 /**
  * Class OrderFactory
@@ -61,10 +62,15 @@ class OrderFactory
      *
      * @param $orderId
      * @return WC_Order|\WC_Order_Refund
+     * @throws RuntimeException
      */
     public function createById($orderId)
     {
         assert(is_int($orderId));
+
+        if (!$orderId) {
+            throw new RuntimeException("Cannot create order by value {$orderId}");
+        }
 
         return wc_get_order($orderId);
     }

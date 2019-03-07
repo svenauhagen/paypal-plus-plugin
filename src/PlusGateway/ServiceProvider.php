@@ -18,7 +18,7 @@ use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\WC\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\WC\Payment\PaymentCreatorFactory;
-use WCPayPalPlus\WC\Payment\PaymentPatchFactory;
+use WCPayPalPlus\WC\Payment\Session;
 use WCPayPalPlus\WC\Refund\RefundFactory;
 
 /**
@@ -50,10 +50,10 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[CredentialValidator::class],
                 $container[GatewaySettingsModel::class],
                 $container[RefundFactory::class],
-                $container[PaymentPatchFactory::class],
                 $container[OrderFactory::class],
                 $container[PaymentExecutionFactory::class],
-                $container[PaymentCreatorFactory::class]
+                $container[PaymentCreatorFactory::class],
+                $container[Session::class]
             );
         };
     }
@@ -88,33 +88,9 @@ class ServiceProvider implements BootstrappableServiceProvider
             10
         );
         add_action(
-            'woocommerce_receipt_' . $gatewayId,
-            [$gateway, 'render_receipt_page']
-        );
-        add_action(
             'woocommerce_api_' . $gatewayId,
             [$gateway, 'execute_payment'],
             12
-        );
-        add_action(
-            'woocommerce_add_to_cart',
-            [$gateway, 'clear_session_data']
-        );
-        add_action(
-            'woocommerce_cart_item_removed',
-            [$gateway, 'clear_session_data']
-        );
-        add_action(
-            'woocommerce_after_cart_item_quantity_update',
-            [$gateway, 'clear_session_data']
-        );
-        add_action(
-            'woocommerce_applied_coupon',
-            [$gateway, 'clear_session_data']
-        );
-        add_action(
-            'woocommerce_removed_coupon',
-            [$gateway, 'clear_session_data']
         );
     }
 }
