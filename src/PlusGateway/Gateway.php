@@ -165,7 +165,7 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
         }
 
         $apiContext = ApiContextFactory::get();
-        $refund = $this->refundFactory->create($orderId, $amount, $reason, $apiContext);
+        $refund = $this->refundFactory->create($order, $amount, $reason, $apiContext);
 
         return $refund->execute();
     }

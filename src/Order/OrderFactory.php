@@ -61,7 +61,7 @@ class OrderFactory
      * Create and order by the given Id
      *
      * @param $orderId
-     * @return WC_Order|\WC_Order_Refund
+     * @return WC_Order|WC_Order_Refund
      * @throws RuntimeException
      */
     public function createById($orderId)
