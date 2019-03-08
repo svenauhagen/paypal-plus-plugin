@@ -44,13 +44,11 @@ class PayPalAssetManager
      */
     public function enqueueFrontEndScripts()
     {
-        if (!$this->isCheckout()) {
-            $url = add_query_arg(
-                $this->sdkArguments->toArray(),
-                'https://www.paypal.com/sdk/js'
-            );
-            wp_enqueue_script('ppplus-express-checkout', $url, [], null, true);
-        }
+        $url = add_query_arg(
+            $this->sdkArguments->toArray(),
+            'https://www.paypal.com/sdk/js'
+        );
+        wp_enqueue_script('ppplus-express-checkout', $url, [], null, true);
 
         $this->isCheckout() and wp_enqueue_script(
             'ppplus',
