@@ -12,6 +12,8 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\NonceInterface;
+use const WCPayPalPlus\ACTION_LOG;
+use WC_Log_Levels;
 
 /**
  * Class AjaxHandler
@@ -62,7 +64,6 @@ class AjaxHandler
      *
      * @return void
      */
-    // TODO Add log system for json error responses
     public function handle()
     {
         if (!$this->nonce->validate($this->nonceContext)) {
@@ -71,19 +72,31 @@ class AjaxHandler
 
         $context = $this->context();
         if (!$context) {
-            wp_send_json_error([
+            $this->sendJsonError([
                 'message' => $this->invalidContextMessage(),
             ]);
         }
 
         $response = $this->dispatcher->dispatch($context);
         if (!$response) {
-            wp_send_json_error([
+            $this->sendJsonError([
                 'message' => $this->invalidResponseMessage(),
             ]);
         }
 
         wp_send_json_success($response);
+    }
+
+    /**
+     * @param array $data
+     */
+    private function sendJsonError(array $data)
+    {
+        $message = isset($data['message']) ? $data['message'] : 'No Message Provided.';
+
+        do_action(ACTION_LOG, WC_Log_Levels::ERROR, $message, compact($data));
+
+        wp_send_json_error($data);
     }
 
     /**
@@ -116,7 +129,7 @@ class AjaxHandler
     /**
      * Invalid Response Message
      *
-     * @return string|void
+     * @return string
      */
     private function invalidResponseMessage()
     {
