@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Assets;
 
-use WCPayPalPlus\ExpressCheckout\AjaxHandler;
+use WCPayPalPlus\ExpressCheckoutGateway\AjaxHandler;
 use WCPayPalPlus\PluginProperties;
 
 /**

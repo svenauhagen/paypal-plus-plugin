@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\ExpressCheckout;
+namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use function Brain\Nonces\formField;
 use Brain\Nonces\NonceInterface;

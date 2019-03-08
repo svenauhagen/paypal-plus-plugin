@@ -137,7 +137,7 @@ $bootstrap = \Closure::bind(function () {
                 ->add(new Log\ServiceProvider())
                 ->add(new Api\ServiceProvider())
                 ->add(new Order\ServiceProvider())
-                ->add(new ExpressCheckout\ServiceProvider())
+                ->add(new ExpressCheckoutGateway\ServiceProvider())
                 ->add(new PlusGateway\ServiceProvider());
 
             $payPalPlus = new PayPalPlus($container, $providers);
