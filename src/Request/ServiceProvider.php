@@ -13,13 +13,13 @@ namespace WCPayPalPlus\Request;
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\RequestGlobalsContext;
 use WCPayPalPlus\Service\Container;
-use WCPayPalPlus\Service;
+use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
 
 /**
  * Class ServiceProvider
  * @package WCPayPalPlus\Request
  */
-class ServiceProvider implements Service\ServiceProvider
+class ServiceProvider implements ServiceProviderInterface
 {
     /**
      * @inheritdoc

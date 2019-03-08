@@ -12,14 +12,14 @@ namespace WCPayPalPlus\Order;
 
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Service\Container;
-use WCPayPalPlus\Service;
+use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
 use WCPayPalPlus\Setting\PlusStorable;
 
 /**
  * Class ServiceProvider
  * @package WCPayPalPlus\Order
  */
-class ServiceProvider implements Service\ServiceProvider
+class ServiceProvider implements ServiceProviderInterface
 {
     /**
      * @inheritdoc

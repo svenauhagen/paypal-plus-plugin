@@ -11,14 +11,14 @@
 namespace WCPayPalPlus\Setting;
 
 use WCPayPalPlus\PlusGateway\Gateway;
-use WCPayPalPlus\Service;
+use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
 use WCPayPalPlus\Service\Container;
 
 /**
  * Class ServiceProvider
  * @package WCPayPalPlus\Setting
  */
-class ServiceProvider implements Service\ServiceProvider
+class ServiceProvider implements ServiceProviderInterface
 {
     /**
      * @inheritdoc
