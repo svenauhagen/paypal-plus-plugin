@@ -6,12 +6,12 @@
  * Time: 15:30
  */
 
-namespace WCPayPalPlus\WC\Payment;
+namespace WCPayPalPlus\Payment;
 
 /**
  * Class OrderDiscountData
  *
- * @package WCPayPalPlus\WC\Payment
+ * @package WCPayPalPlus\Payment
  */
 class OrderDiscountData implements OrderItemDataProvider
 {

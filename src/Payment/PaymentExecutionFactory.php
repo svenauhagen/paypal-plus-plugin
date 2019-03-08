@@ -8,17 +8,32 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC\Payment;
+namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 use WC_Order;
+use WooCommerce;
 
 /**
  * Class PaymentExecutionFactory
- * @package WCPayPalPlus\WC\Payment
+ * @package WCPayPalPlus\Payment
  */
 class PaymentExecutionFactory
 {
+    /**
+     * @var WooCommerce
+     */
+    private $wooCommerce;
+
+    /**
+     * PaymentExecutionFactory constructor.
+     * @param WooCommerce $wooCommerce
+     */
+    public function __construct(WooCommerce $wooCommerce)
+    {
+        $this->wooCommerce = $wooCommerce;
+    }
+
     /**
      * @param WC_Order $order
      * @param string $payerId
@@ -38,7 +53,7 @@ class PaymentExecutionFactory
             $apiContext
         );
 
-        $success = new PaymentExecutionSuccess($data);
+        $success = new PaymentExecutionSuccess($this->wooCommerce, $data);
 
         return new PaymentPerformer($data, $success);
     }

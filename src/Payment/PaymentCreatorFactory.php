@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC\Payment;
+namespace WCPayPalPlus\Payment;
 
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Ipn\Ipn;
@@ -24,7 +24,7 @@ use WooCommerce;
 
 /**
  * Class PaymentCreatorFactory
- * @package WCPayPalPlus\WC\Payment
+ * @package WCPayPalPlus\Payment
  */
 class PaymentCreatorFactory
 {

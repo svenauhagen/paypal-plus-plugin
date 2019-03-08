@@ -2,46 +2,46 @@
 /**
  * Created by PhpStorm.
  * User: biont
- * Date: 06.02.17
- * Time: 16:02
+ * Date: 02.02.17
+ * Time: 10:58
  */
 
-namespace WCPayPalPlus\WC\Payment;
+namespace WCPayPalPlus\Payment;
 
 /**
- * Class OrderFeeData
+ * Class FeeData
  *
- * @package WCPayPalPlus\WC\Payment
+ * @package WCPayPalPlus\Payment
  */
-class OrderFeeData implements OrderItemDataProvider
+class FeeData implements OrderItemDataProvider
 {
     use OrderDataProcessor;
 
     /**
-     * Item data.
+     * Fee data.
      *
      * @var array
      */
-    private $data;
+    private $fee;
 
     /**
-     * OrderItemData constructor.
+     * FeeData constructor.
      *
-     * @param array $data Item data.
+     * @param object $fee Item data.
      */
-    public function __construct(array $data)
+    public function __construct($fee)
     {
-        $this->data = $data;
+        $this->fee = $fee;
     }
 
     /**
      * Returns the item price.
      *
-     * @return string
+     * @return float
      */
     public function get_price()
     {
-        return $this->format($this->data['line_subtotal'] / $this->get_quantity());
+        return $this->fee->amount;
     }
 
     /**
@@ -51,7 +51,7 @@ class OrderFeeData implements OrderItemDataProvider
      */
     public function get_quantity()
     {
-        return intval($this->data['qty']);
+        return 1;
     }
 
     /**
@@ -61,11 +61,11 @@ class OrderFeeData implements OrderItemDataProvider
      */
     public function get_name()
     {
-        return $this->data['name'];
+        return $this->fee->name;
     }
 
     /**
-     * Returns no product SKU.
+     * Returns the item SKU.
      *
      * @return string|null
      */

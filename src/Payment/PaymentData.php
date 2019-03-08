@@ -6,14 +6,14 @@
  * Time: 16:42
  */
 
-namespace WCPayPalPlus\WC\Payment;
+namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 
 /**
  * Class PaymentData
  *
- * @package WCPayPalPlus\WC\Payment
+ * @package WCPayPalPlus\Payment
  */
 class PaymentData
 {

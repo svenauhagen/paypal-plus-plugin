@@ -6,7 +6,7 @@
  * Time: 09:37
  */
 
-namespace WCPayPalPlus\WC\Payment;
+namespace WCPayPalPlus\Payment;
 
 use WCPayPalPlus\WC\RequestSuccessHandler;
 use WooCommerce;
@@ -14,7 +14,7 @@ use WooCommerce;
 /**
  * Class PaymentExecutionSuccess
  *
- * @package WCPayPalPlus\WC\Payment
+ * @package WCPayPalPlus\Payment
  */
 class PaymentExecutionSuccess implements RequestSuccessHandler
 {

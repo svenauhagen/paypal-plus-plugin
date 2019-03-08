@@ -6,7 +6,7 @@
  * Time: 18:17
  */
 
-namespace WCPayPalPlus\WC\Payment;
+namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use const WCPayPalPlus\ACTION_LOG;
@@ -14,7 +14,7 @@ use const WCPayPalPlus\ACTION_LOG;
 /**
  * Class PaymentPatcher
  *
- * @package WCPayPalPlus\WC\Payment
+ * @package WCPayPalPlus\Payment
  */
 class PaymentPatcher
 {

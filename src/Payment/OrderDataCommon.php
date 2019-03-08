@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC\Payment;
+namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Api\Item;
 use Inpsyde\Lib\PayPal\Api\ItemList;
@@ -16,7 +16,7 @@ use Inpsyde\Lib\PayPal\Api\ItemList;
 /**
  * Class OrderDataCommon
  *
- * @package WCPayPalPlus\WC\Payment
+ * @package WCPayPalPlus\Payment
  */
 abstract class OrderDataCommon implements OrderDataProvider
 {

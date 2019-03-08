@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC\Payment;
+namespace WCPayPalPlus\Payment;
 
 use WCPayPalPlus\WC\RequestSuccessHandler;
 
 /**
  * Class PaymentPerformer
  *
- * @package WCPayPalPlus\WC\Payment
+ * @package WCPayPalPlus\Payment
  */
 class PaymentPerformer
 {

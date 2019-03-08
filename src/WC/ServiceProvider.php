@@ -11,14 +11,11 @@
 namespace WCPayPalPlus\WC;
 
 use WCPayPalPlus\Order\OrderFactory;
-use WCPayPalPlus\Order\OrderStatuses;
 use WCPayPalPlus\PlusGateway\Gateway;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\PlusStorable;
-use WCPayPalPlus\WC\Payment\PaymentExecutionFactory;
-use WCPayPalPlus\WC\Payment\PaymentCreatorFactory;
-use WCPayPalPlus\WC\Payment\PaymentPatchFactory;
-use WCPayPalPlus\WC\Payment\Session;
+use WCPayPalPlus\Payment\PaymentPatchFactory;
+use WCPayPalPlus\Payment\Session;
 use WCPayPalPlus\Service;
 use WooCommerce;
 
@@ -45,24 +42,6 @@ class ServiceProvider implements Service\BootstrappableServiceProvider
                 $container[Session::class]
             );
         };
-
-        $container[PaymentCreatorFactory::class] = function (Container $container) {
-            return new PaymentCreatorFactory(
-                $container[WooCommerce::class],
-                $container[OrderFactory::class]
-            );
-        };
-        $container[PaymentExecutionFactory::class] = function () {
-            return new PaymentExecutionFactory();
-        };
-        $container[PaymentPatchFactory::class] = function () {
-            return new PaymentPatchFactory();
-        };
-        $container[Session::class] = function (Container $container) {
-            return new Session(
-                $container[WooCommerce::class]
-            );
-        };
     }
 
     /**
@@ -72,32 +51,9 @@ class ServiceProvider implements Service\BootstrappableServiceProvider
     {
         $gatewayId = $container[Gateway::class]->id;
 
-        $this->bootstrapPaymentSession($container);
-
         add_action(
             "woocommerce_receipt_{$gatewayId}",
             [$container[ReceiptPageRenderer::class], 'render']
         );
-    }
-
-    /**
-     * Bootstrap the Session for Payment
-     *
-     * @param Container $container
-     */
-    private function bootstrapPaymentSession(Container $container)
-    {
-        $session = $container[Session::class];
-        $sessionCleanHooks = [
-            'woocommerce_add_to_cart',
-            'woocommerce_cart_item_removed',
-            'woocommerce_after_cart_item_quantity_update',
-            'woocommerce_applied_coupon',
-            'woocommerce_removed_coupon',
-        ];
-
-        foreach ($sessionCleanHooks as $hook) {
-            add_action($hook, [$session, 'clean']);
-        }
     }
 }

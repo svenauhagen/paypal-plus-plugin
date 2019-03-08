@@ -1,19 +1,19 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 27.01.17
- * Time: 11:47
- */
 
-namespace WCPayPalPlus\WC\Payment;
+namespace WCPayPalPlus\Payment;
 
 /**
- * Class OrderItemData
+ * Class CartItemData
  *
- * @package WCPayPalPlus\WC\Payment
+ * @package WCPayPalPlus\Payment
  */
-class OrderItemData implements OrderItemDataProvider
+
+/**
+ * Class CartItemData
+ *
+ * @package WCPayPalPlus\Payment
+ */
+class CartItemData implements OrderItemDataProvider
 {
     use OrderDataProcessor;
 
@@ -25,23 +25,29 @@ class OrderItemData implements OrderItemDataProvider
     private $data;
 
     /**
-     * OrderItemData constructor.
+     * CartItemData constructor.
      *
-     * @param \WC_Order_Item $data Item data.
+     * @param array $data Item data.
+     *
+     * @throws \Exception
      */
-    public function __construct(\WC_Order_Item $data)
+    public function __construct(array $data)
     {
-        $this->data = $data->get_data();
+        if (!isset($data['product_id'])) {
+            throw new \Exception('Missing Data');
+        }
+        $this->data = $data;
+        $this->data['subtotal'] = $this->data['line_subtotal'];
     }
 
     /**
      * Returns the item price.
      *
-     * @return string
+     * @return float
      */
     public function get_price()
     {
-        return $this->format($this->data['subtotal'] / $this->get_quantity());
+        return $this->format($this->data['line_subtotal'] / $this->get_quantity());
     }
 
     /**
@@ -67,7 +73,7 @@ class OrderItemData implements OrderItemDataProvider
     }
 
     /**
-     * Returns the WC_Product associated with the order item.
+     * Returns the WC_Product associated with the item.
      *
      * @return \WC_Product
      */
@@ -77,7 +83,7 @@ class OrderItemData implements OrderItemDataProvider
     }
 
     /**
-     * Returns the product SKU.
+     * Returns the Product SKU.
      *
      * @return string|null
      */

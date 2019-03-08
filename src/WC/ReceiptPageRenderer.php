@@ -13,8 +13,8 @@ namespace WCPayPalPlus\WC;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Setting\PlusStorable;
-use WCPayPalPlus\WC\Payment\PaymentPatchFactory;
-use WCPayPalPlus\WC\Payment\Session;
+use WCPayPalPlus\Payment\PaymentPatchFactory;
+use WCPayPalPlus\Payment\Session;
 
 /**
  * Class ReceiptPageRenderer

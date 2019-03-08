@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC\Payment;
+namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Api\PaymentExecution;
@@ -17,7 +17,7 @@ use Inpsyde\Lib\PayPal\Rest\ApiContext;
 /**
  * Class PaymentExecutionData
  *
- * @package WCPayPalPlus\WC\Payment
+ * @package WCPayPalPlus\Payment
  */
 class PaymentExecutionData
 {

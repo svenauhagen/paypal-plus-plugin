@@ -19,19 +19,20 @@ use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Notice;
 use WCPayPalPlus\Setting\PlusRepositoryHelper;
 use WCPayPalPlus\Setting\PlusStorable;
-use WCPayPalPlus\WC\Payment\PaymentExecutionFactory;
-use WCPayPalPlus\WC\Payment\PaymentCreatorFactory;
-use WCPayPalPlus\WC\Payment\Session;
+use WCPayPalPlus\Payment\PaymentExecutionFactory;
+use WCPayPalPlus\Payment\PaymentCreatorFactory;
+use WCPayPalPlus\Payment\Session;
 use WCPayPalPlus\Refund\RefundFactory;
 use WCPayPalPlus\WC\WCWebExperienceProfile;
 use WC_Order_Refund;
 use WooCommerce;
+use WC_Payment_Gateway;
 
 /**
  * Class Gateway
  * @package WCPayPalPlus\WC
  */
-class Gateway extends \WC_Payment_Gateway implements PlusStorable
+class Gateway extends WC_Payment_Gateway implements PlusStorable
 {
     use PlusRepositoryHelper;
 

@@ -17,9 +17,9 @@ use WCPayPalPlus\Refund\RefundFactory;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\PlusStorable;
-use WCPayPalPlus\WC\Payment\PaymentExecutionFactory;
-use WCPayPalPlus\WC\Payment\PaymentCreatorFactory;
-use WCPayPalPlus\WC\Payment\Session;
+use WCPayPalPlus\Payment\PaymentExecutionFactory;
+use WCPayPalPlus\Payment\PaymentCreatorFactory;
+use WCPayPalPlus\Payment\Session;
 use WooCommerce;
 
 /**

@@ -138,6 +138,7 @@ $bootstrap = \Closure::bind(function () {
                 ->add(new Api\ServiceProvider())
                 ->add(new Order\ServiceProvider())
                 ->add(new Refund\ServiceProvider())
+                ->add(new Payment\ServiceProvider())
                 ->add(new ExpressCheckoutGateway\ServiceProvider())
                 ->add(new PlusGateway\ServiceProvider());
 

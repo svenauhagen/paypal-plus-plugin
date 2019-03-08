@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC\Payment;
+namespace WCPayPalPlus\Payment;
 
 use WC_Order;
 
 /**
  * Class OrderData
  *
- * @package WCPayPalPlus\WC\Payment
+ * @package WCPayPalPlus\Payment
  */
 class OrderData extends OrderDataCommon
 {
