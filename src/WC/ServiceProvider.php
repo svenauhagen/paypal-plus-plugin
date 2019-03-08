@@ -19,7 +19,6 @@ use WCPayPalPlus\WC\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\WC\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\WC\Payment\PaymentPatchFactory;
 use WCPayPalPlus\WC\Payment\Session;
-use WCPayPalPlus\WC\Refund\RefundFactory;
 use WCPayPalPlus\Service;
 use WooCommerce;
 
@@ -36,12 +35,6 @@ class ServiceProvider implements Service\BootstrappableServiceProvider
     {
         $container[WooCommerce::class] = function () {
             return wc();
-        };
-
-        $container[RefundFactory::class] = function (Container $container) {
-            return new RefundFactory(
-                $container[OrderStatuses::class]
-            );
         };
 
         $container[ReceiptPageRenderer::class] = function (Container $container) {

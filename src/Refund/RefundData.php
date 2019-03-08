@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC\Refund;
+namespace WCPayPalPlus\Refund;
 
 use Inpsyde\Lib\PayPal\Api\Amount;
 use Inpsyde\Lib\PayPal\Api\RefundRequest;
@@ -19,15 +19,15 @@ use WC_Order_Refund;
 /**
  * Class RefundData
  *
- * Bridge between WooCommcerce and PayPal objects.
- * Provides WooCommcerce with the objects needed to perform a refund
+ * Bridge between WooCommerce and PayPal objects.
+ * Provides WooCommerce with the objects needed to perform a refund
  *
  * @package WCPayPalPlus\WC
  */
 class RefundData
 {
     /**
-     * WooCommcerce Order object.
+     * WooComcerce Order object.
      *
      * @var \WC_Order
      */

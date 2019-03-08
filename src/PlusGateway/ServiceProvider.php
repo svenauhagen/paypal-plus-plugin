@@ -13,13 +13,13 @@ namespace WCPayPalPlus\PlusGateway;
 use WCPayPalPlus\Api\CredentialProvider;
 use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Order\OrderFactory;
+use WCPayPalPlus\Refund\RefundFactory;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\WC\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\WC\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\WC\Payment\Session;
-use WCPayPalPlus\WC\Refund\RefundFactory;
 use WooCommerce;
 
 /**

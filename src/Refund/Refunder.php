@@ -1,12 +1,14 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 28.11.16
- * Time: 13:49
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC\Refund;
+namespace WCPayPalPlus\Refund;
 
 use const WCPayPalPlus\ACTION_LOG;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
@@ -14,11 +16,11 @@ use Inpsyde\Lib\PayPal\Rest\ApiContext;
 use WCPayPalPlus\Order\OrderStatuses;
 
 /**
- * Class WCRefund
+ * Class Refunder
  *
- * @package WCPayPalPlus\WC\Refund
+ * @package WCPayPalPlus\Refund
  */
-class WCRefund
+class Refunder
 {
     /**
      * RefundData object.

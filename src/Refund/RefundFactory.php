@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC\Refund;
+namespace WCPayPalPlus\Refund;
 
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 use WCPayPalPlus\Order\OrderStatuses;
@@ -16,7 +16,7 @@ use WC_Order_Refund;
 
 /**
  * Class RefundFactory
- * @package WCPayPalPlus\WC\Refund
+ * @package WCPayPalPlus\Refund
  */
 class RefundFactory
 {
@@ -41,7 +41,7 @@ class RefundFactory
      * @param float $amount
      * @param string $reason
      * @param ApiContext $apiContext
-     * @return WCRefund
+     * @return Refunder
      */
     public function create($order, $amount, $reason, ApiContext $apiContext)
     {
@@ -55,6 +55,6 @@ class RefundFactory
             $apiContext
         );
 
-        return new WCRefund($refundData, $apiContext, $this->orderStatuses);
+        return new Refunder($refundData, $apiContext, $this->orderStatuses);
     }
 }

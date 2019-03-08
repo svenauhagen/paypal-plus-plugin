@@ -1,19 +1,21 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 02.12.16
- * Time: 10:54
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC\Refund;
+namespace WCPayPalPlus\Refund;
 
 use WCPayPalPlus\WC\RequestSuccessHandler;
 
 /**
  * Class RefundSuccess
  *
- * @package WCPayPalPlus\WC\Refund
+ * @package WCPayPalPlus\Refund
  */
 class RefundSuccess implements RequestSuccessHandler
 {

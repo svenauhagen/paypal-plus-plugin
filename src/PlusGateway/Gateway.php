@@ -22,7 +22,7 @@ use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\WC\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\WC\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\WC\Payment\Session;
-use WCPayPalPlus\WC\Refund\RefundFactory;
+use WCPayPalPlus\Refund\RefundFactory;
 use WCPayPalPlus\WC\WCWebExperienceProfile;
 use WC_Order_Refund;
 use WooCommerce;
