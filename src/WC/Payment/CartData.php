@@ -1,9 +1,11 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 17.01.17
- * Time: 15:53
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace WCPayPalPlus\WC\Payment;
@@ -121,7 +123,7 @@ class CartData extends OrderDataCommon
      *
      * @return string
      */
-    protected function get_subtotal_including_tax()
+    public function get_subtotal_including_tax()
     {
         return $this->format($this->round(
             $this->cart->cart_contents_total

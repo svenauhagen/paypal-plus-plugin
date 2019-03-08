@@ -8,9 +8,13 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\Ipn;
+namespace WCPayPalPlus\Order;
 
 use const WCPayPalPlus\ACTION_LOG;
+use WCPayPalPlus\Ipn\PaymentValidator;
+use WCPayPalPlus\Request\Request;
+use WC_Order;
+use WCPayPalPlus\Setting\Storable;
 
 /**
  * Class OrderUpdater
@@ -19,23 +23,12 @@ use const WCPayPalPlus\ACTION_LOG;
  */
 class OrderUpdater
 {
-    const ORDER_STATUS_COMPLETED = 'completed';
-    const ORDER_STATUS_ON_HOLD = 'on-hold';
-    const ORDER_STATUS_REFUNDED = 'refunded';
-
     /**
      * WooCommerce Order object
      *
-     * @var \WC_Order
+     * @var WC_Order
      */
     private $order;
-
-    /**
-     * Request Data
-     *
-     * @var Data
-     */
-    private $ipnData;
 
     /**
      * Payment Validation handler
@@ -47,26 +40,39 @@ class OrderUpdater
     /**
      * @var Request
      */
-    private $ipnRequest;
+    private $request;
+
+    /**
+     * @var OrderStatuses
+     */
+    private $orderStatuses;
+
+    /**
+     * @var Storable
+     */
+    private $settingRepository;
 
     /**
      * OrderUpdater constructor.
-     * @param \WC_Order $order
-     * @param Data $ipnData
-     * @param Request $ipnRequest
+     * @param WC_Order $order
+     * @param Storable $settingRepository
+     * @param Request $request
      * @param PaymentValidator $validator
+     * @param OrderStatuses $orderStatuses
      */
     public function __construct(
-        \WC_Order $order,
-        Data $ipnData,
-        Request $ipnRequest,
-        PaymentValidator $validator
+        WC_Order $order,
+        Storable $settingRepository,
+        Request $request,
+        PaymentValidator $validator,
+        OrderStatuses $orderStatuses
     ) {
 
         $this->order = $order;
-        $this->ipnData = $ipnData;
-        $this->ipnRequest = $ipnRequest;
+        $this->settingRepository = $settingRepository;
+        $this->request = $request;
         $this->validator = $validator;
+        $this->orderStatuses = $orderStatuses;
     }
 
     /**
@@ -86,7 +92,7 @@ class OrderUpdater
      */
     public function payment_status_completed()
     {
-        if ($this->order->has_status(self::ORDER_STATUS_COMPLETED)) {
+        if ($this->order->has_status(OrderStatuses::ORDER_STATUS_COMPLETED)) {
             do_action(
                 ACTION_LOG,
                 \WC_Log_Levels::ERROR,
@@ -99,7 +105,7 @@ class OrderUpdater
 
         if (!$this->validator->is_valid_payment()) {
             $last_error = $this->validator->get_last_error();
-            $this->order->update_status(self::ORDER_STATUS_ON_HOLD, $last_error);
+            $this->order->update_status(OrderStatuses::ORDER_STATUS_ON_HOLD, $last_error);
             do_action(
                 ACTION_LOG,
                 \WC_Log_Levels::ERROR,
@@ -112,11 +118,16 @@ class OrderUpdater
 
         $this->save_paypal_meta_data();
 
-        $paymentStatus = $this->ipnRequest->get(Request::KEY_PAYMENT_STATUS);
-        if ($paymentStatus === self::ORDER_STATUS_COMPLETED) {
-            $transaction_id = wc_clean($this->ipnRequest->get(Request::KEY_TXN_ID));
+        $paymentStatus = $this->request->get(Request::KEY_PAYMENT_STATUS);
+        $isOrderStatusCompleted = $this->orderStatuses->orderStatusIs(
+            $paymentStatus,
+            OrderStatuses::ORDER_STATUS_COMPLETED
+        );
+
+        if ($isOrderStatusCompleted) {
+            $transaction_id = wc_clean($this->request->get(Request::KEY_TXN_ID));
             $note = __('IPN payment completed', 'woo-paypalplus');
-            $fee = $this->ipnRequest->get(Request::KEY_MC_FEE);
+            $fee = $this->request->get(Request::KEY_MC_FEE);
 
             $this->payment_complete($transaction_id, $note);
 
@@ -132,7 +143,7 @@ class OrderUpdater
         $this->payment_on_hold(
             sprintf(
                 __('Payment pending: %s', 'woo-paypalplus'),
-                $this->ipnRequest->get(Request::KEY_PENDING_REASON)
+                $this->request->get(Request::KEY_PENDING_REASON)
             )
         );
         do_action(ACTION_LOG, \WC_Log_Levels::INFO, 'Payment put on hold ', []);
@@ -153,7 +164,7 @@ class OrderUpdater
         ];
 
         foreach ($postMeta as $key => $name) {
-            $value = $this->ipnRequest->get($key);
+            $value = $this->request->get($key);
             $value and update_post_meta($this->order->get_id(), $name, wc_clean($value));
         }
     }
@@ -177,7 +188,7 @@ class OrderUpdater
      */
     private function payment_on_hold($reason)
     {
-        $this->order->update_status(self::ORDER_STATUS_ON_HOLD, $reason);
+        $this->order->update_status(OrderStatuses::ORDER_STATUS_ON_HOLD, $reason);
         wc_reduce_stock_levels($this->order->get_id());
         wc()->cart->empty_cart();
     }
@@ -203,7 +214,7 @@ class OrderUpdater
             'failed',
             sprintf(
                 __('Payment %s via IPN.', 'woo-paypalplus'),
-                wc_clean($this->ipnRequest->get(Request::KEY_PAYMENT_STATUS))
+                wc_clean($this->request->get(Request::KEY_PAYMENT_STATUS))
             )
         );
     }
@@ -235,16 +246,16 @@ class OrderUpdater
     {
         if ($this->validator->is_valid_refund()) {
             $this->order->update_status(
-                self::ORDER_STATUS_REFUNDED,
+                OrderStatuses::ORDER_STATUS_REFUNDED,
                 sprintf(
                     __('Payment %s via IPN.', 'woo-paypalplus'),
-                    $this->ipnRequest->get(Request::KEY_PAYMENT_STATUS)
+                    $this->request->get(Request::KEY_PAYMENT_STATUS)
                 )
             );
             do_action(
                 'wc_paypal_plus__ipn_payment_update',
-                self::ORDER_STATUS_REFUNDED,
-                $this->ipnData
+                OrderStatuses::ORDER_STATUS_REFUNDED,
+                $this->settingRepository
             );
         }
     }
@@ -255,16 +266,16 @@ class OrderUpdater
     public function payment_status_reversed()
     {
         $this->order->update_status(
-            self::ORDER_STATUS_ON_HOLD,
+            OrderStatuses::ORDER_STATUS_ON_HOLD,
             sprintf(
                 __('Payment %s via IPN.', 'woo-paypalplus'),
                 wc_clean(
-                    $this->ipnRequest->get(Request::KEY_PAYMENT_STATUS)
+                    $this->request->get(Request::KEY_PAYMENT_STATUS)
                 )
             )
         );
 
-        do_action('wc_paypal_plus__ipn_payment_update', 'reversed', $this->ipnData);
+        do_action('wc_paypal_plus__ipn_payment_update', 'reversed', $this->settingRepository);
     }
 
     /**
@@ -272,6 +283,6 @@ class OrderUpdater
      */
     public function payment_status_canceled_reversal()
     {
-        do_action('wc_paypal_plus__ipn_payment_update', 'canceled_reversal', $this->ipnData);
+        do_action('wc_paypal_plus__ipn_payment_update', 'canceled_reversal', $this->settingRepository);
     }
 }

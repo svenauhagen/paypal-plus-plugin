@@ -1,9 +1,11 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 17.01.17
- * Time: 15:52
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace WCPayPalPlus\WC\Payment;
@@ -75,4 +77,27 @@ interface OrderDataProvider
      * @return Item
      */
     public function get_item(OrderItemDataProvider $item);
+
+    /**
+     * Whether to list taxes in addition to the subtotal.
+     *
+     * @return bool
+     */
+    public function should_include_tax_in_total();
+
+    /**
+     * Get total shipping tax.
+     *
+     * @return string
+     */
+    public function get_shipping_tax();
+
+    /**
+     * Get the subtotal including any additional taxes.
+     *
+     * This is used when the prices are given already including tax.
+     *
+     * @return string
+     */
+    public function get_subtotal_including_tax();
 }

@@ -1,22 +1,26 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 03.11.16
- * Time: 14:27
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\WC;
+namespace WCPayPalPlus\PlusGateway;
 
 /**
- * Class PayPalIframeView
+ * Class FrameRenderer
  *
  * @package WCPayPalPlus\WC
  */
-class PlusFrameView
+class FrameRenderer
 {
     /**
      * Render the Paywall iframe
+     *
+     * @param array $data
      */
     public function render(array $data)
     {

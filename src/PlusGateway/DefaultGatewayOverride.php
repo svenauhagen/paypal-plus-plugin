@@ -1,6 +1,14 @@
 <?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-namespace WCPayPalPlus\WC;
+namespace WCPayPalPlus\PlusGateway;
 
 use WCPayPalPlus\Setting;
 
@@ -31,7 +39,7 @@ class DefaultGatewayOverride
             return;
         }
 
-        $this->setChosenPaymentMethod(PlusGateway::GATEWAY_ID);
+        $this->setChosenPaymentMethod(Gateway::GATEWAY_ID);
         $this->setSessionFlag();
     }
 
@@ -42,20 +50,13 @@ class DefaultGatewayOverride
      */
     public function isValidRequest()
     {
-        if (is_ajax()) {
-            return false;
-        }
+        $paymentMethod = (string)filter_input(INPUT_POST, 'payment_method', FILTER_SANITIZE_STRING);
 
-        // phpcs:ignore WordPress.CSRF.NonceVerification.NoNonceVerification
-        if (isset($_POST['payment_method'])) {
-            return false;
-        }
-
-        if (!is_checkout()) {
-            return false;
-        }
-
-        if ($this->getSessionFlag()) {
+        if ($paymentMethod
+            || !is_checkout()
+            || $this->getSessionFlag()
+            || is_ajax()
+        ) {
             return false;
         }
 

@@ -14,10 +14,10 @@ use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
 use Inpsyde\Lib\PayPal\Core\PayPalConfigManager;
 use Inpsyde\Lib\PayPal\Core\PayPalCredentialManager;
 use WCPayPalPlus\Log\PayPalSdkLogFactory;
-use WCPayPalPlus\Service\IntegrationServiceProvider;
 use WCPayPalPlus\Service\Container;
+use WCPayPalPlus\Service\IntegrationServiceProvider;
 use WCPayPalPlus\Setting\PlusStorable;
-use WCPayPalPlus\WC\PlusGateway;
+use WCPayPalPlus\PlusGateway\Gateway;
 
 /**
  * Class ServiceProvider
@@ -26,21 +26,26 @@ use WCPayPalPlus\WC\PlusGateway;
 class ServiceProvider implements IntegrationServiceProvider
 {
     /**
-     * @param Container $container
+     * @inheritdoc
      */
     public function register(Container $container)
     {
         $container[PayPalConfigManager::class] = function () {
             return PayPalConfigManager::getInstance();
         };
-        
         $container[PayPalCredentialManager::class] = function () {
             return PayPalCredentialManager::getInstance();
+        };
+        $container[CredentialProvider::class] = function () {
+            return new CredentialProvider();
+        };
+        $container[CredentialValidator::class] = function () {
+            return new CredentialValidator();
         };
     }
 
     /**
-     * @param Container $container
+     * @inheritdoc
      */
     public function integrate(Container $container)
     {
@@ -68,18 +73,18 @@ class ServiceProvider implements IntegrationServiceProvider
                 ]
             );
         }
-        
+
         $container[PayPalCredentialManager::class]->setCredentialObject(
             new OAuthTokenCredential(
-                $container[PlusGateway::class]->get_option('rest_client_id'),
-                $container[PlusGateway::class]->get_option('rest_secret_id')
+                $container[Gateway::class]->get_option('rest_client_id'),
+                $container[Gateway::class]->get_option('rest_secret_id')
             )
         );
         if ($container[PlusStorable::class]->isSandboxed()) {
             $container[PayPalCredentialManager::class]->setCredentialObject(
                 new OAuthTokenCredential(
-                    $container[PlusGateway::class]->get_option('rest_client_id_sandbox'),
-                    $container[PlusGateway::class]->get_option('rest_secret_id_sandbox')
+                    $container[Gateway::class]->get_option('rest_client_id_sandbox'),
+                    $container[Gateway::class]->get_option('rest_secret_id_sandbox')
                 )
             );
         }
