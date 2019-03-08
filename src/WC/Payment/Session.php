@@ -12,6 +12,7 @@ namespace WCPayPalPlus\WC\Payment;
 
 use WC_Session_Handler;
 use OutOfBoundsException;
+use WooCommerce;
 
 /**
  * Class Session
@@ -34,6 +35,20 @@ class Session
         self::APPROVAL_URL,
         self::TOKEN,
     ];
+
+    /**
+     * @var WooCommerce
+     */
+    private $wooCommerce;
+
+    /**
+     * Session constructor.
+     * @param WooCommerce $wooCommerce
+     */
+    public function __construct(WooCommerce $wooCommerce)
+    {
+        $this->wooCommerce = $wooCommerce;
+    }
 
     /**
      * @param $name
@@ -102,7 +117,7 @@ class Session
             return $session;
         }
 
-        $session = wc()->session;
+        $session = $this->wooCommerce->session;
 
         return $session;
     }

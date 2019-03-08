@@ -14,6 +14,7 @@ use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
 use WCPayPalPlus\Setting\PlusStorable;
+use WooCommerce;
 
 /**
  * Class ServiceProvider
@@ -34,6 +35,7 @@ class ServiceProvider implements ServiceProviderInterface
         };
         $container[OrderUpdaterFactory::class] = function (Container $container) {
             return new OrderUpdaterFactory(
+                $container[WooCommerce::class],
                 $container[OrderStatuses::class],
                 $container[OrderFactory::class],
                 $container[Request::class],

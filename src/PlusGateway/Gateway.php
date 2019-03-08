@@ -25,6 +25,7 @@ use WCPayPalPlus\WC\Payment\Session;
 use WCPayPalPlus\WC\Refund\RefundFactory;
 use WCPayPalPlus\WC\WCWebExperienceProfile;
 use WC_Order_Refund;
+use WooCommerce;
 
 /**
  * Class Gateway
@@ -83,7 +84,13 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
     private $paymentSession;
 
     /**
+     * @var WooCommerce
+     */
+    private $wooCommerce;
+
+    /**
      * Gateway constructor.
+     * @param WooCommerce $wooCommerce
      * @param FrameRenderer $frameView
      * @param CredentialProvider $credentialProvider
      * @param CredentialValidator $credentialValidator
@@ -95,6 +102,7 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
      * @param Session $paymentSession
      */
     public function __construct(
+        WooCommerce $wooCommerce,
         FrameRenderer $frameView,
         CredentialProvider $credentialProvider,
         CredentialValidator $credentialValidator,
@@ -106,6 +114,7 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
         Session $paymentSession
     ) {
 
+        $this->wooCommerce = $wooCommerce;
         $this->frameView = $frameView;
         $this->credentialProvider = $credentialProvider;
         $this->credentialValidator = $credentialValidator;
@@ -384,7 +393,7 @@ class Gateway extends \WC_Payment_Gateway implements PlusStorable
             'approvalUrl' => $paymentUrl,
             'placeholder' => 'ppplus',
             'mode' => $this->isSandboxed() ? 'sandbox' : 'live',
-            'country' => wc()->customer->get_billing_country(),
+            'country' => $this->wooCommerce->customer->get_billing_country(),
             'language' => $this->locale(),
             'buttonLocation' => 'outside',
             'showPuiOnSandbox' => true,

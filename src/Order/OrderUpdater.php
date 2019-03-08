@@ -15,6 +15,7 @@ use WCPayPalPlus\Ipn\PaymentValidator;
 use WCPayPalPlus\Request\Request;
 use WC_Order;
 use WCPayPalPlus\Setting\Storable;
+use WooCommerce;
 
 /**
  * Class OrderUpdater
@@ -53,7 +54,13 @@ class OrderUpdater
     private $settingRepository;
 
     /**
+     * @var WooCommerce
+     */
+    private $wooCommerce;
+
+    /**
      * OrderUpdater constructor.
+     * @param WooCommerce $wooCommerce
      * @param WC_Order $order
      * @param Storable $settingRepository
      * @param Request $request
@@ -61,6 +68,7 @@ class OrderUpdater
      * @param OrderStatuses $orderStatuses
      */
     public function __construct(
+        WooCommerce $wooCommerce,
         WC_Order $order,
         Storable $settingRepository,
         Request $request,
@@ -68,6 +76,7 @@ class OrderUpdater
         OrderStatuses $orderStatuses
     ) {
 
+        $this->wooCommerce = $wooCommerce;
         $this->order = $order;
         $this->settingRepository = $settingRepository;
         $this->request = $request;
@@ -190,7 +199,7 @@ class OrderUpdater
     {
         $this->order->update_status(OrderStatuses::ORDER_STATUS_ON_HOLD, $reason);
         wc_reduce_stock_levels($this->order->get_id());
-        wc()->cart->empty_cart();
+        $this->wooCommerce->cart->empty_cart();
     }
 
     /**
@@ -283,6 +292,7 @@ class OrderUpdater
      */
     public function payment_status_canceled_reversal()
     {
-        do_action('wc_paypal_plus__ipn_payment_update', 'canceled_reversal', $this->settingRepository);
+        do_action('wc_paypal_plus__ipn_payment_update', 'canceled_reversal',
+            $this->settingRepository);
     }
 }

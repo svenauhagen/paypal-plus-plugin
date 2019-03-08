@@ -20,6 +20,7 @@ use WCPayPalPlus\WC\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\WC\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\WC\Payment\Session;
 use WCPayPalPlus\WC\Refund\RefundFactory;
+use WooCommerce;
 
 /**
  * Class ServiceProvider
@@ -40,11 +41,13 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[DefaultGatewayOverride::class] = function (Container $container) {
             return new DefaultGatewayOverride(
+                $container[WooCommerce::class],
                 $container[PlusStorable::class]
             );
         };
         $container[Gateway::class] = function (Container $container) {
             return new Gateway(
+                $container[WooCommerce::class],
                 $container[FrameRenderer::class],
                 $container[CredentialProvider::class],
                 $container[CredentialValidator::class],

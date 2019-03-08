@@ -20,6 +20,7 @@ use WC_Order;
 use WC_Order_Refund;
 use RuntimeException;
 use Exception;
+use WooCommerce;
 
 /**
  * Class PaymentCreatorFactory
@@ -33,11 +34,18 @@ class PaymentCreatorFactory
     private $orderFactory;
 
     /**
-     * PaymentFactory constructor.
+     * @var WooCommerce
+     */
+    private $wooCommerce;
+
+    /**
+     * PaymentCreatorFactory constructor.
+     * @param WooCommerce $wooCommerce
      * @param OrderFactory $orderFactory
      */
-    public function __construct(OrderFactory $orderFactory)
+    public function __construct(WooCommerce $wooCommerce, OrderFactory $orderFactory)
     {
+        $this->wooCommerce = $wooCommerce;
         $this->orderFactory = $orderFactory;
     }
 
@@ -53,11 +61,13 @@ class PaymentCreatorFactory
             $orderData = $this->retrieveOrderByRequest($session);
             $orderData = new OrderData($orderData);
         } catch (Exception $exc) {
-            $orderData = new CartData(wc()->cart);
+            $orderData = new CartData($this->wooCommerce->cart);
         }
 
-        $returnUrl = wc()->api_request_url($gateway->id);
-        $notifyUrl = wc()->api_request_url(Gateway::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX);
+        $returnUrl = $this->wooCommerce->api_request_url($gateway->id);
+        $notifyUrl = $this->wooCommerce->api_request_url(
+            Gateway::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX
+        );
         $cancelUrl = $settings->cancelUrl();
         $experienceProfile = $settings->experienceProfileId();
 

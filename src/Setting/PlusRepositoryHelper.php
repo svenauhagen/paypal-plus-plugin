@@ -114,6 +114,6 @@ trait PlusRepositoryHelper
      */
     public function userAgent()
     {
-        return 'WooCommerce/' . wc()->version;
+        return 'WooCommerce/' . $this->wooCommerce->version;
     }
 }

@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\PlusGateway;
 
 use WCPayPalPlus\Setting;
+use WooCommerce;
 
 /**
  * Class DefaultGatewayOverride
@@ -24,13 +25,30 @@ class DefaultGatewayOverride
     const SESSION_CHECK_KEY = '_ppp_default_override_flag';
     const SESSION_CHECK_ACTIVATE = '1';
 
+    /**
+     * @var Setting\PlusStorable
+     */
     private $repository;
 
-    public function __construct(Setting\PlusStorable $repository)
+    /**
+     * @var WooCommerce
+     */
+    private $wooCommerce;
+
+    /**
+     * DefaultGatewayOverride constructor.
+     * @param WooCommerce $wooCommerce
+     * @param Setting\PlusStorable $repository
+     */
+    public function __construct(WooCommerce $wooCommerce, Setting\PlusStorable $repository)
     {
+        $this->wooCommerce = $wooCommerce;
         $this->repository = $repository;
     }
 
+    /**
+     *
+     */
     public function maybeOverride()
     {
         if (!$this->isValidRequest()
@@ -70,7 +88,7 @@ class DefaultGatewayOverride
      */
     private function getSessionFlag()
     {
-        return wc()->session->get(self::SESSION_CHECK_KEY);
+        return $this->wooCommerce->session->get(self::SESSION_CHECK_KEY);
     }
 
     /**
@@ -82,7 +100,7 @@ class DefaultGatewayOverride
     {
         assert(is_string($paymentMethod));
 
-        wc()->session->set('chosen_payment_method', $paymentMethod);
+        $this->wooCommerce->session->set('chosen_payment_method', $paymentMethod);
     }
 
     /**
@@ -90,6 +108,6 @@ class DefaultGatewayOverride
      */
     private function setSessionFlag()
     {
-        wc()->session->set(self::SESSION_CHECK_KEY, self::SESSION_CHECK_ACTIVATE);
+        $this->wooCommerce->session->set(self::SESSION_CHECK_KEY, self::SESSION_CHECK_ACTIVATE);
     }
 }

@@ -9,6 +9,7 @@
 namespace WCPayPalPlus\WC\Payment;
 
 use WCPayPalPlus\WC\RequestSuccessHandler;
+use WooCommerce;
 
 /**
  * Class PaymentExecutionSuccess
@@ -25,12 +26,18 @@ class PaymentExecutionSuccess implements RequestSuccessHandler
     private $data;
 
     /**
-     * PaymentExecutionSuccess constructor.
-     *
-     * @param PaymentExecutionData $data Payment Data from successful Execution.
+     * @var WooCommerce
      */
-    public function __construct(PaymentExecutionData $data)
+    private $wooCommerce;
+
+    /**
+     * PaymentExecutionSuccess constructor.
+     * @param WooCommerce $wooCommerce
+     * @param PaymentExecutionData $data
+     */
+    public function __construct(WooCommerce $wooCommerce, PaymentExecutionData $data)
     {
+        $this->wooCommerce = $wooCommerce;
         $this->data = $data;
     }
 
@@ -43,7 +50,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler
         if ($this->data->is_approved()) {
             $this->update_order();
 
-            wc()->cart->empty_cart();
+            $this->wooCommerce->cart->empty_cart();
             $redirect_url = $order->get_checkout_order_received_url();
         } else {
             $notice = sprintf(
@@ -82,7 +89,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler
                 $sale_id
             );
             $order->add_order_note($note);
-            wc()->cart->empty_cart();
+            $this->wooCommerce->cart->empty_cart();
         } else {
             $order->update_status('on-hold', __('Awaiting payment', 'woo-paypalplus'));
             wc_reduce_stock_levels($order->get_id());
