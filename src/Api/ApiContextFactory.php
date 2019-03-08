@@ -20,17 +20,36 @@ use Inpsyde\Lib\PayPal\Rest\ApiContext;
 class ApiContextFactory
 {
     /**
-     * @param OAuthTokenCredential|null $credentials
+     * Get PayPal apiContext with credentials from configuration
      *
      * @return ApiContext
      */
-    public static function get($credentials = null)
+    public static function getFromConfiguration()
     {
-        assert(null === $credentials || $credentials instanceof OAuthTokenCredential);
-
         return new ApiContext(
-            $credentials,
-            uniqid(home_url(), false)
+            null,
+            self::requestId()
         );
+    }
+
+    /**
+     * Get PayPal apiContext with credentials
+     *
+     * @param OAuthTokenCredential $credential
+     * @return ApiContext
+     */
+    public static function getFromCredentials(OAuthTokenCredential $credential)
+    {
+        return new ApiContext($credential, self::requestId());
+    }
+
+    /**
+     * Generate a uniqi Request ID
+     *
+     * @return string
+     */
+    public static function requestId()
+    {
+        return \uniqid(\home_url(), false);
     }
 }

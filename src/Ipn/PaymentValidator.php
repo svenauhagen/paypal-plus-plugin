@@ -10,6 +10,9 @@
 
 namespace WCPayPalPlus\Ipn;
 
+use WC_Order;
+use WCPayPalPlus\Request\Request;
+
 /**
  * Class PaymentValidator
  *
@@ -44,11 +47,19 @@ class PaymentValidator
      */
     private $order;
 
-    private $ipnData;
+    /**
+     * @var Request
+     */
+    private $request;
 
-    public function __construct(Data $ipnData, \WC_Order $order)
+    /**
+     * PaymentValidator constructor.
+     * @param Request $request
+     * @param WC_Order $order
+     */
+    public function __construct(Request $request, WC_Order $order)
     {
-        $this->ipnData = $ipnData;
+        $this->request = $request;
         $this->order = $order;
     }
 
@@ -59,9 +70,9 @@ class PaymentValidator
      */
     public function is_valid_payment()
     {
-        $transactionType = $this->ipnData->get(self::TRANSACTION_TYPE_DATA_KEY);
-        $currency = $this->ipnData->get(self::CURRENCY_DATA_KEY);
-        $amount = $this->ipnData->get(self::AMOUNT_DATA_KEY);
+        $transactionType = $this->request->get(self::TRANSACTION_TYPE_DATA_KEY);
+        $currency = $this->request->get(self::CURRENCY_DATA_KEY);
+        $amount = $this->request->get(self::AMOUNT_DATA_KEY);
 
         return ($this->validate_transaction_type($transactionType)
             && $this->validate_currency($currency)
@@ -152,7 +163,7 @@ class PaymentValidator
      */
     public function is_valid_refund()
     {
-        $currency = $this->ipnData->get(self::CURRENCY_DATA_KEY);
+        $currency = $this->request->get(self::CURRENCY_DATA_KEY);
 
         $wc_total = number_format(
             $this->sanitize_string_amount($this->order->get_total()),

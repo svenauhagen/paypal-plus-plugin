@@ -6,9 +6,9 @@
  * Description: PayPal Plus - the official WordPress Plugin for WooCommerce
  * Author:      Inpsyde GmbH
  * Author URI:  https://inpsyde.com/
- * Version:     1.0.9-dev
+ * Version:     1.1.0
  * WC requires at least: 3.0.0
- * WC tested up to: 3.4.0
+ * WC tested up to: 3.5.5
  * License:     MIT
  * Text Domain: woo-paypalplus
  * Domain Path: /languages/
@@ -127,15 +127,18 @@ $bootstrap = \Closure::bind(function () {
 
             $providers = new ServiceProvidersCollection();
             $providers
-                ->add(new Request\ServiceProvider())
                 ->add(new Notice\ServiceProvider())
                 ->add(new Assets\ServiceProvider())
+                ->add(new Setting\ServiceProvider())
+                ->add(new Request\ServiceProvider())
                 ->add(new WC\ServiceProvider())
                 ->add(new Ipn\ServiceProvider())
                 ->add(new Pui\ServiceProvider())
                 ->add(new Log\ServiceProvider())
                 ->add(new Api\ServiceProvider())
-                ->add(new ExpressCheckout\ServiceProvider());
+                ->add(new Order\ServiceProvider())
+                ->add(new ExpressCheckout\ServiceProvider())
+                ->add(new PlusGateway\ServiceProvider());
 
             $payPalPlus = new PayPalPlus($container, $providers);
 
@@ -153,7 +156,7 @@ $bootstrap = \Closure::bind(function () {
 
             unset($providers);
         } catch (\Exception $exc) {
-            do_action(ACTION_LOG, 'error', $exc->getMessage(), compact($exc));
+            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, $exc->getMessage(), compact($exc));
 
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 throw $exc;

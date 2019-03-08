@@ -13,6 +13,7 @@ use Inpsyde\Lib\PayPal\Api\Presentation;
 use Inpsyde\Lib\PayPal\Api\WebProfile;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
+use const WCPayPalPlus\ACTION_LOG;
 
 /**
  * Class WCWebExperienceProfile
@@ -99,7 +100,7 @@ class WCWebExperienceProfile
                 $new_id = $response->getId();
             }
         } catch (PayPalConnectionException $ex) {
-            do_action('wc_paypal_plus_log_exception', 'web_profile_exception', $ex);
+            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'web_profile_exception: ' . $ex->getMessage(), compact($ex));
         }
 
         return $new_id;
@@ -118,7 +119,7 @@ class WCWebExperienceProfile
         try {
             $web_profile = WebProfile::get($profile_id, $this->api_context);
         } catch (PayPalConnectionException $ex) {
-            do_action('wc_paypal_plus_log_exception', 'web_profile_exception', $ex);
+            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'web_profile_exception: ' . $ex->getMessage(), compact($ex));
         }
 
         return $web_profile;

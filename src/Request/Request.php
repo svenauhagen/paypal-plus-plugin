@@ -8,13 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\Ipn;
+namespace WCPayPalPlus\Request;
 
 /**
- * Class IpnRequest
- *
- * @method custom
- * @method paymentStatus
+ * Class Request
  *
  * @package WCPayPalPlus\Ipn
  */

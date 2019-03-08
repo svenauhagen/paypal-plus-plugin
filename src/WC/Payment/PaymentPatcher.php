@@ -9,13 +9,14 @@
 namespace WCPayPalPlus\WC\Payment;
 
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use const WCPayPalPlus\ACTION_LOG;
 
 /**
- * Class WCPaymentPatch
+ * Class PaymentPatcher
  *
  * @package WCPayPalPlus\WC\Payment
  */
-class WCPaymentPatch
+class PaymentPatcher
 {
     /**
      * Patch data object.
@@ -25,7 +26,7 @@ class WCPaymentPatch
     private $patch_data;
 
     /**
-     * WCPaymentPatch constructor.
+     * PaymentPatcher constructor.
      *
      * @param PaymentPatchData $patch_data You guessed it: The Patch data.
      */
@@ -49,7 +50,7 @@ class WCPaymentPatch
                 return true;
             }
         } catch (PayPalConnectionException $ex) {
-            do_action('wc_paypal_plus_log_exception', 'payment_patch_exception', $ex);
+            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'payment_patch_exception: ' . $ex->getMessage(), compact($ex));
 
             return false;
         }

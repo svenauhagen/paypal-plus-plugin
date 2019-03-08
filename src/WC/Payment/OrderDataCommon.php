@@ -1,4 +1,12 @@
-<?php
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace WCPayPalPlus\WC\Payment;
 
@@ -58,9 +66,11 @@ abstract class OrderDataCommon implements OrderDataProvider
                 $item_price = floatval($product_price * $item->getQuantity());
                 $subtotal += $item_price;
             }
-        } else {
-            $subtotal = $this->get_subtotal_including_tax();
+
+            return $this->format($subtotal);
         }
+
+        $subtotal = $this->get_subtotal_including_tax();
 
         return $this->format($subtotal);
     }
@@ -117,20 +127,4 @@ abstract class OrderDataCommon implements OrderDataProvider
     {
         return (!wc_tax_enabled() || !wc_prices_include_tax());
     }
-
-    /**
-     * Get total shipping tax.
-     *
-     * @return string
-     */
-    abstract public function get_shipping_tax();
-
-    /**
-     * Get the subtotal including any additional taxes.
-     *
-     * This is used when the prices are given already including tax.
-     *
-     * @return string
-     */
-    abstract protected function get_subtotal_including_tax();
 }

@@ -32,6 +32,11 @@ class RefundSuccess implements RequestSuccessHandler
     private $transaction_id;
 
     /**
+     * @var string
+     */
+    private $reason;
+
+    /**
      * RefundSuccess constructor.
      *
      * @param \WC_Order $order WooCommerce Order object.
@@ -42,6 +47,7 @@ class RefundSuccess implements RequestSuccessHandler
     {
         $this->order = $order;
         $this->transaction_id = $transaction_id;
+        $this->reason = $reason;
     }
 
     /**
@@ -52,11 +58,10 @@ class RefundSuccess implements RequestSuccessHandler
     public function execute()
     {
         $this->order->add_order_note('Refund Transaction ID:' . $this->transaction_id);
-        if (isset($this->reason) && !empty($this->reason)) {
-            $this->order->add_order_note('Reason for Refund :' . $this->reason);
-        }
+        $this->reason and $this->order->add_order_note('Reason for Refund :' . $this->reason);
+
         $max_remaining_refund = wc_format_decimal($this->order->get_total() - $this->order->get_total_refunded());
-        if (!$max_remaining_refund > 0) {
+        if ($max_remaining_refund <= 0) {
             $this->order->update_status('refunded');
         }
 

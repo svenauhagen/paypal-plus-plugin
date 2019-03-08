@@ -8,16 +8,15 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\Request;
+namespace WCPayPalPlus\Setting;
 
-use Brain\Nonces\NonceContextInterface;
-use Brain\Nonces\RequestGlobalsContext;
-use WCPayPalPlus\Service\Container;
+use WCPayPalPlus\PlusGateway\Gateway;
 use WCPayPalPlus\Service;
+use WCPayPalPlus\Service\Container;
 
 /**
  * Class ServiceProvider
- * @package WCPayPalPlus\Request
+ * @package WCPayPalPlus\Setting
  */
 class ServiceProvider implements Service\ServiceProvider
 {
@@ -26,11 +25,11 @@ class ServiceProvider implements Service\ServiceProvider
      */
     public function register(Container $container)
     {
-        $container[NonceContextInterface::class] = function () {
-            return new RequestGlobalsContext();
+        $container[PlusStorable::class] = function (Container $container) {
+            return $container[Gateway::class];
         };
-        $container[Request::class] = function () {
-            return new Request(filter_input_array(INPUT_POST) ?: []);
+        $container[Storable::class] = function (Container $container) {
+            return $container[Gateway::class];
         };
     }
 }

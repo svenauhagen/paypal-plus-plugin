@@ -10,10 +10,13 @@
 
 namespace WCPayPalPlus\Ipn;
 
+use WCPayPalPlus\Order\OrderFactory;
+use WCPayPalPlus\Order\OrderUpdaterFactory;
+use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting;
-use WCPayPalPlus\WC\PlusGateway;
+use WCPayPalPlus\PlusGateway\Gateway;
 
 /**
  * Class ServiceProvider
@@ -21,35 +24,34 @@ use WCPayPalPlus\WC\PlusGateway;
  */
 class ServiceProvider implements BootstrappableServiceProvider
 {
+    /**
+     * @inheritdoc
+     */
     public function register(Container $container)
     {
-        $container[Request::class] = function () {
-            return new Request(filter_input_array(INPUT_POST) ?: []);
-        };
-        $container[Data::class] = function (Container $container) {
-            return new Data(
-                $container[Setting\PlusStorable::class]
-            );
-        };
-        $container[Validator::class] = function (Container $container) {
-            return new Validator(
-                $container[Data::class],
-                $container[Request::class]
+        $container[IpnVerifier::class] = function (Container $container) {
+            return new IpnVerifier(
+                $container[Request::class],
+                $container[Setting\Storable::class]
             );
         };
         $container[Ipn::class] = function (Container $container) {
             return new Ipn(
-                $container[Data::class],
                 $container[Request::class],
-                $container[Validator::class]
+                $container[IpnVerifier::class],
+                $container[OrderUpdaterFactory::class],
+                $container[OrderFactory::class]
             );
         };
     }
 
+    /**
+     * @inheritdoc
+     */
     public function bootstrap(Container $container)
     {
         add_action(
-            'woocommerce_api_' . PlusGateway::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX,
+            'woocommerce_api_' . Gateway::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX,
             [$container[Ipn::class], 'checkResponse']
         );
     }

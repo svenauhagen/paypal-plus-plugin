@@ -1,9 +1,11 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: biont
- * Date: 02.12.16
- * Time: 17:26
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace WCPayPalPlus\WC\Payment;
@@ -12,6 +14,7 @@ use Inpsyde\Lib\PayPal\Api\Patch;
 use Inpsyde\Lib\PayPal\Api\PatchRequest;
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
+use WC_Order;
 
 /**
  * Class PaymentPatchData
@@ -23,66 +26,69 @@ class PaymentPatchData
     /**
      * WooCommerce Order object.
      *
-     * @var \WC_Order
+     * @var WC_Order
      */
     private $order;
+
     /**
      * The Payment ID.
      *
      * @var string
      */
-    private $payment_id;
+    private $paymentId;
+
     /**
      * The invoice prefix.
      *
      * @var string
      */
-    private $invoice_prefix;
+    private $invoicePrefix;
+
     /**
      * The PayPal SDK ApiContext object.
      *
      * @var ApiContext
      */
-    private $api_context;
+    private $apiContext;
+
     /**
      * The PatchProvider object
      *
      * @var PatchProvider
      */
-    private $patch_provider;
+    private $patchProvider;
 
     /**
      * PaymentPatchData constructor.
      *
-     * @param \WC_Order $order WooCommerce Order object.
-     * @param string $payment_id The Payment ID.
-     * @param string $invoice_prefix The invoice prefix.
-     * @param ApiContext $api_context The PayPal SDK ApiContext object.
-     * @param PatchProvider $patch_provider The PatchProvider object.
+     * @param WC_Order $order WooCommerce Order object.
+     * @param string $paymentId The Payment ID.
+     * @param string $invoicePrefix The invoice prefix.
+     * @param ApiContext $apiContext The PayPal SDK ApiContext object.
+     * @param PatchProvider $patchProvider The PatchProvider object.
      */
     public function __construct(
-        \WC_Order $order,
-        $payment_id,
-        $invoice_prefix,
-        ApiContext $api_context,
-        PatchProvider $patch_provider = null
+        WC_Order $order,
+        $paymentId,
+        $invoicePrefix,
+        ApiContext $apiContext,
+        PatchProvider $patchProvider
     ) {
 
+        assert(is_string($paymentId));
+        assert(is_string($invoicePrefix));
+
         $this->order = $order;
-        $this->payment_id = $payment_id;
-        $this->invoice_prefix = $invoice_prefix;
-        $this->api_context = $api_context;
-        if (!is_null($patch_provider)) {
-            $this->patch_provider = $patch_provider;
-        } else {
-            $this->patch_provider = new PatchProvider($this->order);
-        }
+        $this->paymentId = $paymentId;
+        $this->invoicePrefix = $invoicePrefix;
+        $this->apiContext = $apiContext;
+        $this->patchProvider = $patchProvider;
     }
 
     /**
      * Returns the WooCommerce Order object
      *
-     * @return \WC_Order
+     * @return WC_Order
      */
     public function get_order()
     {
@@ -106,7 +112,7 @@ class PaymentPatchData
      */
     public function get_payment_id()
     {
-        return $this->payment_id;
+        return $this->paymentId;
     }
 
     /**
@@ -116,7 +122,7 @@ class PaymentPatchData
      */
     public function get_api_context()
     {
-        return $this->api_context;
+        return $this->apiContext;
     }
 
     /**
@@ -141,10 +147,10 @@ class PaymentPatchData
     private function get_patches()
     {
         $patches = [
-            $this->patch_provider->get_payment_amount_patch(),
-            $this->patch_provider->get_custom_patch(),
-            $this->patch_provider->get_invoice_patch($this->get_invoice_prefix()),
-            $this->patch_provider->get_billing_patch(),
+            $this->patchProvider->get_payment_amount_patch(),
+            $this->patchProvider->get_custom_patch(),
+            $this->patchProvider->get_invoice_patch($this->get_invoice_prefix()),
+            $this->patchProvider->get_billing_patch(),
         ];
 
         return $patches;
@@ -157,6 +163,6 @@ class PaymentPatchData
      */
     public function get_invoice_prefix()
     {
-        return $this->invoice_prefix;
+        return $this->invoicePrefix;
     }
 }
