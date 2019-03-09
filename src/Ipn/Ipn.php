@@ -16,6 +16,7 @@ use WCPayPalPlus\Order\OrderUpdaterFactory;
 use Exception;
 use WCPayPalPlus\Request\Request;
 use WC_Log_Levels as LogLevels;
+use LogicException;
 
 /**
  * Handles responses from PayPal IPN.
@@ -69,57 +70,50 @@ class Ipn
     }
 
     /**
+     * TODO IPN Doesn't need to get any response from us?
+     *      If so, ensure all OrderUpdater methods will return the same value types.
+     *
      * @return void
      * @throws Exception
      */
     public function checkResponse()
     {
+        if (!$this->ipnVerifier->isVerified()) {
+            $this->log(LogLevels::ERROR, 'Invalid IPN call', $this->request->all());
+            // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+            wp_die('PayPal IPN Request Failure', 'PayPal IPN', ['response' => 500]);
+        }
+
         try {
             // Ensure an order exists
             $this->orderFactory->createByRequest($this->request);
+            $this->updatePaymentStatus();
+            // TODO Why exiting here?
+            exit;
         } catch (Exception $exc) {
-            do_action(ACTION_LOG, LogLevels::ERROR, $exc->getMessage(), compact($exc));
-
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                throw $exc;
-            }
-
+            // TODO W
+            $this->logException($exc);
             return;
         }
-
-        if ($this->ipnVerifier->isVerified()) {
-            // TODO IPN Doesn't need to get any response from us?
-            $this->updatePaymentStatus();
-            exit;
-        }
-
-        do_action(ACTION_LOG, LogLevels::ERROR, 'Invalid IPN call', $this->request->all());
-        // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
-        wp_die('PayPal IPN Request Failure', 'PayPal IPN', ['response' => 500]);
     }
 
     /**
      * Update Payment Status
      *
      * @return void
+     * @throws LogicException
      */
     private function updatePaymentStatus()
     {
         $payment_status = $this->request->get(Request::KEY_PAYMENT_STATUS);
-        $updater = $this->orderUpdaterFactory->create();
         $method = "payment_status_{$payment_status}";
+        $updater = $this->orderUpdaterFactory->create();
 
         if (!method_exists($updater, $method)) {
-            do_action(
-                ACTION_LOG,
-                LogLevels::WARNING,
-                "Processing IPN. payment status: {$payment_status}. Update method {$method} does not exists.",
-                $this->request->all()
-            );
+            throw new LogicException("Method OrderUpdater::{$method} does not exists.");
         }
 
-        do_action(
-            ACTION_LOG,
+        $this->log(
             LogLevels::INFO,
             "Processing IPN. payment status: {$payment_status}",
             $this->request->all()
@@ -127,5 +121,37 @@ class Ipn
 
         // Call Updater
         $updater->{$method}();
+    }
+
+    /**
+     * Log Exceptions and re-throw them if `WP_DEBUG` is set to true
+     *
+     * @param Exception $exception
+     * @throws Exception
+     */
+    private function logException(Exception $exception)
+    {
+        $this->log(LogLevels::ERROR, $exception->getMessage(), compact($exception));
+
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            throw $exception;
+        }
+    }
+
+    /**
+     * Log Action
+     *
+     * TODO Could be an utility function or a trait? I prefer traits as helpers.
+     *      We could add two kind of loggers, normal and from exception, so we can re-throw it in one place.
+     *      See self::logExceptionAction
+     *
+     * @param string $level
+     * @param string $message
+     * @param array $data
+     * @return void
+     */
+    private function log($level, $message, array $data)
+    {
+        do_action(ACTION_LOG, $level, "IPN: {$message}", $data);
     }
 }
