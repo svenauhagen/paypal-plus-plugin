@@ -15,6 +15,7 @@ use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Order\OrderUpdaterFactory;
 use Exception;
 use WCPayPalPlus\Request\Request;
+use WC_Log_Levels as LogLevels;
 
 /**
  * Handles responses from PayPal IPN.
@@ -77,7 +78,7 @@ class Ipn
             // Ensure an order exists
             $this->orderFactory->createByRequest($this->request);
         } catch (Exception $exc) {
-            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, $exc->getMessage(), compact($exc));
+            do_action(ACTION_LOG, LogLevels::ERROR, $exc->getMessage(), compact($exc));
 
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 throw $exc;
@@ -87,37 +88,44 @@ class Ipn
         }
 
         if ($this->ipnVerifier->isVerified()) {
-            $this->isValidResponse();
+            // TODO IPN Doesn't need to get any response from us?
+            $this->updatePaymentStatus();
             exit;
         }
 
-        do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'Invalid IPN call', $this->request->all());
+        do_action(ACTION_LOG, LogLevels::ERROR, 'Invalid IPN call', $this->request->all());
         // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
         wp_die('PayPal IPN Request Failure', 'PayPal IPN', ['response' => 500]);
     }
 
     /**
-     * There was a valid response.
+     * Update Payment Status
      *
-     * @return bool
+     * @return void
      */
-    private function isValidResponse()
+    private function updatePaymentStatus()
     {
         $payment_status = $this->request->get(Request::KEY_PAYMENT_STATUS);
         $updater = $this->orderUpdaterFactory->create();
+        $method = "payment_status_{$payment_status}";
 
-        if (method_exists($updater, 'payment_status_' . $payment_status)) {
+        if (!method_exists($updater, $method)) {
             do_action(
                 ACTION_LOG,
-                \WC_Log_Levels::INFO,
-                'Processing IPN. payment status: ' . $payment_status,
+                LogLevels::WARNING,
+                "Processing IPN. payment status: {$payment_status}. Update method {$method} does not exists.",
                 $this->request->all()
             );
-            $updater->{"payment_status_{$payment_status}"}();
-
-            return true;
         }
 
-        return false;
+        do_action(
+            ACTION_LOG,
+            LogLevels::INFO,
+            "Processing IPN. payment status: {$payment_status}",
+            $this->request->all()
+        );
+
+        // Call Updater
+        $updater->{$method}();
     }
 }
