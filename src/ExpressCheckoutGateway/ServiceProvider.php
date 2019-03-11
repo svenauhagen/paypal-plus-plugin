@@ -49,6 +49,11 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[Session::class]
             );
         };
+        $container[CheckoutGatewayOverride::class] = function (Container $container) {
+            return new CheckoutGatewayOverride(
+                $container[Session::class]
+            );
+        };
 
         $ajaxNonce = new WpNonce(AjaxHandler::ACTION . '_nonce');
 
@@ -96,6 +101,12 @@ class ServiceProvider implements BootstrappableServiceProvider
             'woocommerce_api_' . $gatewayId,
             [$gateway, 'execute_payment'],
             12
+        );
+
+        add_filter(
+            'woocommerce_available_payment_gateways',
+            [$container[CheckoutGatewayOverride::class], 'maybeOverride'],
+            999
         );
 
         add_action(
