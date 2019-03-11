@@ -51,7 +51,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[CheckoutGatewayOverride::class] = function (Container $container) {
             return new CheckoutGatewayOverride(
-                $container[Session::class]
+                $container[\WooCommerce::class]
             );
         };
 
