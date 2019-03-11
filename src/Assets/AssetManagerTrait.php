@@ -14,15 +14,11 @@ use WCPayPalPlus\PluginProperties;
 
 /**
  * Interface AssetManagerTrait
+ * @property PluginProperties $pluginProperties
  * @package WCPayPalPlus\Assets
  */
 trait AssetManagerTrait
 {
-    /**
-     * @var PluginProperties
-     */
-    private $pluginProperties;
-
     /**
      * Localize Scripts
      * @param $handle
