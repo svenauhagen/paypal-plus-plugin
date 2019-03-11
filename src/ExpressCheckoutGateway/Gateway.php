@@ -77,7 +77,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     /**
      * @var Session
      */
-    private $paymentSession;
+    private $session;
 
     /**
      * @var WooCommerce
@@ -86,37 +86,31 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
 
     /**
      * Gateway constructor.
-     * @param WooCommerce $wooCommerce
      * @param CredentialProvider $credentialProvider
      * @param CredentialValidator $credentialValidator
      * @param GatewaySettingsModel $settingsModel
      * @param RefundFactory $refundFactory
      * @param OrderFactory $orderFactory
      * @param PaymentExecutionFactory $paymentExecutionFactory
-     * @param PaymentCreatorFactory $paymentCreatorFactory
-     * @param Session $paymentSession
+     * @param Session $session
      */
     public function __construct(
-        WooCommerce $wooCommerce,
         CredentialProvider $credentialProvider,
         CredentialValidator $credentialValidator,
         GatewaySettingsModel $settingsModel,
         RefundFactory $refundFactory,
         OrderFactory $orderFactory,
         PaymentExecutionFactory $paymentExecutionFactory,
-        PaymentCreatorFactory $paymentCreatorFactory,
-        Session $paymentSession
+        Session $session
     ) {
 
-        $this->wooCommerce = $wooCommerce;
         $this->credentialProvider = $credentialProvider;
         $this->credentialValidator = $credentialValidator;
         $this->settingsModel = $settingsModel;
         $this->refundFactory = $refundFactory;
         $this->orderFactory = $orderFactory;
         $this->paymentExecutionFactory = $paymentExecutionFactory;
-        $this->paymentCreatorFactory = $paymentCreatorFactory;
-        $this->paymentSession = $paymentSession;
+        $this->session = $session;
 
         $this->id = self::GATEWAY_ID;
         $this->title = $this->get_option('title');
@@ -280,17 +274,17 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         $token = filter_input(INPUT_GET, 'token', FILTER_SANITIZE_STRING);
         $payerId = filter_input(INPUT_GET, 'PayerID', FILTER_SANITIZE_STRING);
         $paymentId = filter_input(INPUT_GET, 'paymentId', FILTER_SANITIZE_STRING);
-        $orderId = $this->paymentSession->get(Session::ORDER_ID);
+        $orderId = $this->session->get(Session::ORDER_ID);
 
         if (!$paymentId) {
-            $paymentId = $this->paymentSession->get(Session::PAYMENT_ID);
+            $paymentId = $this->session->get(Session::PAYMENT_ID);
         }
         if (!$token || !$payerId || !$paymentId || !$orderId) {
             return;
         }
 
-        $this->paymentSession->set(Session::TOKEN, $token);
-        $this->paymentSession->set(Session::PAYER_ID, $payerId);
+        $this->session->set(Session::TOKEN, $token);
+        $this->session->set(Session::PAYER_ID, $payerId);
 
         $order = $this->orderFactory->createById($orderId);
 
