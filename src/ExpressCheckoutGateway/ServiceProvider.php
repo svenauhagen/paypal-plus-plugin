@@ -12,6 +12,13 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\WpNonce;
+use WCPayPalPlus\Api\CredentialProvider;
+use WCPayPalPlus\Api\CredentialValidator;
+use WCPayPalPlus\Order\OrderFactory;
+use WCPayPalPlus\Payment\PaymentCreatorFactory;
+use WCPayPalPlus\Payment\PaymentExecutionFactory;
+use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Refund\RefundFactory;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 
@@ -26,6 +33,23 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function register(Container $container)
     {
+        $container[GatewaySettingsModel::class] = function () {
+            return new GatewaySettingsModel();
+        };
+        $container[Gateway::class] = function (Container $container) {
+            return new Gateway(
+                $container[\WooCommerce::class],
+                $container[CredentialProvider::class],
+                $container[CredentialValidator::class],
+                $container[GatewaySettingsModel::class],
+                $container[RefundFactory::class],
+                $container[OrderFactory::class],
+                $container[PaymentExecutionFactory::class],
+                $container[PaymentCreatorFactory::class],
+                $container[Session::class]
+            );
+        };
+
         $ajaxNonce = new WpNonce(AjaxHandler::ACTION . '_nonce');
 
         $container[SingleProductButtonView::class] = function () use ($ajaxNonce) {
@@ -54,6 +78,26 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function bootstrap(Container $container)
     {
+        $gatewayId = Gateway::GATEWAY_ID;
+        $gateway = $container[Gateway::class];
+
+        add_filter('woocommerce_payment_gateways', function ($methods) use ($gateway) {
+            $methods[Gateway::class] = $gateway;
+
+            return $methods;
+        });
+
+        add_action(
+            "woocommerce_update_options_payment_gateways_{$gatewayId}",
+            [$gateway, 'process_admin_options'],
+            10
+        );
+        add_action(
+            'woocommerce_api_' . $gatewayId,
+            [$gateway, 'execute_payment'],
+            12
+        );
+
         add_action(
             'woocommerce_after_add_to_cart_button',
             [$container[SingleProductButtonView::class], 'render']
