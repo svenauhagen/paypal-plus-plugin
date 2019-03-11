@@ -21,7 +21,6 @@ use WCPayPalPlus\Renderable;
 final class SingleProductButtonView implements Renderable
 {
     const SELECTOR_ID = 'paypalplus_ecs_single_product_button';
-    // TODO Allow all products except for or allow only specific ones
     const NOT_ALLOWED_PRODUCTS = [
         'external',
     ];
