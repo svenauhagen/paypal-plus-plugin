@@ -40,26 +40,26 @@ class ReceiptPageRenderer
     /**
      * @var Session
      */
-    private $paymentSession;
+    private $session;
 
     /**
      * ReceiptPageRender constructor.
      * @param OrderFactory $orderFactory
      * @param PaymentPatchFactory $paymentPatchFactory
      * @param PlusStorable $settingRepository
-     * @param Session $paymentSession
+     * @param Session $session
      */
     public function __construct(
         OrderFactory $orderFactory,
         PaymentPatchFactory $paymentPatchFactory,
         PlusStorable $settingRepository,
-        Session $paymentSession
+        Session $session
     ) {
 
         $this->orderFactory = $orderFactory;
         $this->paymentPatchFactory = $paymentPatchFactory;
         $this->settingRepository = $settingRepository;
-        $this->paymentSession = $paymentSession;
+        $this->session = $session;
     }
 
     /**
@@ -67,9 +67,9 @@ class ReceiptPageRenderer
      */
     public function render($orderId)
     {
-        $this->paymentSession->set(Session::ORDER_ID, $orderId);
+        $this->session->set(Session::ORDER_ID, $orderId);
         $order = $this->orderFactory->createById($orderId);
-        $paymentId = $this->paymentSession->get(Session::PAYMENT_ID);
+        $paymentId = $this->session->get(Session::PAYMENT_ID);
 
         if (!$paymentId) {
             $this->abortCheckout();
@@ -97,7 +97,7 @@ class ReceiptPageRenderer
      */
     private function abortCheckout()
     {
-        $this->paymentSession->clean();
+        $this->session->clean();
 
         wc_add_notice(
             esc_html__('Error processing checkout. Please try again.', 'woo-paypalplus'),
