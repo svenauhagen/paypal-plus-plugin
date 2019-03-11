@@ -10,6 +10,12 @@
 
 namespace WCPayPalPlus;
 
+/**
+ * TODO Move within the Utils package
+ *
+ * Class NetworkState
+ * @package WCPayPalPlus
+ */
 class NetworkState
 {
     /**
