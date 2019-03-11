@@ -25,6 +25,10 @@ const Request = class Request
 
     submit(formData)
     {
+        // TODO Extract specific data such as: action, nonce, task, context and
+        //      put the rest within a specific object.
+        //      Make a separation for data controls and real request data.
+
         const dataObject = this.formDataObject(formData);
 
         if (_.isEmpty(dataObject)) {

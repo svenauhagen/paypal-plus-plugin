@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\Refund;
 
 use WCPayPalPlus\WC\RequestSuccessHandler;
+use WC_Order;
 
 /**
  * Class RefundSuccess
@@ -41,11 +42,11 @@ class RefundSuccess implements RequestSuccessHandler
     /**
      * RefundSuccess constructor.
      *
-     * @param \WC_Order $order WooCommerce Order object.
+     * @param WC_Order $order WooCommerce Order object.
      * @param string $transaction_id PayPal transaction ID.
      * @param string $reason Refund reason.
      */
-    public function __construct(\WC_Order $order, $transaction_id, $reason)
+    public function __construct(WC_Order $order, $transaction_id, $reason)
     {
         $this->order = $order;
         $this->transaction_id = $transaction_id;
@@ -55,18 +56,20 @@ class RefundSuccess implements RequestSuccessHandler
     /**
      * Handle the successful request.
      *
-     * @return bool
+     * @return void
      */
     public function execute()
     {
-        $this->order->add_order_note('Refund Transaction ID:' . $this->transaction_id);
-        $this->reason and $this->order->add_order_note('Reason for Refund :' . $this->reason);
+        $this->order->add_order_note(
+            esc_html__('Refund Transaction ID:', 'woo-paypalplus') . $this->transaction_id
+        );
+        $this->reason and $this->order->add_order_note(
+            esc_html__('Reason for Refund :', 'woo-paypalplus') . $this->reason
+        );
 
         $max_remaining_refund = wc_format_decimal($this->order->get_total() - $this->order->get_total_refunded());
         if ($max_remaining_refund <= 0) {
             $this->order->update_status('refunded');
         }
-
-        return true;
     }
 }

@@ -13,6 +13,7 @@ namespace WCPayPalPlus\Assets;
 use WCPayPalPlus\PluginProperties;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
+use WCPayPalPlus\Setting\PlusStorable;
 
 class ServiceProvider implements BootstrappableServiceProvider
 {
@@ -23,17 +24,17 @@ class ServiceProvider implements BootstrappableServiceProvider
     {
         $container[AssetManager::class] = function (Container $container) {
             return new AssetManager(
-                $container[PluginProperties::class]
-            );
-        };
-        $container[PayPalSdkScriptArguments::class] = function () {
-            return new PayPalSdkScriptArguments();
-        };
-        $container[PayPalAssetManager::class] = function (Container $container) {
-            return new PayPalAssetManager(
                 $container[PluginProperties::class],
-                $container[PayPalSdkScriptArguments::class]
+                $container[SmartButtonArguments::class]
             );
+        };
+        $container[SmartButtonArguments::class] = function (Container $container) {
+            return new SmartButtonArguments(
+                $container[PlusStorable::class]
+            );
+        };
+        $container[PayPalAssetManager::class] = function () {
+            return new PayPalAssetManager();
         };
     }
 

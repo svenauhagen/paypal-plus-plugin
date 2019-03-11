@@ -10,8 +10,9 @@
 
 namespace WCPayPalPlus\PlusGateway;
 
+use WCPayPalPlus\Payment\Session;
 use WCPayPalPlus\Setting;
-use WooCommerce;
+use OutOfBoundsException;
 
 /**
  * Class DefaultGatewayOverride
@@ -22,8 +23,7 @@ use WooCommerce;
  */
 class DefaultGatewayOverride
 {
-    const SESSION_CHECK_KEY = '_ppp_default_override_flag';
-    const SESSION_CHECK_ACTIVATE = '1';
+    const INPUT_PAYMENT_METHOD = 'payment_method';
 
     /**
      * @var Setting\PlusStorable
@@ -31,28 +31,32 @@ class DefaultGatewayOverride
     private $repository;
 
     /**
-     * @var WooCommerce
+     * @var Session
      */
-    private $wooCommerce;
+    private $session;
 
     /**
      * DefaultGatewayOverride constructor.
-     * @param WooCommerce $wooCommerce
      * @param Setting\PlusStorable $repository
+     * @param Session $session
      */
-    public function __construct(WooCommerce $wooCommerce, Setting\PlusStorable $repository)
-    {
-        $this->wooCommerce = $wooCommerce;
+    public function __construct(
+        Setting\PlusStorable $repository,
+        Session $session
+    ) {
+
         $this->repository = $repository;
+        $this->session = $session;
     }
 
     /**
      *
+     * @throws OutOfBoundsException
      */
     public function maybeOverride()
     {
         if (!$this->isValidRequest()
-            || !$this->repository->isDefaultGatewayOverrideEnabled()
+            || $this->repository->isDefaultGatewayOverrideDisabled()
         ) {
             return;
         }
@@ -68,7 +72,11 @@ class DefaultGatewayOverride
      */
     public function isValidRequest()
     {
-        $paymentMethod = (string)filter_input(INPUT_POST, 'payment_method', FILTER_SANITIZE_STRING);
+        $paymentMethod = (string)filter_input(
+            INPUT_POST,
+            self::INPUT_PAYMENT_METHOD,
+            FILTER_SANITIZE_STRING
+        );
 
         if ($paymentMethod
             || !is_checkout()
@@ -88,26 +96,29 @@ class DefaultGatewayOverride
      */
     private function getSessionFlag()
     {
-        return $this->wooCommerce->session->get(self::SESSION_CHECK_KEY);
+        return $this->session->get(Session::SESSION_CHECK_KEY);
     }
 
     /**
      * Set the gateway override
      *
      * @param string $paymentMethod
+     * @throws OutOfBoundsException
      */
     private function setChosenPaymentMethod($paymentMethod)
     {
         assert(is_string($paymentMethod));
 
-        $this->wooCommerce->session->set('chosen_payment_method', $paymentMethod);
+        $this->session->set(Session::CHOSEN_PAYMENT_METHOD, $paymentMethod);
     }
 
     /**
      * Set our private session flag
+     *
+     * @throws OutOfBoundsException
      */
     private function setSessionFlag()
     {
-        $this->wooCommerce->session->set(self::SESSION_CHECK_KEY, self::SESSION_CHECK_ACTIVATE);
+        $this->session->set(Session::SESSION_CHECK_KEY, Session::SESSION_CHECK_ACTIVATE);
     }
 }

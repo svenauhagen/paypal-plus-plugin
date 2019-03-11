@@ -16,7 +16,8 @@ use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting;
-use WCPayPalPlus\PlusGateway\Gateway;
+use WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
+use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressGateway;
 
 /**
  * Class ServiceProvider
@@ -51,7 +52,11 @@ class ServiceProvider implements BootstrappableServiceProvider
     public function bootstrap(Container $container)
     {
         add_action(
-            'woocommerce_api_' . Gateway::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX,
+            'woocommerce_api_' . PlusGateway::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX,
+            [$container[Ipn::class], 'checkResponse']
+        );
+        add_action(
+            'woocommerce_api_' . ExpressGateway::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX,
             [$container[Ipn::class], 'checkResponse']
         );
     }

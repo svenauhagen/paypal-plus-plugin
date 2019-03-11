@@ -25,6 +25,11 @@ use RuntimeException;
 class OrderFactory
 {
     /**
+     * TODO Remember to edit this based on che patch made for #PPP-275
+     *      Moreover I would like to remove completely this method. Why use request and do not just
+     *      pass explicitly the data we need? Will make more clear what we need to build the object.
+     *      Clear design make easy to discover bugs and it's more maintainable.
+     *
      * @param Request $request
      * @return WC_Order|WC_Order_Refund
      * @throws Exception
@@ -44,6 +49,8 @@ class OrderFactory
     /**
      * @param $orderKey
      * @return WC_Order|WC_Order_Refund
+     * @throws RuntimeException
+     * @throws UnexpectedValueException
      */
     public function createByOrderKey($orderKey)
     {
@@ -72,7 +79,13 @@ class OrderFactory
             throw new RuntimeException("Cannot create order by value {$orderId}");
         }
 
-        return wc_get_order($orderId);
+        $order = wc_get_order($orderId);
+
+        if (!in_array(get_class($order), [WC_Order::class, WC_Order_Refund::class], true)) {
+            throw new RuntimeException("Cannot create order by value {$orderId}");
+        }
+
+        return $order;
     }
 
     /**

@@ -34,6 +34,7 @@ import { SmartPaymentButtonRendererFactory } from './expressCheckout/smartPaymen
 
         const request = RequestFactory(requestData.ajaxUrl, requestData.action);
         const smartPaymentButton = SmartPaymentButtonRendererFactory(
+            expressCheckoutData,
             validContexts,
             request
         );

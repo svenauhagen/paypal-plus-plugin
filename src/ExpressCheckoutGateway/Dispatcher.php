@@ -21,13 +21,21 @@ class Dispatcher
     /**
      * Dispatch a request by the given context
      *
-     * @param $context
+     * @param string $context
+     * @param string $action
+     * @param array $data
      * @return mixed
      */
-    public function dispatch($context)
+    public function dispatch($context, $action, array $data)
     {
         assert(is_string($context));
+        assert(is_string($action));
 
-        return apply_filters(self::ACTION_DISPATCH_CONTEXT . "_{$context}", null);
+        /**
+         * Dispatch action
+         *
+         * @param array $data
+         */
+        do_action(self::ACTION_DISPATCH_CONTEXT . "/{$context}/{$action}", $data);
     }
 }

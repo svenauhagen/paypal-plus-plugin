@@ -15,6 +15,7 @@ use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Api\CredentialProvider;
 use WCPayPalPlus\Api\CredentialValidator;
+use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Notice;
 use WCPayPalPlus\Setting\PlusRepositoryHelper;
@@ -27,6 +28,8 @@ use WCPayPalPlus\WC\WCWebExperienceProfile;
 use WC_Order_Refund;
 use WooCommerce;
 use WC_Payment_Gateway;
+use OutOfBoundsException;
+use RuntimeException;
 
 /**
  * Class Gateway
@@ -82,7 +85,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     /**
      * @var Session
      */
-    private $paymentSession;
+    private $session;
 
     /**
      * @var WooCommerce
@@ -100,7 +103,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
      * @param OrderFactory $orderFactory
      * @param PaymentExecutionFactory $paymentExecutionFactory
      * @param PaymentCreatorFactory $paymentCreatorFactory
-     * @param Session $paymentSession
+     * @param Session $session
      */
     public function __construct(
         WooCommerce $wooCommerce,
@@ -112,7 +115,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         OrderFactory $orderFactory,
         PaymentExecutionFactory $paymentExecutionFactory,
         PaymentCreatorFactory $paymentCreatorFactory,
-        Session $paymentSession
+        Session $session
     ) {
 
         $this->wooCommerce = $wooCommerce;
@@ -124,7 +127,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         $this->orderFactory = $orderFactory;
         $this->paymentExecutionFactory = $paymentExecutionFactory;
         $this->paymentCreatorFactory = $paymentCreatorFactory;
-        $this->paymentSession = $paymentSession;
+        $this->session = $session;
 
         $this->id = self::GATEWAY_ID;
         $this->title = $this->get_option('title');
@@ -330,24 +333,23 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * @return void
+     * @throws OutOfBoundsException
+     * @throws RuntimeException
      */
     public function execute_payment()
     {
-        $token = filter_input(INPUT_GET, 'token', FILTER_SANITIZE_STRING);
         $payerId = filter_input(INPUT_GET, 'PayerID', FILTER_SANITIZE_STRING);
         $paymentId = filter_input(INPUT_GET, 'paymentId', FILTER_SANITIZE_STRING);
-        $orderId = $this->paymentSession->get(Session::ORDER_ID);
+        $orderId = $this->session->get(Session::ORDER_ID);
 
         if (!$paymentId) {
-            $paymentId = $this->paymentSession->get(Session::PAYMENT_ID);
+            $paymentId = $this->session->get(Session::PAYMENT_ID);
         }
-        if (!$token || !$payerId || !$paymentId || !$orderId) {
+        if (!$payerId || !$paymentId || !$orderId) {
             return;
         }
 
-        $this->paymentSession->set(Session::TOKEN, $token);
-        $this->paymentSession->set(Session::PAYER_ID, $payerId);
+        $this->session->set(Session::PAYER_ID, $payerId);
 
         $order = $this->orderFactory->createById($orderId);
 
@@ -359,6 +361,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
                 ApiContextFactory::getFromConfiguration()
             );
             $payment->execute();
+            $redirectUrl = $order->get_checkout_order_received_url();
         } catch (PayPalConnectionException $exc) {
             do_action(
                 ACTION_LOG,
@@ -375,10 +378,12 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
                 'error'
             );
 
-            wp_safe_redirect(wc_get_checkout_url());
-
-            die();
+            // TODO Should be the cancel url option?
+            $redirectUrl = wc_get_checkout_url();
         }
+
+        wp_safe_redirect($redirectUrl);
+        exit;
     }
 
     /**
@@ -431,17 +436,22 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
 
     /**
      * @return string
+     * @throws OutOfBoundsException
      */
     private function createPayment()
     {
-        $url = (string)$this->paymentSession->get(Session::APPROVAL_URL);
+        $url = (string)$this->session->get(Session::APPROVAL_URL);
 
         if (!$url) {
             try {
+                $returnUrl = $this->wooCommerce->api_request_url($this->id);
+                $notifyUrl = $this->wooCommerce->api_request_url(
+                    self::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX
+                );
                 $paymentCreator = $this->paymentCreatorFactory->create(
                     $this,
-                    $this,
-                    $this->paymentSession
+                    $returnUrl,
+                    $notifyUrl
                 );
                 $paymentCreator = $paymentCreator->create();
             } catch (\Exception $exc) {
@@ -455,10 +465,10 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
                 return $url;
             }
 
-            $this->paymentSession->set(Session::PAYMENT_ID, $paymentCreator->getId());
+            $this->session->set(Session::PAYMENT_ID, $paymentCreator->getId());
 
             $url = htmlspecialchars_decode($paymentCreator->getApprovalLink());
-            $this->paymentSession->set(Session::APPROVAL_URL, $url);
+            $this->session->set(Session::APPROVAL_URL, $url);
         }
 
         return $url;

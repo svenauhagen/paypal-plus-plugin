@@ -10,8 +10,6 @@
 
 namespace WCPayPalPlus\Api;
 
-use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
-
 /**
  * Class CredentialProvider
  * @package WCPayPalPlus\Api
@@ -25,7 +23,7 @@ class CredentialProvider
 
     /**
      * @param $isSandboxed
-     * @return OAuthTokenCredential
+     * @return Credential
      */
     public function byRequest($isSandboxed)
     {
@@ -37,6 +35,6 @@ class CredentialProvider
         $clientId = (string)filter_input(INPUT_POST, $clientIdKey, FILTER_SANITIZE_STRING);
         $clientSecret = (string)filter_input(INPUT_POST, $clientSecret, FILTER_SANITIZE_STRING);
 
-        return new OAuthTokenCredential($clientId, $clientSecret);
+        return new Credential($clientId, $clientSecret);
     }
 }

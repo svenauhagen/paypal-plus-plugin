@@ -10,8 +10,6 @@
 
 namespace WCPayPalPlus\Assets;
 
-use WCPayPalPlus\PluginProperties;
-
 /**
  * Class PayPalAssetManager
  * @package WCPayPalPlus\Assets
@@ -21,34 +19,17 @@ class PayPalAssetManager
     use AssetManagerTrait;
 
     /**
-     * @var PayPalSdkScriptArguments
-     */
-    private $sdkArguments;
-
-    /**
-     * PayPalAssetManager constructor.
-     * @param PluginProperties $pluginProperties
-     * @param PayPalSdkScriptArguments $sdkArguments
-     */
-    public function __construct(
-        PluginProperties $pluginProperties,
-        PayPalSdkScriptArguments $sdkArguments
-    ) {
-
-        $this->pluginProperties = $pluginProperties;
-        $this->sdkArguments = $sdkArguments;
-    }
-
-    /**
      * Enqueue PayPal FrontEnd Scripts
      */
     public function enqueueFrontEndScripts()
     {
-        $url = add_query_arg(
-            $this->sdkArguments->toArray(),
-            'https://www.paypal.com/sdk/js'
+        wp_enqueue_script(
+            'ppplus-express-checkout',
+            'https://www.paypalobjects.com/api/checkout.js',
+            [],
+            null,
+            true
         );
-        wp_enqueue_script('ppplus-express-checkout', $url, [], null, true);
 
         $this->isCheckout() and wp_enqueue_script(
             'ppplus',

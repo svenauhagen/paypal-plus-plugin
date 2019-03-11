@@ -15,6 +15,8 @@ use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Payment\Session;
+use OutOfBoundsException;
+use RuntimeException;
 
 /**
  * Class ReceiptPageRenderer
@@ -43,27 +45,40 @@ class ReceiptPageRenderer
     private $session;
 
     /**
-     * ReceiptPageRender constructor.
+     * @var CheckoutDropper
+     */
+    private $checkoutDropper;
+
+    /**
+     * ReceiptPageRenderer constructor.
      * @param OrderFactory $orderFactory
      * @param PaymentPatchFactory $paymentPatchFactory
      * @param PlusStorable $settingRepository
      * @param Session $session
+     * @param CheckoutDropper $checkoutDropper
      */
     public function __construct(
         OrderFactory $orderFactory,
         PaymentPatchFactory $paymentPatchFactory,
         PlusStorable $settingRepository,
-        Session $session
+        Session $session,
+        CheckoutDropper $checkoutDropper
     ) {
 
         $this->orderFactory = $orderFactory;
         $this->paymentPatchFactory = $paymentPatchFactory;
         $this->settingRepository = $settingRepository;
         $this->session = $session;
+        $this->checkoutDropper = $checkoutDropper;
     }
 
     /**
+     * TODO May be this method can be split into two methods and use action to run the patcher.
+     *      See the same code in \WCPayPalPlus\ExpressCheckoutGateway\Gateway::process_payment
+     *
      * @param $orderId
+     * @throws OutOfBoundsException
+     * @throws RuntimeException
      */
     public function render($orderId)
     {
@@ -71,11 +86,7 @@ class ReceiptPageRenderer
         $order = $this->orderFactory->createById($orderId);
         $paymentId = $this->session->get(Session::PAYMENT_ID);
 
-        if (!$paymentId) {
-            $this->abortCheckout();
-
-            return;
-        }
+        !$paymentId and $this->checkoutDropper->abortCheckout();
 
         $paymentPatcher = $this->paymentPatchFactory->create(
             $order,
@@ -84,27 +95,9 @@ class ReceiptPageRenderer
             ApiContextFactory::getFromConfiguration()
         );
 
-        if ($paymentPatcher->execute()) {
-            wp_enqueue_script('paypalplus-woocommerce-plus-paypal-redirect');
-            return;
-        }
+        $isSuccessPatched = $paymentPatcher->execute();
+        !$isSuccessPatched and $this->checkoutDropper->abortCheckout();
 
-        $this->abortCheckout();
-    }
-
-    /**
-     * @return void
-     */
-    private function abortCheckout()
-    {
-        $this->session->clean();
-
-        wc_add_notice(
-            esc_html__('Error processing checkout. Please try again.', 'woo-paypalplus'),
-            'error'
-        );
-
-        wp_safe_redirect(wc_get_cart_url());
-        exit;
+        wp_enqueue_script('paypalplus-woocommerce-plus-paypal-redirect');
     }
 }

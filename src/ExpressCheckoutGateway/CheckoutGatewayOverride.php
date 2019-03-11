@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
-use WooCommerce;
+use WCPayPalPlus\Payment\Session;
 
 /**
  * Class DefaultGatewayOverride
@@ -21,10 +21,18 @@ use WooCommerce;
  */
 class CheckoutGatewayOverride
 {
+    /**
+     * @var Session
+     */
+    private $session;
 
-    public function __construct(WooCommerce $wooCommerce)
+    /**
+     * CheckoutGatewayOverride constructor.
+     * @param Session $session
+     */
+    public function __construct(Session $session)
     {
-        $this->wooCommerce = $wooCommerce;
+        $this->session = $session;
     }
 
     /**
@@ -35,16 +43,16 @@ class CheckoutGatewayOverride
      */
     public function maybeOverride(array $availableGateways)
     {
-        if (! isset($availableGateways[Gateway::GATEWAY_ID])) {
+        if (!isset($availableGateways[Gateway::GATEWAY_ID])) {
             return $availableGateways;
         }
 
-        $ecGateway = $availableGateways[Gateway::GATEWAY_ID];
+        $gateway = $availableGateways[Gateway::GATEWAY_ID];
         unset($availableGateways[Gateway::GATEWAY_ID]);
 
-        if (Gateway::GATEWAY_ID === $this->wooCommerce->session->get('chosen_payment_method')) {
+        if (Gateway::GATEWAY_ID === $this->session->get(Session::CHOSEN_PAYMENT_METHOD)) {
             $availableGateways = [
-                Gateway::GATEWAY_ID => $ecGateway,
+                Gateway::GATEWAY_ID => $gateway,
             ];
         }
 

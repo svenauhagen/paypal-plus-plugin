@@ -46,9 +46,11 @@ class PaymentCreator
     }
 
     /**
-     * Returns the generated Payment object
+     * Create a new payment on PayPal.
+     * Be aware that this method may indirectly throw a PayPalConnectionException.
      *
      * @return Api\Payment
+     * @throws \InvalidArgumentException
      */
     public function create()
     {
@@ -59,6 +61,7 @@ class PaymentCreator
      * Returns a configured Payment object
      *
      * @return Api\Payment
+     * @throws \InvalidArgumentException
      */
     private function payment()
     {
@@ -82,7 +85,7 @@ class PaymentCreator
             ->setExperienceProfileId($this->paymentData->get_web_profile_id())
             ->setPayer($payer)
             ->setRedirectUrls($redirect_urls)
-            ->setTransactions([$this->transation($amount, $item_list)]);
+            ->setTransactions([$this->transaction($amount, $item_list)]);
 
         return $payment;
     }
@@ -91,6 +94,7 @@ class PaymentCreator
      * Generated a new ItemList object from the items of the current order
      *
      * @return Api\ItemList
+     * @throws \InvalidArgumentException
      */
     private function itemList()
     {
@@ -116,14 +120,16 @@ class PaymentCreator
      * Created a Details object for the Paypal API
      *
      * @return Api\Details
+     * @throws \InvalidArgumentException
      */
     private function details()
     {
-        $shipping = $this->orderDataProvider->get_total_shipping();
+        $shipping = (string)$this->orderDataProvider->get_total_shipping();
         if ($this->orderDataProvider->should_include_tax_in_total()) {
             $tax = $this->orderDataProvider->get_total_tax();
         } else {
-            $shipping += $this->orderDataProvider->get_shipping_tax();
+            // TODO Could be there problems to convert it to float?.
+            $shipping += (float)$this->orderDataProvider->get_shipping_tax();
         }
         $sub_total = $this->orderDataProvider->get_subtotal();
 
@@ -140,14 +146,15 @@ class PaymentCreator
     }
 
     /**
-     * Cretae a configured Transaction object.
+     * Create a configured Transaction object.
      *
      * @param Api\Amount $amount Amount object.
      * @param Api\ItemList $item_list ItemList object.
      *
      * @return Api\Transaction
+     * @throws \InvalidArgumentException
      */
-    private function transation(Api\Amount $amount, Api\ItemList $item_list)
+    private function transaction(Api\Amount $amount, Api\ItemList $item_list)
     {
         $transaction = new Api\Transaction();
         $transaction

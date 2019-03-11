@@ -4,6 +4,9 @@ import { contextByElement } from './context';
 const SINGLE_PRODUCT_BUTTON = 'paypalplus_ecs_single_product_button';
 const CART_BUTTON = 'paypalplus_ecs_cart_button';
 
+const TASK_CREATE_ORDER = 'createOrder';
+const TASK_STORE_PAYMENT_DATA = 'storePaymentData';
+
 /**
  * Class Smart Payment Button Renderer
  *
@@ -14,11 +17,13 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
     /**
      * Constructor
      *
+     * @param buttonConfiguration
      * @param validContexts
      * @param request
      */
-    constructor(validContexts, request)
+    constructor(buttonConfiguration, validContexts, request)
     {
+        this.buttonConfiguration = buttonConfiguration;
         this.validContexts = Array.from(validContexts);
         this.request = request;
     }
@@ -54,20 +59,59 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
             return;
         }
 
-        return paypal.Buttons({
-            style: {
-                layout: 'vertical',
+        paypal.Button.render({
+            ...this.buttonConfiguration,
+
+            payment: () => {
+                const formData = this.formDataByContext(element);
+                formData.append('task', TASK_CREATE_ORDER);
+
+                return this.request
+                    .submit(formData)
+                    .then(response => {
+                        const orderId = 'orderID' in response.data ? response.data.orderID : '';
+
+                        if (!orderId) {
+                            // TODO Do something to inform user about the problem and close the flow.
+                        }
+
+                        return orderId;
+                    });
             },
-            createOrder: (data, actions) => {
+
+            onAuthorize: (data, actions) => {
+                // TODO Ensure return_url exists.
                 const formData = this.formDataByContext(element);
 
-                this.request
+                formData.append('task', TASK_STORE_PAYMENT_DATA);
+                formData.append('orderID', data.orderID);
+                formData.append('payerID', data.payerID);
+                formData.append('paymentID', data.paymentID);
+                formData.append('paymentToken', data.paymentToken);
+
+                return this.request
                     .submit(formData)
-                    .then(() => {
-                        return 12; // TODO Implement correct value instead of dummy data
+                    .then((response) => {
+                        if (response.success) {
+                            window.location.href = data.returnUrl;
+                            return;
+                        }
+
+                        // TODO Show alert to the user
                     });
-            }
-        }).render(element);
+            },
+
+            onCancel: () => {
+                console.log(arguments);
+                // TODO Redirect the user to the page set in the options.
+            },
+
+            onError: () => {
+                console.log(arguments);
+                // TODO Redirect to cart and show customizable notice with message.
+            },
+
+        }, element);
     }
 
     /**
@@ -76,7 +120,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
      * @param element
      * @returns {FormData}
      */
-    // TODO Make it private
+    // TODO Make it private if not possible move it as closure within the render function.
     formDataByContext(element)
     {
         let formData = new FormData();
@@ -107,14 +151,15 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
 /**
  * Smart Payment Button Renderer Factory
  *
+ * @param buttonConfiguration
  * @param validContexts
  * @param request
  * @returns {SmartPaymentButtonRenderer}
  * @constructor
  */
-export function SmartPaymentButtonRendererFactory(validContexts, request)
+export function SmartPaymentButtonRendererFactory(buttonConfiguration, validContexts, request)
 {
-    const object = new SmartPaymentButtonRenderer(validContexts, request);
+    const object = new SmartPaymentButtonRenderer(buttonConfiguration, validContexts, request);
 
     Object.freeze(object);
 

@@ -26,10 +26,18 @@ interface PlusStorable extends Storable
     const OPTION_CANCEL_URL_NAME = 'cancel_url';
     const OPTION_CANCEL_CUSTOM_URL_NAME = 'cancel_custom_url';
 
+    const OPTION_INVOICE_PREFIX = 'invoice_prefix';
+
+    const OPTION_CLIENT_ID = 'rest_client_id';
+    const OPTION_SECRET_ID = 'rest_secret_id';
+
+    const OPTION_CLIENT_ID_SANDBOX = 'rest_client_id_sandbox';
+    const OPTION_SECRET_ID_SANDBOX = 'rest_secret_id_sandbox';
+
     /**
      * @return bool
      */
-    public function isDefaultGatewayOverrideEnabled();
+    public function isDefaultGatewayOverrideDisabled();
 
     /**
      * @return string

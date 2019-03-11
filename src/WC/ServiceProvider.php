@@ -33,13 +33,18 @@ class ServiceProvider implements Service\BootstrappableServiceProvider
         $container[WooCommerce::class] = function () {
             return wc();
         };
-
+        $container[CheckoutDropper::class] = function (Container $container) {
+            return new CheckoutDropper(
+                $container[Session::class]
+            );
+        };
         $container[ReceiptPageRenderer::class] = function (Container $container) {
             return new ReceiptPageRenderer(
                 $container[OrderFactory::class],
                 $container[PaymentPatchFactory::class],
                 $container[PlusStorable::class],
-                $container[Session::class]
+                $container[Session::class],
+                $container[CheckoutDropper::class]
             );
         };
     }

@@ -14,6 +14,7 @@ use WCPayPalPlus\Ipn\PaymentValidator;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Setting\Storable;
 use WooCommerce;
+use Exception;
 
 /**
  * Class OrderUpdaterFactory
@@ -71,9 +72,9 @@ class OrderUpdaterFactory
 
     /**
      * @return OrderUpdater
-     * @throws \DomainException
+     * @throws Exception
      */
-    public function create()
+    public function createByRequest()
     {
         $order = $this->orderFactory->createByRequest($this->request);
         $paymentValidator = new PaymentValidator($this->request, $order);

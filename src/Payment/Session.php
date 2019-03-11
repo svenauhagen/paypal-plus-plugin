@@ -18,13 +18,19 @@ use WooCommerce;
  * Class Session
  * @package WCPayPalPlus\Payment
  */
+// TODO May be better to move it outside of the payment and keep it as the General Session for PPP.
+//      Because of `CHOSEN_PAYMENT_METHOD`
 class Session
 {
     const ORDER_ID = 'ppp_order_id';
     const PAYMENT_ID = 'ppp_payment_id';
     const PAYER_ID = 'ppp_payer_id';
     const APPROVAL_URL = 'ppp_approval_url';
-    const TOKEN = 'ppp_token';
+
+    const CHOSEN_PAYMENT_METHOD = 'chosen_payment_method';
+
+    const SESSION_CHECK_KEY = '_ppp_default_override_flag';
+    const SESSION_CHECK_ACTIVATE = '1';
 
     const DEFAULT_VALUE = null;
 
@@ -33,7 +39,9 @@ class Session
         self::PAYMENT_ID,
         self::PAYER_ID,
         self::APPROVAL_URL,
-        self::TOKEN,
+        self::CHOSEN_PAYMENT_METHOD,
+        self::SESSION_CHECK_KEY,
+        self::SESSION_CHECK_ACTIVATE,
     ];
 
     /**
@@ -91,6 +99,7 @@ class Session
      */
     public function clean()
     {
+        // TODO It's ok to clear everything? Previous versions didn't do that.
         foreach (self::ALLOWED_PROPERTIES as $property) {
             $this->session()->__unset($property);
         }

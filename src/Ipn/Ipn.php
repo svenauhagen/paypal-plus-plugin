@@ -80,6 +80,9 @@ class Ipn
     {
         if (!$this->ipnVerifier->isVerified()) {
             $this->log(LogLevels::ERROR, 'Invalid IPN call', $this->request->all());
+            // TODO Doesn't make any sense here to have the `wp_die` we don't show anything, an exception will be more helpful.
+            //      May be we can set just the header response to 500 just to give back something.
+            //      Check also other code where we use the `wp_die`
             // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
             wp_die('PayPal IPN Request Failure', 'PayPal IPN', ['response' => 500]);
         }
@@ -91,7 +94,7 @@ class Ipn
             // TODO Why exiting here?
             exit;
         } catch (Exception $exc) {
-            // TODO W
+            // TODO Create a LoggerTrait so we can reuse the logic from here.
             $this->logException($exc);
             return;
         }
@@ -107,7 +110,7 @@ class Ipn
     {
         $payment_status = $this->request->get(Request::KEY_PAYMENT_STATUS);
         $method = "payment_status_{$payment_status}";
-        $updater = $this->orderUpdaterFactory->create();
+        $updater = $this->orderUpdaterFactory->createByRequest();
 
         if (!method_exists($updater, $method)) {
             throw new LogicException("Method OrderUpdater::{$method} does not exists.");

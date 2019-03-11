@@ -41,8 +41,8 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[DefaultGatewayOverride::class] = function (Container $container) {
             return new DefaultGatewayOverride(
-                $container[WooCommerce::class],
-                $container[PlusStorable::class]
+                $container[PlusStorable::class],
+                $container[Session::class]
             );
         };
         $container[Gateway::class] = function (Container $container) {

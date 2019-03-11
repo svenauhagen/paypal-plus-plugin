@@ -12,8 +12,8 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\NonceInterface;
-use const WCPayPalPlus\ACTION_LOG;
-use WC_Log_Levels;
+use WCPayPalPlus\Utils\AjaxJsonRequest;
+use WCPayPalPlus\Request\Request;
 
 /**
  * Class AjaxHandler
@@ -43,20 +43,36 @@ class AjaxHandler
     private $dispatcher;
 
     /**
+     * @var Request
+     */
+    private $request;
+
+    /**
+     * @var AjaxJsonRequest
+     */
+    private $ajaxJsonRequest;
+
+    /**
      * AjaxHandler constructor.
      * @param NonceInterface $nonce
      * @param NonceContextInterface $nonceContext
      * @param Dispatcher $dispatcher
+     * @param Request $request
+     * @param AjaxJsonRequest $ajaxJsonRequest
      */
     public function __construct(
         NonceInterface $nonce,
         NonceContextInterface $nonceContext,
-        Dispatcher $dispatcher
+        Dispatcher $dispatcher,
+        Request $request,
+        AjaxJsonRequest $ajaxJsonRequest
     ) {
 
         $this->nonce = $nonce;
         $this->nonceContext = $nonceContext;
         $this->dispatcher = $dispatcher;
+        $this->request = $request;
+        $this->ajaxJsonRequest = $ajaxJsonRequest;
     }
 
     /**
@@ -71,42 +87,37 @@ class AjaxHandler
         }
 
         $context = $this->context();
+        $task = $this->task();
+        $requestData = $this->request->all();
+
         if (!$context) {
-            $this->sendJsonError([
+            // TODO Handle request in the client.
+            $this->ajaxJsonRequest->sendJsonError([
                 'message' => $this->invalidContextMessage(),
             ]);
         }
 
-        $response = $this->dispatcher->dispatch($context);
-        if (!$response) {
-            $this->sendJsonError([
-                'message' => $this->invalidResponseMessage(),
-            ]);
-        }
-
-        wp_send_json_success($response);
+        $this->dispatcher->dispatch($context, $task, $requestData);
     }
 
     /**
-     * @param array $data
-     */
-    private function sendJsonError(array $data)
-    {
-        $message = isset($data['message']) ? $data['message'] : 'No Message Provided.';
-
-        do_action(ACTION_LOG, WC_Log_Levels::ERROR, $message, compact($data));
-
-        wp_send_json_error($data);
-    }
-
-    /**
-     * Retrieve the context from the request
+     * Retrieve the context from the request data
      *
      * @return mixed
      */
     private function context()
     {
-        return filter_input(INPUT_POST, 'context', FILTER_SANITIZE_STRING);
+        return filter_var($this->request->get('context'), FILTER_SANITIZE_STRING);
+    }
+
+    /**
+     * Retrieve the task name from the request data
+     *
+     * @return string
+     */
+    private function task()
+    {
+        return filter_var($this->request->get('task'), FILTER_SANITIZE_STRING);
     }
 
     /**
@@ -124,19 +135,5 @@ class AjaxHandler
         $validContextList = implode(',', self::VALID_CONTEXTS);
 
         return sprintf($message, $validContextList);
-    }
-
-    /**
-     * Invalid Response Message
-     *
-     * @return string
-     */
-    private function invalidResponseMessage()
-    {
-        return _x(
-            'Something happened but we do not know what',
-            'express-checkout',
-            'woo-paypalplus'
-        );
     }
 }

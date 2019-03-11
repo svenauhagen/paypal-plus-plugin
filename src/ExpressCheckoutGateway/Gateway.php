@@ -17,16 +17,20 @@ use WCPayPalPlus\Api\CredentialProvider;
 use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Notice;
+use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Setting\PlusRepositoryHelper;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\Session;
 use WCPayPalPlus\Refund\RefundFactory;
+use WCPayPalPlus\WC\CheckoutDropper;
 use WCPayPalPlus\WC\WCWebExperienceProfile;
 use WC_Order_Refund;
 use WooCommerce;
 use WC_Payment_Gateway;
+use WC_Log_Levels as LogLevels;
+use RuntimeException;
 
 /**
  * Class Gateway
@@ -85,6 +89,16 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     private $wooCommerce;
 
     /**
+     * @var CheckoutDropper
+     */
+    private $checkoutDropper;
+
+    /**
+     * @var PaymentPatchFactory
+     */
+    private $paymentPatchFactory;
+
+    /**
      * Gateway constructor.
      * @param CredentialProvider $credentialProvider
      * @param CredentialValidator $credentialValidator
@@ -93,6 +107,8 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
      * @param OrderFactory $orderFactory
      * @param PaymentExecutionFactory $paymentExecutionFactory
      * @param Session $session
+     * @param CheckoutDropper $checkoutDropper
+     * @param PaymentPatchFactory $paymentPatchFactory
      */
     public function __construct(
         CredentialProvider $credentialProvider,
@@ -101,7 +117,9 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         RefundFactory $refundFactory,
         OrderFactory $orderFactory,
         PaymentExecutionFactory $paymentExecutionFactory,
-        Session $session
+        Session $session,
+        CheckoutDropper $checkoutDropper,
+        PaymentPatchFactory $paymentPatchFactory
     ) {
 
         $this->credentialProvider = $credentialProvider;
@@ -111,6 +129,8 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         $this->orderFactory = $orderFactory;
         $this->paymentExecutionFactory = $paymentExecutionFactory;
         $this->session = $session;
+        $this->checkoutDropper = $checkoutDropper;
+        $this->paymentPatchFactory = $paymentPatchFactory;
 
         $this->id = self::GATEWAY_ID;
         $this->title = $this->get_option('title');
@@ -145,6 +165,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
      * @param null $amount
      * @param string $reason
      * @return bool
+     * @throws RuntimeException
      */
     public function process_refund($orderId, $amount = null, $reason = '')
     {
@@ -253,69 +274,106 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     }
 
     /**
+     * TODO May be logic of Patching and Payment Execution can be splitted. Use actions?
+     *      About this see the similar code for Plus Gateway.
+     *
      * @param int $orderId
      * @return array
      */
     public function process_payment($orderId)
     {
-        $order = new \WC_Order($orderId);
+        assert(is_int($orderId));
 
-        return [
-            'result' => 'success',
-            'redirect' => $order->get_checkout_payment_url(true),
-        ];
-    }
+        $order = null;
+        $paymentId = $this->session->get(Session::PAYMENT_ID);
+        $payerId = $this->session->get(Session::PAYER_ID);
 
-    /**
-     * @return void
-     */
-    public function execute_payment()
-    {
-        $token = filter_input(INPUT_GET, 'token', FILTER_SANITIZE_STRING);
-        $payerId = filter_input(INPUT_GET, 'PayerID', FILTER_SANITIZE_STRING);
-        $paymentId = filter_input(INPUT_GET, 'paymentId', FILTER_SANITIZE_STRING);
-        $orderId = $this->session->get(Session::ORDER_ID);
-
-        if (!$paymentId) {
-            $paymentId = $this->session->get(Session::PAYMENT_ID);
-        }
-        if (!$token || !$payerId || !$paymentId || !$orderId) {
-            return;
-        }
-
-        $this->session->set(Session::TOKEN, $token);
-        $this->session->set(Session::PAYER_ID, $payerId);
-
-        $order = $this->orderFactory->createById($orderId);
-
-        try {
-            $payment = $this->paymentExecutionFactory->create(
-                $order,
-                $payerId,
-                $paymentId,
-                ApiContextFactory::getFromConfiguration()
-            );
-            $payment->execute();
-        } catch (PayPalConnectionException $exc) {
+        // TODO Should thrown an exception and log it.
+        if (!$payerId || !$paymentId || !$orderId) {
             do_action(
                 ACTION_LOG,
-                \WC_Log_Levels::ERROR,
+                LogLevels::ERROR,
+                'payment_execution: Insufficient data to make payment.'
+            );
+
+            return [
+                'result' => 'failed',
+                'redirect' => '',
+            ];
+        }
+
+        try {
+            $order = $this->orderFactory->createById($orderId);
+        } catch (RuntimeException $exc) {
+            $this->checkoutDropper->abortCheckout();
+
+            do_action(
+                ACTION_LOG,
+                LogLevels::ERROR,
                 'payment_execution_exception: ' . $exc->getMessage(),
                 compact($exc)
             );
 
-            wc_add_notice(
-                __(
-                    'Error processing checkout. Please check the logs. ',
-                    'woo-paypalplus'
-                ),
-                'error'
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                throw new $exc;
+            }
+
+            return [
+                'result' => 'failed',
+                'redirect' => '',
+            ];
+        }
+
+        $paymentPatcher = $this->paymentPatchFactory->create(
+            $order,
+            $paymentId,
+            $this->invoicePrefix(),
+            ApiContextFactory::getFromConfiguration()
+        );
+
+        $isSuccessPatched = $paymentPatcher->execute();
+        if (!$isSuccessPatched) {
+            $this->checkoutDropper->abortCheckout();
+
+            return [
+                'result' => 'failed',
+                'redirect' => $order->get_cancel_order_url(),
+            ];
+        }
+
+        $payment = $this->paymentExecutionFactory->create(
+            $order,
+            $payerId,
+            $paymentId,
+            ApiContextFactory::getFromConfiguration()
+        );
+
+        try {
+            $payment->execute();
+        } catch (PayPalConnectionException $exc) {
+            $this->checkoutDropper->abortCheckout();
+
+            do_action(
+                ACTION_LOG,
+                LogLevels::ERROR,
+                'payment_execution_exception: ' . $exc->getMessage(),
+                compact($exc)
             );
 
-            wp_safe_redirect(wc_get_checkout_url());
+            if (defined('WP_DEBUG') && WP_DEBUG) {
+                throw new $exc;
+            }
 
-            die();
+            return [
+                'result' => 'failed',
+                'redirect' => $order->get_cancel_order_url(),
+            ];
         }
+
+        return [
+            'result' => 'success',
+            'redirect' => $order->get_checkout_order_received_url(),
+        ];
     }
 
     /**

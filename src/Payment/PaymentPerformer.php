@@ -29,7 +29,7 @@ class PaymentPerformer
     /**
      * SuccessHandler object.
      *
-     * @var RequestSuccessHandler[]
+     * @var RequestSuccessHandler
      */
     private $successHandlers;
 
@@ -37,21 +37,22 @@ class PaymentPerformer
      * PaymentPerformer constructor.
      *
      * @param PaymentExecutionData $data PaymentExecutionData object.
-     * @param RequestSuccessHandler[] $successHandlers Array of SuccessHandler objects.
+     * @param RequestSuccessHandler[] $successHandler Array of SuccessHandler objects.
      */
     public function __construct(
         PaymentExecutionData $data,
-        RequestSuccessHandler ...$successHandlers
+        RequestSuccessHandler ...$successHandler
     ) {
 
         $this->data = $data;
-        $this->successHandlers = $successHandlers;
+        $this->successHandlers = $successHandler;
     }
 
     /**
-     * Execute the Payment.
+     * Execute Payment
+     * Be aware all of the call made by the PayPal SDK may throw a PayPalConnectionException
      *
-     * @return bool
+     * @return string $redirectUrl
      */
     public function execute()
     {

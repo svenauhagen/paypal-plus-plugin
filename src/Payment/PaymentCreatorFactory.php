@@ -11,11 +11,8 @@
 namespace WCPayPalPlus\Payment;
 
 use WCPayPalPlus\Api\ApiContextFactory;
-use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Setting\PlusStorable;
-use WCPayPalPlus\PlusGateway\Gateway;
-use WC_Payment_Gateway;
 use WC_Order;
 use WC_Order_Refund;
 use RuntimeException;
@@ -39,35 +36,47 @@ class PaymentCreatorFactory
     private $wooCommerce;
 
     /**
+     * @var Session
+     */
+    private $session;
+
+    /**
      * PaymentCreatorFactory constructor.
      * @param WooCommerce $wooCommerce
      * @param OrderFactory $orderFactory
+     * @param Session $session
      */
-    public function __construct(WooCommerce $wooCommerce, OrderFactory $orderFactory)
-    {
+    public function __construct(
+        WooCommerce $wooCommerce,
+        OrderFactory $orderFactory,
+        Session $session
+    ) {
+
         $this->wooCommerce = $wooCommerce;
         $this->orderFactory = $orderFactory;
+        $this->session = $session;
     }
 
+    // TODO Do not pass PlusStorable but Storable and inject it into constructor. Pay attention to the Dependency Loop.
+    //      We cannot use the PlusStorable here since we have to deal with ECS Gateway too.
     /**
      * @param PlusStorable $settings
-     * @param WC_Payment_Gateway $gateway
-     * @param Session $session
+     * @param $returnUrl
+     * @param $notifyUrl
      * @return PaymentCreator
      */
-    public function create(PlusStorable $settings, WC_Payment_Gateway $gateway, Session $session)
+    public function create(PlusStorable $settings, $returnUrl, $notifyUrl)
     {
+        assert(is_string($returnUrl));
+        assert(is_string($notifyUrl));
+
         try {
-            $orderData = $this->retrieveOrderByRequest($session);
+            $orderData = $this->retrieveOrderByRequest($this->session);
             $orderData = new OrderData($orderData);
         } catch (Exception $exc) {
             $orderData = new CartData($this->wooCommerce->cart);
         }
 
-        $returnUrl = $this->wooCommerce->api_request_url($gateway->id);
-        $notifyUrl = $this->wooCommerce->api_request_url(
-            Gateway::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX
-        );
         $cancelUrl = $settings->cancelUrl();
         $experienceProfile = $settings->experienceProfileId();
 
@@ -85,9 +94,9 @@ class PaymentCreatorFactory
     /**
      * @param Session $session
      * @return WC_Order|WC_Order_Refund
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
-    public function retrieveOrderByRequest(Session $session)
+    private function retrieveOrderByRequest(Session $session)
     {
         $key = filter_input(INPUT_GET, 'key');
 

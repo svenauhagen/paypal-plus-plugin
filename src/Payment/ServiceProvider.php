@@ -29,7 +29,8 @@ class ServiceProvider implements BootstrappableServiceProvider
         $container[PaymentCreatorFactory::class] = function (Container $container) {
             return new PaymentCreatorFactory(
                 $container[WooCommerce::class],
-                $container[OrderFactory::class]
+                $container[OrderFactory::class],
+                $container[Session::class]
             );
         };
         $container[PaymentExecutionFactory::class] = function (Container $container) {

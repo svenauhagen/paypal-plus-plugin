@@ -19,7 +19,7 @@ trait PlusRepositoryHelper
     /**
      * @inheritdoc
      */
-    public function isDefaultGatewayOverrideEnabled()
+    public function isDefaultGatewayOverrideDisabled()
     {
         $option = $this->get_option(self::OPTION_DISABLE_GATEWAY_OVERRIDE_NAME, self::OPTION_OFF);
 
@@ -98,7 +98,7 @@ trait PlusRepositoryHelper
      */
     public function invoicePrefix()
     {
-        return $this->get_option('invoice_prefix', '');
+        return $this->get_option(PlusStorable::OPTION_INVOICE_PREFIX, '');
     }
 
     /**

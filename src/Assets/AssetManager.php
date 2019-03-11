@@ -22,12 +22,28 @@ class AssetManager
     use AssetManagerTrait;
 
     /**
+     * @var PluginProperties
+     */
+    private $pluginProperties;
+
+    /**
+     * @var SmartButtonArguments
+     */
+    private $smartButtonArguments;
+
+    /**
      * AssetManager constructor.
      * @param PluginProperties $pluginProperties
+     * @param SmartButtonArguments $smartButtonArguments
      */
-    public function __construct(PluginProperties $pluginProperties)
-    {
+    public function __construct(
+        PluginProperties $pluginProperties,
+        SmartButtonArguments $smartButtonArguments
+    ) {
+
+        /** @noinspection UnusedConstructorDependenciesInspection */
         $this->pluginProperties = $pluginProperties;
+        $this->smartButtonArguments = $smartButtonArguments;
     }
 
     /**
@@ -79,13 +95,7 @@ class AssetManager
         $this->loadScriptsData(
             'paypalplus-woocommerce-front',
             'wooPayPalPlusExpressCheckout',
-            [
-                'validContexts' => AjaxHandler::VALID_CONTEXTS,
-                'request' => [
-                    'action' => AjaxHandler::ACTION,
-                    'ajaxUrl' => home_url('/wp-admin/admin-ajax.php'),
-                ],
-            ]
+            $this->expressCheckoutScriptData()
         );
 
         $this->enqueuePayPalFrontEndScripts();
@@ -134,32 +144,21 @@ class AssetManager
     }
 
     /**
-     * Localize Scripts
-     * @param $handle
-     * @param $objName
-     * @param array $data
-     */
-    private function loadScriptsData($handle, $objName, array $data)
-    {
-        assert(is_string($handle));
-        assert(is_string($objName));
-
-        wp_localize_script($handle, $objName, $data);
-    }
-
-    /**
-     * Retrieve the assets and url path for scripts
+     * Build the Express Checkout Data
      *
      * @return array
      */
-    private function assetUrlPath()
+    private function expressCheckoutScriptData()
     {
-        $assetPath = untrailingslashit($this->pluginProperties->dirPath());
-        $assetUrl = untrailingslashit($this->pluginProperties->dirUrl());
-
-        return [
-            $assetPath,
-            $assetUrl,
+        $data = [
+            'validContexts' => AjaxHandler::VALID_CONTEXTS,
+            'request' => [
+                'action' => AjaxHandler::ACTION,
+                'ajaxUrl' => home_url('/wp-admin/admin-ajax.php'),
+            ],
         ];
+
+        /** @noinspection AdditionOperationOnArraysInspection */
+        return $data + $this->smartButtonArguments->toArray();
     }
 }

@@ -12,15 +12,21 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\WpNonce;
+use WCPayPalPlus\Payment\PaymentCreatorFactory;
+use WCPayPalPlus\Payment\PaymentPatchFactory;
+use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Utils\AjaxJsonRequest;
+use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Api\CredentialProvider;
 use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Order\OrderFactory;
-use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\PaymentExecutionFactory;
-use WCPayPalPlus\Payment\Session;
 use WCPayPalPlus\Refund\RefundFactory;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
+use WCPayPalPlus\Setting\PlusStorable;
+use WCPayPalPlus\WC\CheckoutDropper;
+use WooCommerce;
 
 /**
  * Class ServiceProvider
@@ -33,6 +39,8 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function register(Container $container)
     {
+        $ajaxNonce = new WpNonce(AjaxHandler::ACTION . '_nonce');
+
         $container[GatewaySettingsModel::class] = function () {
             return new GatewaySettingsModel();
         };
@@ -44,16 +52,16 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[RefundFactory::class],
                 $container[OrderFactory::class],
                 $container[PaymentExecutionFactory::class],
-                $container[Session::class]
+                $container[Session::class],
+                $container[CheckoutDropper::class],
+                $container[PaymentPatchFactory::class]
             );
         };
         $container[CheckoutGatewayOverride::class] = function (Container $container) {
             return new CheckoutGatewayOverride(
-                $container[\WooCommerce::class]
+                $container[Session::class]
             );
         };
-
-        $ajaxNonce = new WpNonce(AjaxHandler::ACTION . '_nonce');
 
         $container[SingleProductButtonView::class] = function () use ($ajaxNonce) {
             return new SingleProductButtonView($ajaxNonce);
@@ -61,7 +69,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         $container[CartButtonView::class] = function (Container $container) use ($ajaxNonce) {
             return new CartButtonView(
                 $ajaxNonce,
-                $container[\WooCommerce::class]
+                $container[WooCommerce::class]
             );
         };
         $container[Dispatcher::class] = function () {
@@ -71,7 +79,18 @@ class ServiceProvider implements BootstrappableServiceProvider
             return new AjaxHandler(
                 $ajaxNonce,
                 $container[NonceContextInterface::class],
-                $container[Dispatcher::class]
+                $container[Dispatcher::class],
+                $container[Request::class],
+                $container[AjaxJsonRequest::class]
+            );
+        };
+        $container[CartCheckout::class] = function (Container $container) {
+            return new CartCheckout(
+                $container[PlusStorable::class],
+                $container[PaymentCreatorFactory::class],
+                $container[AjaxJsonRequest::class],
+                $container[WooCommerce::class],
+                $container[Session::class]
             );
         };
     }
@@ -94,11 +113,6 @@ class ServiceProvider implements BootstrappableServiceProvider
             "woocommerce_update_options_payment_gateways_{$gatewayId}",
             [$gateway, 'process_admin_options'],
             10
-        );
-        add_action(
-            'woocommerce_api_' . $gatewayId,
-            [$gateway, 'execute_payment'],
-            12
         );
 
         add_filter(
@@ -129,6 +143,19 @@ class ServiceProvider implements BootstrappableServiceProvider
         add_action(
             'wp_ajax_nopriv_' . AjaxHandler::ACTION,
             [$container[AjaxHandler::class], 'handle']
+        );
+
+        add_action(
+            Dispatcher::ACTION_DISPATCH_CONTEXT . '/cart/' . CartCheckout::TASK_CREATE_ORDER,
+            [$container[CartCheckout::class], CartCheckout::TASK_CREATE_ORDER],
+            10,
+            2
+        );
+        add_action(
+            Dispatcher::ACTION_DISPATCH_CONTEXT . '/cart/' . CartCheckout::TASK_STORE_PAYMENT_DATA,
+            [$container[CartCheckout::class], CartCheckout::TASK_STORE_PAYMENT_DATA],
+            10,
+            2
         );
     }
 }
