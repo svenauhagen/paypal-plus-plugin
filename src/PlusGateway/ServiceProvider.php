@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\PlusGateway;
 
+use function WCPayPalPlus\isGatewayDisabled;
 use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Api\CredentialProvider;
 use WCPayPalPlus\Api\CredentialValidator;
@@ -70,6 +71,10 @@ class ServiceProvider implements BootstrappableServiceProvider
     {
         $gatewayId = Gateway::GATEWAY_ID;
         $gateway = $container[Gateway::class];
+
+        if (!isGatewayDisabled($gateway)) {
+            return;
+        }
 
         add_action(
             'wp_loaded',

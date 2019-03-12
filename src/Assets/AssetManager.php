@@ -88,14 +88,9 @@ class AssetManager
         wp_enqueue_script(
             'paypalplus-woocommerce-front',
             "{$assetUrl}/public/js/front.min.js",
-            ['underscore', 'jquery', 'ppplus-express-checkout'],
+            ['underscore', 'jquery'],
             filemtime("{$assetPath}/public/js/front.min.js"),
             true
-        );
-        $this->loadScriptsData(
-            'paypalplus-woocommerce-front',
-            'wooPayPalPlusExpressCheckout',
-            $this->expressCheckoutScriptData()
         );
 
         $this->enqueuePayPalFrontEndScripts();
@@ -140,6 +135,19 @@ class AssetManager
                     'woo-paypalplus'
                 ),
             ]
+        );
+
+        wp_enqueue_script(
+            'paypalplus-express-checkout',
+            "{$assetUrl}/public/js/expressCheckout.min.js",
+            ['underscore', 'jquery', 'paypal-express-checkout'],
+            filemtime("{$assetPath}/public/js/expressCheckout.min.js"),
+            true
+        );
+        $this->loadScriptsData(
+            'paypalplus-express-checkout',
+            'wooPayPalPlusExpressCheckout',
+            $this->expressCheckoutScriptData()
         );
     }
 

@@ -18,6 +18,7 @@ module.exports = [
         entry: {
             admin: './resources/js/admin.js',
             front: './resources/js/front.js',
+            expressCheckout: './resources/js/expressCheckout.js',
             paypalRedirect: './resources/js/payPalRedirect.js'
         },
         output: {

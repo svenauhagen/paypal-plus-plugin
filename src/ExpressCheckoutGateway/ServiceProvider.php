@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
+use function WCPayPalPlus\isGatewayDisabled;
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\WpNonce;
 use WC_Logger_Interface as Logger;
@@ -127,6 +128,10 @@ class ServiceProvider implements BootstrappableServiceProvider
 
             return $methods;
         });
+
+        if (isGatewayDisabled($gateway)) {
+            return;
+        }
 
         add_action(
             'woocommerce_checkout_init',

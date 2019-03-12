@@ -10,6 +10,10 @@
 
 namespace WCPayPalPlus\Assets;
 
+use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
+use function WCPayPalPlus\isGatewayDisabled;
+use WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
+
 /**
  * Class PayPalAssetManager
  * @package WCPayPalPlus\Assets
@@ -19,24 +23,52 @@ class PayPalAssetManager
     use AssetManagerTrait;
 
     /**
+     * @var ExpressCheckoutGateway
+     */
+    private $expressCheckoutGateway;
+
+    /**
+     * @var PlusGateway
+     */
+    private $plusGateway;
+
+    /**
+     * PayPalAssetManager constructor.
+     * @param ExpressCheckoutGateway $expressCheckoutGateway
+     * @param PlusGateway $plusGateway
+     */
+    public function __construct(
+        ExpressCheckoutGateway $expressCheckoutGateway,
+        PlusGateway $plusGateway
+    ) {
+
+        $this->expressCheckoutGateway = $expressCheckoutGateway;
+        $this->plusGateway = $plusGateway;
+    }
+
+    /**
      * Enqueue PayPal FrontEnd Scripts
      */
     public function enqueueFrontEndScripts()
     {
-        wp_enqueue_script(
-            'ppplus-express-checkout',
-            'https://www.paypalobjects.com/api/checkout.js',
-            [],
-            null,
-            true
-        );
+        if (!isGatewayDisabled($this->expressCheckoutGateway)) {
+            wp_enqueue_script(
+                'paypal-express-checkout',
+                'https://www.paypalobjects.com/api/checkout.js',
+                [],
+                null,
+                true
+            );
+        }
 
-        $this->isCheckout() and wp_enqueue_script(
-            'ppplus',
-            'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
-            [],
-            null
-        );
+        if ($this->isCheckout() && !isGatewayDisabled($this->plusGateway)) {
+            wp_enqueue_script(
+                'ppplus',
+                'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
+                [],
+                null
+            );
+        }
     }
 
     /**

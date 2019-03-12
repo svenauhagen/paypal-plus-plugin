@@ -37,3 +37,14 @@ function resolve($name = '')
 
     return $name ? $container[$name] : $container;
 }
+
+/**
+ * Check if Given Gateway is Available or not
+ *
+ * @param $gateway
+ * @return bool
+ */
+function isGatewayDisabled($gateway)
+{
+    return ($gateway->enabled !== 'yes' && !is_admin());
+}

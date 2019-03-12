@@ -10,6 +10,8 @@
 
 namespace WCPayPalPlus\Assets;
 
+use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
+use WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
 use WCPayPalPlus\PluginProperties;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
@@ -33,8 +35,11 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[PlusStorable::class]
             );
         };
-        $container[PayPalAssetManager::class] = function () {
-            return new PayPalAssetManager();
+        $container[PayPalAssetManager::class] = function (Container $container) {
+            return new PayPalAssetManager(
+                $container[ExpressCheckoutGateway::class],
+                $container[PlusGateway::class]
+            );
         };
     }
 
