@@ -14,7 +14,7 @@ if (file_exists($autoload)) {
     /** @noinspection PhpIncludeInspection */
     require $autoload;
 }
-if (!class_exists(Plugin::class)) {
+if (!class_exists(PayPalPlus::class)) {
     return;
 }
 
