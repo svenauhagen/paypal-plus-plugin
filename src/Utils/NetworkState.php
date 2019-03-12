@@ -8,11 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus;
+namespace WCPayPalPlus\Utils;
 
 /**
- * TODO Move within the Utils package
- *
  * Class NetworkState
  * @package WCPayPalPlus
  */

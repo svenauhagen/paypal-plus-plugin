@@ -2,6 +2,7 @@
 
 namespace WCPayPalPlus;
 
+use WCPayPalPlus\Utils\NetworkState;
 use WCPayPalPlus\Notice\DismissibleNoticeOption;
 
 if (!defined('WP_UNINSTALL_PLUGIN')) {
