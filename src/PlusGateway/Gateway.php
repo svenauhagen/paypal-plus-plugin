@@ -349,8 +349,6 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
             return;
         }
 
-        $this->session->set(Session::PAYER_ID, $payerId);
-
         $order = $this->orderFactory->createById($orderId);
 
         try {
