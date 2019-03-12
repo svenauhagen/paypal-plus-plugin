@@ -56,7 +56,7 @@ class DefaultGatewayOverride
     public function maybeOverride()
     {
         if (!$this->isValidRequest()
-            || $this->repository->isDefaultGatewayOverrideDisabled()
+            || $this->repository->isDisableGatewayOverrideEnabled()
         ) {
             return;
         }

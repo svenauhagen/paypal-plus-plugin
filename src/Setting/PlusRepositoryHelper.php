@@ -19,7 +19,7 @@ trait PlusRepositoryHelper
     /**
      * @inheritdoc
      */
-    public function isDefaultGatewayOverrideDisabled()
+    public function isDisableGatewayOverrideEnabled()
     {
         $option = $this->get_option(self::OPTION_DISABLE_GATEWAY_OVERRIDE_NAME, self::OPTION_OFF);
 
