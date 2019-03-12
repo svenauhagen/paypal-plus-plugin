@@ -77,9 +77,6 @@ class Ipn
     }
 
     /**
-     * TODO IPN Doesn't need to get any response from us?
-     *      If so, ensure all OrderUpdater methods will return the same value types.
-     *
      * @return void
      * @throws Exception
      */
@@ -87,11 +84,8 @@ class Ipn
     {
         if (!$this->ipnVerifier->isVerified()) {
             $this->logger->error('Invalid IPN call', $this->request->all());
-            // TODO Doesn't make any sense here to have the `wp_die` we don't show anything, an exception will be more helpful.
-            //      May be we can set just the header response to 500 just to give back something.
-            //      Check also other code where we use the `wp_die`
-            // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
-            wp_die('PayPal IPN Request Failure', 'PayPal IPN', ['response' => 500]);
+            status_header(500);
+            return;
         }
 
         try {
