@@ -10,8 +10,6 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
-use const WCPayPalPlus\ACTION_LOG;
-use WC_Log_Levels as LogLevels;
 use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\Session;
@@ -107,19 +105,9 @@ class CartCheckout
             $orderId = $payment->getId();
         } catch (Exception $exc) {
             $this->ajaxJsonRequest->sendJsonError([
+                'exception' => $exc,
                 'message' => $exc->getMessage(),
             ]);
-
-            do_action(
-                ACTION_LOG,
-                LogLevels::ERROR,
-                'create_payment_exception: ' . $exc->getMessage(),
-                compact($exc)
-            );
-
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                throw new $exc;
-            }
         }
 
         $this->ajaxJsonRequest->sendJsonSuccess([

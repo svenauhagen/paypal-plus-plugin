@@ -10,8 +10,8 @@
 
 namespace WCPayPalPlus\PlusGateway;
 
-use const WCPayPalPlus\ACTION_LOG;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use Psr\Log\LoggerInterface;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Api\CredentialProvider;
 use WCPayPalPlus\Api\CredentialValidator;
@@ -98,6 +98,11 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     private $wooCommerce;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * Gateway constructor.
      * @param WooCommerce $wooCommerce
      * @param FrameRenderer $frameView
@@ -109,6 +114,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
      * @param PaymentExecutionFactory $paymentExecutionFactory
      * @param PaymentCreatorFactory $paymentCreatorFactory
      * @param Session $session
+     * @param LoggerInterface $logger
      */
     public function __construct(
         WooCommerce $wooCommerce,
@@ -120,7 +126,8 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         OrderFactory $orderFactory,
         PaymentExecutionFactory $paymentExecutionFactory,
         PaymentCreatorFactory $paymentCreatorFactory,
-        Session $session
+        Session $session,
+        LoggerInterface $logger
     ) {
 
         $this->wooCommerce = $wooCommerce;
@@ -133,6 +140,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         $this->paymentExecutionFactory = $paymentExecutionFactory;
         $this->paymentCreatorFactory = $paymentCreatorFactory;
         $this->session = $session;
+        $this->logger = $logger;
 
         $this->id = self::GATEWAY_ID;
         $this->title = $this->get_option('title');
@@ -374,18 +382,10 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
 
             $redirectUrl = $order->get_checkout_order_received_url();
         } catch (PayPalConnectionException $exc) {
-            do_action(
-                ACTION_LOG,
-                \WC_Log_Levels::ERROR,
-                'payment_execution_exception: ' . $exc->getMessage(),
-                compact($exc)
-            );
+            $this->logger->error($exc);
 
             wc_add_notice(
-                __(
-                    'Error processing checkout. Please check the logs. ',
-                    'woo-paypalplus'
-                ),
+                esc_html__('Error processing checkout. Please check the logs.', 'woo-paypalplus'),
                 'error'
             );
 
@@ -466,13 +466,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
                 );
                 $paymentCreator = $paymentCreator->create();
             } catch (\Exception $exc) {
-                do_action(
-                    ACTION_LOG,
-                    \WC_Log_Levels::ERROR,
-                    'create_payment_exception: ' . $exc->getMessage(),
-                    compact($exc)
-                );
-
+                $this->logger->error($exc);
                 return $url;
             }
 

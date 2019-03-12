@@ -11,8 +11,7 @@
 namespace WCPayPalPlus\Api;
 
 use Exception;
-use WC_Log_Levels;
-use const WCPayPalPlus\ACTION_LOG;
+use Psr\Log\LoggerInterface;
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 
@@ -23,6 +22,20 @@ use Inpsyde\Lib\PayPal\Rest\ApiContext;
  */
 class CredentialValidator
 {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * CredentialValidator constructor.
+     * @param LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * Verify the API Credentials by making a dummy API call with them.
      *
@@ -35,12 +48,7 @@ class CredentialValidator
             $params = ['count' => 1];
             Payment::all($params, $context);
         } catch (Exception $exc) {
-            do_action(
-                ACTION_LOG,
-                WC_Log_Levels::ERROR,
-                'credential_exception:' . $exc->getMessage(),
-                compact($exc)
-            );
+            $this->logger->error($exc);
 
             return [
                 false,

@@ -13,7 +13,7 @@ use Inpsyde\Lib\PayPal\Api\Presentation;
 use Inpsyde\Lib\PayPal\Api\WebProfile;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
-use const WCPayPalPlus\ACTION_LOG;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class WCWebExperienceProfile
@@ -37,15 +37,22 @@ class WCWebExperienceProfile
     private $config;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * WCWebExperienceProfile constructor.
      *
      * @param array $config Profile configuration.
      * @param ApiContext $api_context PayPal SDK Api Context object.
+     * @param LoggerInterface $logger
      */
-    public function __construct(array $config, ApiContext $api_context)
+    public function __construct(array $config, ApiContext $api_context, LoggerInterface $logger)
     {
         $this->api_context = $api_context;
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     /**
@@ -99,8 +106,8 @@ class WCWebExperienceProfile
                 $response = $web_profile->create($this->api_context);
                 $new_id = $response->getId();
             }
-        } catch (PayPalConnectionException $ex) {
-            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'web_profile_exception: ' . $ex->getMessage(), compact($ex));
+        } catch (PayPalConnectionException $exc) {
+            $this->logger->error($exc);
         }
 
         return $new_id;
@@ -118,8 +125,8 @@ class WCWebExperienceProfile
         $web_profile = null;
         try {
             $web_profile = WebProfile::get($profile_id, $this->api_context);
-        } catch (PayPalConnectionException $ex) {
-            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'web_profile_exception: ' . $ex->getMessage(), compact($ex));
+        } catch (PayPalConnectionException $exc) {
+            $this->logger->error($exc);
         }
 
         return $web_profile;

@@ -12,6 +12,7 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\WpNonce;
+use Psr\Log\LoggerInterface;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Payment\Session;
@@ -54,7 +55,8 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[PaymentExecutionFactory::class],
                 $container[Session::class],
                 $container[CheckoutDropper::class],
-                $container[PaymentPatchFactory::class]
+                $container[PaymentPatchFactory::class],
+                $container[LoggerInterface::class]
             );
         };
         $container[CheckoutGatewayOverride::class] = function (Container $container) {

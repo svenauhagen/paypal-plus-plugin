@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
+use Psr\Log\LoggerInterface;
 use WC_Order;
 
 /**
@@ -19,6 +20,20 @@ use WC_Order;
  */
 class PaymentPatchFactory
 {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
+     * PaymentPatchFactory constructor.
+     * @param LoggerInterface $logger
+     */
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     /**
      * @param WC_Order $order
      * @param string $paymentId
@@ -33,7 +48,6 @@ class PaymentPatchFactory
 
         $orderData = new OrderData($order);
         $patchProvider = new PatchProvider($order, $orderData);
-
         $patchData = new PaymentPatchData(
             $order,
             $paymentId,
@@ -42,6 +56,6 @@ class PaymentPatchFactory
             $patchProvider
         );
 
-        return new PaymentPatcher($patchData);
+        return new PaymentPatcher($patchData, $this->logger);
     }
 }

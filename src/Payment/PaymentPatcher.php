@@ -9,7 +9,7 @@
 namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
-use const WCPayPalPlus\ACTION_LOG;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class PaymentPatcher
@@ -26,13 +26,20 @@ class PaymentPatcher
     private $patch_data;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * PaymentPatcher constructor.
      *
      * @param PaymentPatchData $patch_data You guessed it: The Patch data.
+     * @param LoggerInterface $logger
      */
-    public function __construct(PaymentPatchData $patch_data)
+    public function __construct(PaymentPatchData $patch_data, LoggerInterface $logger)
     {
         $this->patch_data = $patch_data;
+        $this->logger = $logger;
     }
 
     /**
@@ -42,19 +49,16 @@ class PaymentPatcher
      */
     public function execute()
     {
+        $success = false;
         $patch_request = $this->patch_data->get_patch_request();
+
         try {
             $payment = $this->patch_data->get_payment();
-            $result = $payment->update($patch_request, $this->patch_data->get_api_context());
-            if ($result) {
-                return true;
-            }
-        } catch (PayPalConnectionException $ex) {
-            do_action(ACTION_LOG, \WC_Log_Levels::ERROR, 'payment_patch_exception: ' . $ex->getMessage(), compact($ex));
-
-            return false;
+            $success = $payment->update($patch_request, $this->patch_data->get_api_context());
+        } catch (PayPalConnectionException $exc) {
+            $this->logger->error($exc);
         }
 
-        return false;
+        return $success;
     }
 }

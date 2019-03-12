@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\Order;
 
+use Psr\Log\LoggerInterface;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
@@ -39,7 +40,8 @@ class ServiceProvider implements ServiceProviderInterface
                 $container[OrderStatuses::class],
                 $container[OrderFactory::class],
                 $container[Request::class],
-                $container[PlusStorable::class]
+                $container[PlusStorable::class],
+                $container[LoggerInterface::class]
             );
         };
     }

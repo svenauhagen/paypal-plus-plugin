@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\Ipn;
 
+use Psr\Log\LoggerInterface;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Order\OrderUpdaterFactory;
 use WCPayPalPlus\Request\Request;
@@ -41,7 +42,8 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[Request::class],
                 $container[IpnVerifier::class],
                 $container[OrderUpdaterFactory::class],
-                $container[OrderFactory::class]
+                $container[OrderFactory::class],
+                $container[LoggerInterface::class]
             );
         };
     }

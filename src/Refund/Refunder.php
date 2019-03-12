@@ -10,9 +10,9 @@
 
 namespace WCPayPalPlus\Refund;
 
-use const WCPayPalPlus\ACTION_LOG;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
+use Psr\Log\LoggerInterface;
 use WCPayPalPlus\Order\OrderStatuses;
 
 /**
@@ -42,20 +42,28 @@ class Refunder
     private $orderStatuses;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * WCRefund constructor.
      * @param RefundData $refund_data
      * @param ApiContext $context
      * @param OrderStatuses $orderStatuses
+     * @param LoggerInterface $logger
      */
     public function __construct(
         RefundData $refund_data,
         ApiContext $context,
-        OrderStatuses $orderStatuses
+        OrderStatuses $orderStatuses,
+        LoggerInterface $logger
     ) {
 
         $this->context = $context;
         $this->refund_data = $refund_data;
         $this->orderStatuses = $orderStatuses;
+        $this->logger = $logger;
     }
 
     /**
@@ -79,14 +87,8 @@ class Refunder
                 ->refund_data
                 ->get_success_handler($refundedSale->getId())
                 ->execute();
-        } catch (PayPalConnectionException $ex) {
-            do_action(
-                ACTION_LOG,
-                \WC_Log_Levels::ERROR,
-                'refund_exception: ' . $ex->getMessage(),
-                compact($ex)
-            );
-
+        } catch (PayPalConnectionException $exc) {
+            $this->logger->error($exc);
             return false;
         }
 

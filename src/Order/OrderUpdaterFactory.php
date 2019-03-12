@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\Order;
 
+use Psr\Log\LoggerInterface;
 use WCPayPalPlus\Ipn\PaymentValidator;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Setting\Storable;
@@ -48,19 +49,26 @@ class OrderUpdaterFactory
     private $wooCommerce;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * OrderUpdaterFactory constructor.
      * @param WooCommerce $wooCommerce
      * @param OrderStatuses $orderStatuses
      * @param OrderFactory $orderFactory
      * @param Request $request
      * @param Storable $settingRepository
+     * @param LoggerInterface $logger
      */
     public function __construct(
         WooCommerce $wooCommerce,
         OrderStatuses $orderStatuses,
         OrderFactory $orderFactory,
         Request $request,
-        Storable $settingRepository
+        Storable $settingRepository,
+        LoggerInterface $logger
     ) {
 
         $this->wooCommerce = $wooCommerce;
@@ -68,13 +76,14 @@ class OrderUpdaterFactory
         $this->orderFactory = $orderFactory;
         $this->request = $request;
         $this->settingRepository = $settingRepository;
+        $this->logger = $logger;
     }
 
     /**
      * @return OrderUpdater
      * @throws Exception
      */
-    public function createByRequest()
+    public function create()
     {
         $order = $this->orderFactory->createByRequest($this->request);
         $paymentValidator = new PaymentValidator($this->request, $order);
@@ -85,7 +94,8 @@ class OrderUpdaterFactory
             $this->settingRepository,
             $this->request,
             $paymentValidator,
-            $this->orderStatuses
+            $this->orderStatuses,
+            $this->logger
         );
     }
 }

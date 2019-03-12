@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Order;
 
-use const WCPayPalPlus\ACTION_LOG;
+use Psr\Log\LoggerInterface;
 use WCPayPalPlus\Ipn\PaymentValidator;
 use WCPayPalPlus\Request\Request;
 use WC_Order;
@@ -59,6 +59,11 @@ class OrderUpdater
     private $wooCommerce;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * OrderUpdater constructor.
      * @param WooCommerce $wooCommerce
      * @param WC_Order $order
@@ -66,6 +71,7 @@ class OrderUpdater
      * @param Request $request
      * @param PaymentValidator $validator
      * @param OrderStatuses $orderStatuses
+     * @param LoggerInterface $logger
      */
     public function __construct(
         WooCommerce $wooCommerce,
@@ -73,7 +79,8 @@ class OrderUpdater
         Storable $settingRepository,
         Request $request,
         PaymentValidator $validator,
-        OrderStatuses $orderStatuses
+        OrderStatuses $orderStatuses,
+        LoggerInterface $logger
     ) {
 
         $this->wooCommerce = $wooCommerce;
@@ -82,6 +89,7 @@ class OrderUpdater
         $this->request = $request;
         $this->validator = $validator;
         $this->orderStatuses = $orderStatuses;
+        $this->logger = $logger;
     }
 
     /**
@@ -102,26 +110,14 @@ class OrderUpdater
     public function payment_status_completed()
     {
         if ($this->order->has_status(OrderStatuses::ORDER_STATUS_COMPLETED)) {
-            do_action(
-                ACTION_LOG,
-                \WC_Log_Levels::ERROR,
-                'IPN Error. Payment already completed. ',
-                []
-            );
-
+            $this->logger->error('IPN Error. Payment already completed.');
             return true;
         }
 
         if (!$this->validator->is_valid_payment()) {
-            $last_error = $this->validator->get_last_error();
-            $this->order->update_status(OrderStatuses::ORDER_STATUS_ON_HOLD, $last_error);
-            do_action(
-                ACTION_LOG,
-                \WC_Log_Levels::ERROR,
-                'IPN Error. Payment validation failed: ' . $last_error,
-                []
-            );
-
+            $lastError = $this->validator->get_last_error();
+            $this->order->update_status(OrderStatuses::ORDER_STATUS_ON_HOLD, $lastError);
+            $this->logger->error("IPN Error. Payment validation failed: {$lastError}");
             return false;
         }
 
@@ -144,8 +140,7 @@ class OrderUpdater
                 update_post_meta($this->order->get_id(), 'PayPal Transaction Fee', wc_clean($fee));
             }
 
-            do_action(ACTION_LOG, \WC_Log_Levels::INFO, 'Payment completed successfully ', []);
-
+            $this->logger->info('Payment completed successfully');
             return true;
         }
 
@@ -155,8 +150,8 @@ class OrderUpdater
                 $this->request->get(Request::KEY_PENDING_REASON)
             )
         );
-        do_action(ACTION_LOG, \WC_Log_Levels::INFO, 'Payment put on hold ', []);
 
+        $this->logger->info('Payment put on hold');
         return true;
     }
 

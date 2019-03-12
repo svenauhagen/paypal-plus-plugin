@@ -13,6 +13,7 @@ namespace WCPayPalPlus\Api;
 use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
 use Inpsyde\Lib\PayPal\Core\PayPalConfigManager;
 use Inpsyde\Lib\PayPal\Core\PayPalCredentialManager;
+use Psr\Log\LoggerInterface;
 use WCPayPalPlus\Log\PayPalSdkLogFactory;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\IntegrationServiceProvider;
@@ -39,8 +40,10 @@ class ServiceProvider implements IntegrationServiceProvider
         $container[CredentialProvider::class] = function () {
             return new CredentialProvider();
         };
-        $container[CredentialValidator::class] = function () {
-            return new CredentialValidator();
+        $container[CredentialValidator::class] = function (Container $container) {
+            return new CredentialValidator(
+                $container[LoggerInterface::class]
+            );
         };
     }
 

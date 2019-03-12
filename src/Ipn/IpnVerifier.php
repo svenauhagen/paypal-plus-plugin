@@ -10,13 +10,12 @@
 
 namespace WCPayPalPlus\Ipn;
 
-use const WCPayPalPlus\ACTION_LOG;
+use Psr\Log\LoggerInterface;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Setting\Storable;
 use WP_Error;
 use RuntimeException;
 use Exception;
-use WC_Log_Levels;
 
 /**
  * Class IPNValidator
@@ -38,14 +37,25 @@ class IpnVerifier
     private $settingRepository;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * Validator constructor.
      * @param Request $request
      * @param Storable $settingRepository
+     * @param LoggerInterface $logger
      */
-    public function __construct(Request $request, Storable $settingRepository)
-    {
+    public function __construct(
+        Request $request,
+        Storable $settingRepository,
+        LoggerInterface $logger
+    ) {
+
         $this->request = $request;
         $this->settingRepository = $settingRepository;
+        $this->logger = $logger;
     }
 
     /**
@@ -67,7 +77,7 @@ class IpnVerifier
         try {
             list($code, $body) = $this->remotePost($this->settingRepository->paypalUrl(), $params);
         } catch (Exception $exc) {
-            do_action(ACTION_LOG, WC_Log_Levels::ERROR, $exc->getMessage(), compact($exc));
+            $this->logger->error($exc);
 
             $code = 0;
             $body = '';

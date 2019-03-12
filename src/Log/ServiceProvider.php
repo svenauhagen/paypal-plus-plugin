@@ -10,46 +10,23 @@
 
 namespace WCPayPalPlus\Log;
 
-use const WCPayPalPlus\ACTION_LOG;
-use Inpsyde\Lib\Psr\Log\LoggerInterface;
-use WCPayPalPlus\Service\BootstrappableServiceProvider;
+use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
 use WCPayPalPlus\Service\Container;
-use WC_Log_Levels as LogLevels;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class ServiceProvider
  * @package WCPayPalPlus\Log
  */
-class ServiceProvider implements BootstrappableServiceProvider
+class ServiceProvider implements ServiceProviderInterface
 {
     /**
      * @inheritdoc
      */
     public function register(Container $container)
     {
-        $container['is_wp_debug'] = function () {
-            return (\defined(\WP_DEBUG) && \WP_DEBUG);
+        $container[LoggerInterface::class] = function () {
+            return \wc_get_logger();
         };
-        $container['is_script_debug'] = function () {
-            return (\defined(\SCRIPT_DEBUG) && \SCRIPT_DEBUG);
-        };
-
-        $container[LoggerInterface::class] = function ($container) {
-            return new WcPsrLoggerAdapter(
-                \wc_get_logger(),
-                $container['is_wp_debug'] ? LogLevels::DEBUG : LogLevels::INFO
-            );
-        };
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function bootstrap(Container $container)
-    {
-        $logger = $container[LoggerInterface::class];
-        add_action(ACTION_LOG, function ($level, $message, $context) use ($logger) {
-            $logger->log($level, $message, $context);
-        }, 10, 3);
     }
 }

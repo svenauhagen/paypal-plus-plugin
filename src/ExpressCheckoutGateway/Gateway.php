@@ -11,8 +11,8 @@
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use Inpsyde\Lib\PayPal\Api\Payment;
-use const WCPayPalPlus\ACTION_LOG;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use Psr\Log\LoggerInterface;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Api\CredentialProvider;
 use WCPayPalPlus\Api\CredentialValidator;
@@ -31,7 +31,6 @@ use WCPayPalPlus\WC\WCWebExperienceProfile;
 use WC_Order_Refund;
 use WooCommerce;
 use WC_Payment_Gateway;
-use WC_Log_Levels as LogLevels;
 use RuntimeException;
 use WC_Order;
 use OutOfBoundsException;
@@ -104,6 +103,8 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
      */
     private $paymentPatchFactory;
 
+    private $logger;
+
     /**
      * Gateway constructor.
      * @param CredentialProvider $credentialProvider
@@ -115,6 +116,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
      * @param Session $session
      * @param CheckoutDropper $checkoutDropper
      * @param PaymentPatchFactory $paymentPatchFactory
+     * @param LoggerInterface $logger
      */
     public function __construct(
         CredentialProvider $credentialProvider,
@@ -125,7 +127,8 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         PaymentExecutionFactory $paymentExecutionFactory,
         Session $session,
         CheckoutDropper $checkoutDropper,
-        PaymentPatchFactory $paymentPatchFactory
+        PaymentPatchFactory $paymentPatchFactory,
+        LoggerInterface $logger
     ) {
 
         $this->credentialProvider = $credentialProvider;
@@ -137,6 +140,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         $this->session = $session;
         $this->checkoutDropper = $checkoutDropper;
         $this->paymentPatchFactory = $paymentPatchFactory;
+        $this->logger = $logger;
 
         $this->id = self::GATEWAY_ID;
         $this->title = $this->get_option('title');
@@ -295,14 +299,9 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         $paymentId = $this->session->get(Session::PAYMENT_ID);
         $payerId = $this->session->get(Session::PAYER_ID);
 
-        // TODO Should thrown an exception and log it.
         if (!$payerId || !$paymentId || !$orderId) {
-            do_action(
-                ACTION_LOG,
-                LogLevels::ERROR,
-                'payment_execution: Insufficient data to make payment.'
-            );
-
+            $this->logger->error('Payment Excecution: Insufficient data to make payment.');
+            // TODO Where redirect the user.
             return [
                 'result' => 'failed',
                 'redirect' => '',
@@ -312,23 +311,8 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         try {
             $order = $this->orderFactory->createById($orderId);
         } catch (RuntimeException $exc) {
+            $this->logger->error('Payment Execution: ' . $exc);
             $this->checkoutDropper->abortCheckout();
-
-            do_action(
-                ACTION_LOG,
-                LogLevels::ERROR,
-                'payment_execution_exception: ' . $exc->getMessage(),
-                compact($exc)
-            );
-
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                throw new $exc;
-            }
-
-            return [
-                'result' => 'failed',
-                'redirect' => '',
-            ];
         }
 
         $paymentPatcher = $this->paymentPatchFactory->create(
@@ -381,23 +365,8 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
              */
             do_action(self::ACTION_AFTER_PAYMENT_EXECUTION, $payment, $order);
         } catch (PayPalConnectionException $exc) {
+            $this->logger->error('Payment Execution: ' . $exc);
             $this->checkoutDropper->abortCheckout();
-
-            do_action(
-                ACTION_LOG,
-                LogLevels::ERROR,
-                'payment_execution_exception: ' . $exc->getMessage(),
-                compact($exc)
-            );
-
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                throw new $exc;
-            }
-
-            return [
-                'result' => 'failed',
-                'redirect' => $order->get_cancel_order_url(),
-            ];
         }
 
         return [

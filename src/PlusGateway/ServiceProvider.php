@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\PlusGateway;
 
+use Psr\Log\LoggerInterface;
 use WCPayPalPlus\Api\CredentialProvider;
 use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Order\OrderFactory;
@@ -56,7 +57,8 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[OrderFactory::class],
                 $container[PaymentExecutionFactory::class],
                 $container[PaymentCreatorFactory::class],
-                $container[Session::class]
+                $container[Session::class],
+                $container[LoggerInterface::class]
             );
         };
     }

@@ -10,9 +10,7 @@
 
 namespace WCPayPalPlus\WC;
 
-use const WCPayPalPlus\ACTION_LOG;
 use WCPayPalPlus\Payment\Session;
-use WC_Log_Levels as LogLevels;
 
 /**
  * Class CheckoutDropper
@@ -44,14 +42,15 @@ class CheckoutDropper
     {
         $this->session->clean();
 
-        do_action(ACTION_LOG, LogLevels::ERROR, 'Checkout Dropped', compact($this->session));
-
+        // TODO May be a more useful message for the user.
         wc_add_notice(
             esc_html__('Error processing checkout. Please try again.', 'woo-paypalplus'),
             'error'
         );
 
         // TODO Shouldn't be the same of the `Cancel Url` option?
+        //      Also, would be better if we could manage the case when the user want to cancel the order.
+        //      Otherwise do not do any redirection here and let's do it by the caller.
         wp_safe_redirect(wc_get_cart_url());
         exit;
     }
