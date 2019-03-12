@@ -105,6 +105,13 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[Session::class]
             );
         };
+        $container[SingleProductCheckout::class] = function (Container $container) {
+            return new SingleProductCheckout(
+                $container[WooCommerce::class],
+                $container[AjaxJsonRequest::class],
+                $container[CartCheckout::class]
+            );
+        };
     }
 
     /**
@@ -186,6 +193,18 @@ class ServiceProvider implements BootstrappableServiceProvider
         );
         add_action(
             Dispatcher::ACTION_DISPATCH_CONTEXT . '/cart/' . CartCheckout::TASK_STORE_PAYMENT_DATA,
+            [$container[CartCheckout::class], CartCheckout::TASK_STORE_PAYMENT_DATA],
+            10,
+            2
+        );
+        add_action(
+            Dispatcher::ACTION_DISPATCH_CONTEXT . '/product/' . SingleProductCheckout::TASK_CREATE_ORDER,
+            [$container[SingleProductCheckout::class], SingleProductCheckout::TASK_CREATE_ORDER],
+            10,
+            2
+        );
+        add_action(
+            Dispatcher::ACTION_DISPATCH_CONTEXT . '/product/' . CartCheckout::TASK_STORE_PAYMENT_DATA,
             [$container[CartCheckout::class], CartCheckout::TASK_STORE_PAYMENT_DATA],
             10,
             2

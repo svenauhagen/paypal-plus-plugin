@@ -63,7 +63,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
             ...this.buttonConfiguration,
 
             payment: () => {
-                const formData = this.formDataByContext(element);
+                const formData = this.formDataByElement(element);
                 formData.append('task', TASK_CREATE_ORDER);
 
                 return this.request
@@ -81,7 +81,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
 
             onAuthorize: (data, actions) => {
                 // TODO Ensure return_url exists.
-                const formData = this.formDataByContext(element);
+                const formData = this.formDataByElement(element);
 
                 formData.append('task', TASK_STORE_PAYMENT_DATA);
                 formData.append('orderID', data.orderID);
@@ -94,7 +94,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
                     .then((response) => {
                         if (response.success) {
                             window.location.href = data.returnUrl;
-                            return;
+                            // TODO Block the form UI? Prevent to do stuffs.
                         }
 
                         // TODO Show alert to the user
@@ -102,12 +102,13 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
             },
 
             onCancel: () => {
-                console.log(arguments);
+                console.log('ON CANCEL', arguments);
+                // TODO Update the mini cart if context is product. Unless we want to do a redirect.
                 // TODO Redirect the user to the page set in the options.
             },
 
             onError: () => {
-                console.log(arguments);
+                console.log('ON ERROR', arguments);
                 // TODO Redirect to cart and show customizable notice with message.
             },
 
@@ -121,7 +122,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
      * @returns {FormData}
      */
     // TODO Make it private if not possible move it as closure within the render function.
-    formDataByContext(element)
+    formDataByElement(element)
     {
         let formData = new FormData();
         const context = contextByElement(element);
