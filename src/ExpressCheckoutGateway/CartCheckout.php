@@ -19,9 +19,6 @@ use Exception;
 use OutOfBoundsException;
 use WooCommerce;
 
-// TODO Problem about the class it's use `AjaxJsonRequest` making impossible to call in a context
-//      that is not ajax. When an error occur, throw an exception and let the client do whatever it want.
-
 /**
  * Class CartCheckout
  * @package WCPayPalPlus\ExpressCheckoutGateway

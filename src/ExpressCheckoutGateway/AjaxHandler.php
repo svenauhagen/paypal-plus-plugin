@@ -91,7 +91,6 @@ class AjaxHandler
         $requestData = $this->request->all();
 
         if (!$context) {
-            // TODO Handle request in the client.
             $this->ajaxJsonRequest->sendJsonError([
                 'message' => $this->invalidContextMessage(),
             ]);
