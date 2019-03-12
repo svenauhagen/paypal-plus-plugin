@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\Payment;
 
+use Inpsyde\Lib\PayPal\Api\Payment;
 use WCPayPalPlus\WC\RequestSuccessHandler;
 
 /**
@@ -52,7 +53,7 @@ class PaymentPerformer
      * Execute Payment
      * Be aware all of the call made by the PayPal SDK may throw a PayPalConnectionException
      *
-     * @return string $redirectUrl
+     * @return Payment
      */
     public function execute()
     {
@@ -63,6 +64,6 @@ class PaymentPerformer
             $success_handler->execute();
         }
 
-        return true;
+        return $payment;
     }
 }
