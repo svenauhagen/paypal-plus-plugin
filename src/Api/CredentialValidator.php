@@ -11,7 +11,7 @@
 namespace WCPayPalPlus\Api;
 
 use Exception;
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 
@@ -23,15 +23,15 @@ use Inpsyde\Lib\PayPal\Rest\ApiContext;
 class CredentialValidator
 {
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
     /**
      * CredentialValidator constructor.
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(Logger $logger)
     {
         $this->logger = $logger;
     }

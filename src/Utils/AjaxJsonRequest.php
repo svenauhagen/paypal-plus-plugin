@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Utils;
 
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 
 /**
  * Class JsonParser
@@ -21,15 +21,15 @@ class AjaxJsonRequest
     const DEFAULT_LOG_MESSAGE = 'Unknown error message.';
 
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
     /**
      * AjaxJsonRequest constructor.
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(Logger $logger)
     {
         $this->logger = $logger;
     }

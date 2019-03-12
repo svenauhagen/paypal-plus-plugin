@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Utils;
 
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
 
@@ -27,7 +27,7 @@ class ServiceProvider implements ServiceProviderInterface
     {
         $container[AjaxJsonRequest::class] = function (Container $container) {
             return new AjaxJsonRequest(
-                $container[LoggerInterface::class]
+                $container[Logger::class]
             );
         };
     }

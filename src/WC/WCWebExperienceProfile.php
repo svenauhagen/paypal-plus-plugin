@@ -13,7 +13,7 @@ use Inpsyde\Lib\PayPal\Api\Presentation;
 use Inpsyde\Lib\PayPal\Api\WebProfile;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 
 /**
  * Class WCWebExperienceProfile
@@ -37,7 +37,7 @@ class WCWebExperienceProfile
     private $config;
 
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
@@ -46,9 +46,9 @@ class WCWebExperienceProfile
      *
      * @param array $config Profile configuration.
      * @param ApiContext $api_context PayPal SDK Api Context object.
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      */
-    public function __construct(array $config, ApiContext $api_context, LoggerInterface $logger)
+    public function __construct(array $config, ApiContext $api_context, Logger $logger)
     {
         $this->api_context = $api_context;
         $this->config = $config;

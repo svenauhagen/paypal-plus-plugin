@@ -9,7 +9,7 @@
 namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 
 /**
  * Class PaymentPatcher
@@ -26,7 +26,7 @@ class PaymentPatcher
     private $patch_data;
 
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
@@ -34,9 +34,9 @@ class PaymentPatcher
      * PaymentPatcher constructor.
      *
      * @param PaymentPatchData $patch_data You guessed it: The Patch data.
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      */
-    public function __construct(PaymentPatchData $patch_data, LoggerInterface $logger)
+    public function __construct(PaymentPatchData $patch_data, Logger $logger)
     {
         $this->patch_data = $patch_data;
         $this->logger = $logger;

@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Ipn;
 
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Order\OrderUpdaterFactory;
 use Exception;
@@ -49,7 +49,7 @@ class Ipn
     private $orderFactory;
 
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
@@ -59,14 +59,14 @@ class Ipn
      * @param IpnVerifier $ipnVerifier
      * @param OrderUpdaterFactory $orderUpdaterFactory
      * @param OrderFactory $orderFactory
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      */
     public function __construct(
         Request $request,
         IpnVerifier $ipnVerifier,
         OrderUpdaterFactory $orderUpdaterFactory,
         OrderFactory $orderFactory,
-        LoggerInterface $logger
+        Logger $logger
     ) {
 
         $this->request = $request;

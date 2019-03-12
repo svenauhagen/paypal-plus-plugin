@@ -11,7 +11,7 @@
 namespace WCPayPalPlus\Refund;
 
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Order\OrderStatuses;
 use WC_Order_Refund;
 
@@ -27,16 +27,16 @@ class RefundFactory
     private $orderStatuses;
 
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
     /**
      * RefundFactory constructor.
      * @param OrderStatuses $orderStatuses
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      */
-    public function __construct(OrderStatuses $orderStatuses, LoggerInterface $logger)
+    public function __construct(OrderStatuses $orderStatuses, Logger $logger)
     {
         $this->orderStatuses = $orderStatuses;
         $this->logger = $logger;

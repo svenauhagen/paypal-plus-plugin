@@ -12,7 +12,7 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Api\CredentialProvider;
 use WCPayPalPlus\Api\CredentialValidator;
@@ -116,7 +116,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
      * @param Session $session
      * @param CheckoutDropper $checkoutDropper
      * @param PaymentPatchFactory $paymentPatchFactory
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      */
     public function __construct(
         CredentialProvider $credentialProvider,
@@ -128,7 +128,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         Session $session,
         CheckoutDropper $checkoutDropper,
         PaymentPatchFactory $paymentPatchFactory,
-        LoggerInterface $logger
+        Logger $logger
     ) {
 
         $this->credentialProvider = $credentialProvider;

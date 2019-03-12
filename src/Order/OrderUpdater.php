@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Order;
 
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Ipn\PaymentValidator;
 use WCPayPalPlus\Request\Request;
 use WC_Order;
@@ -59,7 +59,7 @@ class OrderUpdater
     private $wooCommerce;
 
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
@@ -71,7 +71,7 @@ class OrderUpdater
      * @param Request $request
      * @param PaymentValidator $validator
      * @param OrderStatuses $orderStatuses
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      */
     public function __construct(
         WooCommerce $wooCommerce,
@@ -80,7 +80,7 @@ class OrderUpdater
         Request $request,
         PaymentValidator $validator,
         OrderStatuses $orderStatuses,
-        LoggerInterface $logger
+        Logger $logger
     ) {
 
         $this->wooCommerce = $wooCommerce;

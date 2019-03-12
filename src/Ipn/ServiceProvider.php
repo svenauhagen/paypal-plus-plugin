@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Ipn;
 
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Order\OrderUpdaterFactory;
 use WCPayPalPlus\Request\Request;
@@ -34,7 +34,8 @@ class ServiceProvider implements BootstrappableServiceProvider
         $container[IpnVerifier::class] = function (Container $container) {
             return new IpnVerifier(
                 $container[Request::class],
-                $container[Setting\Storable::class]
+                $container[Setting\Storable::class],
+                $container[Logger::class]
             );
         };
         $container[Ipn::class] = function (Container $container) {
@@ -43,7 +44,7 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[IpnVerifier::class],
                 $container[OrderUpdaterFactory::class],
                 $container[OrderFactory::class],
-                $container[LoggerInterface::class]
+                $container[Logger::class]
             );
         };
     }

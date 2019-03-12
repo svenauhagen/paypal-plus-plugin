@@ -11,7 +11,7 @@
 namespace WCPayPalPlus\PlusGateway;
 
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Api\CredentialProvider;
 use WCPayPalPlus\Api\CredentialValidator;
@@ -98,7 +98,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     private $wooCommerce;
 
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
@@ -114,7 +114,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
      * @param PaymentExecutionFactory $paymentExecutionFactory
      * @param PaymentCreatorFactory $paymentCreatorFactory
      * @param Session $session
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      */
     public function __construct(
         WooCommerce $wooCommerce,
@@ -127,7 +127,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         PaymentExecutionFactory $paymentExecutionFactory,
         PaymentCreatorFactory $paymentCreatorFactory,
         Session $session,
-        LoggerInterface $logger
+        Logger $logger
     ) {
 
         $this->wooCommerce = $wooCommerce;
@@ -222,7 +222,8 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
                 ];
                 $webProfile = new WCWebExperienceProfile(
                     $config,
-                    $apiContext
+                    $apiContext,
+                    $this->logger
                 );
                 $optionKey = $this->experienceProfileKey();
                 $_POST[$this->get_field_key($optionKey)] = $webProfile->save_profile();

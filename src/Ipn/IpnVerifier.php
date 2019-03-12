@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Ipn;
 
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Setting\Storable;
 use WP_Error;
@@ -37,7 +37,7 @@ class IpnVerifier
     private $settingRepository;
 
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
@@ -45,12 +45,12 @@ class IpnVerifier
      * Validator constructor.
      * @param Request $request
      * @param Storable $settingRepository
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      */
     public function __construct(
         Request $request,
         Storable $settingRepository,
-        LoggerInterface $logger
+        Logger $logger
     ) {
 
         $this->request = $request;

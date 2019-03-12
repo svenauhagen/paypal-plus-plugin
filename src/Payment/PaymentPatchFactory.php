@@ -11,7 +11,7 @@
 namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 use WC_Order;
 
 /**
@@ -21,15 +21,15 @@ use WC_Order;
 class PaymentPatchFactory
 {
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
     /**
      * PaymentPatchFactory constructor.
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct(Logger $logger)
     {
         $this->logger = $logger;
     }

@@ -12,7 +12,7 @@ namespace WCPayPalPlus\Refund;
 
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Order\OrderStatuses;
 
 /**
@@ -42,7 +42,7 @@ class Refunder
     private $orderStatuses;
 
     /**
-     * @var LoggerInterface
+     * @var Logger
      */
     private $logger;
 
@@ -51,13 +51,13 @@ class Refunder
      * @param RefundData $refund_data
      * @param ApiContext $context
      * @param OrderStatuses $orderStatuses
-     * @param LoggerInterface $logger
+     * @param Logger $logger
      */
     public function __construct(
         RefundData $refund_data,
         ApiContext $context,
         OrderStatuses $orderStatuses,
-        LoggerInterface $logger
+        Logger $logger
     ) {
 
         $this->context = $context;

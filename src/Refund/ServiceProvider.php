@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Refund;
 
-use Psr\Log\LoggerInterface;
+use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Order\OrderStatuses;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
@@ -29,7 +29,7 @@ class ServiceProvider implements ServiceProviderInterface
         $container[RefundFactory::class] = function (Container $container) {
             return new RefundFactory(
                 $container[OrderStatuses::class],
-                $container[LoggerInterface::class]
+                $container[Logger::class]
             );
         };
     }
