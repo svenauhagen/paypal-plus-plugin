@@ -13,11 +13,7 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 use WCPayPalPlus\Payment\Session;
 
 /**
- * Class DefaultGatewayOverride
- *
- * Overrides the default Payment Gateway ONCE per user session.
- *
- * Hence, it should never override user input.
+ * Class CheckoutGatewayOverride
  */
 class CheckoutGatewayOverride
 {

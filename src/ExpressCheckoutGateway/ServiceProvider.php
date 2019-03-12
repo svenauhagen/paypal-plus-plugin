@@ -64,6 +64,16 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[Session::class]
             );
         };
+        $container[CheckoutAddressOverride::class] = function (Container $container) {
+            return new CheckoutAddressOverride(
+                $container[\WooCommerce::class]
+            );
+        };
+        $container[StorePaymentData::class] = function (Container $container) {
+            return new StorePaymentData(
+                $container[\WooCommerce::class]
+            );
+        };
 
         $container[SingleProductButtonView::class] = function () use ($ajaxNonce) {
             return new SingleProductButtonView($ajaxNonce);
@@ -110,6 +120,27 @@ class ServiceProvider implements BootstrappableServiceProvider
 
             return $methods;
         });
+
+        add_action(
+            'woocommerce_checkout_init',
+            [$container[CheckoutAddressOverride::class], 'init']
+        );
+        add_filter(
+            'woocommerce_default_address_fields',
+            [$container[CheckoutAddressOverride::class], 'filterDefaultAddressFields']
+        );
+        add_filter(
+            'woocommerce_billing_fields',
+            [$container[CheckoutAddressOverride::class], 'filterBillingFields']
+        );
+        add_action(
+            'woocommerce_checkout_process',
+            [$container[CheckoutAddressOverride::class], 'addAddressesToCheckoutPostVars']
+        );
+        add_filter(
+            'woocommerce_billing_fields',
+            [$container[StorePaymentData::class], 'addFromFilter']
+        );
 
         add_action(
             "woocommerce_update_options_payment_gateways_{$gatewayId}",
