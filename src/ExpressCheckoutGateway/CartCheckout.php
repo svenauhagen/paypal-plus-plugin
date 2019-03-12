@@ -90,6 +90,16 @@ class CartCheckout
      */
     public function createOrder()
     {
+        if ($this->wooCommerce->cart->is_empty()) {
+            $this->ajaxJsonRequest->sendJsonError([
+                'message' => esc_html_x(
+                    'Cannot create an order with an empty cart.',
+                    'express-checkout',
+                    'woo-paypalplus'
+                ),
+            ]);
+        }
+
         $orderId = '';
         $returnUrl = wc_get_checkout_url();
         $notifyUrl = $this->wooCommerce->api_request_url(
