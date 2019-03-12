@@ -18,6 +18,7 @@ use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Notice;
+use WCPayPalPlus\Payment\PaymentPatcher;
 use WCPayPalPlus\Setting\PlusRepositoryHelper;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentExecutionFactory;
@@ -30,6 +31,7 @@ use WooCommerce;
 use WC_Payment_Gateway;
 use OutOfBoundsException;
 use RuntimeException;
+use WC_Order;
 
 /**
  * Class Gateway
@@ -41,6 +43,9 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
 
     const GATEWAY_ID = 'paypal_plus';
     const GATEWAY_TITLE_METHOD = 'PayPal PLUS';
+
+    const ACTION_AFTER_PAYMENT_EXECUTION = 'woopaypalplus.after_plus_checkout_payment_execution';
+    const ACTION_AFTER_PAYMENT_PATCH = 'woopaypalplus.after_plus_checkout_payment_patch';
 
     /**
      * @var FrameRenderer
@@ -182,7 +187,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * @param \WC_Order $order
+     * @param WC_Order $order
      * @return bool
      */
     public function can_refund_order($order)
@@ -275,7 +280,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
      */
     public function process_payment($orderId)
     {
-        $order = new \WC_Order($orderId);
+        $order = new WC_Order($orderId);
 
         return [
             'result' => 'success',
@@ -333,7 +338,6 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * @throws OutOfBoundsException
      * @throws RuntimeException
      */
     public function execute_payment()
@@ -359,6 +363,15 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
                 ApiContextFactory::getFromConfiguration()
             );
             $payment->execute();
+
+            /**
+             * Action After Payment has been Executed
+             *
+             * @param PaymentPatcher $payment
+             * @param WC_Order $order
+             */
+            do_action(self::ACTION_AFTER_PAYMENT_EXECUTION, $payment, $order);
+
             $redirectUrl = $order->get_checkout_order_received_url();
         } catch (PayPalConnectionException $exc) {
             do_action(

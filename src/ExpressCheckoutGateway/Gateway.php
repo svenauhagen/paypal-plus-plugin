@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
+use Inpsyde\Lib\PayPal\Api\Payment;
 use const WCPayPalPlus\ACTION_LOG;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use WCPayPalPlus\Api\ApiContextFactory;
@@ -17,6 +18,7 @@ use WCPayPalPlus\Api\CredentialProvider;
 use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Notice;
+use WCPayPalPlus\Payment\PaymentPatcher;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Setting\PlusRepositoryHelper;
 use WCPayPalPlus\Setting\PlusStorable;
@@ -31,6 +33,8 @@ use WooCommerce;
 use WC_Payment_Gateway;
 use WC_Log_Levels as LogLevels;
 use RuntimeException;
+use WC_Order;
+use OutOfBoundsException;
 
 /**
  * Class Gateway
@@ -42,6 +46,8 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
 
     const GATEWAY_ID = 'paypal_express';
     const GATEWAY_TITLE_METHOD = 'PayPal Express Checkout';
+    const ACTION_AFTER_PAYMENT_EXECUTION = 'woopaypalplus.after_express_checkout_payment_execution';
+    const ACTION_AFTER_PAYMENT_PATCH = 'woopaypalplus.after_express_checkout_payment_patch';
 
     /**
      * @var CredentialProvider
@@ -186,7 +192,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * @param \WC_Order $order
+     * @param WC_Order $order
      * @return bool
      */
     public function can_refund_order($order)
@@ -274,11 +280,12 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * TODO May be logic of Patching and Payment Execution can be splitted. Use actions?
+     * TODO May be logic of Patching and Payment Execution can be split. Use actions?
      *      About this see the similar code for Plus Gateway.
      *
      * @param int $orderId
      * @return array
+     * @throws OutOfBoundsException
      */
     public function process_payment($orderId)
     {
@@ -332,6 +339,21 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         );
 
         $isSuccessPatched = $paymentPatcher->execute();
+
+        /**
+         * Action After Payment Patch
+         *
+         * @param PaymentPatcher $paymentPatcher
+         * @oparam bool $isSuccessPatched
+         * @param CheckoutDropper $checkoutDropper
+         */
+        do_action(
+            self::ACTION_AFTER_PAYMENT_PATCH,
+            $paymentPatcher,
+            $isSuccessPatched,
+            $this->checkoutDropper
+        );
+
         if (!$isSuccessPatched) {
             $this->checkoutDropper->abortCheckout();
 
@@ -349,7 +371,15 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         );
 
         try {
-            $payment->execute();
+            $payment = $payment->execute();
+
+            /**
+             * Action After Payment has been Executed
+             *
+             * @param Payment $payment
+             * @param WC_Order $order
+             */
+            do_action(self::ACTION_AFTER_PAYMENT_EXECUTION, $payment, $order);
         } catch (PayPalConnectionException $exc) {
             $this->checkoutDropper->abortCheckout();
 

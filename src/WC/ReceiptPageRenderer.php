@@ -12,6 +12,8 @@ namespace WCPayPalPlus\WC;
 
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Order\OrderFactory;
+use WCPayPalPlus\Payment\PaymentPatcher;
+use WCPayPalPlus\PlusGateway\Gateway;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Payment\Session;
@@ -96,6 +98,21 @@ class ReceiptPageRenderer
         );
 
         $isSuccessPatched = $paymentPatcher->execute();
+
+        /**
+         * Action After Payment Patch
+         *
+         * @param PaymentPatcher $paymentPatcher
+         * @oparam bool $isSuccessPatched
+         * @param CheckoutDropper $checkoutDropper
+         */
+        do_action(
+            Gateway::ACTION_AFTER_PAYMENT_PATCH,
+            $paymentPatcher,
+            $isSuccessPatched,
+            $this->checkoutDropper
+        );
+
         !$isSuccessPatched and $this->checkoutDropper->abortCheckout();
 
         wp_enqueue_script('paypalplus-woocommerce-plus-paypal-redirect');
