@@ -58,7 +58,7 @@ class AjaxJsonRequest
 
         unset($data['exception']);
 
-        $this->logger->error($message);
+        $this->logger->error($message, [$data, $status]);
 
         wp_send_json_error($data, $status);
     }
