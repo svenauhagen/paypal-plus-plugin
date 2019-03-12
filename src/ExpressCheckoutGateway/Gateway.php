@@ -223,7 +223,8 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
                 ];
                 $webProfile = new WCWebExperienceProfile(
                     $config,
-                    $apiContext
+                    $apiContext,
+                    $this->logger
                 );
                 $optionKey = $this->experienceProfileKey();
                 $_POST[$this->get_field_key($optionKey)] = $webProfile->save_profile();
