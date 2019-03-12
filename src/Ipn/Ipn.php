@@ -92,8 +92,6 @@ class Ipn
             // Ensure an order exists
             $this->orderFactory->createByRequest($this->request);
             $this->updatePaymentStatus();
-            // TODO Why exiting here?
-            exit;
         } catch (Exception $exc) {
             $this->logger->error($exc);
         }
