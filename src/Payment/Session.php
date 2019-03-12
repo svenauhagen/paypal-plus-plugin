@@ -19,7 +19,7 @@ use WooCommerce;
  * @package WCPayPalPlus\Payment
  */
 // TODO May be better to move it outside of the payment and keep it as the General Session for PPP.
-//      Because of `CHOSEN_PAYMENT_METHOD`
+//      Because of `CHOSEN_PAYMENT_METHOD`. See how the Payment set data for Express checkout will be implemented.
 class Session
 {
     const ORDER_ID = 'ppp_order_id';
