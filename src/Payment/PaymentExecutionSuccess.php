@@ -45,26 +45,21 @@ class PaymentExecutionSuccess implements RequestSuccessHandler
     }
 
     /**
-     * Execute!
+     * @inheritdoc
      */
     public function execute()
     {
-        $order = $this->data->get_order();
         if ($this->data->is_approved()) {
             $this->updateOrder();
 
             $this->wooCommerce->cart->empty_cart();
-            $redirectUrl = $order->get_checkout_order_received_url();
         } else {
             $notice = sprintf(
                 __('There was an error executing the payment. Payment state: %s', 'woo-paypalplus'),
                 $this->data->get_payment_state()
             );
             wc_add_notice($notice, 'error');
-            $redirectUrl = wc_get_cart_url();
         }
-
-        return $redirectUrl;
     }
 
     /**
