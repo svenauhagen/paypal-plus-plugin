@@ -96,6 +96,23 @@ class CheckoutAddressOverride
     }
 
     /**
+     * @param array $fields
+     *
+     * @return array
+     */
+    public function filterBillingFields(Array $fields)
+    {
+        if (! $this->isExpressCheckout()) {
+            return $fields;
+        }
+
+        $fields['billing_phone']['required'] = false;
+        $fields['billing_phone']['custom_attributes'] = ['readonly' => 'readonly'];
+
+        return $fields;
+    }
+
+    /**
      * Add addresses to checkout post vars
      */
     public function addAddressesToCheckoutPostVars()
