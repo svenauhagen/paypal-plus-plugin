@@ -57,8 +57,6 @@ class PaymentCreatorFactory
         $this->session = $session;
     }
 
-    // TODO Do not pass PlusStorable but Storable and inject it into constructor. Pay attention to the Dependency Loop.
-    //      We cannot use the PlusStorable here since we have to deal with ECS Gateway too.
     /**
      * @param Storable $settings
      * @param $returnUrl
