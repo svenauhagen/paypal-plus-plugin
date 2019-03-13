@@ -62,6 +62,11 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
         paypal.Button.render({
             ...this.buttonConfiguration,
 
+            /**
+             * Do Payment
+             *
+             * @returns {*}
+             */
             payment: () => {
                 const formData = this.formDataByElement(element);
                 formData.append('task', TASK_CREATE_ORDER);
@@ -79,6 +84,13 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
                     });
             },
 
+            /**
+             * Execute Authorization
+             *
+             * @param data
+             * @param actions
+             * @returns {*}
+             */
             onAuthorize: (data, actions) => {
                 // TODO Ensure return_url exists.
                 const formData = this.formDataByElement(element);
@@ -93,18 +105,24 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
                     .submit(formData)
                     .then((response) => {
                         if (response.success) {
-                            window.location.href = data.returnUrl;
-                            // TODO Block the form UI? Prevent to do stuffs.
+                            const returnUrl = 'returnUrl' in data ? data.returnUrl : '';
+                            returnUrl && actions.redirect(null, returnUrl);
                         }
 
                         // TODO Show alert to the user
                     });
             },
 
-            onCancel: () => {
-                console.log('ON CANCEL', arguments);
-                // TODO Update the mini cart if context is product. Unless we want to do a redirect.
-                // TODO Redirect the user to the page set in the options.
+            /**
+             * Perform Action when a Payment get Cancelled
+             *
+             * @param data
+             * @param actions
+             */
+            onCancel: (data, actions) => {
+                actions.close();
+                const cancelUrl = 'cancelUrl' in data ? data.cancelUrl : '';
+                cancelUrl && actions.redirect(null, cancelUrl);
             },
 
             onError: () => {
