@@ -149,7 +149,7 @@ class ServiceProvider implements BootstrappableServiceProvider
             'woocommerce_checkout_process',
             [$container[CheckoutAddressOverride::class], 'addAddressesToCheckoutPostVars']
         );
-        add_filter(
+        add_action(
             CartCheckout::ACTION_STORE_PAYMENT_DATA,
             [$container[StorePaymentData::class], 'addFromAction']
         );
