@@ -24,16 +24,6 @@ class CheckoutAddressOverride
      */
     private $woocommerce;
 
-    /**
-     * @var \WC_Cart
-     */
-    private $cart;
-
-    /**
-     * @var \WC_Customer
-     */
-    private $customer;
-
     public function __construct(\WooCommerce $woocommerce)
     {
         $this->woocommerce = $woocommerce;
@@ -69,8 +59,9 @@ class CheckoutAddressOverride
     {
         ?>
         <h3><?php _e('Billing details', '' ); ?></h3>
-        <?php
-        print_r($this->woocommerce->customer->get_billing());
+        <?php echo $this->woocommerce->countries->get_formatted_address($this->woocommerce->customer->get_billing()); ?>
+        <br />
+        <?php echo esc_html($this->woocommerce->customer->get_billing_email());
     }
 
     public function shippingDetails()
@@ -78,41 +69,27 @@ class CheckoutAddressOverride
         ?>
         <h3><?php _e('Shipping details', '' ); ?></h3>
         <?php
-        print_r($this->woocommerce->customer->get_shipping());
+        echo $this->woocommerce->countries->get_formatted_address(
+            $this->woocommerce->customer->get_shipping()
+        );
     }
 
+    /**
+     * @param array $fields
+     *
+     * @return array
+     */
     public function filterDefaultAddressFields(Array $fields)
     {
         if (! $this->isExpressCheckout()) {
             return $fields;
         }
 
-        if (method_exists($this->cart, 'needs_shipping') &&
-            ! $this->cart->needs_shipping()
-        ) {
-            $notRequiredFields = ['address_1', 'city', 'postcode', 'country'];
-            foreach ($notRequiredFields as $notRequiredField) {
-                if (array_key_exists($notRequiredField, $fields)) {
-                    $fields[$notRequiredField]['required'] = false;
-                }
+        foreach ($fields as $key => $field) {
+            if (!empty($field['required'])) {
+                $fields[$key]['required'] = false;
             }
-        }
-
-        if (array_key_exists('state', $fields)) {
-            $fields['state']['required'] = false;
-        }
-
-        return $fields;
-    }
-
-    public function filterBillingFields(Array $fields)
-    {
-        if (! $this->isExpressCheckout()) {
-            return $fields;
-        }
-
-        if (array_key_exists('billing_phone', $fields)) {
-            $fields['billing_phone']['required'] = 'no';
+            $fields[$key]['custom_attributes'] = ['readonly' => 'readonly'];
         }
 
         return $fields;
@@ -132,7 +109,9 @@ class CheckoutAddressOverride
             return;
         }
 
-        $_POST['ship_to_different_address'] = $this->woocommerce->cart->needs_shipping_address() ? 1 : 0;
+        $customer = $this->woocommerce->customer;
+
+        $_POST['ship_to_different_address'] = 1;
 
         $billingFields = [
             'first_name',
@@ -149,7 +128,8 @@ class CheckoutAddressOverride
         ];
 
         foreach ($billingFields as $key) {
-            $_POST['billing_' . $key] = $this->woocommerce->customer->get_billing_{$key};
+            $methodName = "get_billing_{$key}";
+            $_POST['billing_' . $key] = $customer->$methodName();
         }
 
         $shippingFields = [
@@ -165,7 +145,8 @@ class CheckoutAddressOverride
         ];
 
         foreach ($shippingFields as $key) {
-            $_POST['shipping_' . $key] = $this->woocommerce->customer->get_shipping_{$key};
+            $methodName = "get_shipping_{$key}";
+            $_POST['shipping_' . $key] = $customer->$methodName();
         }
     }
 }

@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use Inpsyde\Lib\PayPal\Api\Payment;
+use Inpsyde\Lib\PayPal\Api\Transaction;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Payment\Session;
 
@@ -63,9 +64,46 @@ class StorePaymentData
         $apiContext = ApiContextFactory::getFromConfiguration();
         $payment = Payment::get($paymentId, $apiContext);
         $payer = $payment->getPayer();
+        $payerInfo = $payer->getPayerInfo();
+        $billingAddress = $payerInfo->getBillingAddress();
+        $transactions = $payment->getTransactions();
+        if (!$transactions || ! $transactions[0] instanceof Transaction) {
+            return;
+        }
+        $itemList = $transactions[0]->getItemList();
+        $shippingAddress = $itemList->getShippingAddress();
 
-        $this->woocommerce->customer->set_billing_address_1('test');
-        $this->woocommerce->customer->set_shipping_address_1('test');
+        $this->woocommerce->customer->set_billing_company('');
+        $this->woocommerce->customer->set_billing_first_name($payerInfo->getFirstName());
+        $this->woocommerce->customer->set_billing_last_name($payerInfo->getLastName());
+        $this->woocommerce->customer->set_billing_email($payerInfo->getEmail());
+        $this->woocommerce->customer->set_billing_phone($payerInfo->getPhone());
+        $this->woocommerce->customer->set_billing_address_1('');
+        $this->woocommerce->customer->set_billing_address_2('');
+        $this->woocommerce->customer->set_billing_city('');
+        $this->woocommerce->customer->set_billing_country($payerInfo->getCountryCode());
+        $this->woocommerce->customer->set_billing_postcode('');
+        $this->woocommerce->customer->set_billing_state($payment->getState());
+        if ($billingAddress) {
+            $this->woocommerce->customer->set_billing_address_1($billingAddress->getLine1());
+            $this->woocommerce->customer->set_billing_address_2($billingAddress->getLine2());
+            $this->woocommerce->customer->set_billing_city($billingAddress->getCity());
+            $this->woocommerce->customer->set_billing_country($billingAddress->getCountryCode());
+            $this->woocommerce->customer->set_billing_postcode($billingAddress->getPostalCode());
+            $this->woocommerce->customer->set_billing_state($billingAddress->getState());
+        }
+
+        $this->woocommerce->customer->set_shipping_company('');
+        list($firstName, $lastName) = explode(' ', $shippingAddress->getRecipientName(), 2);
+        $this->woocommerce->customer->set_shipping_first_name($firstName);
+        $this->woocommerce->customer->set_shipping_last_name($lastName);
+        $this->woocommerce->customer->set_shipping_address_1($shippingAddress->getLine1());
+        $this->woocommerce->customer->set_shipping_address_2($shippingAddress->getLine2());
+        $this->woocommerce->customer->set_shipping_city($shippingAddress->getCity());
+        $this->woocommerce->customer->set_shipping_country($shippingAddress->getCountryCode());
+        $this->woocommerce->customer->set_shipping_postcode($shippingAddress->getPostalCode());
+        $this->woocommerce->customer->set_shipping_state($shippingAddress->getState());
+
         $this->woocommerce->customer->save();
     }
 }
