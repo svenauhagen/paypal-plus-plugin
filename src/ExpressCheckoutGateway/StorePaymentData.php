@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
+use Inpsyde\Lib\PayPal\Api\Payment;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Payment\Session;
 
@@ -41,7 +42,7 @@ class StorePaymentData
      * @return array
      * @throws \Exception
      */
-    public function addFromFilter(Array $data)
+    public function addFromAction(Array $data)
     {
         $this->woocommerce->session->set(Session::PAYER_ID, $data[CartCheckout::INPUT_PAYER_ID_NAME]);
         $this->woocommerce->session->set(Session::PAYMENT_ID, $data[CartCheckout::INPUT_PAYMENT_ID_NAME]);
@@ -60,9 +61,11 @@ class StorePaymentData
         \assert(is_string($paymentId));
 
         $apiContext = ApiContextFactory::getFromConfiguration();
+        $payment = Payment::get($paymentId, $apiContext);
+        $payer = $payment->getPayer();
 
         $this->woocommerce->customer->set_billing_address_1('test');
-        $this->woocommerce->customer->set_shipping_address('test');
+        $this->woocommerce->customer->set_shipping_address_1('test');
         $this->woocommerce->customer->save();
     }
 }

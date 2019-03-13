@@ -31,7 +31,7 @@ class CartCheckout
     const TASK_CREATE_ORDER = 'createOrder';
     const TASK_STORE_PAYMENT_DATA = 'storePaymentData';
 
-    const FILTER_STORE_PAYMENT_DATA = 'woopaypalplus.exc_store_payment_data';
+    const ACTION_STORE_PAYMENT_DATA = 'woopaypalplus.exc_store_payment_data';
 
     /**
      * @var PaymentCreatorFactory
@@ -141,7 +141,7 @@ class CartCheckout
             $this->ajaxJsonRequest->sendJsonError(['success' => false]);
         }
 
-        $data = apply_filters(self::FILTER_STORE_PAYMENT_DATA, $data);
+        do_action(self::ACTION_STORE_PAYMENT_DATA, $data);
 
         $this->ajaxJsonRequest->sendJsonSuccess(['success' => true]);
     }

@@ -150,8 +150,8 @@ class ServiceProvider implements BootstrappableServiceProvider
             [$container[CheckoutAddressOverride::class], 'addAddressesToCheckoutPostVars']
         );
         add_filter(
-            'woocommerce_billing_fields',
-            [$container[StorePaymentData::class], 'addFromFilter']
+            CartCheckout::ACTION_STORE_PAYMENT_DATA,
+            [$container[StorePaymentData::class], 'addFromAction']
         );
 
         add_action(
