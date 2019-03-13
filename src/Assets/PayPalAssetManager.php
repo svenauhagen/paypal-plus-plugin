@@ -51,7 +51,7 @@ class PayPalAssetManager
      */
     public function enqueueFrontEndScripts()
     {
-        if (isGatewayDisabled($this->expressCheckoutGateway)) {
+        if (!isGatewayDisabled($this->expressCheckoutGateway)) {
             wp_enqueue_script(
                 'paypal-express-checkout',
                 'https://www.paypalobjects.com/api/checkout.js',
@@ -61,7 +61,7 @@ class PayPalAssetManager
             );
         }
 
-        if ($this->isCheckout() && isGatewayDisabled($this->plusGateway)) {
+        if ($this->isCheckout() && !isGatewayDisabled($this->plusGateway)) {
             wp_enqueue_script(
                 'ppplus',
                 'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
