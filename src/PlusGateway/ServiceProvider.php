@@ -12,7 +12,6 @@ namespace WCPayPalPlus\PlusGateway;
 
 use function WCPayPalPlus\isGatewayDisabled;
 use WC_Logger_Interface as Logger;
-use WCPayPalPlus\Api\CredentialProvider;
 use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Refund\RefundFactory;
@@ -22,6 +21,7 @@ use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Setting\SharedSettingsModel;
 use WooCommerce;
 
 /**
@@ -38,8 +38,10 @@ class ServiceProvider implements BootstrappableServiceProvider
         $container[FrameRenderer::class] = function () {
             return new FrameRenderer();
         };
-        $container[GatewaySettingsModel::class] = function () {
-            return new GatewaySettingsModel();
+        $container[GatewaySettingsModel::class] = function (Container $container) {
+            return new GatewaySettingsModel(
+                $container[SharedSettingsModel::class]
+            );
         };
         $container[DefaultGatewayOverride::class] = function (Container $container) {
             return new DefaultGatewayOverride(
@@ -51,7 +53,6 @@ class ServiceProvider implements BootstrappableServiceProvider
             return new Gateway(
                 $container[WooCommerce::class],
                 $container[FrameRenderer::class],
-                $container[CredentialProvider::class],
                 $container[CredentialValidator::class],
                 $container[GatewaySettingsModel::class],
                 $container[RefundFactory::class],

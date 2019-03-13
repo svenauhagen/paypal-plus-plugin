@@ -287,7 +287,10 @@ class OrderUpdater
      */
     public function payment_status_canceled_reversal()
     {
-        do_action('wc_paypal_plus__ipn_payment_update', 'canceled_reversal',
-            $this->settingRepository);
+        do_action(
+            'wc_paypal_plus__ipn_payment_update',
+            'canceled_reversal',
+            $this->settingRepository
+        );
     }
 }

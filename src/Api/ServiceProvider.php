@@ -19,6 +19,7 @@ use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\IntegrationServiceProvider;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\PlusGateway\Gateway;
+use WC_Log_Levels as LogLevels;
 
 /**
  * Class ServiceProvider
@@ -36,9 +37,6 @@ class ServiceProvider implements IntegrationServiceProvider
         };
         $container[PayPalCredentialManager::class] = function () {
             return PayPalCredentialManager::getInstance();
-        };
-        $container[CredentialProvider::class] = function () {
-            return new CredentialProvider();
         };
         $container[CredentialValidator::class] = function (Container $container) {
             return new CredentialValidator(
@@ -63,7 +61,7 @@ class ServiceProvider implements IntegrationServiceProvider
             [
                 'log.LogEnabled' => '1',
                 'log.LogLevel' => $container[PlusStorable::class]->isSandboxed()
-                    ? \WC_Log_Levels::DEBUG : \WC_Log_Levels::INFO,
+                    ? LogLevels::DEBUG : LogLevels::INFO,
                 'log.AdapterFactory' => PayPalSdkLogFactory::class,
             ]
         );
@@ -77,7 +75,7 @@ class ServiceProvider implements IntegrationServiceProvider
             );
         }
 
-        // TODO Credentials have to be provided by `CredentialProvider`
+        // TODO Credentials have to be provided by a `CredentialProvider` class
         //      Them are needed by Express Checkout
         $container[PayPalCredentialManager::class]->setCredentialObject(
             new OAuthTokenCredential(

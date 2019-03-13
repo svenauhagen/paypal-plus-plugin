@@ -11,21 +11,11 @@
 namespace WCPayPalPlus\Setting;
 
 /**
- * Class PlusRepositoryHelper
+ * Trait SharedRepositoryHelper
  * @package WCPayPalPlus\Setting
  */
-trait PlusRepositoryHelper
+trait SharedRepositoryTrait
 {
-    /**
-     * @inheritdoc
-     */
-    public function isDisableGatewayOverrideEnabled()
-    {
-        $option = $this->get_option(self::OPTION_DISABLE_GATEWAY_OVERRIDE_NAME, self::OPTION_OFF);
-
-        return $option === self::OPTION_ON;
-    }
-
     /**
      * @inheritdoc
      */
@@ -39,19 +29,11 @@ trait PlusRepositoryHelper
     /**
      * @inheritdoc
      */
-    public function legalNotes()
-    {
-        return $this->get_option('legal_note', '');
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function experienceProfileId()
     {
         $option = $this->isSandboxed()
             ? PlusStorable::OPTION_PROFILE_ID_SANDBOX_NAME
-            : PlusStorable::OPTION_PROFILE_ID_LIVE_NAME;
+            : PlusStorable::OPTION_PROFILE_ID_PRODUCTION_NAME;
 
         return $this->get_option($option, '');
     }
@@ -61,7 +43,7 @@ trait PlusRepositoryHelper
      */
     public function cancelUrl()
     {
-        $option = $this->get_option(PlusStorable::OPTION_CANCEL_URL_NAME, '');
+        $option = $this->get_option(Storable::OPTION_CANCEL_URL_NAME, '');
 
         switch ($option) {
             case 'cart':
@@ -90,15 +72,7 @@ trait PlusRepositoryHelper
      */
     public function cancelCustomUrl()
     {
-        return $this->get_option(PlusStorable::OPTION_CANCEL_CUSTOM_URL_NAME, '');
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function invoicePrefix()
-    {
-        return $this->get_option(PlusStorable::OPTION_INVOICE_PREFIX, '');
+        return $this->get_option(Storable::OPTION_CANCEL_CUSTOM_URL_NAME, '');
     }
 
     /**
@@ -115,5 +89,37 @@ trait PlusRepositoryHelper
     public function userAgent()
     {
         return 'WooCommerce/' . $this->wooCommerce->version;
+    }
+
+    /**
+     * @return string
+     */
+    public function clientIdSandBox()
+    {
+        return $this->get_option(Storable::OPTION_CLIENT_ID_SANDBOX, '');
+    }
+
+    /**
+     * @return string
+     */
+    public function secretIdSandBox()
+    {
+        return $this->get_option(Storable::OPTION_SECRET_ID_SANDBOX, '');
+    }
+
+    /**
+     * @return string
+     */
+    public function clientIdProduction()
+    {
+        return $this->get_option(Storable::OPTION_CLIENT_ID, '');
+    }
+
+    /**
+     * @return string
+     */
+    public function secretIdProduction()
+    {
+        return $this->get_option(Storable::OPTION_SECRET_ID, '');
     }
 }

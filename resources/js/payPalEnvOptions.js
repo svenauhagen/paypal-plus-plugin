@@ -1,13 +1,13 @@
-const TEST_MODE_SELECTOR_ID = 'woocommerce_paypal_plus_testmode';
+const TEST_MODE_SELECTOR_ID = 'paypalplus_testmode';
 const SANDBOX_DATA_SELECTORS = [
-    'woocommerce_paypal_plus_rest_client_id_sandbox',
-    'woocommerce_paypal_plus_rest_secret_id_sandbox',
-    'woocommerce_paypal_plus_sandbox_experience_profile_id'
+    'paypalplus_rest_client_id_sandbox',
+    'paypalplus_rest_secret_id_sandbox',
+    'paypalplus_sandbox_experience_profile_id'
 ];
 const PRODUCTION_DATA_SELECTORS = [
-    'woocommerce_paypal_plus_rest_client_id',
-    'woocommerce_paypal_plus_rest_secret_id',
-    'woocommerce_paypal_plus_live_experience_profile_id'
+    'paypalplus_rest_client_id',
+    'paypalplus_rest_secret_id',
+    'paypalplus_live_experience_profile_id'
 ];
 
 /**
@@ -17,7 +17,7 @@ const PRODUCTION_DATA_SELECTORS = [
  */
 function toggleEnvFields(fieldsSelectors, style)
 {
-    fieldsSelectors.forEach((itemId, index) => {
+    fieldsSelectors.forEach(itemId => {
         const itemEl = document.querySelector(`#${itemId}`);
         if (!itemEl) {
             return;

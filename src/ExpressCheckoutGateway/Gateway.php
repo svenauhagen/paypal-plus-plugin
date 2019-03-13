@@ -14,26 +14,25 @@ use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
-use WCPayPalPlus\Api\CredentialProvider;
 use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Notice;
 use WCPayPalPlus\Payment\PaymentPatcher;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
-use WCPayPalPlus\Setting\PlusRepositoryHelper;
+use WCPayPalPlus\Setting\GatewaySharedSettingsTrait;
+use WCPayPalPlus\Setting\PlusRepositoryTrait;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\Session;
 use WCPayPalPlus\Refund\RefundFactory;
+use WCPayPalPlus\Setting\SharedRepositoryTrait;
 use WCPayPalPlus\WC\CheckoutDropper;
-use WCPayPalPlus\WC\WCWebExperienceProfile;
 use WC_Order_Refund;
 use WooCommerce;
 use WC_Payment_Gateway;
 use RuntimeException;
 use WC_Order;
-use OutOfBoundsException;
 
 /**
  * Class Gateway
@@ -41,17 +40,14 @@ use OutOfBoundsException;
  */
 class Gateway extends WC_Payment_Gateway implements PlusStorable
 {
-    use PlusRepositoryHelper;
+    use SharedRepositoryTrait;
+    use PlusRepositoryTrait;
+    use GatewaySharedSettingsTrait;
 
     const GATEWAY_ID = 'paypal_express';
     const GATEWAY_TITLE_METHOD = 'PayPal Express Checkout';
     const ACTION_AFTER_PAYMENT_EXECUTION = 'woopaypalplus.after_express_checkout_payment_execution';
     const ACTION_AFTER_PAYMENT_PATCH = 'woopaypalplus.after_express_checkout_payment_patch';
-
-    /**
-     * @var CredentialProvider
-     */
-    private $credentialProvider;
 
     /**
      * @var CredentialValidator
@@ -103,11 +99,13 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
      */
     private $paymentPatchFactory;
 
+    /**
+     * @var Logger
+     */
     private $logger;
 
     /**
      * Gateway constructor.
-     * @param CredentialProvider $credentialProvider
      * @param CredentialValidator $credentialValidator
      * @param GatewaySettingsModel $settingsModel
      * @param RefundFactory $refundFactory
@@ -119,7 +117,6 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
      * @param Logger $logger
      */
     public function __construct(
-        CredentialProvider $credentialProvider,
         CredentialValidator $credentialValidator,
         GatewaySettingsModel $settingsModel,
         RefundFactory $refundFactory,
@@ -131,7 +128,6 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         Logger $logger
     ) {
 
-        $this->credentialProvider = $credentialProvider;
         $this->credentialValidator = $credentialValidator;
         $this->settingsModel = $settingsModel;
         $this->refundFactory = $refundFactory;
@@ -141,12 +137,15 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         $this->checkoutDropper = $checkoutDropper;
         $this->paymentPatchFactory = $paymentPatchFactory;
         $this->logger = $logger;
-
         $this->id = self::GATEWAY_ID;
+
+        $this->init_form_fields();
+        $this->init_settings();
+
         $this->title = $this->get_option('title');
         $this->method_title = self::GATEWAY_TITLE_METHOD;
         $this->description = $this->get_option('description');
-        $this->method_description = _x(
+        $this->method_description = esc_html_x(
             'Allow customers to Checkout Product and cart directly.',
             'gateway-settings',
             'woo-paypalplus'
@@ -157,9 +156,6 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
             'products',
             'refunds',
         ];
-
-        $this->init_form_fields();
-        $this->init_settings();
     }
 
     /**
@@ -167,7 +163,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
      */
     public function init_form_fields()
     {
-        $this->form_fields = $this->settingsModel->settings();
+        $this->form_fields = $this->settingsModel->settings($this);
     }
 
     /**
@@ -205,58 +201,6 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * @return bool|void
-     */
-    public function process_admin_options()
-    {
-        $credentials = $this->credentialProvider->byRequest($this->isSandboxed());
-        $apiContext = ApiContextFactory::getFromCredentials($credentials);
-        list($maybeValid, $message) = $this->credentialValidator->ensureCredential($apiContext);
-
-        switch ($maybeValid) {
-            case true:
-                $config = [
-                    'checkout_logo' => $this->get_option('checkout_logo'),
-                    'local_id' => $this->experienceProfileId(),
-                    'brand_name' => $this->get_option('brand_name'),
-                    'country' => $this->get_option('country'),
-                ];
-                $webProfile = new WCWebExperienceProfile(
-                    $config,
-                    $apiContext,
-                    $this->logger
-                );
-                $optionKey = $this->experienceProfileKey();
-                $_POST[$this->get_field_key($optionKey)] = $webProfile->save_profile();
-                break;
-            case false:
-                // phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected
-                unset($_POST[$this->get_field_key('enabled')]);
-                $this->enabled = 'no';
-
-                $this->add_error(sprintf(
-                    __(
-                        'Your API credentials are either missing or invalid: %s',
-                        'woo-paypalplus'
-                    ),
-                    $message
-                ));
-                break;
-        }
-
-        $this->data = $this->get_post_data();
-        $checkoutLogoUrl = $this->ensureCheckoutLogoUrl(
-            $this->data['woocommerce_paypal_plus_checkout_logo']
-        );
-
-        if (!$checkoutLogoUrl) {
-            return;
-        }
-
-        parent::process_admin_options();
-    }
-
-    /**
      * @param array $formFields
      * @param bool $echo
      * @return false|string
@@ -290,7 +234,6 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
      *
      * @param int $orderId
      * @return array
-     * @throws OutOfBoundsException
      */
     public function process_payment($orderId)
     {
@@ -377,36 +320,10 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * @param $checkoutLogoUrl
-     * @return string
-     */
-    private function ensureCheckoutLogoUrl($checkoutLogoUrl)
-    {
-        if (strlen($checkoutLogoUrl) > 127) {
-            $this->add_error(
-                __('Checkout Logo cannot contains more than 127 characters.', 'woo-paypalplus')
-            );
-            return '';
-        }
-
-        if (strpos($checkoutLogoUrl, 'https') === false) {
-            $this->add_error(
-                __(
-                    'Checkout Logo must use the http secure protocol HTTPS. EG. (https://my-url)',
-                    'woo-paypalplus'
-                )
-            );
-            return '';
-        }
-
-        return $checkoutLogoUrl;
-    }
-
-    /**
      * @param $output
      * @param $message
      */
-    private function credentialInformations(&$output, $message)
+    private function credentialInformation(&$output, $message)
     {
         $output .= sprintf(
             '<div><p>%s</p></div>',
@@ -422,7 +339,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
      */
     private function invalidPaymentMessage(&$output)
     {
-        $this->credentialInformations(
+        $this->credentialInformation(
             $output,
             sprintf(
                 '<strong class="error-text">%s</strong>',
@@ -449,19 +366,9 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
                 'woo-paypalplus'
             );
 
-        $this->credentialInformations(
+        $this->credentialInformation(
             $output,
             sprintf('<strong>%s</strong>', $msgSandbox)
         );
-    }
-
-    /**
-     * @return string
-     */
-    private function experienceProfileKey()
-    {
-        return $this->isSandboxed()
-            ? PlusStorable::OPTION_PROFILE_ID_SANDBOX_NAME
-            : PlusStorable::OPTION_PROFILE_ID_LIVE_NAME;
     }
 }

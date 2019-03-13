@@ -17,9 +17,9 @@ use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Setting\SharedSettingsModel;
 use WCPayPalPlus\Utils\AjaxJsonRequest;
 use WCPayPalPlus\Request\Request;
-use WCPayPalPlus\Api\CredentialProvider;
 use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Payment\PaymentExecutionFactory;
@@ -43,12 +43,13 @@ class ServiceProvider implements BootstrappableServiceProvider
     {
         $ajaxNonce = new WpNonce(AjaxHandler::ACTION . '_nonce');
 
-        $container[GatewaySettingsModel::class] = function () {
-            return new GatewaySettingsModel();
+        $container[GatewaySettingsModel::class] = function (Container $container) {
+            return new GatewaySettingsModel(
+                $container[SharedSettingsModel::class]
+            );
         };
         $container[Gateway::class] = function (Container $container) {
             return new Gateway(
-                $container[CredentialProvider::class],
                 $container[CredentialValidator::class],
                 $container[GatewaySettingsModel::class],
                 $container[RefundFactory::class],
