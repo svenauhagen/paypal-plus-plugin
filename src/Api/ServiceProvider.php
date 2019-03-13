@@ -17,7 +17,7 @@ use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Log\PayPalSdkLogFactory;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\IntegrationServiceProvider;
-use WCPayPalPlus\Setting\PlusStorable;
+use WCPayPalPlus\Setting\Storable;
 use WCPayPalPlus\PlusGateway\Gateway;
 use WC_Log_Levels as LogLevels;
 
@@ -50,9 +50,11 @@ class ServiceProvider implements IntegrationServiceProvider
      */
     public function integrate(Container $container)
     {
+        $isSandBoxed = $container[Storable::class]->isSandboxed();
+
         $container[PayPalConfigManager::class]->addConfigs(
             [
-                'mode' => $container[PlusStorable::class]->isSandboxed() ? 'SANDBOX' : 'LIVE',
+                'mode' => $isSandBoxed ? 'SANDBOX' : 'LIVE',
                 'http.headers.PayPal-Partner-Attribution-Id' => 'WooCommerce_Cart_Plus',
             ]
         );
@@ -60,8 +62,7 @@ class ServiceProvider implements IntegrationServiceProvider
         $container[PayPalConfigManager::class]->addConfigs(
             [
                 'log.LogEnabled' => '1',
-                'log.LogLevel' => $container[PlusStorable::class]->isSandboxed()
-                    ? LogLevels::DEBUG : LogLevels::INFO,
+                'log.LogLevel' => $isSandBoxed ? LogLevels::DEBUG : LogLevels::INFO,
                 'log.AdapterFactory' => PayPalSdkLogFactory::class,
             ]
         );
@@ -83,7 +84,7 @@ class ServiceProvider implements IntegrationServiceProvider
                 $container[Gateway::class]->get_option('rest_secret_id')
             )
         );
-        if ($container[PlusStorable::class]->isSandboxed()) {
+        if ($isSandBoxed) {
             $container[PayPalCredentialManager::class]->setCredentialObject(
                 new OAuthTokenCredential(
                     $container[Gateway::class]->get_option('rest_client_id_sandbox'),

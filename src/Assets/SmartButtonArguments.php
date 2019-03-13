@@ -11,7 +11,7 @@
 namespace WCPayPalPlus\Assets;
 
 use WC_Admin_Settings as Settings;
-use WCPayPalPlus\Setting\PlusStorable;
+use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 
 /**
  * Class SmartButtonArguments
@@ -31,15 +31,15 @@ class SmartButtonArguments
     ];
 
     /**
-     * @var PlusStorable
+     * @var ExpressCheckoutStorable
      */
     private $settingRepository;
 
     /**
      * SmartButtonArguments constructor.
-     * @param PlusStorable $settingRepository
+     * @param ExpressCheckoutStorable $settingRepository
      */
-    public function __construct(PlusStorable $settingRepository)
+    public function __construct(ExpressCheckoutStorable $settingRepository)
     {
         $this->settingRepository = $settingRepository;
     }

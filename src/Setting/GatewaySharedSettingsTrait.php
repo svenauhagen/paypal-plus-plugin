@@ -131,8 +131,8 @@ trait GatewaySharedSettingsTrait
     private function experienceProfileKey()
     {
         return $this->isSandboxed()
-            ? PlusStorable::OPTION_PROFILE_ID_SANDBOX_NAME
-            : PlusStorable::OPTION_PROFILE_ID_PRODUCTION_NAME;
+            ? Storable::OPTION_PROFILE_ID_SANDBOX_NAME
+            : Storable::OPTION_PROFILE_ID_PRODUCTION_NAME;
     }
 
     /**
@@ -147,8 +147,8 @@ trait GatewaySharedSettingsTrait
         $clientIdKey = $isSandboxed ? Storable::OPTION_CLIENT_ID_SANDBOX : Storable::OPTION_CLIENT_ID;
         $clientSecretKey = $isSandboxed ? Storable::OPTION_SECRET_ID_SANDBOX : Storable::OPTION_SECRET_ID;
 
-        $clientIdKey = "{$this->plugin_id}{$this->id}_{$clientIdKey}";
-        $clientSecretKey = "{$this->plugin_id}{$this->id}_{$clientSecretKey}";
+        $clientIdKey = Storable::OPTION_PREFIX . $clientIdKey;
+        $clientSecretKey = Storable::OPTION_PREFIX . $clientSecretKey;
 
         $clientId = (string)filter_input(INPUT_POST, $clientIdKey, FILTER_SANITIZE_STRING);
         $clientSecret = (string)filter_input(INPUT_POST, $clientSecretKey, FILTER_SANITIZE_STRING);

@@ -13,10 +13,10 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\Session;
-use WCPayPalPlus\Setting\PlusStorable;
+use WCPayPalPlus\Setting\ExpressCheckoutStorable;
+use WCPayPalPlus\Setting\Storable;
 use WCPayPalPlus\Utils\AjaxJsonRequest;
 use Exception;
-use OutOfBoundsException;
 use WooCommerce;
 
 /**
@@ -39,7 +39,7 @@ class CartCheckout
     private $paymentCreatorFactory;
 
     /**
-     * @var PlusStorable
+     * @var Storable
      */
     private $settingRepository;
 
@@ -60,14 +60,14 @@ class CartCheckout
 
     /**
      * CartCheckout constructor.
-     * @param PlusStorable $settingRepository
+     * @param ExpressCheckoutStorable $settingRepository
      * @param PaymentCreatorFactory $paymentCreatorFactory
      * @param AjaxJsonRequest $ajaxJsonRequest
      * @param WooCommerce $wooCommerce
      * @param Session $session
      */
     public function __construct(
-        PlusStorable $settingRepository,
+        ExpressCheckoutStorable $settingRepository,
         PaymentCreatorFactory $paymentCreatorFactory,
         AjaxJsonRequest $ajaxJsonRequest,
         WooCommerce $wooCommerce,
@@ -126,7 +126,6 @@ class CartCheckout
 
     /**
      * Store the data needed for payment into session
-     * @throws OutOfBoundsException
      */
     public function storePaymentData()
     {

@@ -14,7 +14,7 @@ use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
-use WCPayPalPlus\Setting\PlusStorable;
+use WCPayPalPlus\Setting\Storable;
 use WooCommerce;
 
 /**
@@ -40,7 +40,7 @@ class ServiceProvider implements ServiceProviderInterface
                 $container[OrderStatuses::class],
                 $container[OrderFactory::class],
                 $container[Request::class],
-                $container[PlusStorable::class],
+                $container[Storable::class],
                 $container[Logger::class]
             );
         };

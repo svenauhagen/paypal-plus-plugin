@@ -12,7 +12,7 @@ namespace WCPayPalPlus\Payment;
 
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Order\OrderFactory;
-use WCPayPalPlus\Setting\PlusStorable;
+use WCPayPalPlus\Setting\Storable;
 use WC_Order;
 use WC_Order_Refund;
 use RuntimeException;
@@ -60,12 +60,12 @@ class PaymentCreatorFactory
     // TODO Do not pass PlusStorable but Storable and inject it into constructor. Pay attention to the Dependency Loop.
     //      We cannot use the PlusStorable here since we have to deal with ECS Gateway too.
     /**
-     * @param PlusStorable $settings
+     * @param Storable $settings
      * @param $returnUrl
      * @param $notifyUrl
      * @return PaymentCreator
      */
-    public function create(PlusStorable $settings, $returnUrl, $notifyUrl)
+    public function create(Storable $settings, $returnUrl, $notifyUrl)
     {
         assert(is_string($returnUrl));
         assert(is_string($notifyUrl));

@@ -17,6 +17,7 @@ use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\SharedSettingsModel;
 use WCPayPalPlus\Utils\AjaxJsonRequest;
 use WCPayPalPlus\Request\Request;
@@ -26,7 +27,6 @@ use WCPayPalPlus\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\Refund\RefundFactory;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
-use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\WC\CheckoutDropper;
 use WooCommerce;
 
@@ -100,7 +100,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[CartCheckout::class] = function (Container $container) {
             return new CartCheckout(
-                $container[PlusStorable::class],
+                $container[ExpressCheckoutStorable::class],
                 $container[PaymentCreatorFactory::class],
                 $container[AjaxJsonRequest::class],
                 $container[WooCommerce::class],

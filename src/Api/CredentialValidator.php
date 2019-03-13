@@ -58,7 +58,7 @@ class CredentialValidator
 
         return [
             true,
-            _x('Credential are Valid', 'credential', ' woo-paypalplus'),
+            esc_html_x('Credential are Valid', 'credential', ' woo-paypalplus'),
         ];
     }
 }

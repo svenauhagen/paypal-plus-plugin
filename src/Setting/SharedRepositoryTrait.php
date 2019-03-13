@@ -32,8 +32,8 @@ trait SharedRepositoryTrait
     public function experienceProfileId()
     {
         $option = $this->isSandboxed()
-            ? PlusStorable::OPTION_PROFILE_ID_SANDBOX_NAME
-            : PlusStorable::OPTION_PROFILE_ID_PRODUCTION_NAME;
+            ? Storable::OPTION_PROFILE_ID_SANDBOX_NAME
+            : Storable::OPTION_PROFILE_ID_PRODUCTION_NAME;
 
         return $this->get_option($option, '');
     }

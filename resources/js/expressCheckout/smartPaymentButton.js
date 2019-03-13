@@ -74,8 +74,11 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
                 return this.request
                     .submit(formData)
                     .then(response => {
-                        const orderId = 'orderID' in response.data ? response.data.orderID : '';
+                        if (!'data' in response) {
+                            // TODO Do something to inform user about the problem and close the flow.
+                        }
 
+                        const orderId = 'orderID' in response.data ? response.data.orderID : '';
                         if (!orderId) {
                             // TODO Do something to inform user about the problem and close the flow.
                         }
@@ -125,8 +128,8 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
                 cancelUrl && actions.redirect(null, cancelUrl);
             },
 
-            onError: () => {
-                console.log('ON ERROR', arguments);
+            onError: (data, actions) => {
+                console.log('ON ERROR', data, actions);
                 // TODO Redirect to cart and show customizable notice with message.
             },
 

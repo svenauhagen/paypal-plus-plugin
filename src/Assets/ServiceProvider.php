@@ -15,7 +15,7 @@ use WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
 use WCPayPalPlus\PluginProperties;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
-use WCPayPalPlus\Setting\PlusStorable;
+use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 
 class ServiceProvider implements BootstrappableServiceProvider
 {
@@ -32,7 +32,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[SmartButtonArguments::class] = function (Container $container) {
             return new SmartButtonArguments(
-                $container[PlusStorable::class]
+                $container[ExpressCheckoutStorable::class]
             );
         };
         $container[PayPalAssetManager::class] = function (Container $container) {
