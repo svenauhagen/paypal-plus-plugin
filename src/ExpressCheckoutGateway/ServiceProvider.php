@@ -209,10 +209,6 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     private function bootstrapAjaxRequests(Container $container)
     {
-        if (is_admin()) {
-            return;
-        }
-
         add_action(
             'wp_ajax_' . AjaxHandler::ACTION,
             [$container[AjaxHandler::class], 'handle']
