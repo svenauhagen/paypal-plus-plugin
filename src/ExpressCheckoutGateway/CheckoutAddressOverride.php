@@ -133,41 +133,16 @@ class CheckoutAddressOverride
         $customer = $this->woocommerce->customer;
 
         $_POST['ship_to_different_address'] = 1;
-
-        $billingFields = [
-            'first_name',
-            'last_name',
-            'company',
-            'address_1',
-            'address_2',
-            'city',
-            'state',
-            'postcode',
-            'country',
-            'email',
-            'phone',
-        ];
-
-        foreach ($billingFields as $key) {
-            $methodName = "get_billing_{$key}";
-            $_POST['billing_' . $key] = $customer->$methodName();
+        $billingFields = $this->woocommerce->checkout()->get_checkout_fields('billing');
+        foreach ($billingFields as $key => $value) {
+            $methodName = "get_{$key}";
+            $_POST[$key] = $customer->$methodName();
         }
 
-        $shippingFields = [
-            'first_name',
-            'last_name',
-            'company',
-            'address_1',
-            'address_2',
-            'city',
-            'state',
-            'postcode',
-            'country',
-        ];
-
-        foreach ($shippingFields as $key) {
-            $methodName = "get_shipping_{$key}";
-            $_POST['shipping_' . $key] = $customer->$methodName();
+        $shippingFields = $this->woocommerce->checkout()->get_checkout_fields('shipping');
+        foreach ($shippingFields as $key => $value) {
+            $methodName = "get_{$key}";
+            $_POST[$key] = $customer->$methodName();
         }
     }
 }
