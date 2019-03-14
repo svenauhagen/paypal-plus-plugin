@@ -51,13 +51,17 @@ class SharedSettingsModel
                 'type' => 'checkbox',
                 'label' => esc_html_x('Enable PayPal Sandbox', 'shared-setting', 'woo-paypalplus'),
                 'default' => 'yes',
-                'description' => sprintf(
-                    esc_html_x(
-                        'PayPal sandbox can be used to test payments. Sign up for a <a href="%s">developer account</a>.',
+                'description' => wp_kses(
+                    _x(
+                        'PayPal sandbox can be used to test payments. Sign up for a <a href="https://developer.paypal.com/">developer account</a>.',
                         'shared-setting',
                         'woo-paypalplus'
                     ),
-                    'https://developer.paypal.com/'
+                    [
+                        'a' => [
+                            'href' => true,
+                        ],
+                    ]
                 ),
             ],
             Storable::OPTION_CLIENT_ID_SANDBOX => [
@@ -207,10 +211,15 @@ class SharedSettingsModel
                 'title' => __('PayPal Checkout Logo (190x60px)', 'woo-paypalplus'),
                 'type' => 'text',
                 'description' => sprintf(
-                    esc_html_x(
-                        'Set the absolute URL for a logo to be displayed on the PayPal checkout pages. <br/> Use https and max 127 characters.(E.G., %s).',
-                        'shared-settings',
-                        'woo-paypalplus'
+                    wp_kses(
+                        _x(
+                            'Set the absolute URL for a logo to be displayed on the PayPal checkout pages. <br/> Use https and max 127 characters.(E.G., %s).',
+                            'shared-settings',
+                            'woo-paypalplus'
+                        ),
+                        [
+                            'br' => true,
+                        ]
                     ),
                     get_site_url() . '/path/to/logo.jpg'
                 ),
