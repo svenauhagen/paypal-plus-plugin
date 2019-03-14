@@ -15,7 +15,7 @@ use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Api\CredentialValidator;
-use WCPayPalPlus\GatewayMethodsTrait;
+use WCPayPalPlus\Gateway\MethodsTrait;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Payment\PaymentPatcher;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
@@ -43,7 +43,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
     use SharedRepositoryTrait;
     use ExpressCheckoutRepositoryTrait;
     use GatewaySharedSettingsTrait;
-    use GatewayMethodsTrait;
+    use MethodsTrait;
 
     const GATEWAY_ID = 'paypal_express';
     const GATEWAY_TITLE_METHOD = 'PayPal Express Checkout';

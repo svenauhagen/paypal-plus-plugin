@@ -14,8 +14,8 @@ use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Api\CredentialValidator;
-use WCPayPalPlus\GatewayMethodsTrait;
 use WCPayPalPlus\Ipn\Ipn;
+use WCPayPalPlus\Gateway\MethodsTrait;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Payment\PaymentPatcher;
 use WCPayPalPlus\Setting\GatewaySharedSettingsTrait;
@@ -43,7 +43,7 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
     use SharedRepositoryTrait;
     use PlusRepositoryTrait;
     use GatewaySharedSettingsTrait;
-    use GatewayMethodsTrait;
+    use MethodsTrait;
 
     const GATEWAY_ID = 'paypal_plus';
     const GATEWAY_TITLE_METHOD = 'PayPal PLUS';

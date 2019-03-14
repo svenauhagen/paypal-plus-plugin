@@ -8,18 +8,21 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus;
+namespace WCPayPalPlus\Gateway;
 
 use WC_Order;
 use WC_Order_Refund;
 use WCPayPalPlus\Api\ApiContextFactory;
 use RuntimeException;
+use WCPayPalPlus\Notice\Admin as AdminNotice;
+use WCPayPalPlus\Order\OrderFactory;
 
 /**
  * Trait GatewayMethodsTrait
+ * @property OrderFactory $orderFactory
  * @package WCPayPalPlus
  */
-trait GatewayMethodsTrait
+trait MethodsTrait
 {
     /**
      * @inheritdoc
@@ -72,7 +75,7 @@ trait GatewayMethodsTrait
     {
         ob_start();
         $this->display_errors();
-        do_action(Notice\Admin::ACTION_ADMIN_MESSAGES);
+        do_action(AdminNotice::ACTION_ADMIN_MESSAGES);
         $output = ob_get_clean();
 
         list($isValid) = $this->credentialValidator->ensureCredential(
