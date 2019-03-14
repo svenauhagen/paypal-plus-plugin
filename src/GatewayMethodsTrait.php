@@ -1,0 +1,146 @@
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace WCPayPalPlus;
+
+use WC_Order;
+use WC_Order_Refund;
+use WCPayPalPlus\Api\ApiContextFactory;
+use RuntimeException;
+
+/**
+ * Trait GatewayMethodsTrait
+ * @package WCPayPalPlus
+ */
+trait GatewayMethodsTrait
+{
+    /**
+     * @inheritdoc
+     */
+    public function init_form_fields()
+    {
+        $this->form_fields = $this->settingsModel->settings($this);
+    }
+
+    /**
+     * @param int $orderId
+     * @param null $amount
+     * @param string $reason
+     * @return bool
+     * @throws RuntimeException
+     */
+    public function process_refund($orderId, $amount = null, $reason = '')
+    {
+        $order = $this->orderFactory->createById($orderId);
+
+        if (!$order instanceof WC_Order_Refund) {
+            return false;
+        }
+
+        if (!$this->can_refund_order($order)) {
+            return false;
+        }
+
+        $apiContext = ApiContextFactory::getFromConfiguration();
+        $refund = $this->refundFactory->create($order, $amount, $reason, $apiContext);
+
+        return $refund->execute();
+    }
+
+    /**
+     * @param WC_Order $order
+     * @return bool
+     */
+    public function can_refund_order($order)
+    {
+        return $order && $order->get_transaction_id();
+    }
+
+    /**
+     * @param array $formFields
+     * @param bool $echo
+     * @return false|string
+     */
+    public function generate_settings_html($formFields = [], $echo = true)
+    {
+        ob_start();
+        $this->display_errors();
+        do_action(Notice\Admin::ACTION_ADMIN_MESSAGES);
+        $output = ob_get_clean();
+
+        list($isValid) = $this->credentialValidator->ensureCredential(
+            ApiContextFactory::getFromConfiguration()
+        );
+
+        $isValid and $this->sandboxMessage($output);
+        !$isValid and $this->invalidPaymentMessage($output);
+
+        $output .= parent::generate_settings_html($formFields, $echo);
+
+        if ($echo) {
+            echo wp_kses_post($output);
+        }
+
+        return $output;
+    }
+
+    /**
+     * @param $output
+     * @param $message
+     */
+    private function credentialInformation(&$output, $message)
+    {
+        $output .= sprintf(
+            '<div><p>%s</p></div>',
+            esc_html__(
+                'Below you can see if your account is successfully hooked up to use PayPal Express Checkout.',
+                'woo-paypalplus'
+            ) . "<br />{$message}"
+        );
+    }
+
+    /**
+     * @param $output
+     */
+    private function invalidPaymentMessage(&$output)
+    {
+        $this->credentialInformation(
+            $output,
+            sprintf(
+                '<strong class="error-text">%s</strong>',
+                esc_html__(
+                    'Error connecting to the API. Check that the credentials are correct.',
+                    'woo-paypalplus'
+                )
+            )
+        );
+    }
+
+    /**
+     * @param $output
+     */
+    private function sandboxMessage(&$output)
+    {
+        $msgSandbox = $this->isSandboxed()
+            ? esc_html__(
+                'Note: This is connected to your sandbox account.',
+                'woo-paypalplus'
+            )
+            : esc_html__(
+                'Note: This is connected to your live PayPal account.',
+                'woo-paypalplus'
+            );
+
+        $this->credentialInformation(
+            $output,
+            sprintf('<strong>%s</strong>', $msgSandbox)
+        );
+    }
+}

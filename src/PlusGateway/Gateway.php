@@ -14,9 +14,9 @@ use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Api\CredentialValidator;
+use WCPayPalPlus\GatewayMethodsTrait;
 use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\Order\OrderFactory;
-use WCPayPalPlus\Notice;
 use WCPayPalPlus\Payment\PaymentPatcher;
 use WCPayPalPlus\Setting\GatewaySharedSettingsTrait;
 use WCPayPalPlus\Setting\PlusRepositoryTrait;
@@ -26,7 +26,6 @@ use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\Session;
 use WCPayPalPlus\Refund\RefundFactory;
 use WCPayPalPlus\Setting\SharedRepositoryTrait;
-use WC_Order_Refund;
 use WooCommerce;
 use WC_Payment_Gateway;
 use OutOfBoundsException;
@@ -38,11 +37,12 @@ use Exception;
  * Class Gateway
  * @package WCPayPalPlus\WC
  */
-class Gateway extends WC_Payment_Gateway implements PlusStorable
+final class Gateway extends WC_Payment_Gateway implements PlusStorable
 {
     use SharedRepositoryTrait;
     use PlusRepositoryTrait;
     use GatewaySharedSettingsTrait;
+    use GatewayMethodsTrait;
 
     const GATEWAY_ID = 'paypal_plus';
     const GATEWAY_TITLE_METHOD = 'PayPal PLUS';
@@ -159,76 +159,6 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * @inheritdoc
-     */
-    public function init_form_fields()
-    {
-        $this->form_fields = $this->settingsModel->settings($this);
-    }
-
-    /**
-     * @param int $orderId
-     * @param null $amount
-     * @param string $reason
-     * @return bool
-     * @throws RuntimeException
-     */
-    public function process_refund($orderId, $amount = null, $reason = '')
-    {
-        $order = $this->orderFactory->createById($orderId);
-
-        if (!$order instanceof WC_Order_Refund) {
-            return false;
-        }
-
-        if (!$this->can_refund_order($order)) {
-            return false;
-        }
-
-        $apiContext = ApiContextFactory::getFromConfiguration();
-        $refund = $this->refundFactory->create($order, $amount, $reason, $apiContext);
-
-        return $refund->execute();
-    }
-
-    /**
-     * @param WC_Order $order
-     * @return bool
-     */
-    public function can_refund_order($order)
-    {
-        return $order && $order->get_transaction_id();
-    }
-
-    /**
-     * @param array $formFields
-     * @param bool $echo
-     * @return false|string
-     */
-    public function generate_settings_html($formFields = [], $echo = true)
-    {
-        ob_start();
-        $this->display_errors();
-        do_action(Notice\Admin::ACTION_ADMIN_MESSAGES);
-        $output = ob_get_clean();
-
-        list($isValid) = $this->credentialValidator->ensureCredential(
-            ApiContextFactory::getFromConfiguration()
-        );
-
-        $isValid and $this->sandboxMessage($output);
-        !$isValid and $this->invalidPaymentMessage($output);
-
-        $output .= parent::generate_settings_html($formFields, $echo);
-
-        if ($echo) {
-            echo wp_kses_post($output);
-        }
-
-        return $output;
-    }
-
-    /**
      * @param int $orderId
      * @return array
      */
@@ -243,7 +173,7 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * @return void
+     * @throws OutOfBoundsException
      */
     public function payment_fields()
     {
@@ -261,6 +191,8 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
     }
 
     /**
+     * TODO Move outside here and make it a class.
+     *
      * @throws RuntimeException
      */
     public function execute_payment()
@@ -380,58 +312,5 @@ class Gateway extends WC_Payment_Gateway implements PlusStorable
         }
 
         return $locale;
-    }
-
-    /**
-     * @param $output
-     * @param $message
-     */
-    private function credentialInformations(&$output, $message)
-    {
-        $output .= sprintf(
-            '<div><p>%s</p></div>',
-            esc_html__(
-                'Below you can see if your account is successfully hooked up to use PayPal PLUS.',
-                'woo-paypalplus'
-            ) . "<br />{$message}"
-        );
-    }
-
-    /**
-     * @param $output
-     */
-    private function invalidPaymentMessage(&$output)
-    {
-        $this->credentialInformations(
-            $output,
-            sprintf(
-                '<strong class="error-text">%s</strong>',
-                esc_html__(
-                    'Error connecting to the API. Check that the credentials are correct.',
-                    'woo-paypalplus'
-                )
-            )
-        );
-    }
-
-    /**
-     * @param $output
-     */
-    private function sandboxMessage(&$output)
-    {
-        $msgSandbox = $this->isSandboxed()
-            ? esc_html__(
-                'Note: This is connected to your sandbox account.',
-                'woo-paypalplus'
-            )
-            : esc_html__(
-                'Note: This is connected to your live PayPal account.',
-                'woo-paypalplus'
-            );
-
-        $this->credentialInformations(
-            $output,
-            sprintf('<strong>%s</strong>', $msgSandbox)
-        );
     }
 }
