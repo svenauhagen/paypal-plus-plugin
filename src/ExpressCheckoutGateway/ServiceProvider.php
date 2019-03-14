@@ -20,6 +20,7 @@ use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Payment\Session;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\SharedSettingsModel;
+use WCPayPalPlus\Setting\Storable;
 use WCPayPalPlus\Utils\AjaxJsonRequest;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Api\CredentialValidator;
@@ -101,7 +102,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[CartCheckout::class] = function (Container $container) {
             return new CartCheckout(
-                $container[ExpressCheckoutStorable::class],
+                $container[Storable::class],
                 $container[PaymentCreatorFactory::class],
                 $container[AjaxJsonRequest::class],
                 $container[WooCommerce::class],
