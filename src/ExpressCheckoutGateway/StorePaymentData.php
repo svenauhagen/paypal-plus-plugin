@@ -83,7 +83,7 @@ class StorePaymentData
         $this->woocommerce->customer->set_billing_city('');
         $this->woocommerce->customer->set_billing_country($payerInfo->getCountryCode());
         $this->woocommerce->customer->set_billing_postcode('');
-        $this->woocommerce->customer->set_billing_state($payment->getState());
+        $this->woocommerce->customer->set_billing_state('');
         if ($billingAddress) {
             $this->woocommerce->customer->set_billing_address_1($billingAddress->getLine1());
             $this->woocommerce->customer->set_billing_address_2($billingAddress->getLine2());

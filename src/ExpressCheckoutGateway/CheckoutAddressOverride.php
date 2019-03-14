@@ -57,20 +57,24 @@ class CheckoutAddressOverride
 
     public function billingDetails()
     {
+        $address = $this->woocommerce->customer->get_billing()
         ?>
-        <h3><?php _e('Billing details', '' ); ?></h3>
-        <?php echo $this->woocommerce->countries->get_formatted_address($this->woocommerce->customer->get_billing()); ?>
+        <h3><?php esc_attr_e('Billing details', 'woo-paypalplus'); ?></h3>
+        <?php echo $this->woocommerce->countries->get_formatted_address(
+            $address
+        ); ?>
         <br />
         <?php echo esc_html($this->woocommerce->customer->get_billing_email());
     }
 
     public function shippingDetails()
     {
+        $address = $this->woocommerce->customer->get_shipping();
         ?>
-        <h3><?php _e('Shipping details', '' ); ?></h3>
+        <h3><?php esc_attr_e('Shipping details', 'woo-paypalplus'); ?></h3>
         <?php
         echo $this->woocommerce->countries->get_formatted_address(
-            $this->woocommerce->customer->get_shipping()
+            $address
         );
     }
 
