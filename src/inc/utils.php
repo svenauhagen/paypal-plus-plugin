@@ -13,6 +13,7 @@ namespace WCPayPalPlus;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\Exception\NameNotFound;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
+use WCPayPalPlus\Setting\Storable;
 
 /**
  *  * Resolves the value with the given name from the container.
@@ -47,7 +48,7 @@ function resolve($name = '')
  */
 function isGatewayDisabled($gateway)
 {
-    return ($gateway->enabled !== 'yes' && !is_admin());
+    return ($gateway->enabled !== Storable::OPTION_ON);
 }
 
 /**

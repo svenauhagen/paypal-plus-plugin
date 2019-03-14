@@ -218,7 +218,7 @@ class SharedSettingsModel
                     'pattern' => '^https://.*',
                 ],
                 'sanitize_callback' => function ($url) use ($gateway) {
-                    $this->sanitizeLogoUrl($url, $gateway);
+                    return $this->sanitizeLogoUrl($url, $gateway);
                 },
             ],
         ];

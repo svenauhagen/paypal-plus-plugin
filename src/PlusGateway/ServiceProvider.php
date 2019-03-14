@@ -73,7 +73,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         $gatewayId = Gateway::GATEWAY_ID;
         $gateway = $container[Gateway::class];
 
-        if (isGatewayDisabled($gateway)) {
+        if (!is_admin() && isGatewayDisabled($gateway)) {
             return;
         }
 

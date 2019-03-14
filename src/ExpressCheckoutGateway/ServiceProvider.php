@@ -131,7 +131,7 @@ class ServiceProvider implements BootstrappableServiceProvider
             return $methods;
         });
 
-        if (isGatewayDisabled($gateway) || areAllExpressCheckoutButtonsDisabled()) {
+        if (!is_admin() && (isGatewayDisabled($gateway) || areAllExpressCheckoutButtonsDisabled())) {
             return;
         }
 
@@ -182,6 +182,10 @@ class ServiceProvider implements BootstrappableServiceProvider
     {
         $settingsRepository = $container[ExpressCheckoutStorable::class];
 
+        if (is_admin()) {
+            return;
+        }
+
         $settingsRepository->showOnProductPage() and add_action(
             'woocommerce_after_add_to_cart_button',
             [$container[SingleProductButtonView::class], 'render']
@@ -205,6 +209,10 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     private function bootstrapAjaxRequests(Container $container)
     {
+        if (is_admin()) {
+            return;
+        }
+
         add_action(
             'wp_ajax_' . AjaxHandler::ACTION,
             [$container[AjaxHandler::class], 'handle']
