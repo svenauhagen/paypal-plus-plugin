@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\Assets;
 
+use function WCPayPalPlus\areAllExpressCheckoutButtonsDisabled;
 use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
 use function WCPayPalPlus\isGatewayDisabled;
 use WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
@@ -51,7 +52,9 @@ class PayPalAssetManager
      */
     public function enqueueFrontEndScripts()
     {
-        if (!isGatewayDisabled($this->expressCheckoutGateway)) {
+        if (!isGatewayDisabled($this->expressCheckoutGateway)
+            && !areAllExpressCheckoutButtonsDisabled()
+        ) {
             wp_enqueue_script(
                 'paypal-express-checkout',
                 'https://www.paypalobjects.com/api/checkout.js',

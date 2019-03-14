@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
+use function WCPayPalPlus\areAllExpressCheckoutButtonsDisabled;
 use function WCPayPalPlus\isGatewayDisabled;
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\WpNonce;
@@ -130,7 +131,7 @@ class ServiceProvider implements BootstrappableServiceProvider
             return $methods;
         });
 
-        if (isGatewayDisabled($gateway)) {
+        if (isGatewayDisabled($gateway) || areAllExpressCheckoutButtonsDisabled()) {
             return;
         }
 
@@ -168,21 +169,42 @@ class ServiceProvider implements BootstrappableServiceProvider
             999
         );
 
-        add_action(
+        $this->bootstrapButtons($container);
+        $this->bootstrapAjaxRequests($container);
+    }
+
+    /**
+     * Bootstrap Express Checkout Buttons
+     *
+     * @param Container $container
+     */
+    private function bootstrapButtons(Container $container)
+    {
+        $settingsRepository = $container[ExpressCheckoutStorable::class];
+
+        $settingsRepository->showOnProductPage() and add_action(
             'woocommerce_after_add_to_cart_button',
             [$container[SingleProductButtonView::class], 'render']
         );
-        add_action(
+        $settingsRepository->showOnMiniCart() and add_action(
             'woocommerce_after_mini_cart',
             [$container[CartButtonView::class], 'render']
         );
         // After WooCommerce woocommerce_button_proceed_to_checkout
-        add_action(
+        $settingsRepository->showOnCart() and add_action(
             'woocommerce_proceed_to_checkout',
             [$container[CartButtonView::class], 'render'],
             25
         );
+    }
 
+    /**
+     * Bootstrap Ajax Requests for Express Checkout
+     *
+     * @param Container $container
+     */
+    private function bootstrapAjaxRequests(Container $container)
+    {
         add_action(
             'wp_ajax_' . AjaxHandler::ACTION,
             [$container[AjaxHandler::class], 'handle']

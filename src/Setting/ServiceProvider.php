@@ -26,15 +26,15 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function register(Container $container)
     {
-        $container[Storable::class] = function (Container $container) {
+        $container->share(Storable::class, function (Container $container) {
             return $container[SharedRepository::class];
-        };
-        $container[PlusStorable::class] = function (Container $container) {
+        });
+        $container->share(PlusStorable::class, function (Container $container) {
             return $container[PlusGateway::class];
-        };
-        $container[ExpressCheckoutStorable::class] = function (Container $container) {
+        });
+        $container->share(ExpressCheckoutStorable::class, function (Container $container) {
             return $container[ExpressCheckoutGateway::class];
-        };
+        });
         $container[SharedRepository::class] = function () {
             return new SharedRepository();
         };

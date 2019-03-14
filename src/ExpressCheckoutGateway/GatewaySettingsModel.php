@@ -10,10 +10,12 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
+use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\SharedFieldsOptionsTrait;
 use WCPayPalPlus\Setting\SharedSettingsModel;
 
 use WC_Payment_Gateway as Gateway;
+use WCPayPalPlus\Setting\Storable;
 
 /**
  * Class GatewaySettingsModel
@@ -46,10 +48,11 @@ class GatewaySettingsModel
     {
         /** @noinspection AdditionOperationOnArraysInspection */
         $settings =
-            $this->generalSettings()
+            $this->general()
             + $this->sharedSettingsModel->credentials()
             + $this->sharedSettingsModel->webProfile($gateway)
-            + $this->gatewaySettings()
+            + $this->gateway()
+            + $this->buttons()
             + $this->sharedSettingsModel->downloadLog();
 
         return $settings;
@@ -58,7 +61,7 @@ class GatewaySettingsModel
     /**
      * @return array
      */
-    private function generalSettings()
+    private function general()
     {
         return [
             'enabled' => [
@@ -96,7 +99,7 @@ class GatewaySettingsModel
     /**
      * @return array
      */
-    private function gatewaySettings()
+    private function gateway()
     {
         return [
             'settings_section' => [
@@ -124,6 +127,57 @@ class GatewaySettingsModel
                 'type' => 'text',
                 'description' => esc_html_x(
                     'URL to a custom page to be used for cancelation. Please select "custom" above first.',
+                    'gateway-setting',
+                    'woo-paypalplus'
+                ),
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    private function buttons()
+    {
+        return [
+            ExpressCheckoutStorable::OPTION_SHOW_ON_PRODUCT_PAGE => [
+                'title' => esc_html_x(
+                    'Show button on single product pages',
+                    'gateway-setting',
+                    'woo-paypalplus'
+                ),
+                'type' => 'checkbox',
+                'default' => Storable::OPTION_ON,
+                'description' => esc_html_x(
+                    'Allow you to show or not the Express Checkout button within single product pages.',
+                    'gateway-setting',
+                    'woo-paypalplus'
+                ),
+            ],
+            ExpressCheckoutStorable::OPTION_SHOW_ON_MINI_CART => [
+                'title' => esc_html_x(
+                    'Show button on mini cart',
+                    'gateway-setting',
+                    'woo-paypalplus'
+                ),
+                'type' => 'checkbox',
+                'default' => Storable::OPTION_ON,
+                'description' => esc_html_x(
+                    'Allow you to show or not the Express Checkout button within the mini cart.',
+                    'gateway-setting',
+                    'woo-paypalplus'
+                ),
+            ],
+            ExpressCheckoutStorable::OPTION_SHOW_ON_CART => [
+                'title' => esc_html_x(
+                    'Show button on cart page',
+                    'gateway-setting',
+                    'woo-paypalplus'
+                ),
+                'type' => 'checkbox',
+                'default' => Storable::OPTION_ON,
+                'description' => esc_html_x(
+                    'Allow you to show or not the Express Checkout button within the cart page.',
                     'gateway-setting',
                     'woo-paypalplus'
                 ),

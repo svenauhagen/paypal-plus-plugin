@@ -12,6 +12,7 @@ namespace WCPayPalPlus;
 
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\Exception\NameNotFound;
+use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 
 /**
  *  * Resolves the value with the given name from the container.
@@ -47,4 +48,23 @@ function resolve($name = '')
 function isGatewayDisabled($gateway)
 {
     return ($gateway->enabled !== 'yes' && !is_admin());
+}
+
+/**
+ * Check if no ExpressCheckout Button have to be Displayed
+ *
+ * @return bool
+ * @throws NameNotFound
+ */
+function areAllExpressCheckoutButtonsDisabled()
+{
+    $settingRepository = resolve(ExpressCheckoutStorable::class);
+
+    $buttons = [
+        $settingRepository->showOnProductPage(),
+        $settingRepository->showOnMiniCart(),
+        $settingRepository->showOnCart(),
+    ];
+
+    return count(array_filter($buttons)) === 0;
 }

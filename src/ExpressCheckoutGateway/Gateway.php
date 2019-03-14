@@ -19,9 +19,9 @@ use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Notice;
 use WCPayPalPlus\Payment\PaymentPatcher;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
+use WCPayPalPlus\Setting\ExpressCheckoutRepositoryTrait;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\GatewaySharedSettingsTrait;
-use WCPayPalPlus\Setting\PlusRepositoryTrait;
 use WCPayPalPlus\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\Session;
@@ -41,7 +41,7 @@ use WC_Order;
 class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorable
 {
     use SharedRepositoryTrait;
-    use PlusRepositoryTrait;
+    use ExpressCheckoutRepositoryTrait;
     use GatewaySharedSettingsTrait;
 
     const GATEWAY_ID = 'paypal_express';
