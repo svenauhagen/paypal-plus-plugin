@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Setting;
 
-use WC_Payment_Gateway as Gateway;
+use WC_Payment_Gateway;
 
 /**
  * Class SharedSettingsModel
@@ -19,6 +19,7 @@ use WC_Payment_Gateway as Gateway;
 class SharedSettingsModel
 {
     const OPTION_DOWNLOAD_LOG = 'download_log';
+    const INVOICE_PREFIX = 'WC-PPP-';
 
     const SHARED_OPTIONS = [
         Storable::OPTION_TEST_MODE_NAME => FILTER_DEFAULT,
@@ -30,6 +31,7 @@ class SharedSettingsModel
         Storable::OPTION_PROFILE_ID_PRODUCTION_NAME => FILTER_SANITIZE_STRING,
         Storable::OPTION_PROFILE_CHECKOUT_LOGO => FILTER_VALIDATE_URL,
         Storable::OPTION_PROFILE_BRAND_NAME => FILTER_SANITIZE_STRING,
+        Storable::OPTION_INVOICE_PREFIX => FILTER_SANITIZE_STRING,
         self::OPTION_DOWNLOAD_LOG => FILTER_DEFAULT,
     ];
 
@@ -174,10 +176,10 @@ class SharedSettingsModel
     }
 
     /**
-     * @param Gateway $gateway
+     * @param WC_Payment_Gateway $gateway
      * @return array
      */
-    public function webProfile(Gateway $gateway)
+    public function webProfile(WC_Payment_Gateway $gateway)
     {
         return [
             'web_profile_section' => [
@@ -227,6 +229,26 @@ class SharedSettingsModel
     /**
      * @return array
      */
+    public function invoicePrefix()
+    {
+        return [
+            Storable::OPTION_INVOICE_PREFIX => [
+                'title' => esc_html_x('Invoice Prefix', 'gateway-setting', 'woo-paypalplus'),
+                'type' => 'text',
+                'description' => esc_html_x(
+                    'Please enter a prefix for your invoice numbers. If you use your PayPal account for multiple stores ensure this prefix is unique as PayPal will not allow orders with the same invoice number.',
+                    'gateway-setting',
+                    'woo-paypalplus'
+                ),
+                'default' => $this->defaultInvoicePrefix(),
+                'desc_tip' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
     public function downloadLog()
     {
         $settingTabLogUrl = add_query_arg(
@@ -264,7 +286,7 @@ class SharedSettingsModel
      */
     private function sanitizeLogoUrl($url, $gateway)
     {
-        assert($gateway instanceof Gateway);
+        assert($gateway instanceof WC_Payment_Gateway);
 
         $url = (string)filter_var($url, FILTER_VALIDATE_URL);
 
@@ -301,5 +323,13 @@ class SharedSettingsModel
         }
 
         return $url;
+    }
+
+    /**
+     * @return string
+     */
+    private function defaultInvoicePrefix()
+    {
+        return self::INVOICE_PREFIX . strtoupper(sanitize_title(get_bloginfo('name'))) . '-';
     }
 }

@@ -61,7 +61,7 @@ class ServiceProvider implements BootstrappableServiceProvider
             }
         );
         add_filter(
-            'woocommerce_settings_api_sanitized_fields_' . PlusGateway::GATEWAY_ID,
+            'woocommerce_settings_api_sanitized_fields_' . ExpressCheckoutGateway::GATEWAY_ID,
             function (array $settings) use ($sharedPersistor) {
                 $sharedPersistor->update($settings);
                 return $settings;

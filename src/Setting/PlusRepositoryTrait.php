@@ -33,12 +33,4 @@ trait PlusRepositoryTrait
     {
         return $this->get_option(PlusStorable::OPTION_LEGAL_NOTE_NAME, '');
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function invoicePrefix()
-    {
-        return $this->get_option(PlusStorable::OPTION_INVOICE_PREFIX, '');
-    }
 }

@@ -122,4 +122,11 @@ trait SharedRepositoryTrait
     {
         return $this->get_option(Storable::OPTION_SECRET_ID, '');
     }
+    /**
+     * @inheritdoc
+     */
+    public function invoicePrefix()
+    {
+        return $this->get_option(Storable::OPTION_INVOICE_PREFIX, '');
+    }
 }

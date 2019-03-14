@@ -13,8 +13,7 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\SharedFieldsOptionsTrait;
 use WCPayPalPlus\Setting\SharedSettingsModel;
-
-use WC_Payment_Gateway as Gateway;
+use WC_Payment_Gateway;
 use WCPayPalPlus\Setting\Storable;
 
 /**
@@ -41,10 +40,10 @@ class GatewaySettingsModel
     }
 
     /**
-     * @param Gateway $gateway
+     * @param WC_Payment_Gateway $gateway
      * @return array
      */
-    public function settings(Gateway $gateway)
+    public function settings(WC_Payment_Gateway $gateway)
     {
         /** @noinspection AdditionOperationOnArraysInspection */
         $settings =
@@ -101,12 +100,8 @@ class GatewaySettingsModel
      */
     private function gateway()
     {
-        return [
-            'settings_section' => [
-                'title' => esc_html_x('Settings', 'gateway-setting', 'woo-paypalplus'),
-                'type' => 'title',
-                'desc' => '',
-            ],
+        $invoicePrefix = $this->sharedSettingsModel->invoicePrefix();
+        $options = [
             'cancel_url' => [
                 'title' => esc_html_x('Cancel Page', 'gateway-setting', 'woo-paypalplus'),
                 'description' => esc_html_x(
@@ -132,6 +127,18 @@ class GatewaySettingsModel
                 ),
             ],
         ];
+
+        return array_merge(
+            [
+                'settings_section' => [
+                    'title' => esc_html_x('Settings', 'gateway-setting', 'woo-paypalplus'),
+                    'type' => 'title',
+                    'desc' => '',
+                ],
+            ],
+            $invoicePrefix,
+            $options
+        );
     }
 
     /**

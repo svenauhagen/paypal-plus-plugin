@@ -12,7 +12,7 @@ namespace WCPayPalPlus\PlusGateway;
 
 use WCPayPalPlus\Setting\SharedFieldsOptionsTrait;
 use WCPayPalPlus\Setting\SharedSettingsModel;
-use WC_Payment_Gateway as Gateway;
+use WC_Payment_Gateway;
 
 /**
  * Class GatewaySettingsModel
@@ -38,10 +38,10 @@ class GatewaySettingsModel
     }
 
     /**
-     * @param Gateway $gateway
+     * @param WC_Payment_Gateway $gateway
      * @return array
      */
-    public function settings(Gateway $gateway)
+    public function settings(WC_Payment_Gateway $gateway)
     {
         /** @noinspection AdditionOperationOnArraysInspection */
         $settings =
@@ -102,23 +102,8 @@ class GatewaySettingsModel
      */
     private function gatewaySettings()
     {
-        return [
-            'settings_section' => [
-                'title' => esc_html_x('Settings', 'gateway-setting', 'woo-paypalplus'),
-                'type' => 'title',
-                'desc' => '',
-            ],
-            'invoice_prefix' => [
-                'title' => esc_html_x('Invoice Prefix', 'gateway-setting', 'woo-paypalplus'),
-                'type' => 'text',
-                'description' => esc_html_x(
-                    'Please enter a prefix for your invoice numbers. If you use your PayPal account for multiple stores ensure this prefix is unique as PayPal will not allow orders with the same invoice number.',
-                    'gateway-setting',
-                    'woo-paypalplus'
-                ),
-                'default' => $this->defaultInvoicePrefix(),
-                'desc_tip' => true,
-            ],
+        $invoicePrefix = $this->sharedSettingsModel->invoicePrefix();
+        $options = [
             'cancel_url' => [
                 'title' => esc_html_x('Cancel Page', 'gateway-setting', 'woo-paypalplus'),
                 'description' => esc_html_x(
@@ -131,7 +116,11 @@ class GatewaySettingsModel
                 'default' => wc_get_page_id('checkout'),
             ],
             'cancel_custom_url' => [
-                'title' => esc_html_x('Custom Cancelation URL', 'gateway-setting', 'woo-paypalplus'),
+                'title' => esc_html_x(
+                    'Custom Cancelation URL',
+                    'gateway-setting',
+                    'woo-paypalplus'
+                ),
                 'type' => 'text',
                 'description' => esc_html_x(
                     'URL to a custom page to be used for cancelation. Please select "custom" above first.',
@@ -157,7 +146,11 @@ class GatewaySettingsModel
                 'desc_tip' => false,
             ],
             'pay_upon_invoice_instructions' => [
-                'title' => esc_html_x('Pay upon Invoice Instructions', 'gateway-setting', 'woo-paypalplus'),
+                'title' => esc_html_x(
+                    'Pay upon Invoice Instructions',
+                    'gateway-setting',
+                    'woo-paypalplus'
+                ),
                 'type' => 'textarea',
                 'description' => esc_html_x(
                     'Pay upon Invoice Instructions that will be added to the thank you page and emails.',
@@ -187,13 +180,17 @@ class GatewaySettingsModel
                 ),
             ],
         ];
-    }
 
-    /**
-     * @return string
-     */
-    private function defaultInvoicePrefix()
-    {
-        return 'WC-PPP-' . strtoupper(sanitize_title(get_bloginfo('name'))) . '-';
+        return array_merge(
+            [
+                'settings_section' => [
+                    'title' => esc_html_x('Settings', 'gateway-setting', 'woo-paypalplus'),
+                    'type' => 'title',
+                    'desc' => '',
+                ],
+            ],
+            $invoicePrefix,
+            $options
+        );
     }
 }

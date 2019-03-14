@@ -40,6 +40,8 @@ interface Storable
     const OPTION_CLIENT_ID_SANDBOX = 'rest_client_id_sandbox';
     const OPTION_SECRET_ID_SANDBOX = 'rest_secret_id_sandbox';
 
+    const OPTION_INVOICE_PREFIX = 'invoice_prefix';
+
     /**
      * @return bool
      */
@@ -89,4 +91,9 @@ interface Storable
      * @return string
      */
     public function secretIdProduction();
+
+    /**
+     * @return string
+     */
+    public function invoicePrefix();
 }

@@ -17,6 +17,7 @@ use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Log\PayPalSdkLogFactory;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\IntegrationServiceProvider;
+use WCPayPalPlus\Setting\SharedRepository;
 use WCPayPalPlus\Setting\Storable;
 use WCPayPalPlus\PlusGateway\Gateway;
 use WC_Log_Levels as LogLevels;
@@ -80,15 +81,15 @@ class ServiceProvider implements IntegrationServiceProvider
         //      Them are needed by Express Checkout
         $container[PayPalCredentialManager::class]->setCredentialObject(
             new OAuthTokenCredential(
-                $container[Gateway::class]->get_option('rest_client_id'),
-                $container[Gateway::class]->get_option('rest_secret_id')
+                $container[SharedRepository::class]->clientIdProduction(),
+                $container[SharedRepository::class]->secretIdProduction()
             )
         );
         if ($isSandBoxed) {
             $container[PayPalCredentialManager::class]->setCredentialObject(
                 new OAuthTokenCredential(
-                    $container[Gateway::class]->get_option('rest_client_id_sandbox'),
-                    $container[Gateway::class]->get_option('rest_secret_id_sandbox')
+                    $container[SharedRepository::class]->clientIdSandBox(),
+                    $container[SharedRepository::class]->secretIdSandBox()
                 )
             );
         }

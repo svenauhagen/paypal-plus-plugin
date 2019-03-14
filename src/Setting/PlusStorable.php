@@ -20,8 +20,6 @@ interface PlusStorable extends Storable
     const OPTION_DISABLE_GATEWAY_OVERRIDE_NAME = 'disable_gateway_override';
     const OPTION_LEGAL_NOTE_NAME = 'legal_note';
 
-    const OPTION_INVOICE_PREFIX = 'invoice_prefix';
-
     /**
      * @return bool
      */
@@ -31,9 +29,4 @@ interface PlusStorable extends Storable
      * @return string
      */
     public function legalNotes();
-
-    /**
-     * @return string
-     */
-    public function invoicePrefix();
 }
