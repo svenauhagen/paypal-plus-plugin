@@ -81,10 +81,9 @@ class SmartButtonArguments
                 'tagline' => false,
                 'layout' => 'vertical',
             ],
-            // TODO Change the values here
             'redirect_urls' => [
-                'cancel_url' => 'http://paypalplus.local/cart/',
-                'return_url' => 'http://paypalplus.local/checkout/',
+                'cancel_url' => $this->settingRepository->cancelUrl(),
+                'return_url' => $this->settingRepository->returnUrl(),
             ],
         ];
     }

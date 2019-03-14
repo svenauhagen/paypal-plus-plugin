@@ -70,6 +70,11 @@ interface Storable
     /**
      * @return string
      */
+    public function returnUrl();
+
+    /**
+     * @return string
+     */
     public function experienceProfileId();
 
     /**

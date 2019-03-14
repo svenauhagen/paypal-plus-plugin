@@ -78,6 +78,14 @@ trait SharedRepositoryTrait
     /**
      * @inheritdoc
      */
+    public function returnUrl()
+    {
+        return wc_get_checkout_url();
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function paypalUrl()
     {
         return $this->isSandboxed() ? self::PAYPAL_SANDBOX_URL : self::PAYPAL_LIVE_URL;
@@ -122,6 +130,7 @@ trait SharedRepositoryTrait
     {
         return $this->get_option(Storable::OPTION_SECRET_ID, '');
     }
+
     /**
      * @inheritdoc
      */

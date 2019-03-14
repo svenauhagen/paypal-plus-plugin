@@ -98,7 +98,7 @@ class CartCheckout
         }
 
         $orderId = '';
-        $returnUrl = wc_get_checkout_url();
+        $returnUrl = $this->settingRepository->returnUrl();
         $notifyUrl = $this->wooCommerce->api_request_url(
             Gateway::GATEWAY_ID . Ipn::IPN_ENDPOINT_SUFFIX
         );
