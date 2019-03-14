@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\PlusGateway;
 
+use WCPayPalPlus\Setting\SettingsGatewayModel;
 use WCPayPalPlus\Setting\SharedFieldsOptionsTrait;
 use WCPayPalPlus\Setting\SharedSettingsModel;
 use WC_Payment_Gateway;
@@ -19,7 +20,7 @@ use WC_Payment_Gateway;
  *
  * @package WCPayPalPlus\WC
  */
-class GatewaySettingsModel
+final class GatewaySettingsModel implements SettingsGatewayModel
 {
     use SharedFieldsOptionsTrait;
 

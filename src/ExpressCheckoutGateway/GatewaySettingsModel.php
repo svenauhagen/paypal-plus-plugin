@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
+use WCPayPalPlus\Setting\SettingsGatewayModel;
 use WCPayPalPlus\Setting\SharedFieldsOptionsTrait;
 use WCPayPalPlus\Setting\SharedSettingsModel;
 use WC_Payment_Gateway;
@@ -21,7 +22,7 @@ use WCPayPalPlus\Setting\Storable;
  *
  * @package WCPayPalPlus\ExpressCheckoutGateway
  */
-class GatewaySettingsModel
+final class GatewaySettingsModel implements SettingsGatewayModel
 {
     use SharedFieldsOptionsTrait;
 

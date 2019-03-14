@@ -25,6 +25,7 @@ use WCPayPalPlus\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\Session;
 use WCPayPalPlus\Refund\RefundFactory;
+use WCPayPalPlus\Setting\SettingsGatewayModel;
 use WCPayPalPlus\Setting\SharedRepositoryTrait;
 use WooCommerce;
 use WC_Payment_Gateway;
@@ -105,7 +106,7 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
      * @param WooCommerce $wooCommerce
      * @param FrameRenderer $frameView
      * @param CredentialValidator $credentialValidator
-     * @param GatewaySettingsModel $settingsModel
+     * @param SettingsGatewayModel $settingsModel
      * @param RefundFactory $refundFactory
      * @param OrderFactory $orderFactory
      * @param PaymentExecutionFactory $paymentExecutionFactory
@@ -117,7 +118,7 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
         WooCommerce $wooCommerce,
         FrameRenderer $frameView,
         CredentialValidator $credentialValidator,
-        GatewaySettingsModel $settingsModel,
+        SettingsGatewayModel $settingsModel,
         RefundFactory $refundFactory,
         OrderFactory $orderFactory,
         PaymentExecutionFactory $paymentExecutionFactory,
