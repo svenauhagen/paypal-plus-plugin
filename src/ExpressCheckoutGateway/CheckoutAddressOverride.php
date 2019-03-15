@@ -191,6 +191,8 @@ class CheckoutAddressOverride
         $fields['billing_state']['required'] = false;
         $fields['billing_email']['custom_attributes'] = ['readonly' => 'readonly'];
         $fields['billing_email']['type'] = self::FIELD_TYPE_ID;
+        $fields['billing_email']['required'] = false;
+        $fields['billing_phone']['required'] = false;
 
         return $fields;
     }
