@@ -136,9 +136,11 @@ class ServiceProvider implements BootstrappableServiceProvider
             return;
         }
 
-        add_action(
-            'woocommerce_checkout_init',
-            [$container[CheckoutAddressOverride::class], 'init']
+        add_filter(
+            'woocommerce_checkout_get_value',
+            [$container[CheckoutAddressOverride::class], 'filterCheckoutValues'],
+            20,
+            2
         );
         add_filter(
             'woocommerce_form_field_' . CheckoutAddressOverride::FIELD_TYPE_ID,

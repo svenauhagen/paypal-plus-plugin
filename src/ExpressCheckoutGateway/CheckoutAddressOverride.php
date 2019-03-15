@@ -51,50 +51,6 @@ class CheckoutAddressOverride
         return Gateway::GATEWAY_ID === $this->woocommerce->session->get(Session::CHOSEN_PAYMENT_METHOD);
     }
 
-    public function init(\WC_Checkout $checkout)
-    {
-        if (!$this->isExpressCheckout()) {
-            return;
-        }
-        remove_action('woocommerce_checkout_billing', [$checkout, 'checkout_form_billing']);
-        remove_action('woocommerce_checkout_shipping', [$checkout, 'checkout_form_shipping']);
-
-        add_action(
-            'woocommerce_checkout_billing',
-            [$this, 'billingDetails']
-        );
-        add_action(
-            'woocommerce_checkout_shipping',
-            [$this, 'shippingDetails']
-        );
-    }
-
-    public function billingDetails()
-    {
-        $address = $this->woocommerce->customer->get_billing()
-        ?>
-        <h3><?php esc_attr_e('Billing details', 'woo-paypalplus'); ?></h3>
-        <?php echo $this->woocommerce->countries->get_formatted_address(
-            $address
-        ); ?>
-        <br />
-        <?php echo esc_html($this->woocommerce->customer->get_billing_email());
-    }
-
-    public function shippingDetails()
-    {
-        if (!$this->woocommerce->cart->needs_shipping()) {
-            return;
-        }
-        $address = $this->woocommerce->customer->get_shipping();
-        ?>
-        <h3><?php esc_attr_e('Shipping details', 'woo-paypalplus'); ?></h3>
-        <?php
-        echo $this->woocommerce->countries->get_formatted_address(
-            $address
-        );
-    }
-
     /**
      * @param bool $default
      *
@@ -149,6 +105,29 @@ class CheckoutAddressOverride
     }
 
     /**
+     * @param $default
+     * @param $input
+     */
+    public function filterCheckoutValues($default, $input)
+    {
+        if (! $this->isExpressCheckout()) {
+            return $default;
+        }
+
+        if (0 !== strpos($input, 'billing_') && 0 !== strpos($input, 'shipping_')) {
+            return $default;
+        }
+
+        $customer = $this->woocommerce->customer;
+        $methodName = "get_{$input}";
+        if (method_exists($customer, $methodName) && $customer->$methodName()) {
+            return $customer->$methodName();
+        }
+
+        return $default;
+    }
+
+    /**
      * @param array $fields
      *
      * @return array
@@ -191,8 +170,6 @@ class CheckoutAddressOverride
         $fields['billing_state']['required'] = false;
         $fields['billing_email']['custom_attributes'] = ['readonly' => 'readonly'];
         $fields['billing_email']['type'] = self::FIELD_TYPE_ID;
-        $fields['billing_email']['required'] = false;
-        $fields['billing_phone']['required'] = false;
 
         return $fields;
     }
