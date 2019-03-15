@@ -66,12 +66,6 @@ class StorePaymentData
         $payer = $payment->getPayer();
         $payerInfo = $payer->getPayerInfo();
         $billingAddress = $payerInfo->getBillingAddress();
-        $transactions = $payment->getTransactions();
-        if (!$transactions || ! $transactions[0] instanceof Transaction) {
-            return;
-        }
-        $itemList = $transactions[0]->getItemList();
-        $shippingAddress = $itemList->getShippingAddress();
 
         $this->woocommerce->customer->set_billing_company('');
         $this->woocommerce->customer->set_billing_first_name($payerInfo->getFirstName());
@@ -92,9 +86,21 @@ class StorePaymentData
             $this->woocommerce->customer->set_billing_postcode($billingAddress->getPostalCode());
             $this->woocommerce->customer->set_billing_state($billingAddress->getState());
         }
+        $this->woocommerce->customer->save();
+
+        if (!$this->woocommerce->cart->needs_shipping()) {
+            return;
+        }
+
+        $transactions = $payment->getTransactions();
+        if (!$transactions || ! $transactions[0] instanceof Transaction) {
+            return;
+        }
+        $itemList = $transactions[0]->getItemList();
+        $shippingAddress = $itemList->getShippingAddress();
+        list($firstName, $lastName) = explode(' ', $shippingAddress->getRecipientName(), 2);
 
         $this->woocommerce->customer->set_shipping_company('');
-        list($firstName, $lastName) = explode(' ', $shippingAddress->getRecipientName(), 2);
         $this->woocommerce->customer->set_shipping_first_name($firstName);
         $this->woocommerce->customer->set_shipping_last_name($lastName);
         $this->woocommerce->customer->set_shipping_address_1($shippingAddress->getLine1());
@@ -103,7 +109,6 @@ class StorePaymentData
         $this->woocommerce->customer->set_shipping_country($shippingAddress->getCountryCode());
         $this->woocommerce->customer->set_shipping_postcode($shippingAddress->getPostalCode());
         $this->woocommerce->customer->set_shipping_state($shippingAddress->getState());
-
         $this->woocommerce->customer->save();
     }
 }
