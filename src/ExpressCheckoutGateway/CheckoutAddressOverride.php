@@ -156,7 +156,6 @@ class CheckoutAddressOverride
      */
     public function addAddressesToCheckoutPostVars()
     {
-        return;
         if (! $this->isExpressCheckout()) {
             return;
         }
