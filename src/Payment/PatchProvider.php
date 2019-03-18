@@ -12,6 +12,7 @@ namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Api\Patch;
 use WC_Order;
+use InvalidArgumentException;
 
 /**
  * Class PatchProvider
@@ -53,11 +54,9 @@ class PatchProvider
     }
 
     /**
-     * Returns the invoice Patch.
-     *
-     * @param string $invoice_prefix The invoice prefix.
-     *
+     * @param $invoice_prefix
      * @return Patch
+     * @throws InvalidArgumentException
      */
     public function get_invoice_patch($invoice_prefix)
     {
@@ -73,9 +72,8 @@ class PatchProvider
     }
 
     /**
-     * Returns the custom Patch.
-     *
      * @return Patch
+     * @throws InvalidArgumentException
      */
     public function get_custom_patch()
     {
@@ -83,18 +81,14 @@ class PatchProvider
         $custom_patch
             ->setOp('add')
             ->setPath('/transactions/0/custom')
-            ->setValue(wp_json_encode([
-                'order_id' => $this->order->get_id(),
-                'order_key' => $this->order->get_order_key(),
-            ]));
+            ->setValue($this->order->get_order_key());
 
         return $custom_patch;
     }
 
     /**
-     * Returns the payment amount Patch.
-     *
      * @return Patch
+     * @throws InvalidArgumentException
      */
     public function get_payment_amount_patch()
     {
@@ -128,9 +122,8 @@ class PatchProvider
     }
 
     /**
-     * Returns the billing Patch.
-     *
      * @return Patch
+     * @throws InvalidArgumentException
      */
     public function get_billing_patch()
     {
