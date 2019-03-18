@@ -4,7 +4,7 @@
  * @param element
  * @returns {string}
  */
-export function contextByElement(element)
+export function contextByElement (element)
 {
-    return ('context' in element.dataset ? element.dataset.context : '');
+  return ('context' in element.dataset ? element.dataset.context : '')
 }
