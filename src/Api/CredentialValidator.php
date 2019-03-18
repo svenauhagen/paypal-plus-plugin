@@ -44,6 +44,14 @@ class CredentialValidator
      */
     public function ensureCredential(ApiContext $context)
     {
+        $credential = $context->getCredential();
+        if (!$credential->getClientId() || !$credential->getClientSecret()) {
+            return [
+                false,
+                esc_html_x('Credential are Empty', 'credential', 'woo-paypalplus'),
+            ];
+        }
+
         try {
             $params = ['count' => 1];
             Payment::all($params, $context);
@@ -58,7 +66,7 @@ class CredentialValidator
 
         return [
             true,
-            esc_html_x('Credential are Valid', 'credential', ' woo-paypalplus'),
+            esc_html_x('Credential are Valid', 'credential', 'woo-paypalplus'),
         ];
     }
 }
