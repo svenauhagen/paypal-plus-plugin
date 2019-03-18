@@ -43,9 +43,9 @@ class CredentialValidationResponse
     /**
      * @return bool
      */
-    public function validStatus()
+    public function isValidStatus()
     {
-        return $this->status;
+        return $this->status === true;
     }
 
     /**

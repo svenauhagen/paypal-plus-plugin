@@ -49,7 +49,7 @@ trait GatewaySharedSettingsTrait
         $apiContext = ApiContextFactory::getFromCredentials($credentials);
         $credentialValidationResponse = $this->credentialValidator->ensureCredential($apiContext);
 
-        switch ($credentialValidationResponse->validStatus()) {
+        switch ($credentialValidationResponse->isValidStatus()) {
             case true:
                 $config = [
                     'checkout_logo' => $this->get_option('checkout_logo'),
