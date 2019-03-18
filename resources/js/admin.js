@@ -1,5 +1,5 @@
-import { envOptionsInitialize } from './payPalEnvOptions'
+import { envOptionsInitialize } from './payPalEnvOptions';
 
 window.addEventListener('load', () => {
-  envOptionsInitialize()
-})
+    envOptionsInitialize();
+});
