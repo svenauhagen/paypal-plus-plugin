@@ -48,7 +48,6 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
     const GATEWAY_ID = 'paypal_express';
     const GATEWAY_TITLE_METHOD = 'PayPal Express Checkout';
     const ACTION_AFTER_PAYMENT_EXECUTION = 'woopaypalplus.after_express_checkout_payment_execution';
-    const ACTION_AFTER_PAYMENT_PATCH = 'woopaypalplus.after_express_checkout_payment_patch';
 
     /**
      * @var CredentialValidator
@@ -207,7 +206,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
          * @param CheckoutDropper $checkoutDropper
          */
         do_action(
-            self::ACTION_AFTER_PAYMENT_PATCH,
+            PaymentPatcher::ACTION_AFTER_PAYMENT_PATCH,
             $paymentPatcher,
             $isSuccessPatched,
             $this->checkoutDropper

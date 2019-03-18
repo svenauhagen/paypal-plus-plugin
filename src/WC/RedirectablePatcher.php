@@ -12,8 +12,6 @@ namespace WCPayPalPlus\WC;
 
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Order\OrderFactory;
-use WCPayPalPlus\Payment\PaymentPatcher;
-use WCPayPalPlus\PlusGateway\Gateway;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Session\Session;
@@ -21,10 +19,10 @@ use OutOfBoundsException;
 use RuntimeException;
 
 /**
- * Class ReceiptPageRenderer
+ * Class RedirectablePatcher
  * @package WCPayPalPlus\WC
  */
-class ReceiptPageRenderer
+class RedirectablePatcher
 {
     /**
      * @var OrderFactory
@@ -75,15 +73,14 @@ class ReceiptPageRenderer
     }
 
     /**
-     * TODO May be this method can be split into two methods and use action to run the patcher.
-     *      See the same code in \WCPayPalPlus\ExpressCheckoutGateway\Gateway::process_payment
-     *
-     * @param $orderId
+     * @param int $orderId
      * @throws OutOfBoundsException
      * @throws RuntimeException
      */
-    public function render($orderId)
+    public function patchOrder($orderId)
     {
+        assert(is_int($orderId));
+
         $this->session->set(Session::ORDER_ID, $orderId);
         $order = $this->orderFactory->createById($orderId);
         $paymentId = $this->session->get(Session::PAYMENT_ID);
@@ -97,23 +94,7 @@ class ReceiptPageRenderer
             ApiContextFactory::getFromConfiguration()
         );
 
-        $isSuccessPatched = $paymentPatcher->execute();
-
-        /**
-         * Action After Payment Patch
-         *
-         * @param PaymentPatcher $paymentPatcher
-         * @oparam bool $isSuccessPatched
-         * @param CheckoutDropper $checkoutDropper
-         */
-        do_action(
-            Gateway::ACTION_AFTER_PAYMENT_PATCH,
-            $paymentPatcher,
-            $isSuccessPatched,
-            $this->checkoutDropper
-        );
-
-        !$isSuccessPatched and $this->checkoutDropper->abortCheckout();
+        $paymentPatcher->execute() or $this->checkoutDropper->abortCheckout();
 
         wp_enqueue_script('paypalplus-woocommerce-plus-paypal-redirect');
     }

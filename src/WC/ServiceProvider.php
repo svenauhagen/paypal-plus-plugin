@@ -38,8 +38,8 @@ class ServiceProvider implements Service\BootstrappableServiceProvider
                 $container[Session::class]
             );
         };
-        $container[ReceiptPageRenderer::class] = function (Container $container) {
-            return new ReceiptPageRenderer(
+        $container[RedirectablePatcher::class] = function (Container $container) {
+            return new RedirectablePatcher(
                 $container[OrderFactory::class],
                 $container[PaymentPatchFactory::class],
                 $container[PlusStorable::class],
@@ -58,7 +58,7 @@ class ServiceProvider implements Service\BootstrappableServiceProvider
 
         add_action(
             "woocommerce_receipt_{$gatewayId}",
-            [$container[ReceiptPageRenderer::class], 'render']
+            [$container[RedirectablePatcher::class], 'patchOrder']
         );
     }
 }
