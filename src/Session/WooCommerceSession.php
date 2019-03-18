@@ -75,8 +75,6 @@ class WooCommerceSession implements Session
      */
     public function clean()
     {
-        // TODO It's ok to clear everything? Previous versions didn't do that.
-        //      How this will work with the \WCPayPalPlus\ExpressCheckoutGateway\CartCheckout::storePaymentData
         foreach (self::ALLOWED_PROPERTIES as $property) {
             $this->session()->__unset($property);
         }

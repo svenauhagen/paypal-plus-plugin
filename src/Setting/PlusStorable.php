@@ -16,9 +16,8 @@ namespace WCPayPalPlus\Setting;
  */
 interface PlusStorable extends Storable
 {
-    // TODO Remove the _NAME suffix, it's additional information unneeded.
-    const OPTION_DISABLE_GATEWAY_OVERRIDE_NAME = 'disable_gateway_override';
-    const OPTION_LEGAL_NOTE_NAME = 'legal_note';
+    const OPTION_DISABLE_GATEWAY_OVERRIDE = 'disable_gateway_override';
+    const OPTION_LEGAL_NOTE = 'legal_note';
 
     /**
      * @return bool

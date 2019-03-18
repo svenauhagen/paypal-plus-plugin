@@ -21,7 +21,7 @@ trait PlusRepositoryTrait
      */
     public function isDisableGatewayOverrideEnabled()
     {
-        $option = $this->get_option(self::OPTION_DISABLE_GATEWAY_OVERRIDE_NAME, self::OPTION_OFF);
+        $option = $this->get_option(self::OPTION_DISABLE_GATEWAY_OVERRIDE, self::OPTION_OFF);
 
         return $option === self::OPTION_ON;
     }
@@ -31,6 +31,6 @@ trait PlusRepositoryTrait
      */
     public function legalNotes()
     {
-        return $this->get_option(PlusStorable::OPTION_LEGAL_NOTE_NAME, '');
+        return $this->get_option(PlusStorable::OPTION_LEGAL_NOTE, '');
     }
 }
