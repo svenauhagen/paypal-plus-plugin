@@ -40,16 +40,16 @@ class CredentialValidator
      * Verify the API Credentials by making a dummy API call with them.
      *
      * @param ApiContext $context
-     * @return array
+     * @return CredentialValidationResponse
      */
     public function ensureCredential(ApiContext $context)
     {
         $credential = $context->getCredential();
         if (!$credential->getClientId() || !$credential->getClientSecret()) {
-            return [
-                false,
-                esc_html_x('Credential are Empty', 'credential', 'woo-paypalplus'),
-            ];
+            return new CredentialValidationResponse(
+                true,
+                esc_html_x('Credential are Empty', 'credential', 'woo-paypalplus')
+            );
         }
 
         try {
@@ -58,15 +58,12 @@ class CredentialValidator
         } catch (Exception $exc) {
             $this->logger->error($exc);
 
-            return [
-                false,
-                $exc->getMessage(),
-            ];
+            return new CredentialValidationResponse(false, $exc->getMessage());
         }
 
-        return [
+        return new CredentialValidationResponse(
             true,
-            esc_html_x('Credential are Valid', 'credential', 'woo-paypalplus'),
-        ];
+            esc_html_x('Credential are Valid', 'credential', 'woo-paypalplus')
+        );
     }
 }
