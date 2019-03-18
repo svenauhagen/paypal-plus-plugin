@@ -1,0 +1,6 @@
+"standard": {
+  "ignore": [
+    "node_modules",
+    "public/js",
+  ]
+}
