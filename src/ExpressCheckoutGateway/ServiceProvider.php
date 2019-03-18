@@ -137,6 +137,16 @@ class ServiceProvider implements BootstrappableServiceProvider
         }
 
         add_filter(
+            'woocommerce_cart_needs_shipping_address',
+            [$container[CheckoutAddressOverride::class], 'filterCartNeedsShippingAddress'],
+            9999
+        );
+        add_filter(
+            'woocommerce_ship_to_different_address_checked',
+            [$container[CheckoutAddressOverride::class], 'filterShipToDifferentAddress'],
+            9999
+        );
+        add_filter(
             'woocommerce_checkout_get_value',
             [$container[CheckoutAddressOverride::class], 'filterCheckoutValues'],
             20,
@@ -179,7 +189,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         add_filter(
             'woocommerce_available_payment_gateways',
             [$container[CheckoutGatewayOverride::class], 'maybeOverride'],
-            999
+            9999
         );
 
         $this->bootstrapButtons($container);
