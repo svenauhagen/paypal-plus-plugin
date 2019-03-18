@@ -60,26 +60,22 @@ class CartCheckout
 
     /**
      * CartCheckout constructor.
-     * @param Storable $settingRepository
+     * @param ExpressCheckoutStorable $settingRepository
      * @param PaymentCreatorFactory $paymentCreatorFactory
      * @param AjaxJsonRequest $ajaxJsonRequest
      * @param WooCommerce $wooCommerce
-     * @param Session $session
      */
     public function __construct(
-        Storable $settingRepository,
+        ExpressCheckoutStorable $settingRepository,
         PaymentCreatorFactory $paymentCreatorFactory,
         AjaxJsonRequest $ajaxJsonRequest,
-        WooCommerce $wooCommerce,
-        Session $session
+        WooCommerce $wooCommerce
     ) {
 
-        // TODO Must use ExpressCheckoutStorable
         $this->settingRepository = $settingRepository;
         $this->paymentCreatorFactory = $paymentCreatorFactory;
         $this->ajaxJsonRequest = $ajaxJsonRequest;
         $this->wooCommerce = $wooCommerce;
-        $this->session = $session;
     }
 
     /**

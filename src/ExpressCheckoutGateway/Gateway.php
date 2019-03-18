@@ -175,7 +175,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         $payerId = $this->session->get(Session::PAYER_ID);
 
         if (!$payerId || !$paymentId || !$orderId) {
-            $this->logger->error('Payment Excecution: Insufficient data to make payment.');
+            $this->logger->error('Payment Execution: Insufficient data to make payment.');
             // TODO Where redirect the user.
             return [
                 'result' => 'failed',
