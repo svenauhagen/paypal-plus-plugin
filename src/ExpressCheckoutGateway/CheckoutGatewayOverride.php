@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
-use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Session\Session;
 
 /**
  * Class CheckoutGatewayOverride

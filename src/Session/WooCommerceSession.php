@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\Payment;
+namespace WCPayPalPlus\Session;
 
 use WC_Session_Handler;
 use OutOfBoundsException;
@@ -18,32 +18,8 @@ use WooCommerce;
  * Class Session
  * @package WCPayPalPlus\Payment
  */
-// TODO May be better to move it outside of the payment and keep it as the General Session for PPP.
-//      Because of `CHOSEN_PAYMENT_METHOD`. See how the Payment set data for Express checkout will be implemented.
-class Session
+class WooCommerceSession implements Session
 {
-    const ORDER_ID = 'ppp_order_id';
-    const PAYMENT_ID = 'ppp_payment_id';
-    const PAYER_ID = 'ppp_payer_id';
-    const APPROVAL_URL = 'ppp_approval_url';
-
-    const CHOSEN_PAYMENT_METHOD = 'chosen_payment_method';
-
-    const SESSION_CHECK_KEY = '_ppp_default_override_flag';
-    const SESSION_CHECK_ACTIVATE = '1';
-
-    const DEFAULT_VALUE = null;
-
-    const ALLOWED_PROPERTIES = [
-        self::ORDER_ID,
-        self::PAYMENT_ID,
-        self::PAYER_ID,
-        self::APPROVAL_URL,
-        self::CHOSEN_PAYMENT_METHOD,
-        self::SESSION_CHECK_KEY,
-        self::SESSION_CHECK_ACTIVATE,
-    ];
-
     /**
      * @var WooCommerce
      */

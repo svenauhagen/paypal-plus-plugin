@@ -20,7 +20,7 @@ use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
-use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Setting\SharedSettingsModel;
 use WooCommerce;
 

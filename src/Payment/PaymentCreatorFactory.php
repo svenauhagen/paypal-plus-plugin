@@ -12,6 +12,7 @@ namespace WCPayPalPlus\Payment;
 
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Order\OrderFactory;
+use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Setting\Storable;
 use WC_Order;
 use WC_Order_Refund;

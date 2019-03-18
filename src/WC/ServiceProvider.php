@@ -15,7 +15,7 @@ use WCPayPalPlus\PlusGateway\Gateway;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
-use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Service;
 use WooCommerce;
 

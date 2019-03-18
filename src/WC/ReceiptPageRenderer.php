@@ -16,7 +16,7 @@ use WCPayPalPlus\Payment\PaymentPatcher;
 use WCPayPalPlus\PlusGateway\Gateway;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
-use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Session\Session;
 use OutOfBoundsException;
 use RuntimeException;
 

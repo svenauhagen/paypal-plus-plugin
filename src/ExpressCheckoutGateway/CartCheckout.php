@@ -12,7 +12,6 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
-use WCPayPalPlus\Payment\Session;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\Storable;
 use WCPayPalPlus\Utils\AjaxJsonRequest;
@@ -47,11 +46,6 @@ class CartCheckout
      * @var AjaxJsonRequest
      */
     private $ajaxJsonRequest;
-
-    /**
-     * @var Session
-     */
-    private $session;
 
     /**
      * @var WooCommerce

@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\Payment;
 
+use WCPayPalPlus\Session\Session;
 use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
@@ -42,11 +43,6 @@ class ServiceProvider implements BootstrappableServiceProvider
         $container[PaymentPatchFactory::class] = function (Container $container) {
             return new PaymentPatchFactory(
                 $container[Logger::class]
-            );
-        };
-        $container[Session::class] = function (Container $container) {
-            return new Session(
-                $container[WooCommerce::class]
             );
         };
     }
