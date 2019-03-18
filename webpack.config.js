@@ -19,7 +19,7 @@ module.exports = [
             admin: './resources/js/admin.js',
             front: './resources/js/front.js',
             expressCheckout: './resources/js/expressCheckout.js',
-            paypalRedirect: './resources/js/payPalRedirect.js'
+            payPalRedirect: './resources/js/payPalRedirect.js'
         },
         output: {
             path: resolve('public/js'),
