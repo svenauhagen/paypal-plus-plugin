@@ -33,6 +33,29 @@ function toggleEnvFields(fieldsSelectors, style)
 }
 
 /**
+ * Toggle the Environment Form
+ *
+ * @param toggler
+ */
+function environmentToggler(toggler)
+{
+    if (toggler.getAttribute('id') !== TEST_MODE_SELECTOR_ID) {
+        return;
+    }
+
+    switch (toggler.checked) {
+        case true:
+            toggleEnvFields(SANDBOX_DATA_SELECTORS, 'table-row');
+            toggleEnvFields(PRODUCTION_DATA_SELECTORS, 'none');
+            break;
+        default:
+            toggleEnvFields(SANDBOX_DATA_SELECTORS, 'none');
+            toggleEnvFields(PRODUCTION_DATA_SELECTORS, 'table-row');
+            break;
+    }
+}
+
+/**
  * Initialize the Environment
  */
 export function envOptionsInitialize()
@@ -42,26 +65,12 @@ export function envOptionsInitialize()
         return;
     }
 
+    environmentToggler(modeElement);
+
     modeElement.addEventListener(
         'change',
         (event) => {
-            const testModeCheckbox = event.currentTarget;
-            if (testModeCheckbox.getAttribute('id') !== TEST_MODE_SELECTOR_ID) {
-                return;
-            }
-
-            switch (testModeCheckbox.checked) {
-                case true:
-                    toggleEnvFields(SANDBOX_DATA_SELECTORS, 'table-row');
-                    toggleEnvFields(PRODUCTION_DATA_SELECTORS, 'none');
-                    break;
-                default:
-                    toggleEnvFields(SANDBOX_DATA_SELECTORS, 'none');
-                    toggleEnvFields(PRODUCTION_DATA_SELECTORS, 'table-row');
-                    break;
-            }
+            environmentToggler(event.currentTarget);
         }
     );
-
-    modeElement.dispatchEvent(new Event('change'));
 }
