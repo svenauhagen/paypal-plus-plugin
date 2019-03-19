@@ -37,8 +37,6 @@ class SharedPersistor
     /**
      * Delete all Options
      *
-     * TODO Remember to call deleteAll when plugin is uninstalled.
-     *
      * @return void
      */
     public function deleteAll()

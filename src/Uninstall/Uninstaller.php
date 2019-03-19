@@ -1,0 +1,101 @@
+<?php # -*- coding: utf-8 -*-
+/*
+ * This file is part of the PayPal PLUS for WooCommerce package.
+ *
+ * (c) Inpsyde GmbH
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace WCPayPalPlus\Uninstall;
+
+use WCPayPalPlus\Notice\DismissibleNoticeOption;
+use WCPayPalPlus\Setting\SharedPersistor;
+use WCPayPalPlus\Utils\NetworkState;
+use wpdb;
+
+/**
+ * Class Uninstaller
+ * @package WCPayPalPlus\Uninstall
+ */
+class Uninstaller
+{
+    const OPTION_PAYPAL_PLUS = 'woocommerce_paypal_plus_settings';
+    const OPTION_ADMIN_NOTICE_MESSAGE_ID = 'ppplus_message_id';
+    const OPTION_ADMIN_NOTICE_CONTENT = 'ppplus_message_content';
+
+    /**
+     * @var wpdb
+     */
+    private $wpdb;
+
+    /**
+     * Uninstaller constructor.
+     * @param wpdb $wpdb
+     */
+    public function __construct(wpdb $wpdb)
+    {
+        $this->wpdb = $wpdb;
+    }
+
+    /**
+     * Uninstall Plugin
+     */
+    public function multisiteUninstall()
+    {
+        $noticePrefix = DismissibleNoticeOption::OPTION_PREFIX;
+        $this->wpdb->query(
+            "DELETE FROM {$this->wpdb->sitemeta} WHERE 'meta_key' LIKE '{$noticePrefix}%'"
+        );
+
+        $sites = get_sites(['fields' => 'ids']);
+
+        $networkState = NetworkState::create();
+        foreach ($sites as $blogId) {
+            switch_to_blog($blogId);
+            $this->deleteOptions();
+        }
+        $networkState->restore();
+
+        $this->cleanUp();
+    }
+
+    /**
+     * Uninstall Plugin From all of the Sites of a Multisite Installation
+     */
+    public function uninstall()
+    {
+        $this->deleteOptions();
+        $this->cleanUp();
+    }
+
+    /**
+     * Clean up After Uninstall
+     */
+    private function cleanUp()
+    {
+        wp_cache_flush();
+    }
+
+    /**
+     * Delete options
+     */
+    private function deleteOptions()
+    {
+        $noticePrefix = DismissibleNoticeOption::OPTION_PREFIX;
+
+        delete_option(self::OPTION_PAYPAL_PLUS);
+        delete_option(SharedPersistor::OPTION_NAME);
+
+        delete_site_transient(self::OPTION_ADMIN_NOTICE_MESSAGE_ID);
+        delete_site_transient(self::OPTION_ADMIN_NOTICE_CONTENT);
+
+        $this->wpdb->query(
+            "DELETE FROM {$this->wpdb->options} WHERE 'option_name' LIKE '{$noticePrefix}%'"
+        );
+        $this->wpdb->query(
+            "DELETE FROM {$this->wpdb->options} WHERE 'option_name' LIKE 'woocommerce_ppec_payer_id_%'"
+        );
+    }
+}
