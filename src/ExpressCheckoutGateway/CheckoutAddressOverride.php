@@ -60,6 +60,11 @@ class CheckoutAddressOverride
      */
     public function isExpressCheckout()
     {
+        $postPaymentMethod = \filter_input(INPUT_POST, 'payment_method', FILTER_SANITIZE_STRING);
+        if (Gateway::GATEWAY_ID === $postPaymentMethod) {
+            return true;
+        }
+
         return Gateway::GATEWAY_ID === $this->wooCommerce->session->get(Session::CHOSEN_PAYMENT_METHOD);
     }
 
@@ -192,7 +197,7 @@ class CheckoutAddressOverride
     }
 
     /**
-     * Change fields to not requiered and change field type
+     * Change fields to not required and change field type
      *
      * @wp-hook woocommerce_default_address_fields
      *
@@ -235,11 +240,6 @@ class CheckoutAddressOverride
             return $fields;
         }
 
-        $fields['billing_address_1']['required'] = false;
-        $fields['billing_address_2']['required'] = false;
-        $fields['billing_city']['required'] = false;
-        $fields['billing_postcode']['required'] = false;
-        $fields['billing_state']['required'] = false;
         $fields['billing_email']['custom_attributes'] = ['readonly' => 'readonly'];
         $fields['billing_email']['type'] = self::FIELD_TYPE_ID;
 
@@ -257,13 +257,9 @@ class CheckoutAddressOverride
             return;
         }
 
-        $postPaymentMethod = \filter_input(INPUT_POST, 'payment_method', FILTER_SANITIZE_STRING);
-        if (Gateway::GATEWAY_ID !== $postPaymentMethod) {
-            return;
-        }
-
         $customer = $this->wooCommerce->customer;
 
+        $_POST['payment_method'] = Gateway::GATEWAY_ID;
         $billingFields = $this->wooCommerce->checkout()->get_checkout_fields('billing');
         foreach ($billingFields as $key => $value) {
             if (!in_array(str_replace('billing_', '', $key), self::ALLOWED_ADDRESS_FIELDS, true) ||
