@@ -9,7 +9,7 @@
 namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\ExpressCheckoutGateway\Gateway;
 
 /**

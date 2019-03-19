@@ -11,7 +11,7 @@
 namespace WCPayPalPlus\PlusGateway;
 
 use function WCPayPalPlus\isGatewayDisabled;
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Refund\RefundFactory;

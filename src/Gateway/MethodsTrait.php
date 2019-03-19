@@ -14,12 +14,14 @@ use WC_Order;
 use WC_Order_Refund;
 use WCPayPalPlus\Api\ApiContextFactory;
 use RuntimeException;
+use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Notice\Admin as AdminNotice;
 use WCPayPalPlus\Order\OrderFactory;
 
 /**
  * Trait GatewayMethodsTrait
  * @property OrderFactory $orderFactory
+ * @property CredentialValidator $credentialValidator
  * @package WCPayPalPlus
  */
 trait MethodsTrait
@@ -78,12 +80,13 @@ trait MethodsTrait
         do_action(AdminNotice::ACTION_ADMIN_MESSAGES);
         $output = ob_get_clean();
 
-        list($isValid) = $this->credentialValidator->ensureCredential(
+        $credentialValidationResponse = $this->credentialValidator->ensureCredential(
             ApiContextFactory::getFromConfiguration()
         );
+        $isValidStatus = $credentialValidationResponse->isValidStatus();
 
-        $isValid and $this->sandboxMessage($output);
-        !$isValid and $this->invalidPaymentMessage($output);
+        $isValidStatus and $this->sandboxMessage($output);
+        !$isValidStatus and $this->invalidPaymentMessage($output);
 
         $output .= parent::generate_settings_html($formFields, $echo);
 
