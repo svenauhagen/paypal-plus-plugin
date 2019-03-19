@@ -46,7 +46,7 @@ class CheckoutAddressOverride
 
     /**
      * CheckoutAddressOverride constructor.
-     * @param WooCommerce $woocommerce
+     * @param WooCommerce $wooCommerce
      * @param Session $session
      */
     public function __construct(WooCommerce $wooCommerce, Session $session)
@@ -62,7 +62,6 @@ class CheckoutAddressOverride
      */
     public function isExpressCheckout()
     {
-        return Gateway::GATEWAY_ID === $this->session->get(Session::CHOSEN_PAYMENT_METHOD);
         $postPaymentMethod = \filter_input(INPUT_POST, 'payment_method', FILTER_SANITIZE_STRING);
         if (Gateway::GATEWAY_ID === $postPaymentMethod) {
             return true;
