@@ -106,7 +106,7 @@ class AjaxHandler
      */
     private function context()
     {
-        return filter_var($this->request->get('context'), FILTER_SANITIZE_STRING);
+        return $this->request->get('context', FILTER_SANITIZE_STRING);
     }
 
     /**
@@ -116,7 +116,7 @@ class AjaxHandler
      */
     private function task()
     {
-        return filter_var($this->request->get('task'), FILTER_SANITIZE_STRING);
+        return $this->request->get('task', FILTER_SANITIZE_STRING);
     }
 
     /**
@@ -126,7 +126,7 @@ class AjaxHandler
      */
     private function invalidContextMessage()
     {
-        $message = _x(
+        $message = esc_html_x(
             'Invalid context for express checkout request. Allowed are: %s.',
             'express-checkout',
             'woo-paypalplus'

@@ -105,7 +105,7 @@ class Ipn
      */
     private function updatePaymentStatus()
     {
-        $payment_status = $this->request->get(Request::KEY_PAYMENT_STATUS);
+        $payment_status = $this->request->get(Request::KEY_PAYMENT_STATUS, FILTER_SANITIZE_STRING);
         $method = "payment_status_{$payment_status}";
         $updater = $this->orderUpdaterFactory->create();
 

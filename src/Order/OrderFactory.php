@@ -96,7 +96,7 @@ class OrderFactory
      */
     private function customOrderData(Request $request)
     {
-        $data = $request->get(Request::KEY_CUSTOM);
+        $data = $request->get(Request::KEY_CUSTOM, FILTER_DEFAULT);
         if (!$data) {
             throw new DomainException('Invalid Custom Data');
         }
