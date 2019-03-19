@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Utils;
 
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 
 /**
  * Class JsonParser

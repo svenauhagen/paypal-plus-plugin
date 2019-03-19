@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Order;
 
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Ipn\PaymentValidator;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Setting\Storable;

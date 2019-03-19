@@ -14,7 +14,7 @@ use function WCPayPalPlus\areAllExpressCheckoutButtonsDisabled;
 use function WCPayPalPlus\isGatewayDisabled;
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\WpNonce;
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Payment\Session;

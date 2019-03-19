@@ -12,7 +12,7 @@ namespace WCPayPalPlus\Log;
 
 use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
 use WCPayPalPlus\Service\Container;
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 
 /**
  * Class ServiceProvider
@@ -26,7 +26,7 @@ class ServiceProvider implements ServiceProviderInterface
     public function register(Container $container)
     {
         $container[Logger::class] = function () {
-            return \wc_get_logger();
+            return new WcPsrLoggerAdapter(\wc_get_logger());
         };
     }
 }

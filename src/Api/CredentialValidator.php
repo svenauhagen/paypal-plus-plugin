@@ -11,7 +11,7 @@
 namespace WCPayPalPlus\Api;
 
 use Exception;
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 

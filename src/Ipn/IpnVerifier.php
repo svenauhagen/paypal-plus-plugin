@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Ipn;
 
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Setting\Storable;
 use WP_Error;
