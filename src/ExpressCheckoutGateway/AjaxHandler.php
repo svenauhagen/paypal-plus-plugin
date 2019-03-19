@@ -12,7 +12,6 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\NonceInterface;
-use WCPayPalPlus\Payment\Session;
 use WCPayPalPlus\Utils\AjaxJsonRequest;
 use WCPayPalPlus\Request\Request;
 
@@ -54,26 +53,19 @@ class AjaxHandler
     private $ajaxJsonRequest;
 
     /**
-     * @var Session
-     */
-    private $session;
-
-    /**
      * AjaxHandler constructor.
      * @param NonceInterface $nonce
      * @param NonceContextInterface $nonceContext
      * @param Dispatcher $dispatcher
      * @param Request $request
      * @param AjaxJsonRequest $ajaxJsonRequest
-     * @param Session $session
      */
     public function __construct(
         NonceInterface $nonce,
         NonceContextInterface $nonceContext,
         Dispatcher $dispatcher,
         Request $request,
-        AjaxJsonRequest $ajaxJsonRequest,
-        Session $session
+        AjaxJsonRequest $ajaxJsonRequest
     ) {
 
         $this->nonce = $nonce;
@@ -81,7 +73,6 @@ class AjaxHandler
         $this->dispatcher = $dispatcher;
         $this->request = $request;
         $this->ajaxJsonRequest = $ajaxJsonRequest;
-        $this->session = $session;
     }
 
     /**
@@ -115,7 +106,7 @@ class AjaxHandler
      */
     private function context()
     {
-        return filter_var($this->request->get('context'), FILTER_SANITIZE_STRING);
+        return $this->request->get('context', FILTER_SANITIZE_STRING);
     }
 
     /**
@@ -125,7 +116,7 @@ class AjaxHandler
      */
     private function task()
     {
-        return filter_var($this->request->get('task'), FILTER_SANITIZE_STRING);
+        return $this->request->get('task', FILTER_SANITIZE_STRING);
     }
 
     /**

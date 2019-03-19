@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
-use WCPayPalPlus\Session\Session;
+use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use WooCommerce;
 
 /**
@@ -40,34 +40,22 @@ class CheckoutAddressOverride
     private $wooCommerce;
 
     /**
-     * @var Session
+     * @var CurrentPaymentMethod
      */
-    private $session;
+    private $currentPaymentMethod;
 
     /**
      * CheckoutAddressOverride constructor.
      * @param WooCommerce $wooCommerce
-     * @param Session $session
+     * @param CurrentPaymentMethod $currentPaymentMethod
      */
-    public function __construct(WooCommerce $wooCommerce, Session $session)
-    {
+    public function __construct(
+        WooCommerce $wooCommerce,
+        CurrentPaymentMethod $currentPaymentMethod
+    ) {
+
         $this->wooCommerce = $wooCommerce;
-        $this->session = $session;
-    }
-
-    /**
-     * Are we currently in a Express checkout
-     *
-     * @return bool
-     */
-    public function isExpressCheckout()
-    {
-        $postPaymentMethod = \filter_input(INPUT_POST, 'payment_method', FILTER_SANITIZE_STRING);
-        if (Gateway::GATEWAY_ID === $postPaymentMethod) {
-            return true;
-        }
-
-        return Gateway::GATEWAY_ID === $this->wooCommerce->session->get(Session::CHOSEN_PAYMENT_METHOD);
+        $this->currentPaymentMethod = $currentPaymentMethod;
     }
 
     /**
@@ -285,5 +273,17 @@ class CheckoutAddressOverride
             $methodName = "get_{$key}";
             $_POST[$key] = $customer->$methodName();
         }
+    }
+
+    /**
+     * Are we currently in a Express checkout
+     *
+     * @return bool
+     */
+    private function isExpressCheckout()
+    {
+        $currentPaymentMethod = $this->currentPaymentMethod->payment();
+
+        return Gateway::GATEWAY_ID === $currentPaymentMethod;
     }
 }

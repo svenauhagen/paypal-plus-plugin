@@ -37,8 +37,8 @@ class OrderStatuses
     /**
      * Check if two given orders are the same
      *
-     * @param $status
-     * @param $statusToCompareAgainst
+     * @param string $status
+     * @param string $statusToCompareAgainst
      * @return bool
      */
     public function orderStatusIs($status, $statusToCompareAgainst)

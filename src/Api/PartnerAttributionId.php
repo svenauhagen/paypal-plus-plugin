@@ -10,15 +10,15 @@
 
 namespace WCPayPalPlus\Api;
 
-use WCPayPalPlus\Payment\Session;
 use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
+use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
 
 /**
  * Class BnCode
  * @package WCPayPalPlus\Api
  */
-class BnCode
+class PartnerAttributionId
 {
     const FILTER_API_BN_CODE = 'woopaypalplus.api_bncode';
 
@@ -32,17 +32,17 @@ class BnCode
     ];
 
     /**
-     * @var Session
+     * @var CurrentPaymentMethod
      */
-    private $session;
+    private $currentPaymentMethod;
 
     /**
      * BnCode constructor.
-     * @param Session $session
+     * @param CurrentPaymentMethod $currentPaymentMethod
      */
-    public function __construct(Session $session)
+    public function __construct(CurrentPaymentMethod $currentPaymentMethod)
     {
-        $this->session = $session;
+        $this->currentPaymentMethod = $currentPaymentMethod;
     }
 
     /**
@@ -50,7 +50,7 @@ class BnCode
      */
     public function bnCode()
     {
-        $paymentMethod = (string)$this->session->get(Session::CHOSEN_PAYMENT_METHOD);
+        $paymentMethod = $this->currentPaymentMethod->payment();
 
         if (!array_key_exists($paymentMethod, self::PAYMENT_METHODS)) {
             return self::PAYPAL_DEFAULT_BN_CODE;

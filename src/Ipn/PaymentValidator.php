@@ -70,9 +70,18 @@ class PaymentValidator
      */
     public function is_valid_payment()
     {
-        $transactionType = $this->request->get(self::TRANSACTION_TYPE_DATA_KEY);
-        $currency = $this->request->get(self::CURRENCY_DATA_KEY);
-        $amount = $this->request->get(self::AMOUNT_DATA_KEY);
+        $transactionType = $this->request->get(
+            self::TRANSACTION_TYPE_DATA_KEY,
+            FILTER_SANITIZE_STRING
+        );
+        $currency = $this->request->get(
+            self::CURRENCY_DATA_KEY,
+            FILTER_SANITIZE_STRING
+        );
+        $amount = $this->request->get(
+            self::AMOUNT_DATA_KEY,
+            FILTER_SANITIZE_NUMBER_INT
+        );
 
         return ($this->validate_transaction_type($transactionType)
             && $this->validate_currency($currency)
@@ -163,7 +172,7 @@ class PaymentValidator
      */
     public function is_valid_refund()
     {
-        $currency = $this->request->get(self::CURRENCY_DATA_KEY);
+        $currency = $this->request->get(self::CURRENCY_DATA_KEY, FILTER_SANITIZE_NUMBER_INT);
 
         $wc_total = number_format(
             $this->sanitize_string_amount($this->order->get_total()),

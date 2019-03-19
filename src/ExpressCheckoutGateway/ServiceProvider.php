@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use function WCPayPalPlus\areAllExpressCheckoutButtonsDisabled;
+use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use function WCPayPalPlus\isGatewayDisabled;
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\WpNonce;
@@ -70,7 +71,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         $container[CheckoutAddressOverride::class] = function (Container $container) {
             return new CheckoutAddressOverride(
                 $container[WooCommerce::class],
-                $container[Session::class]
+                $container[CurrentPaymentMethod::class]
             );
         };
         $container[StorePaymentData::class] = function (Container $container) {

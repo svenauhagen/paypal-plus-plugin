@@ -14,8 +14,9 @@ use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
 use Inpsyde\Lib\PayPal\Core\PayPalConfigManager;
 use Inpsyde\Lib\PayPal\Core\PayPalCredentialManager;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
+use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use WCPayPalPlus\Log\PayPalSdkLogFactory;
-use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\IntegrationServiceProvider;
@@ -45,8 +46,8 @@ class ServiceProvider implements IntegrationServiceProvider, BootstrappableServi
                 $container[Logger::class]
             );
         };
-        $container[BnCode::class] = function (Container $container) {
-            return new BnCode($container[Session::class]);
+        $container[PartnerAttributionId::class] = function (Container $container) {
+            return new PartnerAttributionId($container[CurrentPaymentMethod::class]);
         };
     }
 
@@ -105,13 +106,13 @@ class ServiceProvider implements IntegrationServiceProvider, BootstrappableServi
             return;
         }
 
-        $bnCode = $container[BnCode::class];
+        $partnerAttributionId = $container[PartnerAttributionId::class];
         $payPalConfigManager = $container[PayPalConfigManager::class];
 
-        add_action('init', function () use ($payPalConfigManager, $bnCode) {
+        add_action('init', function () use ($payPalConfigManager, $partnerAttributionId) {
             $payPalConfigManager->addConfigs(
                 [
-                    'http.headers.PayPal-Partner-Attribution-Id' => $bnCode->bnCode(),
+                    'http.headers.PayPal-Partner-Attribution-Id' => $partnerAttributionId->bnCode(),
                 ]
             );
         }, PHP_INT_MAX);
