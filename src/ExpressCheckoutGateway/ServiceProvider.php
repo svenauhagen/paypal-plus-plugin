@@ -97,7 +97,8 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[NonceContextInterface::class],
                 $container[Dispatcher::class],
                 $container[Request::class],
-                $container[AjaxJsonRequest::class]
+                $container[AjaxJsonRequest::class],
+                $container[Session::class]
             );
         };
         $container[CartCheckout::class] = function (Container $container) {

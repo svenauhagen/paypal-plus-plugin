@@ -12,6 +12,7 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\NonceInterface;
+use WCPayPalPlus\Payment\Session;
 use WCPayPalPlus\Utils\AjaxJsonRequest;
 use WCPayPalPlus\Request\Request;
 
@@ -53,19 +54,26 @@ class AjaxHandler
     private $ajaxJsonRequest;
 
     /**
+     * @var Session
+     */
+    private $session;
+
+    /**
      * AjaxHandler constructor.
      * @param NonceInterface $nonce
      * @param NonceContextInterface $nonceContext
      * @param Dispatcher $dispatcher
      * @param Request $request
      * @param AjaxJsonRequest $ajaxJsonRequest
+     * @param Session $session
      */
     public function __construct(
         NonceInterface $nonce,
         NonceContextInterface $nonceContext,
         Dispatcher $dispatcher,
         Request $request,
-        AjaxJsonRequest $ajaxJsonRequest
+        AjaxJsonRequest $ajaxJsonRequest,
+        Session $session
     ) {
 
         $this->nonce = $nonce;
@@ -73,12 +81,14 @@ class AjaxHandler
         $this->dispatcher = $dispatcher;
         $this->request = $request;
         $this->ajaxJsonRequest = $ajaxJsonRequest;
+        $this->session = $session;
     }
 
     /**
      * Handle the request and dispatch the action based on the `context`
      *
      * @return void
+     * @throws \OutOfBoundsException
      */
     public function handle()
     {
@@ -95,6 +105,8 @@ class AjaxHandler
                 'message' => $this->invalidContextMessage(),
             ]);
         }
+
+        $this->setSession();
 
         $this->dispatcher->dispatch($context, $task, $requestData);
     }
@@ -120,13 +132,21 @@ class AjaxHandler
     }
 
     /**
+     * @throws \OutOfBoundsException
+     */
+    private function setSession()
+    {
+        $this->session->set(Session::CHOSEN_PAYMENT_METHOD, Gateway::GATEWAY_ID);
+    }
+
+    /**
      * The invalid Context Message
      *
      * @return string
      */
     private function invalidContextMessage()
     {
-        $message = _x(
+        $message = esc_html_x(
             'Invalid context for express checkout request. Allowed are: %s.',
             'express-checkout',
             'woo-paypalplus'
