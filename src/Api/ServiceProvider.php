@@ -15,8 +15,6 @@ use Inpsyde\Lib\PayPal\Core\PayPalConfigManager;
 use Inpsyde\Lib\PayPal\Core\PayPalCredentialManager;
 use WC_Logger_Interface as Logger;
 use WCPayPalPlus\Log\PayPalSdkLogFactory;
-use WCPayPalPlus\Payment\Session;
-use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\IntegrationServiceProvider;
 use WCPayPalPlus\Setting\SharedRepository;
@@ -28,7 +26,7 @@ use WC_Log_Levels as LogLevels;
  * Class ServiceProvider
  * @package WCPayPalPlus\Api
  */
-class ServiceProvider implements IntegrationServiceProvider, BootstrappableServiceProvider
+class ServiceProvider implements IntegrationServiceProvider
 {
     /**
      * @inheritdoc
@@ -46,9 +44,6 @@ class ServiceProvider implements IntegrationServiceProvider, BootstrappableServi
                 $container[Logger::class]
             );
         };
-        $container[BnCode::class] = function (Container $container) {
-            return new BnCode($container[Session::class]);
-        };
     }
 
     /**
@@ -61,6 +56,7 @@ class ServiceProvider implements IntegrationServiceProvider, BootstrappableServi
         $container[PayPalConfigManager::class]->addConfigs(
             [
                 'mode' => $isSandBoxed ? 'SANDBOX' : 'LIVE',
+                'http.headers.PayPal-Partner-Attribution-Id' => 'WooCommerce_Cart_Plus',
             ]
         );
 
@@ -97,26 +93,5 @@ class ServiceProvider implements IntegrationServiceProvider, BootstrappableServi
                 )
             );
         }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function bootstrap(Container $container)
-    {
-        if (is_admin()) {
-            return;
-        }
-
-        $bnCode = $container[BnCode::class];
-        $payPalConfigManager = $container[PayPalConfigManager::class];
-
-        add_action('init', function () use ($payPalConfigManager, $bnCode) {
-            $payPalConfigManager->addConfigs(
-                [
-                    'http.headers.PayPal-Partner-Attribution-Id' => $bnCode->bnCode(),
-                ]
-            );
-        }, PHP_INT_MAX);
     }
 }
