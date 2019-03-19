@@ -47,9 +47,9 @@ trait GatewaySharedSettingsTrait
         $postData = $this->get_post_data();
         $credentials = $this->credentialByRequest();
         $apiContext = ApiContextFactory::getFromCredentials($credentials);
-        list($maybeValid, $message) = $this->credentialValidator->ensureCredential($apiContext);
+        $credentialValidationResponse = $this->credentialValidator->ensureCredential($apiContext);
 
-        switch ($maybeValid) {
+        switch ($credentialValidationResponse->isValidStatus()) {
             case true:
                 $config = [
                     'checkout_logo' => $this->get_option('checkout_logo'),
@@ -70,7 +70,7 @@ trait GatewaySharedSettingsTrait
                         'shared-settings',
                         'woo-paypalplus'
                     ),
-                    $message
+                    $credentialValidationResponse->message()
                 ));
                 break;
         }

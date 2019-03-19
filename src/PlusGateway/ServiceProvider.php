@@ -11,7 +11,7 @@
 namespace WCPayPalPlus\PlusGateway;
 
 use function WCPayPalPlus\isGatewayDisabled;
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Refund\RefundFactory;
@@ -20,7 +20,7 @@ use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
-use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Setting\SharedSettingsModel;
 use WooCommerce;
 

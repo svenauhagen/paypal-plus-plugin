@@ -8,15 +8,15 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\Log;
+namespace WCPayPalPlus\Session;
 
-use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
 use WCPayPalPlus\Service\Container;
-use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
+use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
+use WooCommerce;
 
 /**
  * Class ServiceProvider
- * @package WCPayPalPlus\Log
+ * @package WCPayPalPlus\Session
  */
 class ServiceProvider implements ServiceProviderInterface
 {
@@ -25,8 +25,10 @@ class ServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $container)
     {
-        $container[Logger::class] = function () {
-            return new WcPsrLoggerAdapter(\wc_get_logger());
+        $container[Session::class] = function (Container $container) {
+            return new WooCommerceSession(
+                $container[WooCommerce::class]
+            );
         };
     }
 }

@@ -17,4 +17,3 @@ if (defined(__NAMESPACE__ . '\\FUNCTIONS_LOADED')) {
 const FUNCTIONS_LOADED = 1;
 
 require_once __DIR__ . '/utils.php';
-require_once __DIR__ . '/option.php';

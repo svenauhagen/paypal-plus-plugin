@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\WC;
 
-use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Session\Session;
 
 /**
  * Class CheckoutDropper

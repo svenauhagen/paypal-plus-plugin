@@ -11,7 +11,7 @@
 namespace WCPayPalPlus\PlusGateway;
 
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Ipn\Ipn;
@@ -23,7 +23,7 @@ use WCPayPalPlus\Setting\PlusRepositoryTrait;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
-use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Refund\RefundFactory;
 use WCPayPalPlus\Setting\SettingsGatewayModel;
 use WCPayPalPlus\Setting\SharedRepositoryTrait;

@@ -13,7 +13,7 @@ namespace WCPayPalPlus\Api;
 use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
 use Inpsyde\Lib\PayPal\Core\PayPalConfigManager;
 use Inpsyde\Lib\PayPal\Core\PayPalCredentialManager;
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Log\PayPalSdkLogFactory;
 use WCPayPalPlus\Payment\Session;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
@@ -21,7 +21,6 @@ use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\IntegrationServiceProvider;
 use WCPayPalPlus\Setting\SharedRepository;
 use WCPayPalPlus\Setting\Storable;
-use WCPayPalPlus\PlusGateway\Gateway;
 use WC_Log_Levels as LogLevels;
 
 /**
@@ -81,8 +80,6 @@ class ServiceProvider implements IntegrationServiceProvider, BootstrappableServi
             );
         }
 
-        // TODO Credentials have to be provided by a `CredentialProvider` class
-        //      Them are needed by Express Checkout
         $container[PayPalCredentialManager::class]->setCredentialObject(
             new OAuthTokenCredential(
                 $container[SharedRepository::class]->clientIdProduction(),

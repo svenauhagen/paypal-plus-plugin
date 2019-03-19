@@ -3,7 +3,7 @@ Contributors: inpsyde, biont, cocreation
 Tags: paypal, paypal plus, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
 Requires at least: 4.4
 Tested up to: 5.1.0
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 Requires PHP: 5.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -142,6 +142,9 @@ At the moment, PayPal Plus can only be used by vendors in Germany. But their buy
 
 
 == Changelog ==
+= 1.1.1 =
+ - Fix: Decimal format for shipping details when order data are patched
+
 = 1.1.0 =
  - Fix: When PayPal is activated the WooCommerce PayPal Gateway is now deactivated by default
  - Fix: Limit characters for logo URL to 127 characters
