@@ -10,7 +10,8 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
-use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Session\Session;
+use WooCommerce;
 
 /**
  * Class CheckoutAddressOverride
@@ -18,14 +19,9 @@ use WCPayPalPlus\Payment\Session;
  */
 class CheckoutAddressOverride
 {
-    /**
-     * Type id of WooCommerce Address field
-     */
+
     const FIELD_TYPE_ID = 'ppp_ec_field';
 
-    /**
-     * Address fields that comes from Paypal
-     */
     const ALLOWED_ADDRESS_FIELDS = [
             'first_name',
             'last_name',
@@ -39,27 +35,34 @@ class CheckoutAddressOverride
     ];
 
     /**
-     * @var \WooCommerce
+     * @var WooCommerce
      */
     private $wooCommerce;
 
     /**
-     * CheckoutAddressOverride constructor.
-     *
-     * @param \WooCommerce $woocommerce
+     * @var Session
      */
-    public function __construct(\WooCommerce $woocommerce)
+    private $session;
+
+    /**
+     * CheckoutAddressOverride constructor.
+     * @param WooCommerce $woocommerce
+     * @param Session $session
+     */
+    public function __construct(WooCommerce $wooCommerce, Session $session)
     {
-        $this->wooCommerce = $woocommerce;
+        $this->wooCommerce = $wooCommerce;
+        $this->session = $session;
     }
 
     /**
-     * Are wee currently in a Express checkout
+     * Are we currently in a Express checkout
      *
      * @return bool
      */
     public function isExpressCheckout()
     {
+        return Gateway::GATEWAY_ID === $this->session->get(Session::CHOSEN_PAYMENT_METHOD);
         $postPaymentMethod = \filter_input(INPUT_POST, 'payment_method', FILTER_SANITIZE_STRING);
         if (Gateway::GATEWAY_ID === $postPaymentMethod) {
             return true;

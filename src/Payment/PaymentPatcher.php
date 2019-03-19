@@ -10,6 +10,7 @@ namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
+use WCPayPalPlus\ExpressCheckoutGateway\Gateway;
 
 /**
  * Class PaymentPatcher
@@ -18,12 +19,14 @@ use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
  */
 class PaymentPatcher
 {
+    const ACTION_AFTER_PAYMENT_PATCH = 'woopaypalplus.after_express_checkout_payment_patch';
+
     /**
      * Patch data object.
      *
      * @var PaymentPatchData
      */
-    private $patch_data;
+    private $patchData;
 
     /**
      * @var Logger
@@ -38,7 +41,7 @@ class PaymentPatcher
      */
     public function __construct(PaymentPatchData $patch_data, Logger $logger)
     {
-        $this->patch_data = $patch_data;
+        $this->patchData = $patch_data;
         $this->logger = $logger;
     }
 
@@ -49,16 +52,32 @@ class PaymentPatcher
      */
     public function execute()
     {
-        $success = false;
-        $patch_request = $this->patch_data->get_patch_request();
+        $isSuccessPatched = false;
+        $patchRequest = $this->patchData->get_patch_request();
 
         try {
-            $payment = $this->patch_data->get_payment();
-            $success = $payment->update($patch_request, $this->patch_data->get_api_context());
+            $payment = $this->patchData->get_payment();
+            $isSuccessPatched = $payment->update(
+                $patchRequest,
+                $this->patchData->get_api_context()
+            );
         } catch (PayPalConnectionException $exc) {
             $this->logger->error($exc);
         }
 
-        return $success;
+        /**
+         * Action After Payment Patch
+         *
+         * @param PaymentPatcher $paymentPatcher
+         * @oparam bool $isSuccessPatched
+         */
+        do_action(
+            self::ACTION_AFTER_PAYMENT_PATCH,
+            $this,
+            $isSuccessPatched,
+            $this->patchData
+        );
+
+        return $isSuccessPatched;
     }
 }

@@ -17,10 +17,9 @@ use Brain\Nonces\WpNonce;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
-use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\SharedSettingsModel;
-use WCPayPalPlus\Setting\Storable;
 use WCPayPalPlus\Utils\AjaxJsonRequest;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Api\CredentialValidator;
@@ -70,12 +69,14 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[CheckoutAddressOverride::class] = function (Container $container) {
             return new CheckoutAddressOverride(
-                $container[\WooCommerce::class]
+                $container[WooCommerce::class],
+                $container[Session::class]
             );
         };
         $container[StorePaymentData::class] = function (Container $container) {
             return new StorePaymentData(
-                $container[\WooCommerce::class]
+                $container[WooCommerce::class],
+                $container[Session::class]
             );
         };
 
@@ -102,11 +103,10 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[CartCheckout::class] = function (Container $container) {
             return new CartCheckout(
-                $container[Storable::class],
+                $container[ExpressCheckoutStorable::class],
                 $container[PaymentCreatorFactory::class],
                 $container[AjaxJsonRequest::class],
-                $container[WooCommerce::class],
-                $container[Session::class]
+                $container[WooCommerce::class]
             );
         };
         $container[SingleProductCheckout::class] = function (Container $container) {
@@ -132,6 +132,7 @@ class ServiceProvider implements BootstrappableServiceProvider
             return $methods;
         });
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         if (!is_admin() && (isGatewayDisabled($gateway) || areAllExpressCheckoutButtonsDisabled())) {
             return;
         }

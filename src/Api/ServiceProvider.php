@@ -76,8 +76,6 @@ class ServiceProvider implements IntegrationServiceProvider
             );
         }
 
-        // TODO Credentials have to be provided by a `CredentialProvider` class
-        //      Them are needed by Express Checkout
         $container[PayPalCredentialManager::class]->setCredentialObject(
             new OAuthTokenCredential(
                 $container[SharedRepository::class]->clientIdProduction(),

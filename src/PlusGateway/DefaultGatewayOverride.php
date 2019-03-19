@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\PlusGateway;
 
-use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Setting;
 use OutOfBoundsException;
 

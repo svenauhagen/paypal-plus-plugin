@@ -124,13 +124,15 @@ class PaymentCreator
      */
     private function details()
     {
-        $shipping = (string)$this->orderDataProvider->get_total_shipping();
+        $tax = 0;
+        $shipping = (float)$this->orderDataProvider->get_total_shipping();
+
         if ($this->orderDataProvider->should_include_tax_in_total()) {
             $tax = $this->orderDataProvider->get_total_tax();
-        } else {
-            // TODO Could be there problems to convert it to float?.
-            $shipping += (float)$this->orderDataProvider->get_shipping_tax();
         }
+
+        $tax or $shipping += (float)$this->orderDataProvider->get_shipping_tax();
+
         $sub_total = $this->orderDataProvider->get_subtotal();
 
         $details = new Api\Details();
@@ -138,7 +140,7 @@ class PaymentCreator
             ->setShipping($shipping)
             ->setSubtotal($sub_total);
 
-        if (isset($tax)) {
+        if ($tax > 0) {
             $details->setTax($tax);
         }
 
