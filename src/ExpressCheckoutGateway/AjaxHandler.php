@@ -88,7 +88,6 @@ class AjaxHandler
      * Handle the request and dispatch the action based on the `context`
      *
      * @return void
-     * @throws \OutOfBoundsException
      */
     public function handle()
     {
@@ -105,8 +104,6 @@ class AjaxHandler
                 'message' => $this->invalidContextMessage(),
             ]);
         }
-
-        $this->setSession();
 
         $this->dispatcher->dispatch($context, $task, $requestData);
     }
@@ -129,14 +126,6 @@ class AjaxHandler
     private function task()
     {
         return filter_var($this->request->get('task'), FILTER_SANITIZE_STRING);
-    }
-
-    /**
-     * @throws \OutOfBoundsException
-     */
-    private function setSession()
-    {
-        $this->session->set(Session::CHOSEN_PAYMENT_METHOD, Gateway::GATEWAY_ID);
     }
 
     /**
