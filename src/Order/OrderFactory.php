@@ -11,12 +11,8 @@
 namespace WCPayPalPlus\Order;
 
 use UnexpectedValueException;
-use DomainException;
 use WC_Order;
 use WC_Order_Refund;
-use Exception;
-use WCPayPalPlus\Request\Request;
-use RuntimeException;
 
 /**
  * Class OrderFactory
@@ -27,8 +23,8 @@ class OrderFactory
     /**
      * @param $orderKey
      * @return WC_Order|WC_Order_Refund
-     * @throws RuntimeException
      * @throws UnexpectedValueException
+     * @throws OrderFactoryException
      */
     public function createByOrderKey($orderKey)
     {
@@ -47,22 +43,22 @@ class OrderFactory
     /**
      * Create and order by the given Id
      *
-     * @param int $orderId
+     * @param $orderId
      * @return WC_Order|WC_Order_Refund
-     * @throws RuntimeException
+     * @throws OrderFactoryException
      */
     public function createById($orderId)
     {
         assert(is_int($orderId));
 
         if (!$orderId) {
-            throw new RuntimeException("Cannot create order by value {$orderId}");
+            throw OrderFactoryException::forInvalidOrderId($orderId);
         }
 
         $order = wc_get_order($orderId);
 
         if (!in_array(get_class($order), [WC_Order::class, WC_Order_Refund::class], true)) {
-            throw new RuntimeException("Cannot create order by value {$orderId}");
+            throw OrderFactoryException::forInvalidOrderId($orderId);
         }
 
         return $order;
