@@ -11,6 +11,7 @@ namespace WCPayPalPlus\Payment;
 use WCPayPalPlus\Order\OrderStatuses;
 use WCPayPalPlus\WC\RequestSuccessHandler;
 use WooCommerce;
+use WC_Order;
 
 /**
  * Class PaymentExecutionSuccess
@@ -49,17 +50,22 @@ class PaymentExecutionSuccess implements RequestSuccessHandler
      */
     public function execute()
     {
-        if ($this->data->is_approved()) {
-            $this->updateOrder();
-
-            $this->wooCommerce->cart->empty_cart();
-        } else {
-            $notice = sprintf(
-                __('There was an error executing the payment. Payment state: %s', 'woo-paypalplus'),
-                $this->data->get_payment_state()
+        if (!$this->data->is_approved()) {
+            wc_add_notice(
+                sprintf(
+                    esc_html__(
+                        'There was an error executing the payment. Payment state: %s',
+                        'woo-paypalplus'
+                    ),
+                    $this->data->get_payment_state()
+                ),
+                'error'
             );
-            wc_add_notice($notice, 'error');
+            return;
         }
+
+        $this->updateOrder();
+        $this->wooCommerce->cart->empty_cart();
     }
 
     /**
@@ -81,25 +87,28 @@ class PaymentExecutionSuccess implements RequestSuccessHandler
                 $order->update_status(OrderStatuses::ORDER_STATUS_ON_HOLD);
                 break;
             case OrderStatuses::ORDER_STATUS_COMPLETED:
-                if (!$this->data->is_pui()) {
+                if ($this->data->is_pui()) {
+                    $this->updateStatusToOnHold($order);
+                    $this->reduceStockLevels($order);
                     break;
                 }
 
-                $order->add_order_note(__('PayPal PLUS payment completed', 'woo-paypalplus'));
+                $order->add_order_note(
+                    esc_html__('PayPal PLUS payment completed', 'woo-paypalplus')
+                );
                 $order->payment_complete($saleId);
                 $note = sprintf(
-                    __('PayPal PLUS payment approved! Transaction ID: %s', 'woo-paypalplus'),
+                    esc_html__(
+                        'PayPal PLUS payment approved! Transaction ID: %s',
+                        'woo-paypalplus'
+                    ),
                     $saleId
                 );
                 $order->add_order_note($note);
-                $this->wooCommerce->cart->empty_cart();
                 break;
             default:
-                $order->update_status(
-                    OrderStatuses::ORDER_STATUS_ON_HOLD,
-                    esc_html__('Awaiting payment', 'woo-paypalplus')
-                );
-                wc_reduce_stock_levels($order->get_id());
+                $this->updateStatusToOnHold($order);
+                $this->reduceStockLevels($order);
                 break;
         }
 
@@ -188,5 +197,24 @@ class PaymentExecutionSuccess implements RequestSuccessHandler
             'country' => $payment->payer->payer_info->billing_address->country_code,
         ];
         $order->set_address($billingAddress, $type = 'billing');
+    }
+
+    /**
+     * @param WC_Order $order
+     */
+    private function updateStatusToOnHold(WC_Order $order)
+    {
+        $order->update_status(
+            OrderStatuses::ORDER_STATUS_ON_HOLD,
+            esc_html__('Awaiting payment', 'woo-paypalplus')
+        );
+    }
+
+    /**
+     * @param WC_Order $order
+     */
+    private function reduceStockLevels(WC_Order $order)
+    {
+        wc_reduce_stock_levels($order->get_id());
     }
 }

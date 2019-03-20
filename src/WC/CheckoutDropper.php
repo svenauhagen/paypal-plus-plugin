@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\WC;
 
 use WCPayPalPlus\Session\Session;
+use WC_Order;
 
 /**
  * Class CheckoutDropper
@@ -33,25 +34,39 @@ class CheckoutDropper
     }
 
     /**
-     * TODO May be a reason as parameter? Just for log and notice.
-     * TODO May be passing the url to be different based on cases?
-     *
-     * Abort checkout
+     * Abort Checkout and Redirect User
      */
-    public function abortCheckout()
+    public function abortSession()
     {
+        wc_add_notice($this->errorMessage(), 'error');
         $this->session->clean();
-
-        // TODO May be a more useful message for the user.
-        wc_add_notice(
-            esc_html__('Error processing checkout. Please try again.', 'woo-paypalplus'),
-            'error'
-        );
-
-        // TODO Shouldn't be the same of the `Cancel Url` option?
-        //      Also, would be better if we could manage the case when the user want to cancel the order.
-        //      Otherwise do not do any redirection here and let's do it by the caller.
-        wp_safe_redirect(wc_get_cart_url());
+        wp_safe_redirect($this->url());
         exit;
+    }
+
+    /**
+     * Abort Order
+     */
+    public function abort()
+    {
+        wc_add_notice($this->errorMessage(), 'error');
+    }
+
+    /**
+     * @return string
+     */
+    private function errorMessage()
+    {
+        // TODO May be a more useful message for the user.
+        return esc_html__('Error processing checkout. Please try again.', 'woo-paypalplus');
+    }
+
+    /**
+     * @return string
+     */
+    private function url()
+    {
+        // TODO Still need to clarify which url to use, for both payment methods or they'll have different?
+        return wc_get_cart_url();
     }
 }

@@ -52,6 +52,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[Gateway::class] = function (Container $container) {
             return new Gateway(
+                $container[WooCommerce::class],
                 $container[CredentialValidator::class],
                 $container[GatewaySettingsModel::class],
                 $container[RefundFactory::class],

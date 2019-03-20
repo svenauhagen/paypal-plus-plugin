@@ -14,6 +14,7 @@ use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
 use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
+use WooCommerce;
 
 /**
  * Class ServiceProvider
@@ -35,8 +36,10 @@ class ServiceProvider implements BootstrappableServiceProvider
         $container->share(ExpressCheckoutStorable::class, function (Container $container) {
             return $container[ExpressCheckoutGateway::class];
         });
-        $container[SharedRepository::class] = function () {
-            return new SharedRepository();
+        $container[SharedRepository::class] = function (Container $container) {
+            return new SharedRepository(
+                $container[WooCommerce::class]
+            );
         };
         $container[SharedSettingsModel::class] = function () {
             return new SharedSettingsModel();

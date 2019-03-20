@@ -15,7 +15,8 @@ use WCPayPalPlus\Ipn\PaymentValidator;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Setting\Storable;
 use WooCommerce;
-use Exception;
+use RuntimeException;
+use UnexpectedValueException;
 
 /**
  * Class OrderUpdaterFactory
@@ -81,11 +82,13 @@ class OrderUpdaterFactory
 
     /**
      * @return OrderUpdater
-     * @throws Exception
+     * @throws RuntimeException
+     * @throws UnexpectedValueException
      */
     public function create()
     {
-        $order = $this->orderFactory->createByOrderKey($this->request->get(Request::KEY_CUSTOM));
+        $orderKey = $this->request->get(Request::KEY_CUSTOM, FILTER_SANITIZE_STRING);
+        $order = $this->orderFactory->createByOrderKey($orderKey);
         $paymentValidator = new PaymentValidator($this->request, $order);
 
         return new OrderUpdater(

@@ -16,6 +16,8 @@ use WCPayPalPlus\Order\OrderUpdaterFactory;
 use Exception;
 use WCPayPalPlus\Request\Request;
 use LogicException;
+use RuntimeException;
+use UnexpectedValueException;
 
 /**
  * Handles responses from PayPal IPN.
@@ -88,11 +90,11 @@ class Ipn
             return;
         }
 
-        $orderKey = $this->request->get(Request::KEY_CUSTOM);
+        $orderKey = $this->request->get(Request::KEY_CUSTOM, FILTER_SANITIZE_STRING);
 
         try {
             // Ensure an order exists
-            $this->orderFactory->createByOrderKey($this->request->get(Request::KEY_CUSTOM));
+            $this->orderFactory->createByOrderKey($orderKey);
             $this->updatePaymentStatus();
         } catch (Exception $exc) {
             $this->logger->error($exc, [$orderKey]);
@@ -102,8 +104,9 @@ class Ipn
     /**
      * Update Payment Status
      *
-     * @return void
      * @throws LogicException
+     * @throws RuntimeException
+     * @throws UnexpectedValueException
      */
     private function updatePaymentStatus()
     {

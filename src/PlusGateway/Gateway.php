@@ -27,6 +27,7 @@ use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Refund\RefundFactory;
 use WCPayPalPlus\Setting\SettingsGatewayModel;
 use WCPayPalPlus\Setting\SharedRepositoryTrait;
+use WCPayPalPlus\WC\CheckoutDropper;
 use WooCommerce;
 use WC_Payment_Gateway;
 use OutOfBoundsException;
@@ -102,6 +103,11 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
     private $logger;
 
     /**
+     * @var CheckoutDropper
+     */
+    private $checkoutDropper;
+
+    /**
      * Gateway constructor.
      * @param WooCommerce $wooCommerce
      * @param FrameRenderer $frameView
@@ -111,6 +117,7 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
      * @param OrderFactory $orderFactory
      * @param PaymentExecutionFactory $paymentExecutionFactory
      * @param PaymentCreatorFactory $paymentCreatorFactory
+     * @param CheckoutDropper $checkoutDropper
      * @param Session $session
      * @param Logger $logger
      */
@@ -123,6 +130,7 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
         OrderFactory $orderFactory,
         PaymentExecutionFactory $paymentExecutionFactory,
         PaymentCreatorFactory $paymentCreatorFactory,
+        CheckoutDropper $checkoutDropper,
         Session $session,
         Logger $logger
     ) {
@@ -135,6 +143,7 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
         $this->orderFactory = $orderFactory;
         $this->paymentExecutionFactory = $paymentExecutionFactory;
         $this->paymentCreatorFactory = $paymentCreatorFactory;
+        $this->checkoutDropper = $checkoutDropper;
         $this->session = $session;
         $this->logger = $logger;
 
@@ -229,21 +238,12 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
              */
             do_action(self::ACTION_AFTER_PAYMENT_EXECUTION, $payment, $order);
 
-            $redirectUrl = $order->get_checkout_order_received_url();
+            wp_safe_redirect($order->get_checkout_order_received_url());
+            exit;
         } catch (PayPalConnectionException $exc) {
             $this->logger->error($exc);
-
-            wc_add_notice(
-                esc_html__('Error processing checkout. Please check the logs.', 'woo-paypalplus'),
-                'error'
-            );
-
-            // TODO Should be the cancel url option?
-            $redirectUrl = wc_get_checkout_url();
+            $this->checkoutDropper->abortSession();
         }
-
-        wp_safe_redirect($redirectUrl);
-        exit;
     }
 
     /**
