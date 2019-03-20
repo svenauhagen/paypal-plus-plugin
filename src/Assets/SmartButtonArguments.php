@@ -80,6 +80,7 @@ class SmartButtonArguments
                 'branding' => true,
                 'tagline' => false,
                 'layout' => 'horizontal',
+                'label' => 'paypal',
             ],
             'redirect_urls' => [
                 'cancel_url' => $this->settingRepository->cancelUrl(),
