@@ -25,28 +25,6 @@ use RuntimeException;
 class OrderFactory
 {
     /**
-     * TODO Remember to edit this based on che patch made for #PPP-275
-     *      Moreover I would like to remove completely this method. Why use request and do not just
-     *      pass explicitly the data we need? Will make more clear what we need to build the object.
-     *      Clear design make easy to discover bugs and it's more maintainable.
-     *
-     * @param Request $request
-     * @return WC_Order|WC_Order_Refund
-     * @throws Exception
-     */
-    public function createByRequest(Request $request)
-    {
-        list($orderId, $orderKey) = $this->customOrderData($request);
-
-        $order = $this->createById($orderId);
-        $order or $order = $this->createByOrderKey($orderKey);
-
-        $this->bailIfInvalidOrder($order);
-
-        return $order;
-    }
-
-    /**
      * @param $orderKey
      * @return WC_Order|WC_Order_Refund
      * @throws RuntimeException
@@ -56,6 +34,7 @@ class OrderFactory
     {
         assert(is_string($orderKey));
 
+        $orderKey = $this->orderKeyByJson($orderKey);
         $orderId = wc_get_order_id_by_order_key($orderKey);
         $order = $this->createById($orderId);
 
@@ -89,34 +68,35 @@ class OrderFactory
     }
 
     /**
-     * @param Request $request
-     * @return array
-     * @throws DomainException
-     * @throws UnexpectedValueException
+     * Old plugin version used a json string to extract the order id and or the order key,
+     * sounds like this approach caused issues so we switched to use just the order_key that doesn't
+     * never change.
+     *
+     * To prevent orders are not full filled after the update of the plugin, we'll keep it for a while.
+     *
+     * @deprecated since 2.0.0 This will be removed in a future version
+     * @param $customData
+     * @return string
      */
-    private function customOrderData(Request $request)
+    private function orderKeyByJson($customData)
     {
-        $data = $request->get(Request::KEY_CUSTOM, FILTER_DEFAULT);
-        if (!$data) {
-            throw new DomainException('Invalid Custom Data');
+        assert(is_string($customData));
+
+        $orderKey = '';
+
+        // We are sure we used json object.
+        if (strpos($customData, '{') === false) {
+            return $customData;
         }
 
-        $data = json_decode($data);
-        if ($data === null) {
-            throw new UnexpectedValueException('Decoding IPN Custom Data, produced no value');
+        $custom = json_decode($customData);
+        $jsonErrorNone = json_last_error() === JSON_ERROR_NONE;
+
+        if ($custom && $jsonErrorNone && is_object($custom)) {
+            $orderKey = isset($custom->order_key) ? $custom->order_key : '';
         }
 
-        $orderId = isset($data->order_id) ? (int)$data->order_id : 0;
-        $orderKey = isset($data->order_key) ? $data->order_key : '';
-
-        if (!$orderId && !$orderKey) {
-            throw new UnexpectedValueException('Order ID nor Order Key are valid data.');
-        }
-
-        return [
-            $orderId,
-            $orderKey,
-        ];
+        return $orderKey ?: $customData;
     }
 
     /**

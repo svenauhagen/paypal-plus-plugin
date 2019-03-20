@@ -85,7 +85,7 @@ class OrderUpdaterFactory
      */
     public function create()
     {
-        $order = $this->orderFactory->createByRequest($this->request);
+        $order = $this->orderFactory->createByOrderKey($this->request->get(Request::KEY_CUSTOM));
         $paymentValidator = new PaymentValidator($this->request, $order);
 
         return new OrderUpdater(

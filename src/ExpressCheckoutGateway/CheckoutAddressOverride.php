@@ -59,7 +59,7 @@ class CheckoutAddressOverride
     }
 
     /**
-     * Don't save customer adress from paypal
+     * Don't save customer address from paypal
      *
      * @wp-hook woocommerce_checkout_update_customer_data
      *

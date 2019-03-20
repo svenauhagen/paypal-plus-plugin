@@ -16,7 +16,6 @@ use Inpsyde\Lib\PayPal\Core\PayPalCredentialManager;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use WCPayPalPlus\Log\PayPalSdkLogFactory;
-use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\IntegrationServiceProvider;

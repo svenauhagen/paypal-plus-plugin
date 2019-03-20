@@ -88,12 +88,14 @@ class Ipn
             return;
         }
 
+        $orderKey = $this->request->get(Request::KEY_CUSTOM);
+
         try {
             // Ensure an order exists
-            $this->orderFactory->createByRequest($this->request);
+            $this->orderFactory->createByOrderKey($this->request->get(Request::KEY_CUSTOM));
             $this->updatePaymentStatus();
         } catch (Exception $exc) {
-            $this->logger->error($exc);
+            $this->logger->error($exc, [$orderKey]);
         }
     }
 
