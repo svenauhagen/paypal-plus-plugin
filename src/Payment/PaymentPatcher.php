@@ -29,41 +29,29 @@ class PaymentPatcher
     private $patchData;
 
     /**
-     * @var Logger
-     */
-    private $logger;
-
-    /**
      * PaymentPatcher constructor.
      *
      * @param PaymentPatchData $patch_data You guessed it: The Patch data.
-     * @param Logger $logger
      */
-    public function __construct(PaymentPatchData $patch_data, Logger $logger)
+    public function __construct(PaymentPatchData $patch_data)
     {
         $this->patchData = $patch_data;
-        $this->logger = $logger;
     }
 
     /**
      * Execute the PatchRequest
      *
-     * @return bool
+     * @throws PayPalConnectionException
      */
     public function execute()
     {
-        $isSuccessPatched = false;
         $patchRequest = $this->patchData->get_patch_request();
 
-        try {
-            $payment = $this->patchData->get_payment();
-            $isSuccessPatched = $payment->update(
-                $patchRequest,
-                $this->patchData->get_api_context()
-            );
-        } catch (PayPalConnectionException $exc) {
-            $this->logger->error($exc);
-        }
+        $payment = $this->patchData->get_payment();
+        $payment->update(
+            $patchRequest,
+            $this->patchData->get_api_context()
+        );
 
         /**
          * Action After Payment Patch
@@ -71,13 +59,6 @@ class PaymentPatcher
          * @param PaymentPatcher $paymentPatcher
          * @oparam bool $isSuccessPatched
          */
-        do_action(
-            self::ACTION_AFTER_PAYMENT_PATCH,
-            $this,
-            $isSuccessPatched,
-            $this->patchData
-        );
-
-        return $isSuccessPatched;
+        do_action(self::ACTION_AFTER_PAYMENT_PATCH, $this, $this->patchData);
     }
 }

@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\WC;
 
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Setting\PlusStorable;
@@ -94,7 +95,11 @@ class RedirectablePatcher
             ApiContextFactory::getFromConfiguration()
         );
 
-        $paymentPatcher->execute() or $this->checkoutDropper->abortSession();
+        try {
+            $paymentPatcher->execute();
+        } catch (PayPalConnectionException $exc) {
+            $this->checkoutDropper->abortSession();
+        }
 
         wp_enqueue_script('paypalplus-woocommerce-plus-paypal-redirect');
     }

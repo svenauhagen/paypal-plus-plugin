@@ -19,6 +19,7 @@ use WCPayPalPlus\Gateway\MethodsTrait;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Payment\PaymentPatcher;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
+use WCPayPalPlus\Payment\PaymentProcessException;
 use WCPayPalPlus\Setting\ExpressCheckoutRepositoryTrait;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\GatewaySharedSettingsTrait;
@@ -167,6 +168,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
      *
      * @param int $orderId
      * @return array
+     * @throws PaymentProcessException
      */
     public function process_payment($orderId)
     {
@@ -177,19 +179,13 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         $payerId = $this->session->get(Session::PAYER_ID);
 
         if (!$payerId || !$paymentId || !$orderId) {
-            $this->logger->error('Payment Execution: Insufficient data to make payment.');
-            // TODO Where redirect the user.
-            return [
-                'result' => 'failed',
-                'redirect' => '',
-            ];
+            throw PaymentProcessException::forInsufficientData();
         }
 
         try {
             $order = $this->orderFactory->createById($orderId);
         } catch (RuntimeException $exc) {
-            $this->logger->error('Payment Execution: ' . $exc);
-            $this->checkoutDropper->abortSession();
+            throw PaymentProcessException::becauseInvalidOrderId($orderId);
         }
 
         $paymentPatcher = $this->paymentPatchFactory->create(
@@ -199,30 +195,18 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
             ApiContextFactory::getFromConfiguration()
         );
 
-        $isSuccessPatched = $paymentPatcher->execute();
+        try {
+            $paymentPatcher->execute();
+        } catch (PayPalConnectionException $exc) {
+            throw PaymentProcessException::becausePayPalConnection($exc);
+        }
 
         /**
-         * Action After Payment Patch
+         * Allow to execute more patching
          *
-         * @param PaymentPatcher $paymentPatcher
          * @oparam bool $isSuccessPatched
-         * @param CheckoutDropper $checkoutDropper
          */
-        do_action(
-            PaymentPatcher::ACTION_AFTER_PAYMENT_PATCH,
-            $paymentPatcher,
-            $isSuccessPatched,
-            $this->checkoutDropper
-        );
-
-        if (!$isSuccessPatched) {
-            $this->checkoutDropper->abortSession();
-
-            return [
-                'result' => 'failed',
-                'redirect' => $order->get_cancel_order_url(),
-            ];
-        }
+        do_action(PaymentPatcher::ACTION_AFTER_PAYMENT_PATCH);
 
         $payment = $this->paymentExecutionFactory->create(
             $order,
@@ -242,13 +226,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
              */
             do_action(self::ACTION_AFTER_PAYMENT_EXECUTION, $payment, $order);
         } catch (PayPalConnectionException $exc) {
-            $this->logger->error('Payment Execution: ' . $exc);
-            $this->checkoutDropper->abort();
-
-            return [
-                'result' => 'failed',
-                'redirect' => $order->get_cancel_order_url(),
-            ];
+            throw PaymentProcessException::becausePayPalConnection($exc);
         }
 
         return [

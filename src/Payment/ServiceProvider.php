@@ -40,10 +40,8 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[WooCommerce::class]
             );
         };
-        $container[PaymentPatchFactory::class] = function (Container $container) {
-            return new PaymentPatchFactory(
-                $container[Logger::class]
-            );
+        $container[PaymentPatchFactory::class] = function () {
+            return new PaymentPatchFactory();
         };
     }
 

@@ -37,8 +37,8 @@ class CheckoutDropper
      */
     public function abortSession()
     {
+        $this->abort();
         wc_add_notice($this->errorMessage(), 'error');
-        $this->session->clean();
         wp_safe_redirect($this->url());
         exit;
     }
@@ -48,7 +48,7 @@ class CheckoutDropper
      */
     public function abort()
     {
-        wc_add_notice($this->errorMessage(), 'error');
+        $this->session->clean();
     }
 
     /**

@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Api\Payment;
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use WCPayPalPlus\WC\RequestSuccessHandler;
 
 /**
@@ -54,6 +55,7 @@ class PaymentPerformer
      * Be aware all of the call made by the PayPal SDK may throw a PayPalConnectionException
      *
      * @return Payment
+     * @throws PayPalConnectionException
      */
     public function execute()
     {
