@@ -135,7 +135,7 @@ class OrderUpdater
                 FILTER_SANITIZE_STRING
             );
             $note = __('IPN payment completed', 'woo-paypalplus');
-            $fee = wc_clean($this->request->get(Request::KEY_MC_FEE, FILTER_DEFAULT));
+            $fee = $this->request->get(Request::KEY_MC_FEE, FILTER_SANITIZE_STRING);
 
             $this->payment_complete($transaction_id, $note);
 
