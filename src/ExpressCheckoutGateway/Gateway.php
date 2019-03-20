@@ -12,7 +12,7 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Gateway\MethodsTrait;
@@ -24,7 +24,7 @@ use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\GatewaySharedSettingsTrait;
 use WCPayPalPlus\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
-use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Refund\RefundFactory;
 use WCPayPalPlus\Setting\SettingsGatewayModel;
 use WCPayPalPlus\Setting\SharedRepositoryTrait;
@@ -48,7 +48,6 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
     const GATEWAY_ID = 'paypal_express';
     const GATEWAY_TITLE_METHOD = 'PayPal Express Checkout';
     const ACTION_AFTER_PAYMENT_EXECUTION = 'woopaypalplus.after_express_checkout_payment_execution';
-    const ACTION_AFTER_PAYMENT_PATCH = 'woopaypalplus.after_express_checkout_payment_patch';
 
     /**
      * @var CredentialValidator
@@ -175,7 +174,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         $payerId = $this->session->get(Session::PAYER_ID);
 
         if (!$payerId || !$paymentId || !$orderId) {
-            $this->logger->error('Payment Excecution: Insufficient data to make payment.');
+            $this->logger->error('Payment Execution: Insufficient data to make payment.');
             // TODO Where redirect the user.
             return [
                 'result' => 'failed',
@@ -207,7 +206,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
          * @param CheckoutDropper $checkoutDropper
          */
         do_action(
-            self::ACTION_AFTER_PAYMENT_PATCH,
+            PaymentPatcher::ACTION_AFTER_PAYMENT_PATCH,
             $paymentPatcher,
             $isSuccessPatched,
             $this->checkoutDropper

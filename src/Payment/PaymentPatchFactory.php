@@ -11,7 +11,7 @@
 namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WC_Order;
 
 /**

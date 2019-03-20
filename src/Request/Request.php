@@ -22,6 +22,7 @@ class Request
     const KEY_CUSTOM = 'custom';
     const KEY_PENDING_REASON = 'pending_reason';
     const KEY_PAYMENT_STATUS = 'payment_status';
+    const KEY_PAYMENT_METHOD = 'payment_method';
 
     /**
      * Request data
@@ -51,9 +52,11 @@ class Request
 
     /**
      * @param $name
+     * @param $filter
+     * @param null $options
      * @return mixed
      */
-    public function get($name)
+    public function get($name, $filter, $options = null)
     {
         if (!$this->has($name)) {
             return null;
@@ -65,7 +68,7 @@ class Request
             $value = strtolower($value);
         }
 
-        return $value;
+        return filter_var($value, $filter, $options);
     }
 
     /**

@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Ipn;
 
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Order\OrderUpdaterFactory;
 use Exception;
@@ -107,7 +107,7 @@ class Ipn
      */
     private function updatePaymentStatus()
     {
-        $payment_status = $this->request->get(Request::KEY_PAYMENT_STATUS);
+        $payment_status = $this->request->get(Request::KEY_PAYMENT_STATUS, FILTER_SANITIZE_STRING);
         $method = "payment_status_{$payment_status}";
         $updater = $this->orderUpdaterFactory->create();
 

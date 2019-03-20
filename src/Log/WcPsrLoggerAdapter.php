@@ -79,10 +79,13 @@ class WcPsrLoggerAdapter extends AbstractLogger
             return;
         }
 
-        $context['source'] = self::LOGGER_SOURCE;
-        if ($this->className) {
-            $context['SDKClassName'] = $this->className;
+        if (isset($context['source']) && $context['source'] !== self::LOGGER_SOURCE) {
+            $context['originalSource'] = $context['source'];
         }
+        if ($this->className && !isset($context['originalSource'])) {
+            $context['originalSource'] = $this->className;
+        }
+        $context['source'] = self::LOGGER_SOURCE;
 
         $this->wcLogger->log($wcLevel, $message, $context);
     }

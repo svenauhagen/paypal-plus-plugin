@@ -8,15 +8,16 @@
  * file that was distributed with this source code.
  */
 
-namespace WCPayPalPlus\Log;
+namespace WCPayPalPlus\Gateway;
 
-use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
+use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Service\Container;
-use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
+use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
+use WCPayPalPlus\Session\Session;
 
 /**
  * Class ServiceProvider
- * @package WCPayPalPlus\Log
+ * @package WCPayPalPlus\Gateway
  */
 class ServiceProvider implements ServiceProviderInterface
 {
@@ -25,8 +26,11 @@ class ServiceProvider implements ServiceProviderInterface
      */
     public function register(Container $container)
     {
-        $container[Logger::class] = function () {
-            return new WcPsrLoggerAdapter(\wc_get_logger());
+        $container[CurrentPaymentMethod::class] = function (Container $container) {
+            return new CurrentPaymentMethod(
+                $container[Session::class],
+                $container[Request::class]
+            );
         };
     }
 }

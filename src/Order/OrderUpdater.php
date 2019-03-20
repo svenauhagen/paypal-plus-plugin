@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\Order;
 
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Ipn\PaymentValidator;
 use WCPayPalPlus\Request\Request;
 use WC_Order;
@@ -123,21 +123,24 @@ class OrderUpdater
 
         $this->save_paypal_meta_data();
 
-        $paymentStatus = $this->request->get(Request::KEY_PAYMENT_STATUS);
+        $paymentStatus = $this->request->get(Request::KEY_PAYMENT_STATUS, FILTER_SANITIZE_STRING);
         $isOrderStatusCompleted = $this->orderStatuses->orderStatusIs(
             $paymentStatus,
             OrderStatuses::ORDER_STATUS_COMPLETED
         );
 
         if ($isOrderStatusCompleted) {
-            $transaction_id = wc_clean($this->request->get(Request::KEY_TXN_ID));
+            $transaction_id = $this->request->get(
+                Request::KEY_TXN_ID,
+                FILTER_SANITIZE_STRING
+            );
             $note = __('IPN payment completed', 'woo-paypalplus');
-            $fee = $this->request->get(Request::KEY_MC_FEE);
+            $fee = wc_clean($this->request->get(Request::KEY_MC_FEE, FILTER_DEFAULT));
 
             $this->payment_complete($transaction_id, $note);
 
             if (!empty($fee)) {
-                update_post_meta($this->order->get_id(), 'PayPal Transaction Fee', wc_clean($fee));
+                update_post_meta($this->order->get_id(), 'PayPal Transaction Fee', $fee);
             }
 
             $this->logger->info('Payment completed successfully');
@@ -147,7 +150,7 @@ class OrderUpdater
         $this->payment_on_hold(
             sprintf(
                 __('Payment pending: %s', 'woo-paypalplus'),
-                $this->request->get(Request::KEY_PENDING_REASON)
+                $this->request->get(Request::KEY_PENDING_REASON, FILTER_SANITIZE_STRING)
             )
         );
 
@@ -168,8 +171,8 @@ class OrderUpdater
         ];
 
         foreach ($postMeta as $key => $name) {
-            $value = $this->request->get($key);
-            $value and update_post_meta($this->order->get_id(), $name, wc_clean($value));
+            $value = wc_clean($this->request->get($key, FILTER_DEFAULT));
+            $value and update_post_meta($this->order->get_id(), $name, $value);
         }
     }
 
@@ -217,8 +220,8 @@ class OrderUpdater
         return $this->order->update_status(
             'failed',
             sprintf(
-                __('Payment %s via IPN.', 'woo-paypalplus'),
-                wc_clean($this->request->get(Request::KEY_PAYMENT_STATUS))
+                esc_html__('Payment %s via IPN.', 'woo-paypalplus'),
+                $this->request->get(Request::KEY_PAYMENT_STATUS, FILTER_SANITIZE_STRING)
             )
         );
     }
@@ -252,8 +255,8 @@ class OrderUpdater
             $this->order->update_status(
                 OrderStatuses::ORDER_STATUS_REFUNDED,
                 sprintf(
-                    __('Payment %s via IPN.', 'woo-paypalplus'),
-                    $this->request->get(Request::KEY_PAYMENT_STATUS)
+                    esc_html__('Payment %s via IPN.', 'woo-paypalplus'),
+                    $this->request->get(Request::KEY_PAYMENT_STATUS, FILTER_SANITIZE_STRING)
                 )
             );
             do_action(
@@ -272,10 +275,8 @@ class OrderUpdater
         $this->order->update_status(
             OrderStatuses::ORDER_STATUS_ON_HOLD,
             sprintf(
-                __('Payment %s via IPN.', 'woo-paypalplus'),
-                wc_clean(
-                    $this->request->get(Request::KEY_PAYMENT_STATUS)
-                )
+                esc_html__('Payment %s via IPN.', 'woo-paypalplus'),
+                $this->request->get(Request::KEY_PAYMENT_STATUS, FILTER_SANITIZE_STRING)
             )
         );
 

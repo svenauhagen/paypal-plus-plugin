@@ -115,6 +115,12 @@ $bootstrap = \Closure::bind(function () {
         if (!wooCommerceCheck()) {
             return false;
         }
+        // Plugin doesn't work well with cron because of WooCommerce Session.
+        // To now spread conditional here and there since we don't actually need to do stuffs
+        // during cron I have disabled the plugin here.
+        if (wp_doing_cron()) {
+            return false;
+        }
 
         /** @noinspection BadExceptionsProcessingInspection */
         try {
@@ -130,8 +136,10 @@ $bootstrap = \Closure::bind(function () {
                 ->add(new Utils\ServiceProvider())
                 ->add(new Notice\ServiceProvider())
                 ->add(new Assets\ServiceProvider())
+                ->add(new Session\ServiceProvider())
                 ->add(new Setting\ServiceProvider())
                 ->add(new Request\ServiceProvider())
+                ->add(new Gateway\ServiceProvider())
                 ->add(new WC\ServiceProvider())
                 ->add(new Ipn\ServiceProvider())
                 ->add(new Pui\ServiceProvider())

@@ -13,20 +13,21 @@ namespace WCPayPalPlus\Api;
 use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
 use Inpsyde\Lib\PayPal\Core\PayPalConfigManager;
 use Inpsyde\Lib\PayPal\Core\PayPalCredentialManager;
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
+use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use WCPayPalPlus\Log\PayPalSdkLogFactory;
+use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\IntegrationServiceProvider;
 use WCPayPalPlus\Setting\SharedRepository;
 use WCPayPalPlus\Setting\Storable;
-use WCPayPalPlus\PlusGateway\Gateway;
 use WC_Log_Levels as LogLevels;
 
 /**
  * Class ServiceProvider
  * @package WCPayPalPlus\Api
  */
-class ServiceProvider implements IntegrationServiceProvider
+class ServiceProvider implements IntegrationServiceProvider, BootstrappableServiceProvider
 {
     /**
      * @inheritdoc
@@ -44,6 +45,9 @@ class ServiceProvider implements IntegrationServiceProvider
                 $container[Logger::class]
             );
         };
+        $container[PartnerAttributionId::class] = function (Container $container) {
+            return new PartnerAttributionId($container[CurrentPaymentMethod::class]);
+        };
     }
 
     /**
@@ -56,7 +60,6 @@ class ServiceProvider implements IntegrationServiceProvider
         $container[PayPalConfigManager::class]->addConfigs(
             [
                 'mode' => $isSandBoxed ? 'SANDBOX' : 'LIVE',
-                'http.headers.PayPal-Partner-Attribution-Id' => 'WooCommerce_Cart_Plus',
             ]
         );
 
@@ -77,8 +80,6 @@ class ServiceProvider implements IntegrationServiceProvider
             );
         }
 
-        // TODO Credentials have to be provided by a `CredentialProvider` class
-        //      Them are needed by Express Checkout
         $container[PayPalCredentialManager::class]->setCredentialObject(
             new OAuthTokenCredential(
                 $container[SharedRepository::class]->clientIdProduction(),
@@ -93,5 +94,26 @@ class ServiceProvider implements IntegrationServiceProvider
                 )
             );
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function bootstrap(Container $container)
+    {
+        if (is_admin()) {
+            return;
+        }
+
+        $partnerAttributionId = $container[PartnerAttributionId::class];
+        $payPalConfigManager = $container[PayPalConfigManager::class];
+
+        add_action('init', function () use ($payPalConfigManager, $partnerAttributionId) {
+            $payPalConfigManager->addConfigs(
+                [
+                    'http.headers.PayPal-Partner-Attribution-Id' => $partnerAttributionId->bnCode(),
+                ]
+            );
+        }, PHP_INT_MAX);
     }
 }

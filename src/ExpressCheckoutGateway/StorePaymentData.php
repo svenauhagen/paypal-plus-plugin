@@ -13,7 +13,8 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Api\Transaction;
 use WCPayPalPlus\Api\ApiContextFactory;
-use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Session\Session;
+use WooCommerce;
 
 /**
  * Class Session
@@ -21,18 +22,24 @@ use WCPayPalPlus\Payment\Session;
 class StorePaymentData
 {
     /**
-     * @var \WooCommerce
+     * @var WooCommerce
      */
     private $woocommerce;
 
     /**
-     * CheckoutGatewayOverride constructor.
-     *
-     * @param \WooCommerce $woocommerce
+     * @var Session
      */
-    public function __construct(\WooCommerce $woocommerce)
+    private $session;
+
+    /**
+     * StorePaymentData constructor.
+     * @param WooCommerce $woocommerce
+     * @param Session $session
+     */
+    public function __construct(WooCommerce $woocommerce, Session $session)
     {
         $this->woocommerce = $woocommerce;
+        $this->session = $session;
     }
 
     /**
@@ -45,9 +52,9 @@ class StorePaymentData
      */
     public function addFromAction(Array $data)
     {
-        $this->woocommerce->session->set(Session::PAYER_ID, $data[CartCheckout::INPUT_PAYER_ID_NAME]);
-        $this->woocommerce->session->set(Session::PAYMENT_ID, $data[CartCheckout::INPUT_PAYMENT_ID_NAME]);
-        $this->woocommerce->session->set(Session::CHOSEN_PAYMENT_METHOD, Gateway::GATEWAY_ID);
+        $this->session->set(Session::PAYER_ID, $data[CartCheckout::INPUT_PAYER_ID_NAME]);
+        $this->session->set(Session::PAYMENT_ID, $data[CartCheckout::INPUT_PAYMENT_ID_NAME]);
+        $this->session->set(Session::CHOSEN_PAYMENT_METHOD, Gateway::GATEWAY_ID);
         $this->storeAddressToCart($data[CartCheckout::INPUT_PAYMENT_ID_NAME]);
         return $data;
     }
@@ -61,32 +68,33 @@ class StorePaymentData
     {
         \assert(is_string($paymentId));
 
+        $customer = $this->woocommerce->customer;
         $apiContext = ApiContextFactory::getFromConfiguration();
         $payment = Payment::get($paymentId, $apiContext);
         $payer = $payment->getPayer();
         $payerInfo = $payer->getPayerInfo();
         $billingAddress = $payerInfo->getBillingAddress();
 
-        $this->woocommerce->customer->set_billing_company('');
-        $this->woocommerce->customer->set_billing_first_name($payerInfo->getFirstName());
-        $this->woocommerce->customer->set_billing_last_name($payerInfo->getLastName());
-        $this->woocommerce->customer->set_billing_email($payerInfo->getEmail());
-        $this->woocommerce->customer->set_billing_phone($payerInfo->getPhone());
-        $this->woocommerce->customer->set_billing_address_1('');
-        $this->woocommerce->customer->set_billing_address_2('');
-        $this->woocommerce->customer->set_billing_city('');
-        $this->woocommerce->customer->set_billing_country($payerInfo->getCountryCode());
-        $this->woocommerce->customer->set_billing_postcode('');
-        $this->woocommerce->customer->set_billing_state('');
+        $customer->set_billing_company('');
+        $customer->set_billing_first_name($payerInfo->getFirstName());
+        $customer->set_billing_last_name($payerInfo->getLastName());
+        $customer->set_billing_email($payerInfo->getEmail());
+        $customer->set_billing_phone($payerInfo->getPhone());
+        $customer->set_billing_address_1('');
+        $customer->set_billing_address_2('');
+        $customer->set_billing_city('');
+        $customer->set_billing_country($payerInfo->getCountryCode());
+        $customer->set_billing_postcode('');
+        $customer->set_billing_state('');
         if ($billingAddress) {
-            $this->woocommerce->customer->set_billing_address_1($billingAddress->getLine1());
-            $this->woocommerce->customer->set_billing_address_2($billingAddress->getLine2());
-            $this->woocommerce->customer->set_billing_city($billingAddress->getCity());
-            $this->woocommerce->customer->set_billing_country($billingAddress->getCountryCode());
-            $this->woocommerce->customer->set_billing_postcode($billingAddress->getPostalCode());
-            $this->woocommerce->customer->set_billing_state($billingAddress->getState());
+            $customer->set_billing_address_1($billingAddress->getLine1());
+            $customer->set_billing_address_2($billingAddress->getLine2());
+            $customer->set_billing_city($billingAddress->getCity());
+            $customer->set_billing_country($billingAddress->getCountryCode());
+            $customer->set_billing_postcode($billingAddress->getPostalCode());
+            $customer->set_billing_state($billingAddress->getState());
         }
-        $this->woocommerce->customer->save();
+        $customer->save();
 
         if (!$this->woocommerce->cart->needs_shipping()) {
             return;
@@ -100,15 +108,15 @@ class StorePaymentData
         $shippingAddress = $itemList->getShippingAddress();
         list($firstName, $lastName) = explode(' ', $shippingAddress->getRecipientName(), 2);
 
-        $this->woocommerce->customer->set_shipping_company('');
-        $this->woocommerce->customer->set_shipping_first_name($firstName);
-        $this->woocommerce->customer->set_shipping_last_name($lastName);
-        $this->woocommerce->customer->set_shipping_address_1($shippingAddress->getLine1());
-        $this->woocommerce->customer->set_shipping_address_2($shippingAddress->getLine2());
-        $this->woocommerce->customer->set_shipping_city($shippingAddress->getCity());
-        $this->woocommerce->customer->set_shipping_country($shippingAddress->getCountryCode());
-        $this->woocommerce->customer->set_shipping_postcode($shippingAddress->getPostalCode());
-        $this->woocommerce->customer->set_shipping_state($shippingAddress->getState());
-        $this->woocommerce->customer->save();
+        $customer->set_shipping_company('');
+        $customer->set_shipping_first_name($firstName);
+        $customer->set_shipping_last_name($lastName);
+        $customer->set_shipping_address_1($shippingAddress->getLine1());
+        $customer->set_shipping_address_2($shippingAddress->getLine2());
+        $customer->set_shipping_city($shippingAddress->getCity());
+        $customer->set_shipping_country($shippingAddress->getCountryCode());
+        $customer->set_shipping_postcode($shippingAddress->getPostalCode());
+        $customer->set_shipping_state($shippingAddress->getState());
+        $customer->save();
     }
 }

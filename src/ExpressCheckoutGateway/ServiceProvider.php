@@ -11,16 +11,16 @@
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use function WCPayPalPlus\areAllExpressCheckoutButtonsDisabled;
+use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use function WCPayPalPlus\isGatewayDisabled;
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\WpNonce;
-use WC_Logger_Interface as Logger;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
-use WCPayPalPlus\Payment\Session;
+use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\SharedSettingsModel;
-use WCPayPalPlus\Setting\Storable;
 use WCPayPalPlus\Utils\AjaxJsonRequest;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Api\CredentialValidator;
@@ -70,12 +70,14 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[CheckoutAddressOverride::class] = function (Container $container) {
             return new CheckoutAddressOverride(
-                $container[\WooCommerce::class]
+                $container[WooCommerce::class],
+                $container[CurrentPaymentMethod::class]
             );
         };
         $container[StorePaymentData::class] = function (Container $container) {
             return new StorePaymentData(
-                $container[\WooCommerce::class]
+                $container[WooCommerce::class],
+                $container[Session::class]
             );
         };
 
@@ -102,11 +104,10 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[CartCheckout::class] = function (Container $container) {
             return new CartCheckout(
-                $container[Storable::class],
+                $container[ExpressCheckoutStorable::class],
                 $container[PaymentCreatorFactory::class],
                 $container[AjaxJsonRequest::class],
-                $container[WooCommerce::class],
-                $container[Session::class]
+                $container[WooCommerce::class]
             );
         };
         $container[SingleProductCheckout::class] = function (Container $container) {
@@ -132,10 +133,21 @@ class ServiceProvider implements BootstrappableServiceProvider
             return $methods;
         });
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         if (!is_admin() && (isGatewayDisabled($gateway) || areAllExpressCheckoutButtonsDisabled())) {
             return;
         }
 
+        add_filter(
+            'woocommerce_cart_needs_shipping_address',
+            [$container[CheckoutAddressOverride::class], 'filterCartNeedsShippingAddress'],
+            9999
+        );
+        add_filter(
+            'woocommerce_ship_to_different_address_checked',
+            [$container[CheckoutAddressOverride::class], 'filterShipToDifferentAddress'],
+            9999
+        );
         add_filter(
             'woocommerce_checkout_get_value',
             [$container[CheckoutAddressOverride::class], 'filterCheckoutValues'],
@@ -179,7 +191,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         add_filter(
             'woocommerce_available_payment_gateways',
             [$container[CheckoutGatewayOverride::class], 'maybeOverride'],
-            999
+            9999
         );
 
         $this->bootstrapButtons($container);
