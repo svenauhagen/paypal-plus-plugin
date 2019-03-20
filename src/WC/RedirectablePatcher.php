@@ -85,7 +85,7 @@ class RedirectablePatcher
         $order = $this->orderFactory->createById($orderId);
         $paymentId = $this->session->get(Session::PAYMENT_ID);
 
-        !$paymentId and $this->checkoutDropper->abortCheckout();
+        !$paymentId and $this->checkoutDropper->abortSession();
 
         $paymentPatcher = $this->paymentPatchFactory->create(
             $order,
@@ -94,7 +94,7 @@ class RedirectablePatcher
             ApiContextFactory::getFromConfiguration()
         );
 
-        $paymentPatcher->execute() or $this->checkoutDropper->abortCheckout();
+        $paymentPatcher->execute() or $this->checkoutDropper->abortSession();
 
         wp_enqueue_script('paypalplus-woocommerce-plus-paypal-redirect');
     }

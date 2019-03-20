@@ -106,6 +106,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
 
     /**
      * Gateway constructor.
+     * @param WooCommerce $wooCommerce
      * @param CredentialValidator $credentialValidator
      * @param SettingsGatewayModel $settingsModel
      * @param RefundFactory $refundFactory
@@ -117,6 +118,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
      * @param Logger $logger
      */
     public function __construct(
+        WooCommerce $wooCommerce,
         CredentialValidator $credentialValidator,
         SettingsGatewayModel $settingsModel,
         RefundFactory $refundFactory,
@@ -128,6 +130,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         Logger $logger
     ) {
 
+        $this->wooCommerce = $wooCommerce;
         $this->credentialValidator = $credentialValidator;
         $this->settingsModel = $settingsModel;
         $this->refundFactory = $refundFactory;
@@ -186,7 +189,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
             $order = $this->orderFactory->createById($orderId);
         } catch (RuntimeException $exc) {
             $this->logger->error('Payment Execution: ' . $exc);
-            $this->checkoutDropper->abortCheckout();
+            $this->checkoutDropper->abortSession();
         }
 
         $paymentPatcher = $this->paymentPatchFactory->create(
@@ -213,7 +216,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         );
 
         if (!$isSuccessPatched) {
-            $this->checkoutDropper->abortCheckout();
+            $this->checkoutDropper->abortSession();
 
             return [
                 'result' => 'failed',
@@ -240,7 +243,12 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
             do_action(self::ACTION_AFTER_PAYMENT_EXECUTION, $payment, $order);
         } catch (PayPalConnectionException $exc) {
             $this->logger->error('Payment Execution: ' . $exc);
-            $this->checkoutDropper->abortCheckout();
+            $this->checkoutDropper->abort();
+
+            return [
+                'result' => 'failed',
+                'redirect' => $order->get_cancel_order_url(),
+            ];
         }
 
         return [

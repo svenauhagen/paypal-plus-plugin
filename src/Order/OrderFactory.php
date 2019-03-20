@@ -35,7 +35,8 @@ class OrderFactory
         assert(is_string($orderKey));
 
         $orderKey = $this->orderKeyByJson($orderKey);
-        $orderId = wc_get_order_id_by_order_key($orderKey);
+        // Cast to int because the function return a int as string.
+        $orderId = (int)wc_get_order_id_by_order_key($orderKey);
         $order = $this->createById($orderId);
 
         $this->bailIfInvalidOrder($order);
@@ -46,7 +47,7 @@ class OrderFactory
     /**
      * Create and order by the given Id
      *
-     * @param $orderId
+     * @param int $orderId
      * @return WC_Order|WC_Order_Refund
      * @throws RuntimeException
      */

@@ -78,9 +78,10 @@ class PaymentValidator
             self::CURRENCY_DATA_KEY,
             FILTER_SANITIZE_STRING
         );
+        // Amount is better to be considered as a string because of decimal, thousand separators.
         $amount = $this->request->get(
             self::AMOUNT_DATA_KEY,
-            FILTER_SANITIZE_NUMBER_INT
+            FILTER_SANITIZE_STRING
         );
 
         return ($this->validate_transaction_type($transactionType)
@@ -172,31 +173,25 @@ class PaymentValidator
      */
     public function is_valid_refund()
     {
-        $currency = $this->request->get(self::CURRENCY_DATA_KEY, FILTER_SANITIZE_NUMBER_INT);
+        $currency = $this->request->get(self::CURRENCY_DATA_KEY, FILTER_SANITIZE_STRING);
+        $total = $this->sanitize_string_amount((string)$this->order->get_total());
+        $paypalTotal = $this->sanitize_string_amount((string)$currency) * -1;
 
-        $wc_total = number_format(
-            $this->sanitize_string_amount($this->order->get_total()),
-            2,
-            '.',
-            ''
-        );
-        $pp_total = number_format(
-            $this->sanitize_string_amount($currency) * -1,
-            2,
-            '.',
-            ''
-        );
+        $total = number_format($total, 2, '.', '');
+        $paypalTotal = number_format($paypalTotal, 2, '.', '');
 
-        return ($pp_total === $wc_total);
+        return ($paypalTotal === $total);
     }
 
+    /**
+     * @param string $amt
+     * @return mixed
+     */
     private function sanitize_string_amount($amt)
     {
-        if (is_string($amt)) {
-            $amt = str_replace(',', '.', $amt);
-        }
+        assert(is_string($amt));
 
-        return $amt;
+        return str_replace(',', '.', $amt);
     }
 
     /**

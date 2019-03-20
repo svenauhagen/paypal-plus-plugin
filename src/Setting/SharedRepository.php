@@ -10,6 +10,8 @@
 
 namespace WCPayPalPlus\Setting;
 
+use WooCommerce;
+
 /**
  * Class SharedRepository
  * @package WCPayPalPlus\Setting
@@ -17,6 +19,20 @@ namespace WCPayPalPlus\Setting;
 class SharedRepository implements Storable
 {
     use SharedRepositoryTrait;
+
+    /**
+     * @var WooCommerce
+     */
+    private $wooCommerce;
+
+    /**
+     * SharedRepository constructor.
+     * @param WooCommerce $wooCommerce
+     */
+    public function __construct(WooCommerce $wooCommerce)
+    {
+        $this->wooCommerce = $wooCommerce;
+    }
 
     /**
      * Retrieve a Shared Option by the Given Name
