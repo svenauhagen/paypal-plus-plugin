@@ -11,7 +11,6 @@
 namespace WCPayPalPlus\WC;
 
 use WCPayPalPlus\Session\Session;
-use WC_Order;
 
 /**
  * Class CheckoutDropper
