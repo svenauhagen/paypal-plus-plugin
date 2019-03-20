@@ -79,7 +79,7 @@ class SmartButtonArguments
                 'size' => 'responsive',
                 'branding' => true,
                 'tagline' => false,
-                'layout' => 'vertical',
+                'layout' => 'horizontal',
             ],
             'redirect_urls' => [
                 'cancel_url' => $this->settingRepository->cancelUrl(),
