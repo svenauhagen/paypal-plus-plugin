@@ -13,6 +13,7 @@ namespace WCPayPalPlus\Payment;
 use Inpsyde\Lib\PayPal\Api\Patch;
 use WC_Order;
 use InvalidArgumentException;
+use WCPayPalPlus\Utils\PriceFormatterTrait;
 
 /**
  * Class PatchProvider
@@ -21,6 +22,8 @@ use InvalidArgumentException;
  */
 class PatchProvider
 {
+    use PriceFormatterTrait;
+
     const RECEIPT_NAME = 'recipient_name';
     const LINE_ONE = 'line1';
     const LINE_TWO = 'line2';
@@ -92,9 +95,9 @@ class PatchProvider
      */
     public function get_payment_amount_patch()
     {
-        $replace_patch = new Patch();
+        $replacePatch = new Patch();
 
-        $payment_data = [
+        $paymentData = [
             'total' => $this->orderData->get_total(),
             'currency' => get_woocommerce_currency(),
             'details' => [
@@ -104,21 +107,18 @@ class PatchProvider
         ];
 
         if ($this->orderData->should_include_tax_in_total()) {
-            $payment_data['details']['tax'] = $this->orderData->get_total_tax();
+            $paymentData['details']['tax'] = $this->orderData->get_total_tax();
         } else {
-            $payment_data['details']['shipping'] += $this->orderData->get_shipping_tax();
-            $payment_data['details']['shipping'] = wc_format_decimal(
-                $payment_data['details']['shipping'],
-                wc_get_price_decimals()
-            );
+            $paymentData['details']['shipping'] += $this->orderData->get_shipping_tax();
+            $paymentData['details']['shipping'] = $this->format($paymentData['details']['shipping']);
         }
 
-        $replace_patch
+        $replacePatch
             ->setOp('replace')
             ->setPath('/transactions/0/amount')
-            ->setValue($payment_data);
+            ->setValue($paymentData);
 
-        return $replace_patch;
+        return $replacePatch;
     }
 
     /**

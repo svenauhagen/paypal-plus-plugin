@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\Refund;
 
+use WCPayPalPlus\Utils\PriceFormatterTrait;
 use WCPayPalPlus\WC\RequestSuccessHandler;
 use WC_Order;
 
@@ -20,6 +21,8 @@ use WC_Order;
  */
 class RefundSuccess implements RequestSuccessHandler
 {
+    use PriceFormatterTrait;
+
     /**
      * WooCommerce Order object.
      *
@@ -67,8 +70,10 @@ class RefundSuccess implements RequestSuccessHandler
             esc_html__('Reason for Refund :', 'woo-paypalplus') . $this->reason
         );
 
-        $max_remaining_refund = wc_format_decimal($this->order->get_total() - $this->order->get_total_refunded());
-        if ($max_remaining_refund <= 0) {
+        $maxRemainingRefund = $this->order->get_total() - $this->order->get_total_refunded();
+        $maxRemainingRefund = $this->format($maxRemainingRefund);
+
+        if ($maxRemainingRefund <= 0) {
             $this->order->update_status('refunded');
         }
     }

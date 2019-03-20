@@ -10,6 +10,8 @@
 
 namespace WCPayPalPlus\Payment;
 
+use WCPayPalPlus\Utils\PriceFormatterTrait;
+
 /**
  * Class CartData
  *
@@ -17,7 +19,7 @@ namespace WCPayPalPlus\Payment;
  */
 class CartData extends OrderDataCommon
 {
-    use OrderDataProcessor;
+    use PriceFormatterTrait;
     /**
      * WooCommerce Cart.
      *

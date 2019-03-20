@@ -8,6 +8,8 @@
 
 namespace WCPayPalPlus\Payment;
 
+use WCPayPalPlus\Utils\PriceFormatterTrait;
+
 /**
  * Class FeeData
  *
@@ -15,7 +17,7 @@ namespace WCPayPalPlus\Payment;
  */
 class FeeData implements OrderItemDataProvider
 {
-    use OrderDataProcessor;
+    use PriceFormatterTrait;
 
     /**
      * Fee data.

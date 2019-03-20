@@ -15,6 +15,7 @@ use Inpsyde\Lib\PayPal\Api\RefundRequest;
 use Inpsyde\Lib\PayPal\Api\Sale;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 use WC_Order_Refund;
+use WCPayPalPlus\Utils\PriceFormatterTrait;
 
 /**
  * Class RefundData
@@ -26,6 +27,8 @@ use WC_Order_Refund;
  */
 class RefundData
 {
+    use PriceFormatterTrait;
+
     /**
      * WooComcerce Order object.
      *
@@ -102,34 +105,21 @@ class RefundData
      * Returns a configured RefundRequest object.
      *
      * @return RefundRequest
+     * @throws \InvalidArgumentException
      */
     public function get_refund()
     {
-        $amt = new Amount();
-        $amt->setCurrency($this->order->get_currency());
-        $amt->setTotal($this->number_format($this->amount));
+        $total = $this->format($this->amount);
+
+        $amount = new Amount();
+        $amount
+            ->setCurrency($this->order->get_currency())
+            ->setTotal($total);
+
         $refund = new RefundRequest();
-        $refund->setAmount($amt);
+        $refund->setAmount($amount);
 
         return $refund;
-    }
-
-    /**
-     * Sanitize function for price display.
-     *
-     * @param float $price The price to format.
-     *
-     * @return string
-     */
-    private function number_format($price)
-    {
-        $decimals = 2;
-
-        if (in_array(get_woocommerce_currency(), ['HUF', 'JPY', 'TWD'], true)) {
-            $decimals = 0;
-        }
-
-        return number_format($price, $decimals, '.', '');
     }
 
     /**

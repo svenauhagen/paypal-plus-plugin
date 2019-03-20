@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\Ipn;
 
 use WC_Order;
+use WCPayPalPlus\Utils\PriceFormatterTrait;
 use WCPayPalPlus\Request\Request;
 
 /**
@@ -20,6 +21,8 @@ use WCPayPalPlus\Request\Request;
  */
 class PaymentValidator
 {
+    use PriceFormatterTrait;
+
     const TRANSACTION_TYPE_DATA_KEY = 'txn_type';
     const CURRENCY_DATA_KEY = 'mc_currency';
     const AMOUNT_DATA_KEY = 'mc_gross';
@@ -148,8 +151,8 @@ class PaymentValidator
      */
     private function validate_payment_amount($amount)
     {
-        $wc_total = number_format($this->order->get_total(), 2, '.', '');
-        $pp_total = number_format($amount, 2, '.', '');
+        $wc_total = $this->format($this->order->get_total());
+        $pp_total = $this->format($amount);
         if ($pp_total !== $wc_total) {
             $this->last_error = sprintf(
                 __(
@@ -174,11 +177,12 @@ class PaymentValidator
     public function is_valid_refund()
     {
         $currency = $this->request->get(self::CURRENCY_DATA_KEY, FILTER_SANITIZE_STRING);
+
         $total = $this->sanitize_string_amount((string)$this->order->get_total());
         $paypalTotal = $this->sanitize_string_amount((string)$currency) * -1;
 
-        $total = number_format($total, 2, '.', '');
-        $paypalTotal = number_format($paypalTotal, 2, '.', '');
+        $total = $this->format($total);
+        $paypalTotal = $this->format($paypalTotal);
 
         return ($paypalTotal === $total);
     }

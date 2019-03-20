@@ -12,6 +12,8 @@ namespace WCPayPalPlus\Payment;
 
 use WC_Order;
 
+use WCPayPalPlus\Utils\PriceFormatterTrait;
+
 /**
  * Class OrderData
  *
@@ -19,7 +21,7 @@ use WC_Order;
  */
 class OrderData extends OrderDataCommon
 {
-    use OrderDataProcessor;
+    use PriceFormatterTrait;
 
     /**
      * WooCommerce Order object.

@@ -2,6 +2,8 @@
 
 namespace WCPayPalPlus\Payment;
 
+use WCPayPalPlus\Utils\PriceFormatterTrait;
+
 /**
  * Class CartItemData
  *
@@ -15,7 +17,7 @@ namespace WCPayPalPlus\Payment;
  */
 class CartItemData implements OrderItemDataProvider
 {
-    use OrderDataProcessor;
+    use PriceFormatterTrait;
 
     /**
      * Item data.

@@ -13,6 +13,8 @@ namespace WCPayPalPlus\Payment;
 use Inpsyde\Lib\PayPal\Api\Item;
 use Inpsyde\Lib\PayPal\Api\ItemList;
 
+use WCPayPalPlus\Utils\PriceFormatterTrait;
+
 /**
  * Class OrderDataCommon
  *
@@ -20,7 +22,7 @@ use Inpsyde\Lib\PayPal\Api\ItemList;
  */
 abstract class OrderDataCommon implements OrderDataProvider
 {
-    use OrderDataProcessor;
+    use PriceFormatterTrait;
 
     /**
      * Calculate the order total.
