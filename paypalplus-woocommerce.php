@@ -133,6 +133,7 @@ $bootstrap = \Closure::bind(function () {
 
             $providers = new ServiceProvidersCollection();
             $providers
+                ->add(new Install\ServiceProvider())
                 ->add(new Utils\ServiceProvider())
                 ->add(new Notice\ServiceProvider())
                 ->add(new Assets\ServiceProvider())
