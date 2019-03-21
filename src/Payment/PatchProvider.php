@@ -106,7 +106,7 @@ class PatchProvider
             ],
         ];
 
-        if ($this->orderData->should_include_tax_in_total()) {
+        if (!wc_prices_include_tax()) {
             $paymentData['details']['tax'] = $this->orderData->get_total_tax();
         } else {
             $paymentData['details']['shipping'] += $this->orderData->get_shipping_tax();

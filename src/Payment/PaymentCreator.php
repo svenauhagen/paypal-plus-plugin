@@ -68,7 +68,7 @@ class PaymentCreator
     {
         $payer = new Api\Payer();
         $payer->setPaymentMethod('paypal');
-        $item_list = $this->itemList();
+        $item_list = $this->orderDataProvider->get_item_list();
         $amount = new Api\Amount();
         $amount
             ->setCurrency(get_woocommerce_currency())
@@ -92,32 +92,6 @@ class PaymentCreator
     }
 
     /**
-     * Generated a new ItemList object from the items of the current order
-     *
-     * @return Api\ItemList
-     * @throws \InvalidArgumentException
-     */
-    private function itemList()
-    {
-        if ($this->orderDataProvider->should_include_tax_in_total()) {
-            return $this->orderDataProvider->get_item_list();
-        }
-
-        $item_list = new Api\ItemList;
-        $item = new Api\Item;
-
-        $item
-            ->setName($this->orderItemNames())
-            ->setCurrency(get_woocommerce_currency())
-            ->setQuantity(1)
-            ->setPrice($this->orderDataProvider->get_subtotal());
-
-        $item_list->addItem($item);
-
-        return $item_list;
-    }
-
-    /**
      * Created a Details object for the Paypal API
      *
      * @return Api\Details
@@ -128,7 +102,7 @@ class PaymentCreator
         $tax = 0;
         $shipping = (float)$this->orderDataProvider->get_total_shipping();
 
-        if ($this->orderDataProvider->should_include_tax_in_total()) {
+        if (!wc_prices_include_tax()) {
             $tax = $this->orderDataProvider->get_total_tax();
         }
 
