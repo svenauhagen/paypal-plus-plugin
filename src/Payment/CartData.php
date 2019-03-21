@@ -44,7 +44,8 @@ class CartData extends OrderDataCommon
      */
     public function get_total_tax()
     {
-        $tax = $this->format($this->round($this->cart->get_taxes_total(true, false)));
+        $tax = $this->cart->get_taxes_total(true, false);
+        $tax = $this->format($this->round($tax));
 
         return $tax;
     }

@@ -33,13 +33,9 @@ abstract class OrderDataCommon implements OrderDataProvider
     {
         $total = $this->get_subtotal();
         $shipping = $this->get_total_shipping();
-        if ($this->should_include_tax_in_total()) {
-            $tax = $this->get_total_tax();
-            $total += $tax;
-        } else {
-            $shipping += $this->get_shipping_tax();
-        }
+
         $total += $shipping;
+        $total += wc_prices_include_tax() ? $this->get_shipping_tax() : $this->get_total_tax();
 
         $total = $this->format($total);
 
@@ -53,28 +49,21 @@ abstract class OrderDataCommon implements OrderDataProvider
      */
     public function get_subtotal()
     {
-        if ($this->should_include_tax_in_total()) {
-            $subtotal = 0;
-            $items = $this
-                ->get_item_list()
-                ->getItems();
-
-            if (empty($items)) {
-                return $subtotal;
-            }
-
-            foreach ($items as $item) {
-                $product_price = $item->getPrice();
-                $item_price = floatval($product_price * $item->getQuantity());
-                $subtotal += $item_price;
-            }
-
+        if (wc_prices_include_tax()) {
+            $subtotal = $this->get_subtotal_including_tax();
             return $this->format($subtotal);
         }
 
-        $subtotal = $this->get_subtotal_including_tax();
+        $subtotal = 0;
+        $items = $this->get_item_list()->getItems();
 
-        return $this->format($subtotal);
+        foreach ($items as $item) {
+            $product_price = $item->getPrice();
+            $item_price = (float)$product_price * $item->getQuantity();
+            $subtotal += $item_price;
+        }
+
+        return $subtotal;
     }
 
     /**
@@ -118,15 +107,5 @@ abstract class OrderDataCommon implements OrderDataProvider
         }
 
         return $item;
-    }
-
-    /**
-     * Whether to list taxes in addition to the subtotal.
-     *
-     * @return bool
-     */
-    public function should_include_tax_in_total()
-    {
-        return (!wc_tax_enabled() || !wc_prices_include_tax());
     }
 }

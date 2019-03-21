@@ -24,7 +24,7 @@ trait PriceFormatterTrait
     {
         $decimals = wc_get_price_decimals();
 
-        if (!$this->currencyHasDecimal()) {
+        if ($this->currencyNotSupportDecimals()) {
             $decimals = 0;
         }
 
@@ -41,7 +41,7 @@ trait PriceFormatterTrait
     {
         $precision = wc_get_price_decimals();
 
-        if (!$this->currencyHasDecimal()) {
+        if ($this->currencyNotSupportDecimals()) {
             $precision = 0;
         }
 
@@ -53,7 +53,7 @@ trait PriceFormatterTrait
      *
      * @return bool
      */
-    private function currencyHasDecimal()
+    private function currencyNotSupportDecimals()
     {
         return in_array(get_woocommerce_currency(), ['HUF', 'JPY', 'TWD'], true);
     }

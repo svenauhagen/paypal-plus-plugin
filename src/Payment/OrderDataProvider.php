@@ -79,13 +79,6 @@ interface OrderDataProvider
     public function get_item(OrderItemDataProvider $item);
 
     /**
-     * Whether to list taxes in addition to the subtotal.
-     *
-     * @return bool
-     */
-    public function should_include_tax_in_total();
-
-    /**
      * Get total shipping tax.
      *
      * @return string

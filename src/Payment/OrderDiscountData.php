@@ -52,7 +52,7 @@ class OrderDiscountData implements OrderItemDataProvider
      */
     public function get_quantity()
     {
-        return intval($this->data['qty']);
+        return (int)$this->data['qty'];
     }
 
     /**
