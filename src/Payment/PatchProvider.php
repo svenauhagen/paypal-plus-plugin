@@ -110,7 +110,6 @@ class PatchProvider
             $paymentData['details']['tax'] = $this->orderData->get_total_tax();
         } else {
             $paymentData['details']['shipping'] += $this->orderData->get_shipping_tax();
-            $paymentData['details']['shipping'] = $this->format($paymentData['details']['shipping']);
         }
 
         $replacePatch
