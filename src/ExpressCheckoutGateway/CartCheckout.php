@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
@@ -53,23 +54,31 @@ class CartCheckout
     private $wooCommerce;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * CartCheckout constructor.
      * @param ExpressCheckoutStorable $settingRepository
      * @param PaymentCreatorFactory $paymentCreatorFactory
      * @param AjaxJsonRequest $ajaxJsonRequest
      * @param WooCommerce $wooCommerce
+     * @param Logger $logger
      */
     public function __construct(
         ExpressCheckoutStorable $settingRepository,
         PaymentCreatorFactory $paymentCreatorFactory,
         AjaxJsonRequest $ajaxJsonRequest,
-        WooCommerce $wooCommerce
+        WooCommerce $wooCommerce,
+        Logger $logger
     ) {
 
         $this->settingRepository = $settingRepository;
         $this->paymentCreatorFactory = $paymentCreatorFactory;
         $this->ajaxJsonRequest = $ajaxJsonRequest;
         $this->wooCommerce = $wooCommerce;
+        $this->logger = $logger;
     }
 
     /**
@@ -103,6 +112,7 @@ class CartCheckout
             $payment = $paymentCreator->create();
             $orderId = $payment->getId();
         } catch (Exception $exc) {
+            $this->logger->error($exc, [$orderId]);
             $this->ajaxJsonRequest->sendJsonError([
                 'exception' => $exc,
                 'message' => $exc->getMessage(),

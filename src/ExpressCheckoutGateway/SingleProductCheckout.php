@@ -10,10 +10,11 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Product\ProductStatuses;
+use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Utils\AjaxJsonRequest;
 use WooCommerce;
-use Exception;
 use WC_Product;
 use WC_Product_Variation;
 
@@ -48,20 +49,36 @@ class SingleProductCheckout
     private $wooCommerce;
 
     /**
+     * @var Request
+     */
+    private $request;
+
+    /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * SingleProductCheckout constructor.
      * @param WooCommerce $wooCommerce
      * @param AjaxJsonRequest $ajaxJsonRequest
      * @param CartCheckout $cartCheckout
+     * @param Request $request
+     * @param Logger $logger
      */
     public function __construct(
         WooCommerce $wooCommerce,
         AjaxJsonRequest $ajaxJsonRequest,
-        CartCheckout $cartCheckout
+        CartCheckout $cartCheckout,
+        Request $request,
+        Logger $logger
     ) {
 
         $this->wooCommerce = $wooCommerce;
         $this->ajaxJsonRequest = $ajaxJsonRequest;
         $this->cartCheckout = $cartCheckout;
+        $this->request = $request;
+        $this->logger = $logger;
     }
 
     /**
@@ -78,7 +95,7 @@ class SingleProductCheckout
      */
     private function addToCart()
     {
-        $productId = (int)filter_input(INPUT_POST, self::INPUT_PRODUCT_ID, FILTER_SANITIZE_NUMBER_INT);
+        $productId = (int)$this->request->get(self::INPUT_PRODUCT_ID, FILTER_SANITIZE_NUMBER_INT);
 
         /**
          * Filter the product Id before create the product
@@ -100,8 +117,7 @@ class SingleProductCheckout
             ]);
         }
 
-        $quantity = (int)filter_input(
-            INPUT_POST,
+        $quantity = (int)$this->request->get(
             self::INPUT_PRODUCT_QUANTITY,
             FILTER_SANITIZE_NUMBER_INT
         );
@@ -127,13 +143,14 @@ class SingleProductCheckout
             $quantity
         );
 
-        if ($product instanceof WC_Product_Variation) {
-            $variationId = $productId;
-            $productId = $product->get_parent_id();
-            $variation = $product->get_variation_attributes();
-        }
-
         if (!$passedValidation || $productStatus !== ProductStatuses::PUBLISH_STATUS) {
+            $this->logger->error(
+                'Product cannot be added to cart because is not publicly available.',
+                [
+                    $productStatus,
+                    $productId,
+                ]
+            );
             $this->ajaxJsonRequest->sendJsonError([
                 'message' => esc_html_x(
                     'Product cannot be added to cart because is not publicly available.',
@@ -143,12 +160,33 @@ class SingleProductCheckout
             ]);
         }
 
-        try {
-            $this->wooCommerce->cart->add_to_cart($productId, $quantity, $variationId, $variation);
-        } catch (Exception $exc) {
+        if ($product instanceof WC_Product_Variation) {
+            $variationId = $productId;
+            $productId = $product->get_parent_id();
+            $variation = $product->get_variation_attributes();
+        }
+
+        $addedToCart = $this->wooCommerce->cart->add_to_cart(
+            $productId,
+            $quantity,
+            $variationId,
+            $variation
+        );
+
+        if (!$addedToCart) {
+            $this->logger->error(
+                'There was a problem to add the product into cart.',
+                [
+                    $productId,
+                    $quantity,
+                    $variationId,
+                ]
+            );
             $this->ajaxJsonRequest->sendJsonError([
-                'exception' => $exc,
-                'message' => $exc,
+                'message' => esc_html__(
+                    'There was a problem to add the product into cart. Try again or contact the shop owner.',
+                    'woo-paypalplus'
+                ),
             ]);
         }
 

@@ -108,14 +108,17 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[ExpressCheckoutStorable::class],
                 $container[PaymentCreatorFactory::class],
                 $container[AjaxJsonRequest::class],
-                $container[WooCommerce::class]
+                $container[WooCommerce::class],
+                $container[Logger::class]
             );
         };
         $container[SingleProductCheckout::class] = function (Container $container) {
             return new SingleProductCheckout(
                 $container[WooCommerce::class],
                 $container[AjaxJsonRequest::class],
-                $container[CartCheckout::class]
+                $container[CartCheckout::class],
+                $container[Request::class],
+                $container[Logger::class]
             );
         };
     }
