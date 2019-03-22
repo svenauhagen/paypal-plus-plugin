@@ -18,6 +18,7 @@ use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Service;
+use WCPayPalPlus\Setting\Storable;
 use WooCommerce;
 
 /**
@@ -36,7 +37,8 @@ class ServiceProvider implements Service\BootstrappableServiceProvider
         };
         $container[CheckoutDropper::class] = function (Container $container) {
             return new CheckoutDropper(
-                $container[Session::class]
+                $container[Session::class],
+                $container[Storable::class]
             );
         };
         $container[RedirectablePatcher::class] = function (Container $container) {

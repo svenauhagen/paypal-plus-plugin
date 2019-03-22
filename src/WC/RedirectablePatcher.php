@@ -94,7 +94,7 @@ class RedirectablePatcher
         $order = $this->orderFactory->createById($orderId);
         $paymentId = $this->session->get(Session::PAYMENT_ID);
 
-        !$paymentId and $this->checkoutDropper->abortSession();
+        $paymentId or $this->abortPatchingBecausePaymentId($paymentId);
 
         $paymentPatcher = $this->paymentPatchFactory->create(
             $order,
@@ -107,9 +107,24 @@ class RedirectablePatcher
             $paymentPatcher->execute();
         } catch (PayPalConnectionException $exc) {
             $this->logger->error($exc->getData());
-            $this->checkoutDropper->abortSession();
+            $this->checkoutDropper->abortSessionWithReason($exc->getMessage());
         }
 
         wp_enqueue_script('paypalplus-woocommerce-plus-paypal-redirect');
+    }
+
+    /**
+     * @param $paymentId
+     */
+    private function abortPatchingBecausePaymentId($paymentId)
+    {
+        $this->logger->error("Impossible to update the order, payment id {$paymentId} is not valid.");
+        $this->checkoutDropper->abortSessionWithReason(sprintf(
+            esc_html__(
+                'Impossible to update the order, payment id %s is not valid.',
+                'woo-paypalplus'
+            ),
+            $paymentId
+        ));
     }
 }
