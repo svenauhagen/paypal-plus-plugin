@@ -76,15 +76,29 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
           .then(response => {
             if (!('data' in response)) {
               console.warn('Unable to process the payment, server did not response with valid data')
-              return
+              try {
+                window.location = this.buttonConfiguration.redirect_urls.cancel_url
+              } catch (e) {
+                return
+              }
             }
+
             if (!response.success) {
-              // TODO Do something to inform user about the problem and close the flow.
+              try {
+                window.location = this.buttonConfiguration.redirect_urls.cancel_url
+              } catch (e) {
+                return
+              }
             }
 
             const orderId = 'orderID' in response.data ? response.data.orderID : ''
+
             if (!orderId) {
-              // TODO Do something to inform user about the problem and close the flow.
+              try {
+                window.location = this.buttonConfiguration.redirect_urls.cancel_url
+              } catch (e) {
+                return
+              }
             }
 
             return orderId
@@ -115,12 +129,16 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
         return this.request
           .submit(formData)
           .then((response) => {
-            if (response.success) {
-              const returnUrl = 'returnUrl' in data ? data.returnUrl : ''
-              returnUrl && actions.redirect(null, returnUrl)
+            if (!response.success) {
+              try {
+                window.location = this.buttonConfiguration.redirect_urls.cancel_url
+              } catch (e) {
+                return
+              }
             }
 
-            // TODO Show alert to the user
+            const returnUrl = 'returnUrl' in data ? data.returnUrl : ''
+            returnUrl && actions.redirect(null, returnUrl)
           })
       },
 

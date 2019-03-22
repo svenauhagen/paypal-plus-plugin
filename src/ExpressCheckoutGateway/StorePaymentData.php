@@ -15,6 +15,8 @@ use Inpsyde\Lib\PayPal\Api\Transaction;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Session\Session;
 use WooCommerce;
+use OutOfBoundsException;
+use Exception;
 
 /**
  * Class Session
@@ -43,20 +45,19 @@ class StorePaymentData
     }
 
     /**
-     * Store Payment data from filter
+     * Store Payment data
      *
-     * @param array $data
-     *
-     * @return array
-     * @throws \Exception
+     * @param $payerId
+     * @param $paymentId
+     * @throws OutOfBoundsException
+     * @throws Exception
      */
-    public function addFromAction(Array $data)
+    public function addFromAction($payerId, $paymentId)
     {
-        $this->session->set(Session::PAYER_ID, $data[CartCheckout::INPUT_PAYER_ID_NAME]);
-        $this->session->set(Session::PAYMENT_ID, $data[CartCheckout::INPUT_PAYMENT_ID_NAME]);
+        $this->session->set(Session::PAYER_ID, $payerId);
+        $this->session->set(Session::PAYMENT_ID, $paymentId);
         $this->session->set(Session::CHOSEN_PAYMENT_METHOD, Gateway::GATEWAY_ID);
-        $this->storeAddressToCart($data[CartCheckout::INPUT_PAYMENT_ID_NAME]);
-        return $data;
+        $this->storeAddressToCart($paymentId);
     }
 
     /**
