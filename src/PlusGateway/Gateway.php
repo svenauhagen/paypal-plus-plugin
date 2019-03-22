@@ -288,6 +288,9 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
                     $notifyUrl
                 );
                 $paymentCreator = $paymentCreator->create();
+            } catch (PayPalConnectionException $exc) {
+                $this->logger->error($exc->getData());
+                return $url;
             } catch (Exception $exc) {
                 $this->logger->error($exc);
                 return $url;
