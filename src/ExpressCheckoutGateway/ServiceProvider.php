@@ -109,7 +109,8 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[PaymentCreatorFactory::class],
                 $container[AjaxJsonRequest::class],
                 $container[WooCommerce::class],
-                $container[Logger::class]
+                $container[Logger::class],
+                $container[Request::class]
             );
         };
         $container[SingleProductCheckout::class] = function (Container $container) {
@@ -183,7 +184,9 @@ class ServiceProvider implements BootstrappableServiceProvider
         );
         add_action(
             CartCheckout::ACTION_STORE_PAYMENT_DATA,
-            [$container[StorePaymentData::class], 'addFromAction']
+            [$container[StorePaymentData::class], 'addFromAction'],
+            10,
+            2
         );
 
         add_action(
