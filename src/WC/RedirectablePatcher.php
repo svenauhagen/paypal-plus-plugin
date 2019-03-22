@@ -11,13 +11,13 @@
 namespace WCPayPalPlus\WC;
 
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Session\Session;
 use OutOfBoundsException;
-use RuntimeException;
 
 /**
  * Class RedirectablePatcher
@@ -49,6 +49,7 @@ class RedirectablePatcher
      * @var CheckoutDropper
      */
     private $checkoutDropper;
+
     /**
      * @var Logger
      */
