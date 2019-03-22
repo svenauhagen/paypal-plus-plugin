@@ -241,7 +241,7 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
             wp_safe_redirect($order->get_checkout_order_received_url());
             exit;
         } catch (PayPalConnectionException $exc) {
-            $this->logger->error($exc);
+            $this->logger->error($exc->getData());
             $this->checkoutDropper->abortSession();
         }
     }

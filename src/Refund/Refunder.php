@@ -67,9 +67,8 @@ class Refunder
     }
 
     /**
-     * Execute the refund via PayPal API
-     *
      * @return bool
+     * @throws \InvalidArgumentException
      */
     public function execute()
     {
@@ -88,7 +87,7 @@ class Refunder
                 ->get_success_handler($refundedSale->getId())
                 ->execute();
         } catch (PayPalConnectionException $exc) {
-            $this->logger->error($exc);
+            $this->logger->error($exc->getData());
             return false;
         }
 

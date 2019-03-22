@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\WC;
 
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\PlusGateway\Gateway;
 use WCPayPalPlus\Service\Container;
@@ -44,7 +45,8 @@ class ServiceProvider implements Service\BootstrappableServiceProvider
                 $container[PaymentPatchFactory::class],
                 $container[PlusStorable::class],
                 $container[Session::class],
-                $container[CheckoutDropper::class]
+                $container[CheckoutDropper::class],
+                $container[Logger::class]
             );
         };
     }

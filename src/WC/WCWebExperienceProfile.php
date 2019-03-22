@@ -107,7 +107,7 @@ class WCWebExperienceProfile
                 $new_id = $response->getId();
             }
         } catch (PayPalConnectionException $exc) {
-            $this->logger->error($exc);
+            $this->logger->error($exc->getData());
         }
 
         return $new_id;
@@ -126,7 +126,7 @@ class WCWebExperienceProfile
         try {
             $web_profile = WebProfile::get($profile_id, $this->api_context);
         } catch (PayPalConnectionException $exc) {
-            $this->logger->error($exc);
+            $this->logger->error($exc->getData());
         }
 
         return $web_profile;

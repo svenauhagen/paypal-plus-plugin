@@ -49,6 +49,10 @@ class RedirectablePatcher
      * @var CheckoutDropper
      */
     private $checkoutDropper;
+    /**
+     * @var Logger
+     */
+    private $logger;
 
     /**
      * ReceiptPageRenderer constructor.
@@ -57,13 +61,15 @@ class RedirectablePatcher
      * @param PlusStorable $settingRepository
      * @param Session $session
      * @param CheckoutDropper $checkoutDropper
+     * @param Logger $logger
      */
     public function __construct(
         OrderFactory $orderFactory,
         PaymentPatchFactory $paymentPatchFactory,
         PlusStorable $settingRepository,
         Session $session,
-        CheckoutDropper $checkoutDropper
+        CheckoutDropper $checkoutDropper,
+        Logger $logger
     ) {
 
         $this->orderFactory = $orderFactory;
@@ -71,12 +77,13 @@ class RedirectablePatcher
         $this->settingRepository = $settingRepository;
         $this->session = $session;
         $this->checkoutDropper = $checkoutDropper;
+        $this->logger = $logger;
     }
 
     /**
-     * @param int $orderId
+     * @param $orderId
      * @throws OutOfBoundsException
-     * @throws RuntimeException
+     * @throws \WCPayPalPlus\Order\OrderFactoryException
      */
     public function patchOrder($orderId)
     {
@@ -98,6 +105,7 @@ class RedirectablePatcher
         try {
             $paymentPatcher->execute();
         } catch (PayPalConnectionException $exc) {
+            $this->logger->error($exc->getData());
             $this->checkoutDropper->abortSession();
         }
 
