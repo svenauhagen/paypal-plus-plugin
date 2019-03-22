@@ -124,19 +124,19 @@ class PatchProvider
      * @return Patch
      * @throws InvalidArgumentException
      */
-    public function get_billing_patch()
+    public function get_shipping_patch()
     {
-        $billing_data = $this->has_shipping_data()
+        $addressData = $this->has_shipping_data()
             ? $this->get_shipping_address_data()
             : $this->get_billing_address_data();
 
-        $billing_patch = new Patch();
-        $billing_patch
+        $shippingPatch = new Patch();
+        $shippingPatch
             ->setOp('add')
             ->setPath('/transactions/0/item_list/shipping_address')
-            ->setValue($billing_data);
+            ->setValue($addressData);
 
-        return $billing_patch;
+        return $shippingPatch;
     }
 
     /**
