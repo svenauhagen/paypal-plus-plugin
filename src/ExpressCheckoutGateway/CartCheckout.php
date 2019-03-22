@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
+use PayPal\Exception\PayPalConnectionException;
 use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
@@ -111,10 +112,14 @@ class CartCheckout
         try {
             $payment = $paymentCreator->create();
             $orderId = $payment->getId();
+        } catch (PayPalConnectionException $exc) {
+            $this->logger->error($exc->getData(), [$orderId]);
+            $this->ajaxJsonRequest->sendJsonError([
+                'message' => $exc->getMessage(),
+            ]);
         } catch (Exception $exc) {
             $this->logger->error($exc, [$orderId]);
             $this->ajaxJsonRequest->sendJsonError([
-                'exception' => $exc,
                 'message' => $exc->getMessage(),
             ]);
         }
