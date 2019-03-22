@@ -78,6 +78,10 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
           .submit(formData)
           .then(response => {
             if (!('data' in response)) {
+              console.warn('Unable to process the payment, server did not response with valid data')
+              return
+            }
+            if (!response.success) {
               // TODO Do something to inform user about the problem and close the flow.
             }
 
@@ -87,6 +91,10 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
             }
 
             return orderId
+          })
+          .catch(error => {
+            const textStatus = 'textStatus' in error ? error.textStatus : 'Unknown Error during payment'
+            console.warn(textStatus)
           })
       },
 
