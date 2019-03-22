@@ -150,8 +150,11 @@ class PaymentPatchData
             $this->patchProvider->get_payment_amount_patch(),
             $this->patchProvider->get_custom_patch(),
             $this->patchProvider->get_invoice_patch($this->get_invoice_prefix()),
-            $this->patchProvider->get_billing_patch(),
         ];
+
+        if ($this->order->needs_processing()) {
+            $patches[] = $this->patchProvider->get_shipping_patch();
+        }
 
         return $patches;
     }
