@@ -59,6 +59,9 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
       return
     }
 
+    const button = element.querySelector('.paypal-button')
+    button && button.remove()
+
     paypal.Button.render({
       ...this.buttonConfiguration,
 
