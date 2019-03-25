@@ -10,13 +10,14 @@
 
 namespace WCPayPalPlus\Install;
 
+use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
 use WCPayPalPlus\Setting\SharedPersistor;
 
 /**
- * Class OptionsMigrator
+ * Class Installer
  * @package WCPayPalPlus\Installation
  */
-class OptionsMigrator
+class Installer
 {
     const ORIGINAL_OPTIONS = 'woocommerce_paypal_plus_settings';
 
@@ -26,12 +27,22 @@ class OptionsMigrator
     private $sharedPersistor;
 
     /**
-     * OptionsMigrator constructor.
-     * @param SharedPersistor $sharedPersistor
+     * @var ExpressCheckoutGateway
      */
-    public function __construct(SharedPersistor $sharedPersistor)
-    {
+    private $expressCheckoutGateway;
+
+    /**
+     * Installer constructor.
+     * @param SharedPersistor $sharedPersistor
+     * @param ExpressCheckoutGateway $expressCheckoutGateway
+     */
+    public function __construct(
+        SharedPersistor $sharedPersistor,
+        ExpressCheckoutGateway $expressCheckoutGateway
+    ) {
+
         $this->sharedPersistor = $sharedPersistor;
+        $this->expressCheckoutGateway = $expressCheckoutGateway;
     }
 
     /**
@@ -48,5 +59,20 @@ class OptionsMigrator
         }
 
         $this->sharedPersistor->update($options);
+    }
+
+    /**
+     * Activate Express Checkout Gateway When Plugin get Installed
+     */
+    public function activateExpressCheckout()
+    {
+        $enabled = $this->expressCheckoutGateway->get_option('enabled', 'no');
+        $enabled = wc_string_to_bool($enabled);
+
+        if ($enabled) {
+            return;
+        }
+
+        $this->expressCheckoutGateway->update_option('enabled', 'yes');
     }
 }
