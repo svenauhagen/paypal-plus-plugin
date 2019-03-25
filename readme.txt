@@ -139,9 +139,12 @@ At the moment, PayPal Plus can only be used by vendors in Germany. But their buy
 5. The PayPal Plus form when paying via credit card.
 6. The PayPal Plus form when paying upon invoice.
 
-
-
 == Changelog ==
+= 2.0.0 =
+ - Fix: IPN return 500 because of custom patch is not set correctly on PayPal
+ - Fix: Do not send shipping address for digital goods
+ - Add: Introduce Express Checkout feature
+
 = 1.1.1 =
  - Fix: Decimal format for shipping details when order data are patched
 
