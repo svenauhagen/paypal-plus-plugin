@@ -108,7 +108,7 @@ trait MethodsTrait
         $output .= sprintf(
             '<div><p>%s</p></div>',
             esc_html__(
-                'Below you can see if your account is successfully hooked up to use PayPal Express Checkout.',
+                'Below you can see if your account is successfully hooked up to use PayPal.',
                 'woo-paypalplus'
             ) . "<br />{$message}"
         );
