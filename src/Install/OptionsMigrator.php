@@ -41,7 +41,7 @@ class OptionsMigrator
      */
     public function migrateSharedOptions()
     {
-        $options = get_option(self::ORIGINAL_OPTIONS, true);
+        $options = get_option(self::ORIGINAL_OPTIONS, []);
 
         if (!$options) {
             return;
