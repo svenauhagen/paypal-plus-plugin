@@ -50,17 +50,7 @@ class PaymentExecutionSuccess implements RequestSuccessHandler
      */
     public function execute()
     {
-        if (!$this->data->is_approved()) {
-            wc_add_notice(
-                sprintf(
-                    esc_html__(
-                        'There was an error executing the payment. Payment state: %s',
-                        'woo-paypalplus'
-                    ),
-                    $this->data->get_payment_state()
-                ),
-                'error'
-            );
+        if (!$this->data->isApproved()) {
             return;
         }
 

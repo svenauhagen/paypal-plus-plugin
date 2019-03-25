@@ -55,12 +55,25 @@ class PaymentPerformer
      * Be aware all of the call made by the PayPal SDK may throw a PayPalConnectionException
      *
      * @return Payment
-     * @throws PayPalConnectionException
+     * @throws PaymentProcessException
+     * @throws \InvalidArgumentException
      */
     public function execute()
     {
         $payment = $this->data->get_payment();
         $payment->execute($this->data->get_payment_execution(), $this->data->get_context());
+
+        if (!$this->data->isApproved()) {
+            throw PaymentProcessException::becauseInvalidPaymentState(
+                sprintf(
+                    esc_html__(
+                        'There was an error executing the payment. Payment state: %s. Please restart the process and choose a different PayPal wallet.',
+                        'woo-paypalplus'
+                    ),
+                    $this->data->paymentState()
+                )
+            );
+        }
 
         foreach ($this->successHandlers as $success_handler) {
             $success_handler->execute();
