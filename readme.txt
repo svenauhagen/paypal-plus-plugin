@@ -18,6 +18,7 @@ On the checkout page, the plugin loads an iFrame which is provided by PayPal. It
 
 = Benefits =
 
+* New Express Checkout Gateway: Enable faster payments with the Express Checkout button, directly from the single product page or the shopping cart.
 * More payment methods: PayPal Plus enables to integrate the four most popular payment methods into your shop: PayPal, Direct debit, Credit card, pay upon invoice.
 * Easier integration: all payment methods in only one plugin.
 * More safety: PayPal vendor protection protects against from losing money to chargebacks and reversals for all transactions.
