@@ -1,6 +1,6 @@
 === PayPal Plus for WooCommerce ===
 Contributors: inpsyde, biont, cocreation
-Tags: paypal, paypal plus, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
+Tags: paypal, paypal plus, express checkout, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
 Requires at least: 4.4
 Tested up to: 5.1.0
 Stable tag: 1.1.1
