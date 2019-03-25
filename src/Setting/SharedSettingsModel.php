@@ -314,7 +314,7 @@ class SharedSettingsModel
         if (strlen($url) > 127) {
             $gateway->add_error(
                 esc_html_x(
-                    'Checkout Logo cannot contains more than 127 characters.',
+                    'Checkout logo cannot contain more than 127 characters.',
                     'shared-settings',
                     'woo-paypalplus'
                 )

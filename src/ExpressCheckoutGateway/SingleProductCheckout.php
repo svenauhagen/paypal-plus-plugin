@@ -147,7 +147,7 @@ class SingleProductCheckout
 
         if (!$passedValidation || $productStatus !== ProductStatuses::PUBLISH_STATUS) {
             $this->logger->error(
-                'Product cannot be added to cart because is not publicly available.',
+                'Product cannot be added to the cart because it is not publicly available.',
                 [
                     $productStatus,
                     $productId,
@@ -155,7 +155,7 @@ class SingleProductCheckout
             );
             $this->ajaxJsonRequest->sendJsonError([
                 'message' => esc_html_x(
-                    'Product cannot be added to cart because is not publicly available.',
+                    'Product cannot be added to the cart because it is not publicly available.',
                     'express-checkout',
                     'woo-paypalplus'
                 ),

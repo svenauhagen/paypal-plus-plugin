@@ -157,7 +157,7 @@ final class GatewaySettingsModel implements SettingsGatewayModel
                 'type' => 'checkbox',
                 'default' => Storable::OPTION_ON,
                 'description' => esc_html_x(
-                    'Allow you to show or not the Express Checkout button within single product pages.',
+                    'Allows you to show or hide the Express Checkout button within single product pages.',
                     'gateway-setting',
                     'woo-paypalplus'
                 ),
@@ -171,7 +171,7 @@ final class GatewaySettingsModel implements SettingsGatewayModel
                 'type' => 'checkbox',
                 'default' => Storable::OPTION_ON,
                 'description' => esc_html_x(
-                    'Allow you to show or not the Express Checkout button within the mini cart.',
+                    'Allows you to show or hide the Express Checkout button within the mini cart.',
                     'gateway-setting',
                     'woo-paypalplus'
                 ),
@@ -185,7 +185,7 @@ final class GatewaySettingsModel implements SettingsGatewayModel
                 'type' => 'checkbox',
                 'default' => Storable::OPTION_ON,
                 'description' => esc_html_x(
-                    'Allow you to show or not the Express Checkout button within the cart page.',
+                    'Allows you to show or hide the Express Checkout button within the cart page.',
                     'gateway-setting',
                     'woo-paypalplus'
                 ),
