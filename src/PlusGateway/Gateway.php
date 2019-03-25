@@ -31,7 +31,6 @@ use WCPayPalPlus\WC\CheckoutDropper;
 use WooCommerce;
 use WC_Payment_Gateway;
 use OutOfBoundsException;
-use RuntimeException;
 use WC_Order;
 use Exception;
 
@@ -241,8 +240,8 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
             wp_safe_redirect($order->get_checkout_order_received_url());
             exit;
         } catch (PayPalConnectionException $exc) {
-            $this->logger->error($exc);
-            $this->checkoutDropper->abortSession();
+            $this->logger->error($exc->getData());
+            $this->checkoutDropper->abortSessionWithReason($exc->getMessage());
         }
     }
 
@@ -288,6 +287,9 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
                     $notifyUrl
                 );
                 $paymentCreator = $paymentCreator->create();
+            } catch (PayPalConnectionException $exc) {
+                $this->logger->error($exc->getData());
+                return $url;
             } catch (Exception $exc) {
                 $this->logger->error($exc);
                 return $url;

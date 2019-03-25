@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\WC;
 
 use WCPayPalPlus\Session\Session;
+use WCPayPalPlus\Setting\Storable;
 
 /**
  * Class CheckoutDropper
@@ -24,12 +25,32 @@ class CheckoutDropper
     private $session;
 
     /**
+     * @var Storable
+     */
+    private $settingRepository;
+
+    /**
      * CheckoutDropper constructor.
      * @param Session $session
+     * @param Storable $settingRepository
      */
-    public function __construct(Session $session)
+    public function __construct(Session $session, Storable $settingRepository)
     {
         $this->session = $session;
+        $this->settingRepository = $settingRepository;
+    }
+
+    /**
+     * Abort Checkout with a message and Redirect User
+     *
+     * @param $message
+     */
+    public function abortSessionWithReason($message)
+    {
+        assert(is_string($message));
+
+        wc_add_notice($message, 'error');
+        $this->abortSession();
     }
 
     /**
@@ -38,13 +59,12 @@ class CheckoutDropper
     public function abortSession()
     {
         $this->abort();
-        wc_add_notice($this->errorMessage(), 'error');
         wp_safe_redirect($this->url());
         exit;
     }
 
     /**
-     * Abort Order
+     * Abort Checkout
      */
     public function abort()
     {
@@ -54,18 +74,8 @@ class CheckoutDropper
     /**
      * @return string
      */
-    private function errorMessage()
-    {
-        // TODO May be a more useful message for the user.
-        return esc_html__('Error processing checkout. Please try again.', 'woo-paypalplus');
-    }
-
-    /**
-     * @return string
-     */
     private function url()
     {
-        // TODO Still need to clarify which url to use, for both payment methods or they'll have different?
-        return wc_get_cart_url();
+        return $this->settingRepository->cancelUrl();
     }
 }
