@@ -99,25 +99,16 @@ class PaymentCreator
      */
     private function details()
     {
-        $tax = 0;
         $shipping = (float)$this->orderDataProvider->get_total_shipping();
-
-        if (!wc_prices_include_tax()) {
-            $tax = $this->orderDataProvider->get_total_tax();
-        }
-
-        $tax or $shipping += (float)$this->orderDataProvider->get_shipping_tax();
-
-        $sub_total = $this->orderDataProvider->get_subtotal();
+        $shipping += (float)$this->orderDataProvider->get_shipping_tax();
+        $tax = $this->orderDataProvider->get_total_tax();
+        $subTotal = $this->orderDataProvider->get_subtotal();
 
         $details = new Api\Details();
         $details
             ->setShipping($shipping)
-            ->setSubtotal($sub_total);
-
-        if ($tax > 0) {
-            $details->setTax($tax);
-        }
+            ->setSubtotal($subTotal)
+            ->setTax($tax);
 
         return $details;
     }

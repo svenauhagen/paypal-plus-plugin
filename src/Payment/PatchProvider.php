@@ -103,14 +103,9 @@ class PatchProvider
             'details' => [
                 'subtotal' => $this->orderData->get_subtotal(),
                 'shipping' => $this->orderData->get_total_shipping(),
+                'tax' => $this->orderData->get_total_tax() + $this->orderData->get_shipping_tax(),
             ],
         ];
-
-        if (!wc_prices_include_tax()) {
-            $paymentData['details']['tax'] = $this->orderData->get_total_tax();
-        } else {
-            $paymentData['details']['shipping'] += $this->orderData->get_shipping_tax();
-        }
 
         $replacePatch
             ->setOp('replace')

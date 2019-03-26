@@ -31,11 +31,10 @@ abstract class OrderDataCommon implements OrderDataProvider
      */
     public function get_total()
     {
-        $total = $this->get_subtotal();
-        $shipping = $this->get_total_shipping();
-
-        $total += $shipping;
-        $total += wc_prices_include_tax() ? $this->get_shipping_tax() : $this->get_total_tax();
+        $total = $this->get_subtotal()
+            + $this->get_total_shipping()
+            + $this->get_shipping_tax()
+            + $this->get_total_tax();
 
         $total = $this->format($total);
 
@@ -49,11 +48,6 @@ abstract class OrderDataCommon implements OrderDataProvider
      */
     public function get_subtotal()
     {
-        if (wc_prices_include_tax()) {
-            $subtotal = $this->get_subtotal_including_tax();
-            return $this->format($subtotal);
-        }
-
         $subtotal = 0;
         $items = $this->get_item_list()->getItems();
 
