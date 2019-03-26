@@ -143,20 +143,4 @@ class PaymentCreator
 
         return $transaction;
     }
-
-    /**
-     * Gets a name to send to PayPal in the event the line items cannot be sent.
-     *
-     * @return string
-     */
-    private function orderItemNames()
-    {
-        $item_names = [];
-
-        foreach ($this->orderDataProvider->get_item_list()->getItems() as $item) {
-            $item_names[] = $item->getName() . ' x ' . $item->getQuantity();
-        }
-
-        return implode(', ', $item_names);
-    }
 }
