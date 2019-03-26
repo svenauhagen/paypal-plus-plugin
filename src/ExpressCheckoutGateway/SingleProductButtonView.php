@@ -73,6 +73,7 @@ final class SingleProductButtonView implements Renderable
     {
         return (
             $product instanceof \WC_Product
+            && $product->get_price()
             && !\in_array($product->get_type(), self::NOT_ALLOWED_PRODUCTS, true)
         );
     }

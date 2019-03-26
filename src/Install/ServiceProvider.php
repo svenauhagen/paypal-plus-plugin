@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\Install;
 
+use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\SharedPersistor;
@@ -25,9 +26,10 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function register(Container $container)
     {
-        $container[OptionsMigrator::class] = function (Container $container) {
-            return new OptionsMigrator(
-                $container[SharedPersistor::class]
+        $container[Installer::class] = function (Container $container) {
+            return new Installer(
+                $container[SharedPersistor::class],
+                $container[ExpressCheckoutGateway::class]
             );
         };
     }
@@ -39,7 +41,11 @@ class ServiceProvider implements BootstrappableServiceProvider
     {
         add_action(
             'upgrader_process_complete',
-            [$container[OptionsMigrator::class], 'migrateSharedOptions']
+            [$container[Installer::class], 'migrateSharedOptions']
+        );
+        add_action(
+            'upgrader_process_complete',
+            [$container[Installer::class], 'activateExpressCheckout']
         );
     }
 }

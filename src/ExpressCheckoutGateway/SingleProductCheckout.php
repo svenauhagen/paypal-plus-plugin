@@ -108,12 +108,14 @@ class SingleProductCheckout
         $product = wc_get_product($productId);
 
         if (!$product instanceof WC_Product) {
+            $message = esc_html_x(
+                'The product you are trying to add to cart does not exists.',
+                'express-checkout',
+                'woo-paypalplus'
+            );
+            wc_add_notice($message, 'error');
             $this->ajaxJsonRequest->sendJsonError([
-                'message' => esc_html_x(
-                    'The product you are trying to add to cart does not exists.',
-                    'express-checkout',
-                    'woo-paypalplus'
-                ),
+                'message' => $message,
             ]);
         }
 
@@ -145,7 +147,7 @@ class SingleProductCheckout
 
         if (!$passedValidation || $productStatus !== ProductStatuses::PUBLISH_STATUS) {
             $this->logger->error(
-                'Product cannot be added to cart because is not publicly available.',
+                'Product cannot be added to the cart because it is not publicly available.',
                 [
                     $productStatus,
                     $productId,
@@ -153,7 +155,7 @@ class SingleProductCheckout
             );
             $this->ajaxJsonRequest->sendJsonError([
                 'message' => esc_html_x(
-                    'Product cannot be added to cart because is not publicly available.',
+                    'Product cannot be added to the cart because it is not publicly available.',
                     'express-checkout',
                     'woo-paypalplus'
                 ),
@@ -174,19 +176,13 @@ class SingleProductCheckout
         );
 
         if (!$addedToCart) {
-            $this->logger->error(
-                'There was a problem to add the product into cart.',
-                [
-                    $productId,
-                    $quantity,
-                    $variationId,
-                ]
+            $message = esc_html__(
+                'There was a problem to add the product into cart. Try again or contact the shop owner.',
+                'woo-paypalplus'
             );
+            wc_add_notice($message, 'error');
             $this->ajaxJsonRequest->sendJsonError([
-                'message' => esc_html__(
-                    'There was a problem to add the product into cart. Try again or contact the shop owner.',
-                    'woo-paypalplus'
-                ),
+                'message' => $message,
             ]);
         }
 

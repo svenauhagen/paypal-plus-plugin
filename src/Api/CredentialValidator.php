@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\Api;
 
 use Exception;
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
@@ -44,7 +45,10 @@ class CredentialValidator
      */
     public function ensureCredential(ApiContext $context)
     {
+        $responseMessage = esc_html_x('Credential are Valid', 'credential', 'woo-paypalplus');
+        $isResponseValid = true;
         $credential = $context->getCredential();
+
         if (!$credential->getClientId() || !$credential->getClientSecret()) {
             return new CredentialValidationResponse(
                 true,
@@ -55,15 +59,18 @@ class CredentialValidator
         try {
             $params = ['count' => 1];
             Payment::all($params, $context);
+        } catch (PayPalConnectionException $exc) {
+            $responseMessage = $exc->getData();
+            $isResponseValid = false;
         } catch (Exception $exc) {
-            $this->logger->error($exc);
-
-            return new CredentialValidationResponse(false, $exc->getMessage());
+            $responseMessage = $exc->getMessage();
+            $isResponseValid = false;
         }
 
-        return new CredentialValidationResponse(
-            true,
-            esc_html_x('Credential are Valid', 'credential', 'woo-paypalplus')
-        );
+        if (!$isResponseValid) {
+            $this->logger->error($responseMessage);
+        }
+
+        return new CredentialValidationResponse($isResponseValid, $responseMessage);
     }
 }

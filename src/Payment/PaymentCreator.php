@@ -11,6 +11,8 @@
 namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Api;
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use InvalidArgumentException;
 
 /**
  * Class PaymentCreator
@@ -50,7 +52,8 @@ class PaymentCreator
      * Be aware that this method may indirectly throw a PayPalConnectionException.
      *
      * @return Api\Payment
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
+     * @throws PayPalConnectionException
      */
     public function create()
     {
@@ -58,10 +61,8 @@ class PaymentCreator
     }
 
     /**
-     * Returns a configured Payment object
-     *
      * @return Api\Payment
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function payment()
     {

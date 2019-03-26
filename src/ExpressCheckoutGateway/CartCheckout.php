@@ -11,8 +11,10 @@
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
+use PayPal\Exception\PayPalConnectionException;
 use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
+use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\Storable;
 use WCPayPalPlus\Utils\AjaxJsonRequest;
@@ -57,6 +59,10 @@ class CartCheckout
      * @var Logger
      */
     private $logger;
+    /**
+     * @var Request
+     */
+    private $request;
 
     /**
      * CartCheckout constructor.
@@ -65,13 +71,15 @@ class CartCheckout
      * @param AjaxJsonRequest $ajaxJsonRequest
      * @param WooCommerce $wooCommerce
      * @param Logger $logger
+     * @param Request $request
      */
     public function __construct(
         ExpressCheckoutStorable $settingRepository,
         PaymentCreatorFactory $paymentCreatorFactory,
         AjaxJsonRequest $ajaxJsonRequest,
         WooCommerce $wooCommerce,
-        Logger $logger
+        Logger $logger,
+        Request $request
     ) {
 
         $this->settingRepository = $settingRepository;
@@ -79,6 +87,7 @@ class CartCheckout
         $this->ajaxJsonRequest = $ajaxJsonRequest;
         $this->wooCommerce = $wooCommerce;
         $this->logger = $logger;
+        $this->request = $request;
     }
 
     /**
@@ -111,10 +120,16 @@ class CartCheckout
         try {
             $payment = $paymentCreator->create();
             $orderId = $payment->getId();
+        } catch (PayPalConnectionException $exc) {
+            wc_add_notice($exc->getMessage(), 'error');
+            $this->logger->error($exc->getData(), [$orderId]);
+            $this->ajaxJsonRequest->sendJsonError([
+                'message' => $exc->getMessage(),
+            ]);
         } catch (Exception $exc) {
+            wc_add_notice($exc->getMessage(), 'error');
             $this->logger->error($exc, [$orderId]);
             $this->ajaxJsonRequest->sendJsonError([
-                'exception' => $exc,
                 'message' => $exc->getMessage(),
             ]);
         }
@@ -129,18 +144,25 @@ class CartCheckout
      */
     public function storePaymentData()
     {
-        $dataToSanitize = [
-            self::INPUT_PAYER_ID_NAME => FILTER_SANITIZE_STRING,
-            self::INPUT_PAYMENT_ID_NAME => FILTER_SANITIZE_STRING,
-        ];
-        $data = filter_input_array(INPUT_POST, $dataToSanitize);
-        $data = array_filter($data);
+        $payerId = $this->request->get(self::INPUT_PAYER_ID_NAME, FILTER_SANITIZE_STRING);
+        $paymentId = $this->request->get(self::INPUT_PAYMENT_ID_NAME, FILTER_SANITIZE_STRING);
 
-        if (count($data) !== count($dataToSanitize)) {
+        if (!$payerId || !$paymentId) {
+            wc_add_notice(
+                esc_html__('Invalid Payment or Payer ID.', 'woo-paypalplus'),
+                'error'
+            );
+            $this->logger->error('Invalid Payment or Payer ID.');
             $this->ajaxJsonRequest->sendJsonError(['success' => false]);
         }
 
-        do_action(self::ACTION_STORE_PAYMENT_DATA, $data);
+        /**
+         * Store Payment Data
+         *
+         * @param string $payerId
+         * @param string $paymentId
+         */
+        do_action(self::ACTION_STORE_PAYMENT_DATA, $payerId, $paymentId);
 
         $this->ajaxJsonRequest->sendJsonSuccess(['success' => true]);
     }

@@ -68,7 +68,6 @@ class SmartButtonArguments
             'intent' => 'authorize',
             'payment_method' => 'paypal',
             'env' => $this->environment(),
-            'commit' => true,
             'locale' => $locale,
             'funding' => [
                 'disallowed' => self::DISABLED_FUNDING,

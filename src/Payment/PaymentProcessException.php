@@ -64,4 +64,15 @@ class PaymentProcessException extends Exception
             )
         );
     }
+
+    /**
+     * @param $message
+     * @return PaymentProcessException
+     */
+    public static function becauseInvalidPaymentState($message)
+    {
+        assert(is_string($message));
+
+        return new self($message);
+    }
 }

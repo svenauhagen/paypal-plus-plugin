@@ -21,6 +21,8 @@ use Inpsyde\Lib\PayPal\Rest\ApiContext;
  */
 class PaymentExecutionData
 {
+    const PAYMENT_STATE_APPROVED = 'approved';
+
     /**
      * The payer ID.
      *
@@ -117,9 +119,9 @@ class PaymentExecutionData
      *
      * @return bool;
      */
-    public function is_approved()
+    public function isApproved()
     {
-        return $this->get_payment_state() === 'approved';
+        return $this->paymentState() === self::PAYMENT_STATE_APPROVED;
     }
 
     /**
@@ -127,7 +129,7 @@ class PaymentExecutionData
      *
      * @return string
      */
-    public function get_payment_state()
+    public function paymentState()
     {
         return $this->get_payment()->state;
     }
@@ -151,6 +153,7 @@ class PaymentExecutionData
      * Returns a configured PaymentExecution object.
      *
      * @return PaymentExecution
+     * @throws \InvalidArgumentException
      */
     public function get_payment_execution()
     {
@@ -191,7 +194,7 @@ class PaymentExecutionData
     }
 
     /**
-     * Returns the WooCommcerce Order object
+     * Returns the WooCommerce Order object
      *
      * @return \WC_Order
      */

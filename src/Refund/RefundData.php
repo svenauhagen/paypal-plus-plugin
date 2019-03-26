@@ -14,7 +14,7 @@ use Inpsyde\Lib\PayPal\Api\Amount;
 use Inpsyde\Lib\PayPal\Api\RefundRequest;
 use Inpsyde\Lib\PayPal\Api\Sale;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
-use WC_Order_Refund;
+use WC_Order;
 use WCPayPalPlus\Utils\PriceFormatterTrait;
 
 /**
@@ -58,12 +58,12 @@ class RefundData
     /**
      * RefundData constructor.
      *
-     * @param WC_Order_Refund $order WooCommerce Order object.
+     * @param WC_Order $order WooCommerce Order object.
      * @param float $amount Refund amount.
      * @param string $reason Refund reason.
      * @param ApiContext $context PayPal API Context object.
      */
-    public function __construct(WC_Order_Refund $order, $amount, $reason, ApiContext $context)
+    public function __construct(WC_Order $order, $amount, $reason, ApiContext $context)
     {
         $this->order = $order;
         $this->amount = (float)$amount;

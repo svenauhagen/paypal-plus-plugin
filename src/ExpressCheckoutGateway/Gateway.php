@@ -150,7 +150,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         $this->method_title = self::GATEWAY_TITLE_METHOD;
         $this->description = $this->get_option('description');
         $this->method_description = esc_html_x(
-            'Allow customers to Checkout Product and cart directly.',
+            'Enable faster payments with the Express Checkout button, directly from the single product page or the shopping cart.',
             'gateway-settings',
             'woo-paypalplus'
         );
@@ -198,6 +198,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         try {
             $paymentPatcher->execute();
         } catch (PayPalConnectionException $exc) {
+            $this->logger->error($exc->getData());
             throw PaymentProcessException::becausePayPalConnection($exc);
         }
 
@@ -226,6 +227,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
              */
             do_action(self::ACTION_AFTER_PAYMENT_EXECUTION, $payment, $order);
         } catch (PayPalConnectionException $exc) {
+            $this->logger->error($exc->getData());
             throw PaymentProcessException::becausePayPalConnection($exc);
         }
 

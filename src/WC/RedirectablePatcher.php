@@ -11,13 +11,13 @@
 namespace WCPayPalPlus\WC;
 
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Session\Session;
 use OutOfBoundsException;
-use RuntimeException;
 
 /**
  * Class RedirectablePatcher
@@ -51,19 +51,26 @@ class RedirectablePatcher
     private $checkoutDropper;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * ReceiptPageRenderer constructor.
      * @param OrderFactory $orderFactory
      * @param PaymentPatchFactory $paymentPatchFactory
      * @param PlusStorable $settingRepository
      * @param Session $session
      * @param CheckoutDropper $checkoutDropper
+     * @param Logger $logger
      */
     public function __construct(
         OrderFactory $orderFactory,
         PaymentPatchFactory $paymentPatchFactory,
         PlusStorable $settingRepository,
         Session $session,
-        CheckoutDropper $checkoutDropper
+        CheckoutDropper $checkoutDropper,
+        Logger $logger
     ) {
 
         $this->orderFactory = $orderFactory;
@@ -71,12 +78,13 @@ class RedirectablePatcher
         $this->settingRepository = $settingRepository;
         $this->session = $session;
         $this->checkoutDropper = $checkoutDropper;
+        $this->logger = $logger;
     }
 
     /**
-     * @param int $orderId
+     * @param $orderId
      * @throws OutOfBoundsException
-     * @throws RuntimeException
+     * @throws \WCPayPalPlus\Order\OrderFactoryException
      */
     public function patchOrder($orderId)
     {
@@ -86,7 +94,7 @@ class RedirectablePatcher
         $order = $this->orderFactory->createById($orderId);
         $paymentId = $this->session->get(Session::PAYMENT_ID);
 
-        !$paymentId and $this->checkoutDropper->abortSession();
+        $paymentId or $this->abortPatchingBecausePaymentId($paymentId);
 
         $paymentPatcher = $this->paymentPatchFactory->create(
             $order,
@@ -98,9 +106,25 @@ class RedirectablePatcher
         try {
             $paymentPatcher->execute();
         } catch (PayPalConnectionException $exc) {
-            $this->checkoutDropper->abortSession();
+            $this->logger->error($exc->getData());
+            $this->checkoutDropper->abortSessionWithReason($exc->getMessage());
         }
 
         wp_enqueue_script('paypalplus-woocommerce-plus-paypal-redirect');
+    }
+
+    /**
+     * @param $paymentId
+     */
+    private function abortPatchingBecausePaymentId($paymentId)
+    {
+        $this->logger->error("Impossible to update the order, payment id {$paymentId} is not valid.");
+        $this->checkoutDropper->abortSessionWithReason(sprintf(
+            esc_html__(
+                'Impossible to update the order, payment id %s is not valid.',
+                'woo-paypalplus'
+            ),
+            $paymentId
+        ));
     }
 }

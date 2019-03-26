@@ -1,6 +1,6 @@
 === PayPal Plus for WooCommerce ===
 Contributors: inpsyde, biont, cocreation
-Tags: paypal, paypal plus, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
+Tags: paypal, paypal plus, express checkout, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
 Requires at least: 4.4
 Tested up to: 5.1.0
 Stable tag: 1.1.1
@@ -18,6 +18,7 @@ On the checkout page, the plugin loads an iFrame which is provided by PayPal. It
 
 = Benefits =
 
+* New Express Checkout Gateway: Enable faster payments with the Express Checkout button, directly from the single product page or the shopping cart.
 * More payment methods: PayPal Plus enables to integrate the four most popular payment methods into your shop: PayPal, Direct debit, Credit card, pay upon invoice.
 * Easier integration: all payment methods in only one plugin.
 * More safety: PayPal vendor protection protects against from losing money to chargebacks and reversals for all transactions.
@@ -139,9 +140,12 @@ At the moment, PayPal Plus can only be used by vendors in Germany. But their buy
 5. The PayPal Plus form when paying via credit card.
 6. The PayPal Plus form when paying upon invoice.
 
-
-
 == Changelog ==
+= 2.0.0 =
+ - Fix: IPN return 500 because of custom patch is not set correctly on PayPal
+ - Fix: Do not send shipping address for digital goods
+ - Add: Introduce Express Checkout feature
+
 = 1.1.1 =
  - Fix: Decimal format for shipping details when order data are patched
 

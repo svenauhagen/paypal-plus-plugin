@@ -17,11 +17,13 @@ use RuntimeException;
 use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Notice\Admin as AdminNotice;
 use WCPayPalPlus\Order\OrderFactory;
+use WCPayPalPlus\Refund\RefundFactory;
 
 /**
  * Trait GatewayMethodsTrait
  * @property OrderFactory $orderFactory
  * @property CredentialValidator $credentialValidator
+ * @property RefundFactory $refundFactory
  * @package WCPayPalPlus
  */
 trait MethodsTrait
@@ -45,7 +47,7 @@ trait MethodsTrait
     {
         $order = $this->orderFactory->createById($orderId);
 
-        if (!$order instanceof WC_Order_Refund) {
+        if (!$order instanceof WC_Order) {
             return false;
         }
 
@@ -106,7 +108,7 @@ trait MethodsTrait
         $output .= sprintf(
             '<div><p>%s</p></div>',
             esc_html__(
-                'Below you can see if your account is successfully hooked up to use PayPal Express Checkout.',
+                'Below you can see if your account is successfully hooked up to use PayPal.',
                 'woo-paypalplus'
             ) . "<br />{$message}"
         );

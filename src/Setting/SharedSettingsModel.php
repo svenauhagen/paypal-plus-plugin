@@ -32,6 +32,8 @@ class SharedSettingsModel
         Storable::OPTION_PROFILE_CHECKOUT_LOGO => FILTER_VALIDATE_URL,
         Storable::OPTION_PROFILE_BRAND_NAME => FILTER_SANITIZE_STRING,
         Storable::OPTION_INVOICE_PREFIX => FILTER_SANITIZE_STRING,
+        Storable::OPTION_CANCEL_URL_NAME => FILTER_SANITIZE_STRING,
+        Storable::OPTION_CANCEL_CUSTOM_URL_NAME => FILTER_SANITIZE_STRING,
         self::OPTION_DOWNLOAD_LOG => FILTER_DEFAULT,
     ];
 
@@ -312,7 +314,7 @@ class SharedSettingsModel
         if (strlen($url) > 127) {
             $gateway->add_error(
                 esc_html_x(
-                    'Checkout Logo cannot contains more than 127 characters.',
+                    'Checkout logo cannot contain more than 127 characters.',
                     'shared-settings',
                     'woo-paypalplus'
                 )

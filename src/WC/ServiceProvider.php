@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\WC;
 
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\PlusGateway\Gateway;
 use WCPayPalPlus\Service\Container;
@@ -17,6 +18,7 @@ use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Service;
+use WCPayPalPlus\Setting\Storable;
 use WooCommerce;
 
 /**
@@ -35,7 +37,8 @@ class ServiceProvider implements Service\BootstrappableServiceProvider
         };
         $container[CheckoutDropper::class] = function (Container $container) {
             return new CheckoutDropper(
-                $container[Session::class]
+                $container[Session::class],
+                $container[Storable::class]
             );
         };
         $container[RedirectablePatcher::class] = function (Container $container) {
@@ -44,7 +47,8 @@ class ServiceProvider implements Service\BootstrappableServiceProvider
                 $container[PaymentPatchFactory::class],
                 $container[PlusStorable::class],
                 $container[Session::class],
-                $container[CheckoutDropper::class]
+                $container[CheckoutDropper::class],
+                $container[Logger::class]
             );
         };
     }

@@ -46,14 +46,14 @@ class RefundFactory
      * Create a new Refund Order
      *
      * @param WC_Order_Refund $order
-     * @param float $amount
+     * @param string $amount
      * @param string $reason
      * @param ApiContext $apiContext
      * @return Refunder
      */
     public function create($order, $amount, $reason, ApiContext $apiContext)
     {
-        assert(is_float($amount));
+        assert(is_string($amount));
         assert(is_string($reason));
 
         $refundData = new RefundData(
