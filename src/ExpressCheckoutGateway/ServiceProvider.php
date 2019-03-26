@@ -66,7 +66,8 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[CheckoutGatewayOverride::class] = function (Container $container) {
             return new CheckoutGatewayOverride(
-                $container[Session::class]
+                $container[Session::class],
+                $container[CurrentPaymentMethod::class]
             );
         };
         $container[CheckoutAddressOverride::class] = function (Container $container) {
@@ -196,8 +197,12 @@ class ServiceProvider implements BootstrappableServiceProvider
         );
 
         add_filter(
+            'template_redirect',
+            [$container[CheckoutGatewayOverride::class], 'maybeReset']
+        );
+        add_filter(
             'woocommerce_available_payment_gateways',
-            [$container[CheckoutGatewayOverride::class], 'maybeOverride'],
+            [$container[CheckoutGatewayOverride::class], 'maybeOverridden'],
             9999
         );
 
