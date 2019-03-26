@@ -123,19 +123,4 @@ class OrderData extends OrderDataCommon
     {
         return $this->format($this->round($this->order->get_shipping_tax()));
     }
-
-    /**
-     * Get the subtotal including any additional taxes.
-     *
-     * This is used when the prices are given already including tax.
-     *
-     * @return string
-     */
-    public function get_subtotal_including_tax()
-    {
-        $shipping_diff = $this->round(
-            $this->order->get_shipping_total() + $this->order->get_shipping_tax()
-        );
-        return $this->format($this->order->get_total() - $shipping_diff);
-    }
 }

@@ -118,20 +118,4 @@ class CartData extends OrderDataCommon
     {
         return $this->format($this->round($this->cart->shipping_tax_total));
     }
-
-    /**
-     * Get the subtotal including any additional taxes.
-     *
-     * This is used when the prices are given already including tax.
-     *
-     * @return string
-     */
-    public function get_subtotal_including_tax()
-    {
-        return $this->format($this->round(
-            $this->cart->cart_contents_total
-            + $this->cart->fee_total
-            + $this->cart->tax_total
-        ));
-    }
 }

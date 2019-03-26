@@ -84,13 +84,4 @@ interface OrderDataProvider
      * @return string
      */
     public function get_shipping_tax();
-
-    /**
-     * Get the subtotal including any additional taxes.
-     *
-     * This is used when the prices are given already including tax.
-     *
-     * @return string
-     */
-    public function get_subtotal_including_tax();
 }
