@@ -184,13 +184,6 @@ $bootstrap = \Closure::bind(function () {
         return;
     }
 
-
-//    load_plugin_textdomain(
-//        'woo-paypalplus',
-//        false,
-//        plugin_basename(dirname(__FILE__)) . '/languages'
-//    );
-
     add_action('plugins_loaded', __NAMESPACE__ . '\\bootstrap', 0);
 }, null);
 
