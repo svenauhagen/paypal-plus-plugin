@@ -179,7 +179,7 @@ class CheckoutAddressOverride
 
         $customer = $this->wooCommerce->customer;
         $methodName = "get_{$input}";
-        if (method_exists($customer, $methodName) && $customer->$methodName()) {
+        if (method_exists($customer, $methodName)) {
             return $customer->$methodName();
         }
 
