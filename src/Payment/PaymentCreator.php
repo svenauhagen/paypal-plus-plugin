@@ -102,14 +102,12 @@ class PaymentCreator
         $shipping = (float)$this->orderDataProvider->shippingTotal();
         $tax = $this->orderDataProvider->totalTaxes();
         $subTotal = $this->orderDataProvider->subTotal();
-        $fee = $this->orderDataProvider->feeTotal();
 
         $details = new Api\Details();
         $details
             ->setShipping($shipping)
             ->setSubtotal($subTotal)
-            ->setTax($tax)
-            ->setHandlingFee($fee);
+            ->setTax($tax);
 
         return $details;
     }

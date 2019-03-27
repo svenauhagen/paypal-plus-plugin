@@ -73,16 +73,6 @@ final class CartData extends OrderDataCommon
     }
 
     /**
-     * Retrieve the total amount for fees
-     *
-     * @return float
-     */
-    public function feeTotal()
-    {
-        return $this->format($this->round($this->cart->get_fee_total()));
-    }
-
-    /**
      * Returns the total discount in the cart.
      *
      * @return float
@@ -104,6 +94,10 @@ final class CartData extends OrderDataCommon
             $items[] = new CartItemData($item);
         }
 
+        foreach ($this->cart->get_fees() as $fee) {
+            $items[] = new FeeData($fee);
+        }
+
         if ($discount > 0) {
             foreach ($this->cart->get_coupons('cart') as $code => $coupon) {
                 $couponAmount = $this->cart->get_coupon_discount_amount($code);
@@ -113,10 +107,6 @@ final class CartData extends OrderDataCommon
                     'line_subtotal' => '-' . $this->format($couponAmount),
                 ]);
             }
-        }
-
-        foreach ($this->cart->get_fees() as $fee) {
-            $items[] = new FeeData($fee);
         }
 
         return $items;

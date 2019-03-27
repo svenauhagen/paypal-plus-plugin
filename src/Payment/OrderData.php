@@ -85,22 +85,6 @@ final class OrderData extends OrderDataCommon
     /**
      * @inheritdoc
      */
-    public function feeTotal()
-    {
-        $amount = 0;
-        $fees = $this->order->get_fees();
-
-        /** @var \WC_Order_Item_Fee $fee */
-        foreach ($fees as $fee) {
-            $amount += (float)$fee->get_total();
-        }
-
-        return $this->format($this->round($amount));
-    }
-
-    /**
-     * @inheritdoc
-     */
     protected function items()
     {
         $cart = $this->order->get_items();

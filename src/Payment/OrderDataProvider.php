@@ -61,11 +61,4 @@ interface OrderDataProvider
      * @return float
      */
     public function totalDiscount();
-
-    /**
-     * Retrieve the total amount for fees
-     *
-     * @return float
-     */
-    public function feeTotal();
 }

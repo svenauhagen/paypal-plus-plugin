@@ -34,7 +34,6 @@ abstract class OrderDataCommon implements OrderDataProvider
     {
         $total = $this->subTotal()
             + $this->shippingTotal()
-            + $this->feeTotal()
             + $this->totalTaxes();
 
         $total = $this->format($this->round($total));
