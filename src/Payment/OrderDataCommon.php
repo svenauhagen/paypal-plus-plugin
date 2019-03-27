@@ -25,31 +25,33 @@ abstract class OrderDataCommon implements OrderDataProvider
     use PriceFormatterTrait;
 
     /**
-     * Calculate the order total.
+     * Calculate the order total
      *
-     * @return float
+     * @return float|int|string
+     * @throws \InvalidArgumentException
      */
-    public function get_total()
+    public function total()
     {
-        $total = $this->get_subtotal()
-            + $this->get_total_shipping()
-            + $this->get_shipping_tax()
-            + $this->get_total_tax();
+        $total = $this->subTotal()
+            + $this->shippingTotal()
+            + $this->feeTotal()
+            + $this->totalTaxes();
 
-        $total = $this->format($total);
+        $total = $this->format($this->round($total));
 
         return $total;
     }
 
     /**
-     * Calculate the order subtotal.
+     * Calculate the order subtotal
      *
-     * @return float
+     * @return float|int
+     * @throws \InvalidArgumentException
      */
-    public function get_subtotal()
+    public function subTotal()
     {
         $subtotal = 0;
-        $items = $this->get_item_list()->getItems();
+        $items = $this->itemsList()->getItems();
 
         foreach ($items as $item) {
             $product_price = $item->getPrice();
@@ -61,15 +63,16 @@ abstract class OrderDataCommon implements OrderDataProvider
     }
 
     /**
-     * Generated a new ItemList object from the items of the current order
+     * Retrieve the Items
      *
      * @return ItemList
+     * @throws \InvalidArgumentException
      */
-    public function get_item_list()
+    public function itemsList()
     {
         $item_list = new ItemList();
-        foreach ($this->get_items() as $order_item) {
-            $item_list->addItem($this->get_item($order_item));
+        foreach ($this->items() as $order_item) {
+            $item_list->addItem($this->item($order_item));
         }
 
         return $item_list;
@@ -78,11 +81,11 @@ abstract class OrderDataCommon implements OrderDataProvider
     /**
      * Creates a single Order Item for the Paypal API
      *
-     * @param OrderItemDataProvider $data Order|Cart item.
-     *
+     * @param OrderItemDataProvider $data
      * @return Item
+     * @throws \InvalidArgumentException
      */
-    public function get_item(OrderItemDataProvider $data)
+    protected function item(OrderItemDataProvider $data)
     {
         $name = html_entity_decode($data->get_name(), ENT_NOQUOTES, 'UTF-8');
         $currency = get_woocommerce_currency();
@@ -102,4 +105,11 @@ abstract class OrderDataCommon implements OrderDataProvider
 
         return $item;
     }
+
+    /**
+     * Returns an array of item data providers.
+     *
+     * @return OrderItemDataProvider[]
+     */
+    abstract protected function items();
 }
