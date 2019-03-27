@@ -177,7 +177,8 @@ class ServiceProvider implements BootstrappableServiceProvider
         );
         add_filter(
             'woocommerce_billing_fields',
-            [$container[CheckoutAddressOverride::class], 'filterBillingFields']
+            [$container[CheckoutAddressOverride::class], 'filterBillingFields'],
+            9999
         );
         add_action(
             'woocommerce_checkout_process',

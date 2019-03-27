@@ -230,8 +230,10 @@ class CheckoutAddressOverride
             return $fields;
         }
 
-        $fields['billing_email']['custom_attributes'] = ['readonly' => 'readonly'];
-        $fields['billing_email']['type'] = self::FIELD_TYPE_ID;
+        if (isset($fields['billing_email'])) {
+            $fields['billing_email']['custom_attributes'] = ['readonly' => 'readonly'];
+            $fields['billing_email']['type'] = self::FIELD_TYPE_ID;
+        }
 
         return $fields;
     }
