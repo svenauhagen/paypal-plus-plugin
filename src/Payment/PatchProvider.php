@@ -103,7 +103,7 @@ class PatchProvider
             'details' => [
                 'subtotal' => $this->orderData->subTotal(),
                 'shipping' => $this->orderData->shippingTotal(),
-                'tax' => $this->orderData->totalTaxes() + $this->orderData->shippingTotalTax(),
+                'tax' => $this->orderData->totalTaxes(),
             ],
         ];
 
