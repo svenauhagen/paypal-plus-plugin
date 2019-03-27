@@ -20,6 +20,7 @@ use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Payment\PaymentPatcher;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Payment\PaymentProcessException;
+use WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
 use WCPayPalPlus\Setting\ExpressCheckoutRepositoryTrait;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\GatewaySharedSettingsTrait;
@@ -228,9 +229,14 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
             do_action(self::ACTION_AFTER_PAYMENT_EXECUTION, $payment, $order);
         } catch (PayPalConnectionException $exc) {
             $this->logger->error($exc->getData());
+
+            // Switch to Plus Gateway to perform the traditional checkout.
+            $this->session->set(Session::SESSION_INVALID_PAYMENT_EXECUTION, true);
+            $this->session->set(Session::CHOSEN_PAYMENT_METHOD, PlusGateway::GATEWAY_ID);
+
             return [
                 'result' => 'success',
-                'redirect' => $this->redirectPayPalUrl(),
+                'redirect' => $order->get_checkout_payment_url(true),
             ];
         }
 
