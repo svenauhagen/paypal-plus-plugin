@@ -28,7 +28,6 @@ interface Session
 
     const SESSION_CHECK_KEY = '_ppp_default_override_flag';
     const SESSION_CHECK_ACTIVATE = '1';
-    const SESSION_INVALID_PAYMENT_EXECUTION = 'ppp_invalid_payment_execution';
 
     const DEFAULT_VALUE = null;
 
@@ -41,7 +40,6 @@ interface Session
         self::SESSION_CHECK_KEY,
         self::SESSION_CHECK_ACTIVATE,
         self::PAYMENT_TOKEN,
-        self::SESSION_INVALID_PAYMENT_EXECUTION,
     ];
 
     /**

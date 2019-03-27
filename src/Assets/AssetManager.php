@@ -12,7 +12,6 @@ namespace WCPayPalPlus\Assets;
 
 use WCPayPalPlus\ExpressCheckoutGateway\AjaxHandler;
 use WCPayPalPlus\PluginProperties;
-use WCPayPalPlus\Session\Session;
 
 /**
  * Class AssetManager
@@ -33,26 +32,18 @@ class AssetManager
     private $smartButtonArguments;
 
     /**
-     * @var Session
-     */
-    private $session;
-
-    /**
      * AssetManager constructor.
      * @param PluginProperties $pluginProperties
      * @param SmartButtonArguments $smartButtonArguments
-     * @param Session $session
      */
     public function __construct(
         PluginProperties $pluginProperties,
-        SmartButtonArguments $smartButtonArguments,
-        Session $session
+        SmartButtonArguments $smartButtonArguments
     ) {
 
         /** @noinspection UnusedConstructorDependenciesInspection */
         $this->pluginProperties = $pluginProperties;
         $this->smartButtonArguments = $smartButtonArguments;
-        $this->session = $session;
     }
 
     /**
@@ -128,16 +119,6 @@ class AssetManager
     {
         list($assetPath, $assetUrl) = $this->assetUrlPath();
 
-        $message = $this->session->get(Session::SESSION_INVALID_PAYMENT_EXECUTION)
-            ? esc_html__(
-                'Sorry, there was an error during the payment. We are now redirecting you to PayPal.',
-                'woo-paypalplus'
-            )
-            : esc_html__(
-                'Thank you for your order. We are now redirecting you to PayPal to make payment.',
-                'woo-paypalplus'
-            );
-
         wp_register_script(
             'paypalplus-woocommerce-plus-paypal-redirect',
             "{$assetUrl}/public/js/payPalRedirect.min.js",
@@ -149,7 +130,10 @@ class AssetManager
             'paypalplus-woocommerce-plus-paypal-redirect',
             'payPalRedirect',
             [
-                'message' => $message,
+                'message' => __(
+                    'Thank you for your order. We are now redirecting you to PayPal to make payment.',
+                    'woo-paypalplus'
+                ),
             ]
         );
 

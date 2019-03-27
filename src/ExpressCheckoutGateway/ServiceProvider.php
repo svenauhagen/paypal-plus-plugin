@@ -30,7 +30,6 @@ use WCPayPalPlus\Refund\RefundFactory;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\WC\CheckoutDropper;
-use WCPayPalPlus\WC\RedirectablePatcher;
 use WooCommerce;
 
 /**
@@ -207,13 +206,6 @@ class ServiceProvider implements BootstrappableServiceProvider
             'woocommerce_available_payment_gateways',
             [$container[CheckoutGatewayOverride::class], 'maybeOverridden'],
             9999
-        );
-
-        add_action(
-            "woocommerce_receipt_{$gatewayId}",
-            function () {
-                wp_enqueue_script('paypalplus-woocommerce-plus-paypal-redirect');
-            }
         );
 
         $this->bootstrapButtons($container);
