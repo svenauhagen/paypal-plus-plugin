@@ -40,7 +40,7 @@ import { SmartPaymentButtonRendererFactory } from './expressCheckout/smartPaymen
 
     smartPaymentButton.singleProductButtonRender()
     smartPaymentButton.cartButtonRender()
-    jQuery(document.body).on('wc_fragments_refreshed removed_from_cart added_to_cart', () => {
+    jQuery(document.body).on('wc_fragments_refreshed wc_fragments_loaded removed_from_cart added_to_cart', () => {
       smartPaymentButton.cartButtonRender()
     })
   }
