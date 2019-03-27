@@ -22,6 +22,7 @@ interface Session
     const PAYMENT_ID = 'ppp_payment_id';
     const PAYER_ID = 'ppp_payer_id';
     const APPROVAL_URL = 'ppp_approval_url';
+    const PAYMENT_TOKEN = 'ppp_payment_token';
 
     const CHOSEN_PAYMENT_METHOD = 'chosen_payment_method';
 
@@ -38,6 +39,7 @@ interface Session
         self::CHOSEN_PAYMENT_METHOD,
         self::SESSION_CHECK_KEY,
         self::SESSION_CHECK_ACTIVATE,
+        self::PAYMENT_TOKEN,
     ];
 
     /**

@@ -19,9 +19,9 @@ use OutOfBoundsException;
 use Exception;
 
 /**
- * Class Session
+ * Class PaymentUserDataStorer
  */
-class StorePaymentData
+class PaymentUserDataStorer
 {
     /**
      * @var WooCommerce
@@ -29,43 +29,19 @@ class StorePaymentData
     private $woocommerce;
 
     /**
-     * @var Session
-     */
-    private $session;
-
-    /**
      * StorePaymentData constructor.
      * @param WooCommerce $woocommerce
-     * @param Session $session
      */
-    public function __construct(WooCommerce $woocommerce, Session $session)
+    public function __construct(WooCommerce $woocommerce)
     {
         $this->woocommerce = $woocommerce;
-        $this->session = $session;
     }
 
     /**
-     * Store Payment data
-     *
      * @param $payerId
      * @param $paymentId
-     * @throws OutOfBoundsException
-     * @throws Exception
      */
-    public function addFromAction($payerId, $paymentId)
-    {
-        $this->session->set(Session::PAYER_ID, $payerId);
-        $this->session->set(Session::PAYMENT_ID, $paymentId);
-        $this->session->set(Session::CHOSEN_PAYMENT_METHOD, Gateway::GATEWAY_ID);
-        $this->storeAddressToCart($paymentId);
-    }
-
-    /**
-     * @param string $paymentId
-     *
-     * @throws \Exception
-     */
-    public function storeAddressToCart($paymentId)
+    public function storeAddressToCart($payerId, $paymentId)
     {
         \assert(is_string($paymentId));
 

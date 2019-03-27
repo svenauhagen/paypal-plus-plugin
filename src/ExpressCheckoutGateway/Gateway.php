@@ -228,12 +228,28 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
             do_action(self::ACTION_AFTER_PAYMENT_EXECUTION, $payment, $order);
         } catch (PayPalConnectionException $exc) {
             $this->logger->error($exc->getData());
-            throw PaymentProcessException::becausePayPalConnection($exc);
+            return [
+                'result' => 'success',
+                'redirect' => $this->redirectPayPalUrl(),
+            ];
         }
 
         return [
             'result' => 'success',
             'redirect' => $order->get_checkout_order_received_url(),
         ];
+    }
+
+    /**
+     * Retrieve the url to paypal site
+     *
+     * @return string
+     */
+    private function redirectPayPalUrl()
+    {
+        $paymentToken = urlencode($this->session->get(Session::PAYMENT_TOKEN));
+        $environment = $this->isSandboxed() ? 'sandbox' : 'live';
+
+        return "https://www.{$environment}.paypal.com/checkoutnow?token={$paymentToken}&useraction=commit";
     }
 }

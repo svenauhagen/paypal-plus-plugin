@@ -76,8 +76,8 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[CurrentPaymentMethod::class]
             );
         };
-        $container[StorePaymentData::class] = function (Container $container) {
-            return new StorePaymentData(
+        $container[PaymentUserDataStorer::class] = function (Container $container) {
+            return new PaymentUserDataStorer(
                 $container[WooCommerce::class],
                 $container[Session::class]
             );
@@ -111,7 +111,8 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[AjaxJsonRequest::class],
                 $container[WooCommerce::class],
                 $container[Logger::class],
-                $container[Request::class]
+                $container[Request::class],
+                $container[Session::class]
             );
         };
         $container[SingleProductCheckout::class] = function (Container $container) {
@@ -186,7 +187,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         );
         add_action(
             CartCheckout::ACTION_STORE_PAYMENT_DATA,
-            [$container[StorePaymentData::class], 'addFromAction'],
+            [$container[PaymentUserDataStorer::class], 'storeAddressToCart'],
             10,
             2
         );
