@@ -68,11 +68,11 @@ class PaymentCreator
     {
         $payer = new Api\Payer();
         $payer->setPaymentMethod('paypal');
-        $item_list = $this->orderDataProvider->get_item_list();
+        $item_list = $this->orderDataProvider->itemsList();
         $amount = new Api\Amount();
         $amount
             ->setCurrency(get_woocommerce_currency())
-            ->setTotal($this->orderDataProvider->get_total())
+            ->setTotal($this->orderDataProvider->total())
             ->setDetails($this->details());
 
         $redirect_urls = new Api\RedirectUrls();
@@ -99,16 +99,17 @@ class PaymentCreator
      */
     private function details()
     {
-        $shipping = (float)$this->orderDataProvider->get_total_shipping();
-        $shipping += (float)$this->orderDataProvider->get_shipping_tax();
-        $tax = $this->orderDataProvider->get_total_tax();
-        $subTotal = $this->orderDataProvider->get_subtotal();
+        $shipping = (float)$this->orderDataProvider->shippingTotal();
+        $tax = $this->orderDataProvider->totalTaxes();
+        $subTotal = $this->orderDataProvider->subTotal();
+        $fee = $this->orderDataProvider->feeTotal();
 
         $details = new Api\Details();
         $details
             ->setShipping($shipping)
             ->setSubtotal($subTotal)
-            ->setTax($tax);
+            ->setTax($tax)
+            ->setHandlingFee($fee);
 
         return $details;
     }

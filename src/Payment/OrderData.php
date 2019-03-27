@@ -19,7 +19,7 @@ use WCPayPalPlus\Utils\PriceFormatterTrait;
  *
  * @package WCPayPalPlus\Payment
  */
-class OrderData extends OrderDataCommon
+final class OrderData extends OrderDataCommon
 {
     use PriceFormatterTrait;
 
@@ -41,11 +41,67 @@ class OrderData extends OrderDataCommon
     }
 
     /**
-     * Returns an array of item data providers.
+     * Returns the total discount on the order.
      *
-     * @return OrderItemDataProvider[]
+     * @return float
      */
-    public function get_items()
+    public function totalDiscount()
+    {
+        return $this->order->get_total_discount();
+    }
+
+    /**
+     * Returns the total tax amount of the order.
+     *
+     * @return float
+     */
+    public function totalTaxes()
+    {
+        $tax = $this->order->get_total_tax();
+
+        return $this->format($this->round($tax));
+    }
+
+    /**
+     * Returns the total shipping cost of the order.
+     *
+     * @return float
+     */
+    public function shippingTotal()
+    {
+        $shippingTotal = $this->order->get_shipping_total();
+        $shippingTax = $this->order->get_shipping_tax();
+
+        // If shipping tax exists, and shipping has more than 2 decimals
+        // Then calculate rounded shipping amount to prevent rounding errors
+        if ($shippingTax && preg_match('/\.\d{3,}/', $shippingTotal)) {
+            $shippingTotal = $this->round($shippingTotal + $shippingTax);
+            $shippingTotal = $shippingTotal - $this->round($shippingTax);
+        }
+
+        return $this->format($this->round($shippingTotal));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function feeTotal()
+    {
+        $amount = 0;
+        $fees = $this->order->get_fees();
+
+        /** @var \WC_Order_Item_Fee $fee */
+        foreach ($fees as $fee) {
+            $amount += (float)$fee->get_total();
+        }
+
+        return $this->format($this->round($amount));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function items()
     {
         $cart = $this->order->get_items();
         $items = [];
@@ -62,7 +118,7 @@ class OrderData extends OrderDataCommon
             ]);
         }
 
-        $discount = $this->get_total_discount();
+        $discount = $this->totalDiscount();
         if ($discount > 0) {
             $items[] = new OrderDiscountData([
                 'name' => 'Total Discount',
@@ -72,55 +128,5 @@ class OrderData extends OrderDataCommon
         }
 
         return $items;
-    }
-
-    /**
-     * Returns the total discount on the order.
-     *
-     * @return float
-     */
-    public function get_total_discount()
-    {
-        return $this->order->get_total_discount();
-    }
-
-    /**
-     * Returns the total tax amount of the order.
-     *
-     * @return float
-     */
-    public function get_total_tax()
-    {
-        $tax = $this->order->get_total_tax();
-
-        return $this->format($this->round($tax));
-    }
-
-    /**
-     * Returns the total shipping cost of the order.
-     *
-     * @return float
-     */
-    public function get_total_shipping()
-    {
-        $shipping = $this->order->get_shipping_total();
-
-        if ($this->get_shipping_tax() && preg_match('/\.\d{3,}/', $shipping)) {
-            $shipping_tax = $this->order->get_shipping_tax();
-            $shipping_total = $this->round($shipping + $shipping_tax);
-            $shipping = $shipping_total - $this->round($shipping_tax);
-        }
-
-        return $shipping;
-    }
-
-    /**
-     * Get total shipping tax.
-     *
-     * @return string
-     */
-    public function get_shipping_tax()
-    {
-        return $this->format($this->round($this->order->get_shipping_tax()));
     }
 }

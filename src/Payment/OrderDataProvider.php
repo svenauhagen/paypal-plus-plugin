@@ -23,65 +23,49 @@ interface OrderDataProvider
     /**
      * Array of item data providers.
      *
-     * @return OrderItemDataProvider[]
-     */
-    public function get_items();
-
-    /**
-     * Array of item data providers.
-     *
      * @return ItemList
      */
-    public function get_item_list();
+    public function itemsList();
 
     /**
      * Order subtotal.
      *
      * @return float
      */
-    public function get_subtotal();
+    public function subTotal();
 
     /**
      * Order total.
      *
      * @return float
      */
-    public function get_total();
+    public function total();
 
     /**
      * Tax total amount.
      *
      * @return float
      */
-    public function get_total_tax();
+    public function totalTaxes();
 
     /**
      * Total shipping cost.
      *
      * @return float
      */
-    public function get_total_shipping();
+    public function shippingTotal();
 
     /**
      * Total discount amount.
      *
      * @return float
      */
-    public function get_total_discount();
+    public function totalDiscount();
 
     /**
-     * Creates a single Order Item for the Paypal API
+     * Retrieve the total amount for fees
      *
-     * @param OrderItemDataProvider $item Order|Cart item.
-     *
-     * @return Item
+     * @return float
      */
-    public function get_item(OrderItemDataProvider $item);
-
-    /**
-     * Get total shipping tax.
-     *
-     * @return string
-     */
-    public function get_shipping_tax();
+    public function feeTotal();
 }
