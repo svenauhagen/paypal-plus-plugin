@@ -17,9 +17,10 @@ use WCPayPalPlus\Utils\PriceFormatterTrait;
  *
  * @package WCPayPalPlus\Payment
  */
-class CartData extends OrderDataCommon
+final class CartData extends OrderDataCommon
 {
     use PriceFormatterTrait;
+
     /**
      * WooCommerce Cart.
      *
@@ -38,13 +39,15 @@ class CartData extends OrderDataCommon
     }
 
     /**
-     * Return the total tax amouunt of the cart.
+     * Return the total taxes amount of the cart.
      *
      * @return float
      */
-    public function get_total_tax()
+    public function totalTaxes()
     {
-        $tax = $this->format($this->round($this->cart->get_taxes_total(true, false)));
+        // Include shipping and fee taxes
+        $tax = $this->cart->get_taxes_total(true, false);
+        $tax = $this->format($this->round($tax));
 
         return $tax;
     }
@@ -54,48 +57,19 @@ class CartData extends OrderDataCommon
      *
      * @return float
      */
-    public function get_total_shipping()
+    public function shippingTotal()
     {
-        $shipping = $this->cart->shipping_total;
+        $shippingTotal = $this->cart->get_shipping_total();
+        $shippingTax = $this->cart->get_shipping_tax();
 
         // If shipping tax exists, and shipping has more than 2 decimals
         // Then calculate rounded shipping amount to prevent rounding errors
-        if ($this->get_shipping_tax() && preg_match('/\.\d{3,}/', $shipping)) {
-            $shipping_tax = $this->cart->shipping_tax_total;
-            $shipping_total = $this->round($shipping + $shipping_tax);
-            $shipping = $shipping_total - $this->round($shipping_tax);
+        if ($shippingTax && preg_match('/\.\d{3,}/', $shippingTotal)) {
+            $shippingTotal = $this->round($shippingTotal + $shippingTax);
+            $shippingTotal = $shippingTotal - $this->round($shippingTax);
         }
 
-        return $this->format($this->round($shipping));
-    }
-
-    /**
-     * Returns an array of item data providers.
-     *
-     * @return OrderItemDataProvider[]
-     */
-    public function get_items()
-    {
-        $cart = $this->cart->get_cart();
-        $items = [];
-        foreach ($cart as $item) {
-            $items[] = new CartItemData($item);
-        }
-        if ($this->get_total_discount() > 0) {
-            foreach ($this->cart->get_coupons('cart') as $code => $coupon) {
-                $items[] = new OrderDiscountData([
-                    'name' => 'Cart Discount',
-                    'qty' => '1',
-                    'line_subtotal' => '-' . $this->format($this->cart->coupon_discount_amounts[$code]),
-                ]);
-            }
-        }
-
-        foreach ($this->cart->get_fees() as $fee) {
-            $items[] = new FeeData($fee);
-        }
-
-        return $items;
+        return $this->format($this->round($shippingTotal));
     }
 
     /**
@@ -103,34 +77,38 @@ class CartData extends OrderDataCommon
      *
      * @return float
      */
-    public function get_total_discount()
+    public function totalDiscount()
     {
-        return $this->cart->get_cart_discount_total();
+        return $this->cart->get_discount_total();
     }
 
     /**
-     * Get total shipping tax.
-     *
-     * @return string
+     * @inheritdoc
      */
-    public function get_shipping_tax()
+    protected function items()
     {
-        return $this->format($this->round($this->cart->shipping_tax_total));
-    }
+        $items = [];
+        $discount = $this->totalDiscount();
 
-    /**
-     * Get the subtotal including any additional taxes.
-     *
-     * This is used when the prices are given already including tax.
-     *
-     * @return string
-     */
-    public function get_subtotal_including_tax()
-    {
-        return $this->format($this->round(
-            $this->cart->cart_contents_total
-            + $this->cart->fee_total
-            + $this->cart->tax_total
-        ));
+        foreach ($this->cart->get_cart() as $item) {
+            $items[] = new CartItemData($item);
+        }
+
+        foreach ($this->cart->get_fees() as $fee) {
+            $items[] = new FeeData($fee);
+        }
+
+        if ($discount > 0) {
+            foreach ($this->cart->get_coupons('cart') as $code => $coupon) {
+                $couponAmount = $this->cart->get_coupon_discount_amount($code);
+                $items[] = new OrderDiscountData([
+                    'name' => 'Cart Discount',
+                    'qty' => '1',
+                    'line_subtotal' => '-' . $this->format($couponAmount),
+                ]);
+            }
+        }
+
+        return $items;
     }
 }

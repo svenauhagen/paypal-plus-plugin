@@ -59,7 +59,7 @@ class CartItemData implements OrderItemDataProvider
      */
     public function get_quantity()
     {
-        return intval($this->data['quantity']);
+        return (int)$this->data['quantity'];
     }
 
     /**

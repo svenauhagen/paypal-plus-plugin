@@ -98,19 +98,14 @@ class PatchProvider
         $replacePatch = new Patch();
 
         $paymentData = [
-            'total' => $this->orderData->get_total(),
+            'total' => $this->orderData->total(),
             'currency' => get_woocommerce_currency(),
             'details' => [
-                'subtotal' => $this->orderData->get_subtotal(),
-                'shipping' => $this->orderData->get_total_shipping(),
+                'subtotal' => $this->orderData->subTotal(),
+                'shipping' => $this->orderData->shippingTotal(),
+                'tax' => $this->orderData->totalTaxes(),
             ],
         ];
-
-        if ($this->orderData->should_include_tax_in_total()) {
-            $paymentData['details']['tax'] = $this->orderData->get_total_tax();
-        } else {
-            $paymentData['details']['shipping'] += $this->orderData->get_shipping_tax();
-        }
 
         $replacePatch
             ->setOp('replace')
