@@ -40,6 +40,8 @@ class ApiErrorDataExtractor
         $message = isset($data->message) ? $data->message : '';
         $debugId = isset($data->debugId) ? $data->debugId : '';
 
+        $details = $this->extractDetails($details);
+
         return new PayPalErrorData($name, $details, $message, $debugId);
     }
 
@@ -55,6 +57,31 @@ class ApiErrorDataExtractor
         $errorData = $this->extractByJson($errorDataJson);
 
         return $errorData;
+    }
+
+    /**
+     * Extract Details object by Json String
+     *
+     * @param $jsonDetails
+     * @return array
+     */
+    private function extractDetails($jsonDetails)
+    {
+        assert(is_string($jsonDetails));
+
+        $details = [];
+
+        if (!$this->isJsonString($jsonDetails)) {
+            return [];
+        }
+
+        $decodedDetails = $this->decodeJson($jsonDetails);
+
+        foreach ($decodedDetails as $detail) {
+            $details[] = new Detail($detail->field, $detail->issue);
+        }
+
+        return $details;
     }
 
     /**

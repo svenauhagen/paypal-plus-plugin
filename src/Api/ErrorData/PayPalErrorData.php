@@ -39,7 +39,7 @@ final class PayPalErrorData implements ErrorData
     /**
      * PayPalErrorData constructor.
      * @param string $code
-     * @param array $details
+     * @param Detail[] $details
      * @param string $message
      * @param string $debugId
      */

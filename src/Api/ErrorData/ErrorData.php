@@ -32,7 +32,7 @@ interface ErrorData
     public function code();
 
     /**
-     * @return array
+     * @return Detail[]
      */
     public function details();
 
