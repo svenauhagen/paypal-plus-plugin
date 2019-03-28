@@ -30,8 +30,7 @@ class ServiceProvider implements ServiceProviderInterface
         $container[RefundFactory::class] = function (Container $container) {
             return new RefundFactory(
                 $container[OrderStatuses::class],
-                $container[Logger::class],
-                $container[ApiErrorDataExtractor::class]
+                $container[Logger::class]
             );
         };
     }

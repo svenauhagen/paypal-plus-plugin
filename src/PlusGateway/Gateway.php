@@ -10,10 +10,8 @@
 
 namespace WCPayPalPlus\PlusGateway;
 
-use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\CredentialValidator;
-use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
 use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\Gateway\MethodsTrait;
 use WCPayPalPlus\Order\OrderFactory;
@@ -106,11 +104,6 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
     private $checkoutDropper;
 
     /**
-     * @var ApiErrorDataExtractor
-     */
-    private $dataExtractor;
-
-    /**
      * Gateway constructor.
      * @param WooCommerce $wooCommerce
      * @param FrameRenderer $frameView
@@ -135,8 +128,7 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
         PaymentCreatorFactory $paymentCreatorFactory,
         CheckoutDropper $checkoutDropper,
         Session $session,
-        Logger $logger,
-        ApiErrorDataExtractor $dataExtractor
+        Logger $logger
     ) {
 
         $this->wooCommerce = $wooCommerce;
@@ -150,7 +142,6 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
         $this->checkoutDropper = $checkoutDropper;
         $this->session = $session;
         $this->logger = $logger;
-        $this->dataExtractor = $dataExtractor;
 
         $this->id = self::GATEWAY_ID;
 
@@ -247,13 +238,8 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
                     $notifyUrl
                 );
                 $paymentCreator = $paymentCreator->create();
-            } catch (PayPalConnectionException $exc) {
-                $errorData = $this->dataExtractor->extractByException($exc);
-                $this->logger->error($errorData);
-                return $url;
-            } catch (PayPalConnectionException $exc) {
-                $this->logger->error($exc);
-                return $url;
+            } catch (Exception $exc) {
+                return '';
             }
 
             $this->session->set(Session::PAYMENT_ID, $paymentCreator->getId());

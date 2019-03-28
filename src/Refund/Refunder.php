@@ -48,31 +48,23 @@ class Refunder
     private $logger;
 
     /**
-     * @var ApiErrorDataExtractor
-     */
-    private $apiErrorDataExtractor;
-
-    /**
      * WCRefund constructor.
      * @param RefundData $refund_data
      * @param ApiContext $context
      * @param OrderStatuses $orderStatuses
      * @param Logger $logger
-     * @param ApiErrorDataExtractor $apiErrorDataExtractor
      */
     public function __construct(
         RefundData $refund_data,
         ApiContext $context,
         OrderStatuses $orderStatuses,
-        Logger $logger,
-        ApiErrorDataExtractor $apiErrorDataExtractor
+        Logger $logger
     ) {
 
         $this->context = $context;
         $this->refund_data = $refund_data;
         $this->orderStatuses = $orderStatuses;
         $this->logger = $logger;
-        $this->apiErrorDataExtractor = $apiErrorDataExtractor;
     }
 
     /**
@@ -96,8 +88,6 @@ class Refunder
                 ->get_success_handler($refundedSale->getId())
                 ->execute();
         } catch (PayPalConnectionException $exc) {
-            $errorData = $this->apiErrorDataExtractor->extractByException($exc);
-            $this->logger->error($errorData);
             return false;
         }
 

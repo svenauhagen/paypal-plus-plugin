@@ -87,12 +87,4 @@ final class PayPalErrorData implements ErrorData
     {
         return $this->debugId;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function __toString()
-    {
-        return "Error: {$this->code}, Message: {$this->message}, DebugId: {$this->debugId}";
-    }
 }

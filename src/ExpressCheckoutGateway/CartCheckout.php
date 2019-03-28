@@ -129,7 +129,6 @@ class CartCheckout
             $orderId = $payment->getId();
         } catch (PayPalConnectionException $exc) {
             wc_add_notice($exc->getMessage(), 'error');
-            $this->logger->error($exc->getData(), [$orderId]);
             $this->ajaxJsonRequest->sendJsonError([
                 'message' => $exc->getMessage(),
             ]);

@@ -118,7 +118,6 @@ class PaymentExecution
             $payment->execute();
         } catch (PayPalConnectionException $exc) {
             $errorData = $this->apiErrorDataExtractor->extractByException($exc);
-            $this->logger->error($errorData);
             $this->checkoutDropper->abortSessionBecauseOfApiError($errorData);
         }
 

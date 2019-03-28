@@ -210,7 +210,6 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
             $paymentPatcher->execute();
         } catch (PayPalConnectionException $exc) {
             $errorData = $this->apiErrorDataExtractor->extractByException($exc);
-            $this->logger->error($errorData);
             throw PaymentProcessException::byApiErrorData($errorData);
         }
 
@@ -233,7 +232,6 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
                 ];
             }
 
-            $this->logger->error($errorData);
             throw PaymentProcessException::byApiErrorData($errorData);
         }
 

@@ -47,12 +47,4 @@ final class NullErrorData implements ErrorData
     {
         return '';
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function __toString()
-    {
-        return '';
-    }
 }

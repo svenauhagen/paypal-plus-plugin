@@ -49,11 +49,4 @@ interface ErrorData
      * @return mixed
      */
     public function debugId();
-
-    /**
-     * String Representation of the Object
-     *
-     * @return string
-     */
-    public function __toString();
 }

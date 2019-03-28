@@ -33,25 +33,17 @@ class RefundFactory
     private $logger;
 
     /**
-     * @var ApiErrorDataExtractor
-     */
-    private $apiErrorDataExtractor;
-
-    /**
      * RefundFactory constructor.
      * @param OrderStatuses $orderStatuses
      * @param Logger $logger
-     * @param ApiErrorDataExtractor $apiErrorDataExtractor
      */
     public function __construct(
         OrderStatuses $orderStatuses,
-        Logger $logger,
-        ApiErrorDataExtractor $apiErrorDataExtractor
+        Logger $logger
     ) {
 
         $this->orderStatuses = $orderStatuses;
         $this->logger = $logger;
-        $this->apiErrorDataExtractor = $apiErrorDataExtractor;
     }
 
     /**
@@ -79,8 +71,7 @@ class RefundFactory
             $refundData,
             $apiContext,
             $this->orderStatuses,
-            $this->logger,
-            $this->apiErrorDataExtractor
+            $this->logger
         );
     }
 }

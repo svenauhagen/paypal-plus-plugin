@@ -36,7 +36,7 @@ class ApiErrorDataExtractor
 
         // I've not used the rest param because I don't know which data can be in the json and which not
         $name = isset($data->name) ? $data->name : '';
-        $details = isset($data->details) ? $data->details : [];
+        $details = isset($data->details) ? $data->details : '';
         $message = isset($data->message) ? $data->message : '';
         $debugId = isset($data->debugId) ? $data->debugId : '';
 

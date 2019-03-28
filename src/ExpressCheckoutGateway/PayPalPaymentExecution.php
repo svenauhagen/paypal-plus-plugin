@@ -146,7 +146,6 @@ class PayPalPaymentExecution
             );
         } catch (PayPalConnectionException $exc) {
             $errorData = $this->apiErrorDataExtractor->extractByException($exc);
-            $this->logger->error($errorData);
             wc_add_notice(paymentErrorMessage($errorData), 'error');
             $redirectUrl = $this->settingRepository->cancelUrl();
         }

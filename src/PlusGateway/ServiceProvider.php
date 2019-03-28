@@ -63,8 +63,7 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[PaymentCreatorFactory::class],
                 $container[CheckoutDropper::class],
                 $container[Session::class],
-                $container[Logger::class],
-                $container[ApiErrorDataExtractor::class]
+                $container[Logger::class]
             );
         };
         $container[PaymentExecution::class] = function (Container $container) {
