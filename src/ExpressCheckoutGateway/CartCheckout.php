@@ -28,10 +28,6 @@ use WooCommerce;
  */
 class CartCheckout
 {
-    const INPUT_PAYER_ID_NAME = 'payerID';
-    const INPUT_PAYMENT_ID_NAME = 'paymentID';
-    const INPUT_PAYMENT_TOKEN = 'paymentToken';
-
     const TASK_CREATE_ORDER = 'createOrder';
     const TASK_STORE_PAYMENT_DATA = 'storePaymentData';
 
@@ -146,7 +142,7 @@ class CartCheckout
         }
 
         $this->ajaxJsonRequest->sendJsonSuccess([
-            'orderID' => $orderId,
+            'orderId' => $orderId,
         ]);
     }
 
@@ -155,9 +151,9 @@ class CartCheckout
      */
     public function storePaymentData()
     {
-        $payerId = $this->request->get(self::INPUT_PAYER_ID_NAME, FILTER_SANITIZE_STRING);
-        $paymentId = $this->request->get(self::INPUT_PAYMENT_ID_NAME, FILTER_SANITIZE_STRING);
-        $paymentToken = $this->request->get(self::INPUT_PAYMENT_TOKEN, FILTER_SANITIZE_STRING);
+        $payerId = $this->request->get(Request::INPUT_PAYER_ID, FILTER_SANITIZE_STRING);
+        $paymentId = $this->request->get(Request::INPUT_PAYMENT_ID, FILTER_SANITIZE_STRING);
+        $paymentToken = $this->request->get(Request::INPUT_PAYMENT_TOKEN, FILTER_SANITIZE_STRING);
 
         if (!$payerId || !$paymentId) {
             wc_add_notice(

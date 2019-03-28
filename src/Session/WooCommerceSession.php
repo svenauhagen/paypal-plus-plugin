@@ -62,6 +62,16 @@ class WooCommerceSession implements Session
     }
 
     /**
+     * @inheritdoc
+     */
+    public function delete($name)
+    {
+        assert(is_string($name));
+
+        $this->session()->__unset($name);
+    }
+
+    /**
      * @param $name
      * @return bool
      */

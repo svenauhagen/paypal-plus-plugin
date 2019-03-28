@@ -43,17 +43,23 @@ interface Session
     ];
 
     /**
-     * @param $name
-     * @return array|string
+     * @param string $name
+     * @return mixed
      */
     public function get($name);
 
     /**
-     * @param $name
-     * @param $value
+     * @param string $name
+     * @param mixed $value
      * @throws OutOfBoundsException
      */
     public function set($name, $value);
+
+    /**
+     * @param string $name
+     * @return void
+     */
+    public function delete($name);
 
     /**
      * @param $name

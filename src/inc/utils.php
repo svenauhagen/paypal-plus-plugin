@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus;
 
+use WCPayPalPlus\Api\ErrorData\ErrorData;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\Exception\NameNotFound;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
@@ -68,4 +69,21 @@ function areAllExpressCheckoutButtonsDisabled()
     ];
 
     return count(array_filter($buttons)) === 0;
+}
+
+/**
+ * Retrieve the Default PayPal Payment Error Message
+ *
+ * @param ErrorData $errorData
+ * @return string
+ */
+function paymentErrorMessage(ErrorData $errorData)
+{
+    return sprintf(
+        esc_html__(
+            'Cannot process the payment because of connection returned invalid response: %s',
+            'woo-paypalplus'
+        ),
+        $errorData->code() ?: esc_html__('Unknown PayPal Api Error.', 'woo-paypalplus')
+    );
 }

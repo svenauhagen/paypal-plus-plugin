@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\Refund;
 
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
+use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
 use WCPayPalPlus\Order\OrderStatuses;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
@@ -29,7 +30,8 @@ class ServiceProvider implements ServiceProviderInterface
         $container[RefundFactory::class] = function (Container $container) {
             return new RefundFactory(
                 $container[OrderStatuses::class],
-                $container[Logger::class]
+                $container[Logger::class],
+                $container[ApiErrorDataExtractor::class]
             );
         };
     }

@@ -13,6 +13,7 @@ namespace WCPayPalPlus\WC;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
+use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
@@ -56,6 +57,11 @@ class RedirectablePatcher
     private $logger;
 
     /**
+     * @var ApiErrorDataExtractor
+     */
+    private $apiErrorDataExtractor;
+
+    /**
      * ReceiptPageRenderer constructor.
      * @param OrderFactory $orderFactory
      * @param PaymentPatchFactory $paymentPatchFactory
@@ -63,6 +69,7 @@ class RedirectablePatcher
      * @param Session $session
      * @param CheckoutDropper $checkoutDropper
      * @param Logger $logger
+     * @param ApiErrorDataExtractor $apiErrorDataExtractor
      */
     public function __construct(
         OrderFactory $orderFactory,
@@ -70,7 +77,8 @@ class RedirectablePatcher
         PlusStorable $settingRepository,
         Session $session,
         CheckoutDropper $checkoutDropper,
-        Logger $logger
+        Logger $logger,
+        ApiErrorDataExtractor $apiErrorDataExtractor
     ) {
 
         $this->orderFactory = $orderFactory;
@@ -79,6 +87,7 @@ class RedirectablePatcher
         $this->session = $session;
         $this->checkoutDropper = $checkoutDropper;
         $this->logger = $logger;
+        $this->apiErrorDataExtractor = $apiErrorDataExtractor;
     }
 
     /**
@@ -106,8 +115,9 @@ class RedirectablePatcher
         try {
             $paymentPatcher->execute();
         } catch (PayPalConnectionException $exc) {
-            $this->logger->error($exc->getData());
-            $this->checkoutDropper->abortSessionWithReason($exc->getMessage());
+            $errorData = $this->apiErrorDataExtractor->extractByException($exc);
+            $this->logger->error($errorData);
+            $this->checkoutDropper->abortSessionBecauseOfApiError($errorData);
         }
 
         wp_enqueue_script('paypalplus-woocommerce-plus-paypal-redirect');

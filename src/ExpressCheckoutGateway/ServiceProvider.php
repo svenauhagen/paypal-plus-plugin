@@ -10,12 +10,13 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
+use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
 use function WCPayPalPlus\areAllExpressCheckoutButtonsDisabled;
-use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use function WCPayPalPlus\isGatewayDisabled;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
+use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\WpNonce;
-use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Session\Session;
@@ -61,7 +62,8 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[Session::class],
                 $container[CheckoutDropper::class],
                 $container[PaymentPatchFactory::class],
-                $container[Logger::class]
+                $container[Logger::class],
+                $container[ApiErrorDataExtractor::class]
             );
         };
         $container[CheckoutGatewayOverride::class] = function (Container $container) {
@@ -78,8 +80,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[PaymentUserDataStorer::class] = function (Container $container) {
             return new PaymentUserDataStorer(
-                $container[WooCommerce::class],
-                $container[Session::class]
+                $container[WooCommerce::class]
             );
         };
 
@@ -122,6 +123,18 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[CartCheckout::class],
                 $container[Request::class],
                 $container[Logger::class]
+            );
+        };
+
+        $container[PayPalPaymentExecution::class] = function (Container $container) {
+            return new PayPalPaymentExecution(
+                $container[OrderFactory::class],
+                $container[PaymentExecutionFactory::class],
+                $container[Session::class],
+                $container[Logger::class],
+                $container[ExpressCheckoutStorable::class],
+                $container[Request::class],
+                $container[ApiErrorDataExtractor::class]
             );
         };
     }
@@ -207,6 +220,8 @@ class ServiceProvider implements BootstrappableServiceProvider
             [$container[CheckoutGatewayOverride::class], 'maybeOverridden'],
             9999
         );
+
+        add_action('wp', [$container[PayPalPaymentExecution::class], 'execute']);
 
         $this->bootstrapButtons($container);
         $this->bootstrapAjaxRequests($container);

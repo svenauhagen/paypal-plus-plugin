@@ -12,12 +12,11 @@ namespace WCPayPalPlus\PlusGateway;
 
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
-use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Api\CredentialValidator;
+use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
 use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\Gateway\MethodsTrait;
 use WCPayPalPlus\Order\OrderFactory;
-use WCPayPalPlus\Payment\PaymentPatcher;
 use WCPayPalPlus\Setting\GatewaySharedSettingsTrait;
 use WCPayPalPlus\Setting\PlusRepositoryTrait;
 use WCPayPalPlus\Setting\PlusStorable;
@@ -107,6 +106,11 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
     private $checkoutDropper;
 
     /**
+     * @var ApiErrorDataExtractor
+     */
+    private $dataExtractor;
+
+    /**
      * Gateway constructor.
      * @param WooCommerce $wooCommerce
      * @param FrameRenderer $frameView
@@ -131,7 +135,8 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
         PaymentCreatorFactory $paymentCreatorFactory,
         CheckoutDropper $checkoutDropper,
         Session $session,
-        Logger $logger
+        Logger $logger,
+        ApiErrorDataExtractor $dataExtractor
     ) {
 
         $this->wooCommerce = $wooCommerce;
@@ -145,6 +150,7 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
         $this->checkoutDropper = $checkoutDropper;
         $this->session = $session;
         $this->logger = $logger;
+        $this->dataExtractor = $dataExtractor;
 
         $this->id = self::GATEWAY_ID;
 
@@ -200,52 +206,6 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
     }
 
     /**
-     * TODO Move outside here and make it a class.
-     *
-     * @throws RuntimeException
-     */
-    public function execute_payment()
-    {
-        $payerId = filter_input(INPUT_GET, 'PayerID', FILTER_SANITIZE_STRING);
-        $paymentId = filter_input(INPUT_GET, 'paymentId', FILTER_SANITIZE_STRING);
-        $orderId = $this->session->get(Session::ORDER_ID);
-
-        if (!$paymentId) {
-            $paymentId = $this->session->get(Session::PAYMENT_ID);
-        }
-        if (!$payerId || !$paymentId || !$orderId) {
-            return;
-        }
-
-        $order = $this->orderFactory->createById($orderId);
-
-        $payment = $this->paymentExecutionFactory->create(
-            $order,
-            $payerId,
-            $paymentId,
-            ApiContextFactory::getFromConfiguration()
-        );
-
-        try {
-            $payment->execute();
-
-            /**
-             * Action After Payment has been Executed
-             *
-             * @param PaymentPatcher $payment
-             * @param WC_Order $order
-             */
-            do_action(self::ACTION_AFTER_PAYMENT_EXECUTION, $payment, $order);
-
-            wp_safe_redirect($order->get_checkout_order_received_url());
-            exit;
-        } catch (PayPalConnectionException $exc) {
-            $this->logger->error($exc->getData());
-            $this->checkoutDropper->abortSessionWithReason($exc->getMessage());
-        }
-    }
-
-    /**
      * @throws OutOfBoundsException
      */
     private function form()
@@ -288,9 +248,10 @@ final class Gateway extends WC_Payment_Gateway implements PlusStorable
                 );
                 $paymentCreator = $paymentCreator->create();
             } catch (PayPalConnectionException $exc) {
-                $this->logger->error($exc->getData());
+                $errorData = $this->dataExtractor->extractByException($exc);
+                $this->logger->error($errorData);
                 return $url;
-            } catch (Exception $exc) {
+            } catch (PayPalConnectionException $exc) {
                 $this->logger->error($exc);
                 return $url;
             }

@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\PlusGateway;
 
+use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
 use function WCPayPalPlus\isGatewayDisabled;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\CredentialValidator;
@@ -62,7 +63,18 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[PaymentCreatorFactory::class],
                 $container[CheckoutDropper::class],
                 $container[Session::class],
-                $container[Logger::class]
+                $container[Logger::class],
+                $container[ApiErrorDataExtractor::class]
+            );
+        };
+        $container[PaymentExecution::class] = function (Container $container) {
+            return new PaymentExecution(
+                $container[OrderFactory::class],
+                $container[Session::class],
+                $container[PaymentExecutionFactory::class],
+                $container[Logger::class],
+                $container[CheckoutDropper::class],
+                $container[ApiErrorDataExtractor::class]
             );
         };
     }
@@ -102,7 +114,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         );
         add_action(
             'woocommerce_api_' . $gatewayId,
-            [$gateway, 'execute_payment'],
+            [$container[PaymentExecution::class], 'execute'],
             12
         );
     }
