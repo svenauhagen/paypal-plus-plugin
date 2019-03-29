@@ -26,18 +26,6 @@ class CheckoutAddressOverride
 
     const FIELD_TYPE_ID = 'ppp_ec_field';
 
-    const ALLOWED_ADDRESS_FIELDS = [
-        'first_name',
-        'last_name',
-        'company',
-        'country',
-        'address_1',
-        'address_2',
-        'city',
-        'postcode',
-        'state',
-    ];
-
     /**
      * @var WooCommerce
      */
@@ -237,8 +225,20 @@ class CheckoutAddressOverride
             return $fields;
         }
 
+        $addressFieldsToChange = [
+            'first_name',
+            'last_name',
+            'company',
+            'country',
+            'address_1',
+            'address_2',
+            'city',
+            'postcode',
+            'state',
+        ];
+
         foreach ($fields as $key => $field) {
-            if (! in_array($key, self::ALLOWED_ADDRESS_FIELDS, true)) {
+            if (! in_array($key, $addressFieldsToChange, true)) {
                 continue;
             }
             if (! empty($field['required'])) {
@@ -286,28 +286,15 @@ class CheckoutAddressOverride
         }
 
         $addresses = $this->getPaymentAddresses();
+        $needsShipping = $this->wooCommerce->cart->needs_shipping();
 
         $_POST['payment_method'] = Gateway::GATEWAY_ID;
-        $billingFields = $this->wooCommerce->checkout()->get_checkout_fields('billing');
-        foreach ($billingFields as $key => $value) {
-            if (! in_array(str_replace('billing_', '', $key), self::ALLOWED_ADDRESS_FIELDS, true) ||
-                 'billing_email' === $key
-            ) {
-                continue;
-            }
-            $_POST[$key] = $addresses[$key];
-        }
-
-        if (! $this->wooCommerce->cart->needs_shipping()) {
-            return;
-        }
         $_POST['ship_to_different_address'] = 1;
-        $shippingFields = $this->wooCommerce->checkout()->get_checkout_fields('shipping');
-        foreach ($shippingFields as $key => $value) {
-            if (! in_array(str_replace('shipping_', '', $key), self::ALLOWED_ADDRESS_FIELDS, true)) {
+        foreach ($addresses as $key => $value) {
+            if ('billing_phone' === $key || (!$needsShipping && 0 === strpos($key, 'shipping_'))) {
                 continue;
             }
-            $_POST[$key] = $addresses[$key];
+            $_POST[$key] = $value;
         }
     }
 
