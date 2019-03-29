@@ -78,11 +78,6 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[CurrentPaymentMethod::class]
             );
         };
-        $container[PaymentUserDataStorer::class] = function (Container $container) {
-            return new PaymentUserDataStorer(
-                $container[WooCommerce::class]
-            );
-        };
 
         $container[SingleProductButtonView::class] = function () use ($ajaxNonce) {
             return new SingleProductButtonView($ajaxNonce);
@@ -198,12 +193,6 @@ class ServiceProvider implements BootstrappableServiceProvider
         add_action(
             'woocommerce_checkout_process',
             [$container[CheckoutAddressOverride::class], 'addAddressesToCheckoutPostVars']
-        );
-        add_action(
-            CartCheckout::ACTION_STORE_PAYMENT_DATA,
-            [$container[PaymentUserDataStorer::class], 'storeAddressToCart'],
-            10,
-            2
         );
 
         add_action(

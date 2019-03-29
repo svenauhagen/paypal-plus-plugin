@@ -10,7 +10,11 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
+use Inpsyde\Lib\PayPal\Api\Payment;
+use Inpsyde\Lib\PayPal\Api\Transaction;
+use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Gateway\CurrentPaymentMethod;
+use WCPayPalPlus\Session\Session;
 use WooCommerce;
 
 /**
@@ -21,18 +25,6 @@ class CheckoutAddressOverride
 {
 
     const FIELD_TYPE_ID = 'ppp_ec_field';
-
-    const ALLOWED_ADDRESS_FIELDS = [
-            'first_name',
-            'last_name',
-            'company',
-            'country',
-            'address_1',
-            'address_2',
-            'city',
-            'postcode',
-            'state',
-    ];
 
     /**
      * @var WooCommerce
@@ -45,7 +37,34 @@ class CheckoutAddressOverride
     private $currentPaymentMethod;
 
     /**
+     * @var array Addresses
+     */
+    private $addresses = [
+        'billing_first_name' => '',
+        'billing_last_name' => '',
+        'billing_company' => '',
+        'billing_country' => '',
+        'billing_address_1' => '',
+        'billing_address_2' => '',
+        'billing_city' => '',
+        'billing_postcode' => '',
+        'billing_state' => '',
+        'billing_email' => '',
+        'billing_phone' => '',
+        'shipping_first_name' => '',
+        'shipping_last_name' => '',
+        'shipping_company' => '',
+        'shipping_country' => '',
+        'shipping_address_1' => '',
+        'shipping_address_2' => '',
+        'shipping_city' => '',
+        'shipping_postcode' => '',
+        'shipping_state' => '',
+    ];
+
+    /**
      * CheckoutAddressOverride constructor.
+     *
      * @param WooCommerce $wooCommerce
      * @param CurrentPaymentMethod $currentPaymentMethod
      */
@@ -130,6 +149,10 @@ class CheckoutAddressOverride
      */
     public function filterFieldType($field, $key, Array $args, $value)
     {
+        $addresses = $this->getPaymentAddresses();
+        if (isset($addresses[$key])) {
+            $value = $addresses[$key];
+        }
         $displayValue = $value;
         if ('billing_country' === $key || 'shipping_country' === $key) {
             $countries = $this->wooCommerce->countries->get_countries();
@@ -137,15 +160,17 @@ class CheckoutAddressOverride
                 $displayValue = $countries[$value];
             }
         }
-        if (!$value) {
+        if (! $value) {
             return $field . '<input type="hidden" class="input-text ' .
-                  esc_attr(implode(' ', $args['input_class'])) .
-                  '" name="' . esc_attr($key) . '" id="' . esc_attr($args['id']) .
-                  '" value="' . esc_attr($value) . '" ' . implode(' ', $args['custom_attributes']) . ' />';
+                   esc_attr(implode(' ', $args['input_class'])) .
+                   '" name="' . esc_attr($key) . '" id="' . esc_attr($args['id']) .
+                   '" value="' . esc_attr($value) . '" ' . implode(' ', $args['custom_attributes']) . ' />';
         }
-        $field .= '<p class="form-row '.esc_attr(implode(' ', $args['class'])) .
+        $field .= '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) .
                   '" id="' . esc_attr($args['id']) . '_field' . '">' .
-                  '<label for="' . esc_attr($args['id']) . '" class="' . esc_attr(implode(' ', $args['label_class'])) . '">' . $args['label'] . '</label>' .
+                  '<label for="' . esc_attr($args['id']) . '" class="' . esc_attr(
+                      implode(' ', $args['label_class'])
+                  ) . '">' . $args['label'] . '</label>' .
                   '<span class="woocommerce-input-wrapper">' .
                   '<input type="hidden" class="input-text ' .
                   esc_attr(implode(' ', $args['input_class'])) .
@@ -177,10 +202,9 @@ class CheckoutAddressOverride
             return $default;
         }
 
-        $customer = $this->wooCommerce->customer;
-        $methodName = "get_{$input}";
-        if (method_exists($customer, $methodName)) {
-            return $customer->$methodName();
+        $addresses = $this->getPaymentAddresses();
+        if (isset($addresses[$input])) {
+            return $addresses[$input];
         }
 
         return $default;
@@ -201,11 +225,23 @@ class CheckoutAddressOverride
             return $fields;
         }
 
+        $addressFieldsToChange = [
+            'first_name',
+            'last_name',
+            'company',
+            'country',
+            'address_1',
+            'address_2',
+            'city',
+            'postcode',
+            'state',
+        ];
+
         foreach ($fields as $key => $field) {
-            if (!in_array($key, self::ALLOWED_ADDRESS_FIELDS, true)) {
+            if (! in_array($key, $addressFieldsToChange, true)) {
                 continue;
             }
-            if (!empty($field['required'])) {
+            if (! empty($field['required'])) {
                 $fields[$key]['required'] = false;
             }
             $fields[$key]['custom_attributes'] = ['readonly' => 'readonly'];
@@ -239,7 +275,7 @@ class CheckoutAddressOverride
     }
 
     /**
-     * Overwrite post vars addresses with customer session fields so that they can't be changed
+     * Overwrite post vars addresses with payment addresses so that they can't be changed
      *
      * @wp-hook woocommerce_checkout_process
      */
@@ -249,31 +285,16 @@ class CheckoutAddressOverride
             return;
         }
 
-        $customer = $this->wooCommerce->customer;
+        $addresses = $this->getPaymentAddresses();
+        $needsShipping = $this->wooCommerce->cart->needs_shipping();
 
         $_POST['payment_method'] = Gateway::GATEWAY_ID;
-        $billingFields = $this->wooCommerce->checkout()->get_checkout_fields('billing');
-        foreach ($billingFields as $key => $value) {
-            if (!in_array(str_replace('billing_', '', $key), self::ALLOWED_ADDRESS_FIELDS, true) ||
-                'billing_email' === $key
-            ) {
-                continue;
-            }
-            $methodName = "get_{$key}";
-            $_POST[$key] = $customer->$methodName();
-        }
-
-        if (!$this->wooCommerce->cart->needs_shipping()) {
-            return;
-        }
         $_POST['ship_to_different_address'] = 1;
-        $shippingFields = $this->wooCommerce->checkout()->get_checkout_fields('shipping');
-        foreach ($shippingFields as $key => $value) {
-            if (!in_array(str_replace('shipping_', '', $key), self::ALLOWED_ADDRESS_FIELDS, true)) {
+        foreach ($addresses as $key => $value) {
+            if ('billing_phone' === $key || (!$needsShipping && 0 === strpos($key, 'shipping_'))) {
                 continue;
             }
-            $methodName = "get_{$key}";
-            $_POST[$key] = $customer->$methodName();
+            $_POST[$key] = $value;
         }
     }
 
@@ -287,5 +308,62 @@ class CheckoutAddressOverride
         $currentPaymentMethod = $this->currentPaymentMethod->payment();
 
         return Gateway::GATEWAY_ID === $currentPaymentMethod;
+    }
+
+    /**
+     * Get shipping and billing address
+     *
+     * @return array
+     */
+    private function getPaymentAddresses()
+    {
+        $paymentId = $this->wooCommerce->session->get(Session::PAYMENT_ID);
+        if (! $paymentId ||
+            $this->addresses['billing_first_name'] ||
+            $this->addresses['billing_last_name']
+        ) {
+             return $this->addresses;
+        }
+
+        $apiContext = ApiContextFactory::getFromConfiguration();
+        $payment = Payment::get($paymentId, $apiContext);
+        $payer = $payment->getPayer();
+        $payerInfo = $payer->getPayerInfo();
+        $billingAddress = $payerInfo->getBillingAddress();
+
+        $this->addresses['billing_first_name'] = $payerInfo->getFirstName();
+        $this->addresses['billing_last_name'] = $payerInfo->getLastName();
+        $this->addresses['billing_email'] = $payerInfo->getEmail();
+        $this->addresses['billing_phone'] = $payerInfo->getPhone();
+        $this->addresses['billing_country'] = $payerInfo->getCountryCode();
+        if ($billingAddress) {
+            $this->addresses['billing_address_1'] = $billingAddress->getLine1();
+            $this->addresses['billing_address_2'] = $billingAddress->getLine2();
+            $this->addresses['billing_city'] = $billingAddress->getCity();
+            $this->addresses['billing_country'] = $billingAddress->getCountryCode();
+            $this->addresses['billing_postcode'] = $billingAddress->getPostalCode();
+            $this->addresses['billing_state'] = $billingAddress->getState();
+        }
+
+        if (! $this->wooCommerce->cart->needs_shipping()) {
+            return $this->addresses;
+        }
+
+        $transactions = $payment->getTransactions();
+        if (! $transactions || ! $transactions[0] instanceof Transaction) {
+            return $this->addresses;
+        }
+        $itemList = $transactions[0]->getItemList();
+        $shippingAddress = $itemList->getShippingAddress();
+        list($this->addresses['shipping_first_name'], $this->addresses['shipping_last_name']) =
+            explode(' ', $shippingAddress->getRecipientName(), 2);
+        $this->addresses['shipping_address_1'] = $shippingAddress->getLine1();
+        $this->addresses['shipping_address_2'] = $shippingAddress->getLine2();
+        $this->addresses['shipping_city'] = $shippingAddress->getCity();
+        $this->addresses['shipping_country'] = $shippingAddress->getCountryCode();
+        $this->addresses['shipping_postcode'] = $shippingAddress->getPostalCode();
+        $this->addresses['shipping_state'] = $shippingAddress->getState();
+
+        return $this->addresses;
     }
 }
