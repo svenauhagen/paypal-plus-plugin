@@ -10,10 +10,8 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
-use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\Psr\Log\LoggerInterface;
-use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
 use function WCPayPalPlus\paymentErrorMessage;
 use WCPayPalPlus\Order\OrderFactory;
@@ -31,7 +29,7 @@ use RuntimeException;
 class PayPalPaymentExecution
 {
     use PaymentExecutionTrait {
-        execute as executeHelper;
+        execute as private executeHelper;
     }
 
     /**

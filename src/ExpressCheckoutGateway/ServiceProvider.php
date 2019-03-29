@@ -146,6 +146,7 @@ class ServiceProvider implements BootstrappableServiceProvider
     {
         $gatewayId = Gateway::GATEWAY_ID;
         $gateway = $container[Gateway::class];
+        $payPalPaymentExecution = $container[PayPalPaymentExecution::class];
 
         add_filter('woocommerce_payment_gateways', function ($methods) use ($gateway) {
             $methods[Gateway::class] = $gateway;
@@ -221,7 +222,9 @@ class ServiceProvider implements BootstrappableServiceProvider
             9999
         );
 
-        add_action('wp', [$container[PayPalPaymentExecution::class], 'execute']);
+        add_action('wp', function () use ($payPalPaymentExecution) {
+            !is_admin() and $payPalPaymentExecution->execute();
+        });
 
         $this->bootstrapButtons($container);
         $this->bootstrapAjaxRequests($container);
