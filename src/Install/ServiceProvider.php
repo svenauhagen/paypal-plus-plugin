@@ -39,13 +39,11 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function bootstrap(Container $container)
     {
-        add_action(
-            'upgrader_process_complete',
-            [$container[Installer::class], 'migrateSharedOptions']
-        );
-        add_action(
-            'upgrader_process_complete',
-            [$container[Installer::class], 'activateExpressCheckout']
-        );
+        $installer = $container[Installer::class];
+
+        add_action('upgrader_process_complete', [$installer, 'afterInstall']);
+        add_action('wp_loaded', function () use ($installer) {
+            get_option(SharedPersistor::OPTION_NAME, null) or $installer->afterInstall();
+        });
     }
 }

@@ -46,11 +46,20 @@ class Installer
     }
 
     /**
+     * Perform Tasks After Plugin is Installed or Upgraded
+     */
+    public function afterInstall()
+    {
+        $this->migrateSharedOptions();
+        $this->activateExpressCheckout();
+    }
+
+    /**
      * Migrate Shared options
      *
      * @return void
      */
-    public function migrateSharedOptions()
+    private function migrateSharedOptions()
     {
         $options = get_option(self::ORIGINAL_OPTIONS, []);
 
@@ -64,7 +73,7 @@ class Installer
     /**
      * Activate Express Checkout Gateway When Plugin get Installed
      */
-    public function activateExpressCheckout()
+    private function activateExpressCheckout()
     {
         $enabled = $this->expressCheckoutGateway->get_option('enabled', 'no');
         $enabled = wc_string_to_bool($enabled);
@@ -73,6 +82,40 @@ class Installer
             return;
         }
 
+        if (!method_exists($this->expressCheckoutGateway, 'update_option')) {
+            $this->gatewayUpdateOption('enabled', 'yes');
+            return;
+        }
+
         $this->expressCheckoutGateway->update_option('enabled', 'yes');
+    }
+
+    /**
+     * Backward Compatibility Method Because `WC_Settings_API::update_option` does not Exists
+     * Prior to WooCommerce 3.4.x
+     *
+     * @param $key
+     * @param null $empty_value
+     * @return mixed
+     */
+    private function gatewayUpdateOption($key, $empty_value = null)
+    {
+        if (empty($this->expressCheckoutGateway->settings)) {
+            $this->expressCheckoutGateway->init_settings();
+        }
+
+        // Get option default if unset.
+        if (!isset($this->expressCheckoutGateway->settings[$key])) {
+            $form_fields = $this->expressCheckoutGateway->get_form_fields();
+            $this->expressCheckoutGateway->settings[$key] = isset($form_fields[$key])
+                ? $this->expressCheckoutGateway->get_field_default($form_fields[$key])
+                : '';
+        }
+
+        if (!is_null($empty_value) && $this->expressCheckoutGateway->settings[$key] === '') {
+            $this->expressCheckoutGateway->settings[$key] = $empty_value;
+        }
+
+        return $this->expressCheckoutGateway->settings[$key];
     }
 }
