@@ -22,7 +22,7 @@ trait PriceFormatterTrait
      */
     private function format($price)
     {
-        $decimals = 2;
+        $decimals = wc_get_price_decimals();
 
         if ($this->currencyNotSupportDecimals()) {
             $decimals = 0;
@@ -39,7 +39,7 @@ trait PriceFormatterTrait
      */
     private function round($price)
     {
-        $precision = 2;
+        $precision = wc_get_price_decimals();
 
         if ($this->currencyNotSupportDecimals()) {
             $precision = 0;
