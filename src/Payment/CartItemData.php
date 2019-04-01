@@ -3,6 +3,7 @@
 namespace WCPayPalPlus\Payment;
 
 use WCPayPalPlus\Utils\PriceFormatterTrait;
+use Exception;
 
 /**
  * Class CartItemData
@@ -36,10 +37,10 @@ class CartItemData implements OrderItemDataProvider
     public function __construct(array $data)
     {
         if (!isset($data['product_id'])) {
-            throw new \Exception('Missing Data');
+            throw new Exception('Missing Data');
         }
+
         $this->data = $data;
-        $this->data['subtotal'] = $this->data['line_subtotal'];
     }
 
     /**
@@ -49,7 +50,7 @@ class CartItemData implements OrderItemDataProvider
      */
     public function get_price()
     {
-        return $this->format($this->data['line_subtotal'] / $this->get_quantity());
+        return $this->format($this->data['line_subtotal']);
     }
 
     /**
