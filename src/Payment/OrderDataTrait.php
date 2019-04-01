@@ -13,17 +13,13 @@ namespace WCPayPalPlus\Payment;
 use Inpsyde\Lib\PayPal\Api\Item;
 use Inpsyde\Lib\PayPal\Api\ItemList;
 
-use WCPayPalPlus\Utils\PriceFormatterTrait;
-
 /**
- * Class OrderDataCommon
+ * Trait OrderDataTrait
  *
  * @package WCPayPalPlus\Payment
  */
-abstract class OrderDataCommon implements OrderDataProvider
+trait OrderDataTrait
 {
-    use PriceFormatterTrait;
-
     /**
      * Calculate the order total
      *
@@ -84,7 +80,7 @@ abstract class OrderDataCommon implements OrderDataProvider
      * @return Item
      * @throws \InvalidArgumentException
      */
-    protected function item(OrderItemDataProvider $data)
+    private function item(OrderItemDataProvider $data)
     {
         $name = html_entity_decode($data->get_name(), ENT_NOQUOTES, 'UTF-8');
         $currency = get_woocommerce_currency();
