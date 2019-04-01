@@ -67,8 +67,6 @@ class ApiErrorDataExtractor
      */
     private function extractDetails($jsonDetails)
     {
-        assert(is_string($jsonDetails));
-
         $details = [];
 
         if (!$this->isJsonString($jsonDetails)) {
