@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\Assets;
 
+use WCPayPalPlus\Admin\Notice;
 use WCPayPalPlus\ExpressCheckoutGateway\AjaxHandler;
 use WCPayPalPlus\PluginProperties;
 
@@ -56,9 +57,20 @@ class AssetManager
         wp_enqueue_script(
             'paypalplus-woocommerce-admin',
             "{$assetUrl}/public/js/admin.min.js",
-            [],
+            ['jquery'],
             filemtime("{$assetPath}/public/js/admin.min.js"),
             true
+        );
+        wp_localize_script(
+            'paypalplus-woocommerce-admin',
+            'paypalplus',
+            [
+                'adminNotice' => [
+                    'action' => Notice\AjaxDismisser::AJAX_NONCE_ACTION,
+                    'ajaxUrl' => admin_url('admin-ajax.php'),
+                    'ajaxNonce' => wp_create_nonce(Notice\AjaxDismisser::AJAX_NONCE_ACTION),
+                ],
+            ]
         );
     }
 
