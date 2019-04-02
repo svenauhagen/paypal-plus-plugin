@@ -79,6 +79,13 @@ trait GatewaySharedSettingsTrait
 
         /** @noinspection PhpUndefinedClassInspection */
         parent::process_admin_options();
+
+        /**
+         * After Gateway Settings have been Updated
+         *
+         * @param array $settings
+         */
+        do_action(self::ACTION_AFTER_SETTINGS_UPDATE, $this->settings);
     }
 
     /**

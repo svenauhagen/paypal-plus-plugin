@@ -82,6 +82,7 @@ class Installer
             return;
         }
 
+        // WooCommerce 3.2.x Bc Compatibility
         if (!method_exists($this->expressCheckoutGateway, 'update_option')) {
             $this->gatewayUpdateOption('enabled', 'yes');
             return;

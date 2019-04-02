@@ -54,21 +54,9 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function bootstrap(Container $container)
     {
-        $sharedPersistor = $container[SharedPersistor::class];
-
         add_filter(
-            'woocommerce_settings_api_sanitized_fields_' . PlusGateway::GATEWAY_ID,
-            function (array $settings) use ($sharedPersistor) {
-                $sharedPersistor->update($settings);
-                return $settings;
-            }
-        );
-        add_filter(
-            'woocommerce_settings_api_sanitized_fields_' . ExpressCheckoutGateway::GATEWAY_ID,
-            function (array $settings) use ($sharedPersistor) {
-                $sharedPersistor->update($settings);
-                return $settings;
-            }
+            Storable::ACTION_AFTER_SETTINGS_UPDATE,
+            [$container[SharedPersistor::class], 'update']
         );
 
         add_filter(
