@@ -95,10 +95,10 @@ class Installer
      * Prior to WooCommerce 3.4.x
      *
      * @param $key
-     * @param null $empty_value
+     * @param null $emptyValue
      * @return mixed
      */
-    private function gatewayUpdateOption($key, $empty_value = null)
+    private function gatewayUpdateOption($key, $emptyValue = null)
     {
         if (empty($this->expressCheckoutGateway->settings)) {
             $this->expressCheckoutGateway->init_settings();
@@ -106,16 +106,21 @@ class Installer
 
         // Get option default if unset.
         if (!isset($this->expressCheckoutGateway->settings[$key])) {
-            $form_fields = $this->expressCheckoutGateway->get_form_fields();
-            $this->expressCheckoutGateway->settings[$key] = isset($form_fields[$key])
-                ? $this->expressCheckoutGateway->get_field_default($form_fields[$key])
+            $formFields = $this->expressCheckoutGateway->get_form_fields();
+            $this->expressCheckoutGateway->settings[$key] = isset($formFields[$key])
+                ? $this->expressCheckoutGateway->get_field_default($formFields[$key])
                 : '';
         }
 
-        if (!is_null($empty_value) && $this->expressCheckoutGateway->settings[$key] === '') {
-            $this->expressCheckoutGateway->settings[$key] = $empty_value;
+        if ($emptyValue !== null && $this->expressCheckoutGateway->settings[$key] !== 'yes') {
+            $this->expressCheckoutGateway->settings[$key] = $emptyValue;
         }
 
-        return $this->expressCheckoutGateway->settings[$key];
+        $this->expressCheckoutGateway->settings[$key];
+
+        update_option(
+            $this->expressCheckoutGateway->get_option_key(),
+            $this->expressCheckoutGateway->settings
+        );
     }
 }
