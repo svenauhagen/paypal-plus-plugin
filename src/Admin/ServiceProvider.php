@@ -18,6 +18,9 @@ use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WC_Payment_Gateways;
+use WC_Payment_Gateway;
+use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
+use WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
 
 /**
  * Class ServiceProvider
@@ -54,18 +57,31 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function bootstrap(Container $container)
     {
-        $gatewaySubString = 'paypal';
         $gatewayNotice = $container[GatewayNotice::class];
         $controller = $container[Controller::class];
+        $gatewaySubString = 'paypal';
+        $gatewaysToNotCheckAgainst = [
+            ExpressCheckoutGateway::class,
+            PlusGateway::class,
+        ];
 
         add_action(
             'admin_notices',
-            function () use ($controller, $gatewayNotice, $gatewaySubString) {
+            function () use (
+                $controller,
+                $gatewayNotice,
+                $gatewaySubString,
+                $gatewaysToNotCheckAgainst
+            ) {
                 $availableGateways = WC_Payment_Gateways::instance()->payment_gateways();
+                /** @var WC_Payment_Gateway $method */
                 foreach ($availableGateways as $method) {
                     $name = is_string($method) ? $method : get_class($method);
+                    if (in_array($name, $gatewaysToNotCheckAgainst, true)) {
+                        continue;
+                    }
                     if (stripos($name, $gatewaySubString) !== false) {
-                        $controller->maybeRender($gatewayNotice);
+                        wc_string_to_bool($method->enabled) and $controller->maybeRender($gatewayNotice);
                         break;
                     }
                 }
