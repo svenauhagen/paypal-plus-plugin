@@ -118,7 +118,7 @@ $bootstrap = \Closure::bind(function () {
         // Plugin doesn't work well with cron because of WooCommerce Session.
         // To now spread conditional here and there since we don't actually need to do stuffs
         // during cron I have disabled the plugin here.
-        if (wp_doing_cron()) {
+        if ( defined( 'DOING_CRON' ) && DOING_CRON) {
             return false;
         }
 
