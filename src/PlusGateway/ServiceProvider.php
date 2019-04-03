@@ -86,12 +86,6 @@ class ServiceProvider implements BootstrappableServiceProvider
 
         add_filter('woocommerce_payment_gateways', function ($methods) use ($gateway) {
             $methods[Gateway::class] = $gateway;
-
-            $payPalGatewayIndex = array_search('WC_Gateway_Paypal', $methods, true);
-            if ($payPalGatewayIndex !== false) {
-                unset($methods[$payPalGatewayIndex]);
-            }
-
             return $methods;
         });
 

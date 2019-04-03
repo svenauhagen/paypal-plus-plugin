@@ -140,6 +140,7 @@ $bootstrap = \Closure::bind(function () {
                 ->add(new Session\ServiceProvider())
                 ->add(new Setting\ServiceProvider())
                 ->add(new Request\ServiceProvider())
+                ->add(new Admin\ServiceProvider())
                 ->add(new Gateway\ServiceProvider())
                 ->add(new WC\ServiceProvider())
                 ->add(new Ipn\ServiceProvider())
