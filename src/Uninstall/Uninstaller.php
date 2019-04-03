@@ -21,7 +21,8 @@ use wpdb;
  */
 class Uninstaller
 {
-    const OPTION_PAYPAL_PLUS = 'woocommerce_paypal_plus_settings';
+    const OPTION_PAYPAL_PLUS_GATEWAY = 'woocommerce_paypal_plus_settings';
+    const OPTION_EXPRESS_CHECKOUT_GATEWAY = 'woocommerce_paypal_express_settings';
     const OPTION_ADMIN_NOTICE_MESSAGE_ID = 'ppplus_message_id';
     const OPTION_ADMIN_NOTICE_CONTENT = 'ppplus_message_content';
 
@@ -85,7 +86,8 @@ class Uninstaller
     {
         $noticePrefix = DismissibleNoticeOption::OPTION_PREFIX;
 
-        delete_option(self::OPTION_PAYPAL_PLUS);
+        delete_option(self::OPTION_PAYPAL_PLUS_GATEWAY);
+        delete_option(self::OPTION_EXPRESS_CHECKOUT_GATEWAY);
         delete_option(SharedPersistor::OPTION_NAME);
 
         delete_site_transient(self::OPTION_ADMIN_NOTICE_MESSAGE_ID);
