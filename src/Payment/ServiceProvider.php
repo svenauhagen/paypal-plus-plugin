@@ -10,8 +10,8 @@
 
 namespace WCPayPalPlus\Payment;
 
+use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use WCPayPalPlus\Session\Session;
-use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
@@ -40,8 +40,10 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[WooCommerce::class]
             );
         };
-        $container[PaymentPatchFactory::class] = function () {
-            return new PaymentPatchFactory();
+        $container[PaymentPatchFactory::class] = function (Container $container) {
+            return new PaymentPatchFactory(
+                $container[CurrentPaymentMethod::class]
+            );
         };
     }
 

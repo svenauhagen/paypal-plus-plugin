@@ -10,11 +10,13 @@
 
 namespace WCPayPalPlus\Payment;
 
-use Inpsyde\Lib\PayPal\Api\Patch;
+use InvalidArgumentException;
 use Inpsyde\Lib\PayPal\Api\PatchRequest;
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 use WC_Order;
+use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
+use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 
 /**
  * Class PaymentPatchData
@@ -59,6 +61,11 @@ class PaymentPatchData
     private $patchProvider;
 
     /**
+     * @var CurrentPaymentMethod
+     */
+    private $currentPaymentMethod;
+
+    /**
      * PaymentPatchData constructor.
      *
      * @param WC_Order $order WooCommerce Order object.
@@ -66,13 +73,15 @@ class PaymentPatchData
      * @param string $invoicePrefix The invoice prefix.
      * @param ApiContext $apiContext The PayPal SDK ApiContext object.
      * @param PatchProvider $patchProvider The PatchProvider object.
+     * @param CurrentPaymentMethod $currentPaymentMethod
      */
     public function __construct(
         WC_Order $order,
         $paymentId,
         $invoicePrefix,
         ApiContext $apiContext,
-        PatchProvider $patchProvider
+        PatchProvider $patchProvider,
+        CurrentPaymentMethod $currentPaymentMethod
     ) {
 
         assert(is_string($paymentId));
@@ -83,6 +92,7 @@ class PaymentPatchData
         $this->invoicePrefix = $invoicePrefix;
         $this->apiContext = $apiContext;
         $this->patchProvider = $patchProvider;
+        $this->currentPaymentMethod = $currentPaymentMethod;
     }
 
     /**
@@ -129,11 +139,11 @@ class PaymentPatchData
      * Returns a configured PatchRequest object.
      *
      * @return PatchRequest
+     * @throws InvalidArgumentException
      */
     public function get_patch_request()
     {
         $patch_request = new PatchRequest();
-
         $patch_request->setPatches($this->get_patches());
 
         return $patch_request;
@@ -142,30 +152,27 @@ class PaymentPatchData
     /**
      * Returns an array of configured Patch objects relevant to the current request
      *
-     * @return Patch[]
+     * Use the current payment method as workaround, the solution need a deeper discussion in order
+     * to make the patches selectable based on client requests.
+     *
+     * @return array
+     * @throws InvalidArgumentException
      */
     private function get_patches()
     {
+        $orderNeedProcessing = $this->order->needs_processing();
+        $paymentMethod = $this->currentPaymentMethod->payment();
+
         $patches = [
             $this->patchProvider->get_payment_amount_patch(),
             $this->patchProvider->get_custom_patch(),
-            $this->patchProvider->get_invoice_patch($this->get_invoice_prefix()),
+            $this->patchProvider->get_invoice_patch($this->invoicePrefix),
         ];
 
-        if ($this->order->needs_processing()) {
+        if ($orderNeedProcessing && $paymentMethod !== ExpressCheckoutGateway::GATEWAY_ID) {
             $patches[] = $this->patchProvider->get_shipping_patch();
         }
 
         return $patches;
-    }
-
-    /**
-     * Returns the invoice prefix.
-     *
-     * @return string
-     */
-    public function get_invoice_prefix()
-    {
-        return $this->invoicePrefix;
     }
 }
