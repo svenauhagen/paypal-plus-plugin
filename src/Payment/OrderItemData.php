@@ -43,7 +43,7 @@ class OrderItemData implements OrderItemDataProvider
      */
     public function get_price()
     {
-        return $this->format($this->data['subtotal'] / $this->get_quantity());
+        return $this->format($this->data['subtotal']);
     }
 
     /**

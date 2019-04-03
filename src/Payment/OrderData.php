@@ -19,9 +19,10 @@ use WCPayPalPlus\Utils\PriceFormatterTrait;
  *
  * @package WCPayPalPlus\Payment
  */
-final class OrderData extends OrderDataCommon
+final class OrderData implements OrderDataProvider
 {
     use PriceFormatterTrait;
+    use OrderDataTrait;
 
     /**
      * WooCommerce Order object.

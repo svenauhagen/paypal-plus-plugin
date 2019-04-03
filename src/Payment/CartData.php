@@ -17,9 +17,10 @@ use WCPayPalPlus\Utils\PriceFormatterTrait;
  *
  * @package WCPayPalPlus\Payment
  */
-final class CartData extends OrderDataCommon
+final class CartData implements OrderDataProvider
 {
     use PriceFormatterTrait;
+    use OrderDataTrait;
 
     /**
      * WooCommerce Cart.
