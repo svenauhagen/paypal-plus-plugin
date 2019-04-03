@@ -94,7 +94,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
               }
             }
 
-            const orderId = 'orderID' in response.data ? response.data.orderID : ''
+            const orderId = 'orderId' in response.data ? response.data.orderId : ''
 
             if (!orderId) {
               try {
@@ -124,10 +124,10 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
         const formData = this.formDataByElement(element)
 
         formData.append('task', TASK_STORE_PAYMENT_DATA)
-        formData.append('orderID', data.orderID)
-        formData.append('payerID', data.payerID)
-        formData.append('paymentID', data.paymentID)
-        formData.append('paymentToken', data.paymentToken)
+        formData.append('orderId', data.orderID)
+        formData.append('PayerID', data.payerID)
+        formData.append('paymentId', data.paymentID)
+        formData.append('token', data.paymentToken)
 
         return this.request
           .submit(formData)
@@ -140,7 +140,14 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
               }
             }
 
-            const returnUrl = 'returnUrl' in data ? data.returnUrl : ''
+            let returnUrl = ''
+
+            if ('redirect_urls' in this.buttonConfiguration
+              && 'return_url' in this.buttonConfiguration.redirect_urls
+            ) {
+              returnUrl = this.buttonConfiguration.redirect_urls.return_url
+            }
+
             returnUrl && actions.redirect(null, returnUrl)
           })
       },

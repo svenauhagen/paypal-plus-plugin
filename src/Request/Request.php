@@ -13,7 +13,7 @@ namespace WCPayPalPlus\Request;
 /**
  * Class Request
  *
- * @package WCPayPalPlus\Ipn
+ * @package WCPayPalPlus\Request
  */
 class Request
 {
@@ -23,6 +23,10 @@ class Request
     const KEY_PENDING_REASON = 'pending_reason';
     const KEY_PAYMENT_STATUS = 'payment_status';
     const KEY_PAYMENT_METHOD = 'payment_method';
+
+    const INPUT_PAYER_ID = 'PayerID';
+    const INPUT_PAYMENT_ID = 'paymentId';
+    const INPUT_PAYMENT_TOKEN = 'token';
 
     /**
      * Request data

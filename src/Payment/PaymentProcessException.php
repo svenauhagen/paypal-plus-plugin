@@ -10,8 +10,9 @@
 
 namespace WCPayPalPlus\Payment;
 
-use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Exception;
+use WCPayPalPlus\Api\ErrorData\ErrorData;
+use function WCPayPalPlus\paymentErrorMessage;
 
 /**
  * Class PaymentProcessException
@@ -49,20 +50,12 @@ class PaymentProcessException extends Exception
     }
 
     /**
-     * @param PayPalConnectionException $exc
+     * @param ErrorData $errorData
      * @return PaymentProcessException
      */
-    public static function becausePayPalConnection(PayPalConnectionException $exc)
+    public static function byApiErrorData(ErrorData $errorData)
     {
-        return new self(
-            sprintf(
-                esc_html__(
-                    'Cannot process the payment because of connection returned invalid response: %s',
-                    'woo-paypalplus'
-                ),
-                $exc->getMessage()
-            )
-        );
+        return new self(paymentErrorMessage($errorData));
     }
 
     /**

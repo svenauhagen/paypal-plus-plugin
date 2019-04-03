@@ -15,6 +15,7 @@ use PayPal\Exception\PayPalConnectionException;
 use WCPayPalPlus\Ipn\Ipn;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Request\Request;
+use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\Storable;
 use WCPayPalPlus\Utils\AjaxJsonRequest;
@@ -27,9 +28,6 @@ use WooCommerce;
  */
 class CartCheckout
 {
-    const INPUT_PAYER_ID_NAME = 'payerID';
-    const INPUT_PAYMENT_ID_NAME = 'paymentID';
-
     const TASK_CREATE_ORDER = 'createOrder';
     const TASK_STORE_PAYMENT_DATA = 'storePaymentData';
 
@@ -59,10 +57,16 @@ class CartCheckout
      * @var Logger
      */
     private $logger;
+
     /**
      * @var Request
      */
     private $request;
+
+    /**
+     * @var Session
+     */
+    private $session;
 
     /**
      * CartCheckout constructor.
@@ -72,6 +76,7 @@ class CartCheckout
      * @param WooCommerce $wooCommerce
      * @param Logger $logger
      * @param Request $request
+     * @param Session $session
      */
     public function __construct(
         ExpressCheckoutStorable $settingRepository,
@@ -79,7 +84,8 @@ class CartCheckout
         AjaxJsonRequest $ajaxJsonRequest,
         WooCommerce $wooCommerce,
         Logger $logger,
-        Request $request
+        Request $request,
+        Session $session
     ) {
 
         $this->settingRepository = $settingRepository;
@@ -88,6 +94,7 @@ class CartCheckout
         $this->wooCommerce = $wooCommerce;
         $this->logger = $logger;
         $this->request = $request;
+        $this->session = $session;
     }
 
     /**
@@ -122,7 +129,6 @@ class CartCheckout
             $orderId = $payment->getId();
         } catch (PayPalConnectionException $exc) {
             wc_add_notice($exc->getMessage(), 'error');
-            $this->logger->error($exc->getData(), [$orderId]);
             $this->ajaxJsonRequest->sendJsonError([
                 'message' => $exc->getMessage(),
             ]);
@@ -135,7 +141,7 @@ class CartCheckout
         }
 
         $this->ajaxJsonRequest->sendJsonSuccess([
-            'orderID' => $orderId,
+            'orderId' => $orderId,
         ]);
     }
 
@@ -144,8 +150,9 @@ class CartCheckout
      */
     public function storePaymentData()
     {
-        $payerId = $this->request->get(self::INPUT_PAYER_ID_NAME, FILTER_SANITIZE_STRING);
-        $paymentId = $this->request->get(self::INPUT_PAYMENT_ID_NAME, FILTER_SANITIZE_STRING);
+        $payerId = $this->request->get(Request::INPUT_PAYER_ID, FILTER_SANITIZE_STRING);
+        $paymentId = $this->request->get(Request::INPUT_PAYMENT_ID, FILTER_SANITIZE_STRING);
+        $paymentToken = $this->request->get(Request::INPUT_PAYMENT_TOKEN, FILTER_SANITIZE_STRING);
 
         if (!$payerId || !$paymentId) {
             wc_add_notice(
@@ -162,7 +169,12 @@ class CartCheckout
          * @param string $payerId
          * @param string $paymentId
          */
-        do_action(self::ACTION_STORE_PAYMENT_DATA, $payerId, $paymentId);
+        do_action(self::ACTION_STORE_PAYMENT_DATA, $payerId, $paymentId, $paymentToken);
+
+        $this->session->set(Session::PAYER_ID, $payerId);
+        $this->session->set(Session::PAYMENT_ID, $paymentId);
+        $this->session->set(Session::CHOSEN_PAYMENT_METHOD, Gateway::GATEWAY_ID);
+        $this->session->set(Session::PAYMENT_TOKEN, $paymentToken);
 
         $this->ajaxJsonRequest->sendJsonSuccess(['success' => true]);
     }

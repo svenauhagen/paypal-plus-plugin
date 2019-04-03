@@ -10,11 +10,12 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
-use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Api\CredentialValidator;
+use WCPayPalPlus\Api\ErrorData\ErrorData;
+use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
 use WCPayPalPlus\Gateway\MethodsTrait;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Payment\PaymentPatcher;
@@ -33,7 +34,6 @@ use WCPayPalPlus\WC\CheckoutDropper;
 use WooCommerce;
 use WC_Payment_Gateway;
 use RuntimeException;
-use WC_Order;
 
 /**
  * Class Gateway
@@ -45,6 +45,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
     use ExpressCheckoutRepositoryTrait;
     use GatewaySharedSettingsTrait;
     use MethodsTrait;
+    use PaymentExecutionTrait;
 
     const GATEWAY_ID = 'paypal_express';
     const GATEWAY_TITLE_METHOD = 'PayPal Express Checkout';
@@ -106,6 +107,11 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
     private $logger;
 
     /**
+     * @var ApiErrorDataExtractor
+     */
+    private $apiErrorDataExtractor;
+
+    /**
      * Gateway constructor.
      * @param WooCommerce $wooCommerce
      * @param CredentialValidator $credentialValidator
@@ -117,6 +123,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
      * @param CheckoutDropper $checkoutDropper
      * @param PaymentPatchFactory $paymentPatchFactory
      * @param Logger $logger
+     * @param ApiErrorDataExtractor $apiErrorDataExtractor
      */
     public function __construct(
         WooCommerce $wooCommerce,
@@ -128,7 +135,8 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         Session $session,
         CheckoutDropper $checkoutDropper,
         PaymentPatchFactory $paymentPatchFactory,
-        Logger $logger
+        Logger $logger,
+        ApiErrorDataExtractor $apiErrorDataExtractor
     ) {
 
         $this->wooCommerce = $wooCommerce;
@@ -142,6 +150,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         $this->paymentPatchFactory = $paymentPatchFactory;
         $this->logger = $logger;
         $this->id = self::GATEWAY_ID;
+        $this->apiErrorDataExtractor = $apiErrorDataExtractor;
 
         $this->init_form_fields();
         $this->init_settings();
@@ -163,12 +172,11 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
     }
 
     /**
-     * TODO May be logic of Patching and Payment Execution can be split. Use actions?
-     *      About this see the similar code for Plus Gateway.
-     *
-     * @param int $orderId
-     * @return array
+     * @inheritdoc
      * @throws PaymentProcessException
+     * @throws \InvalidArgumentException
+     * @throws \OutOfBoundsException
+     * @throws \WCPayPalPlus\Order\OrderFactoryException
      */
     public function process_payment($orderId)
     {
@@ -177,6 +185,9 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         $order = null;
         $paymentId = $this->session->get(Session::PAYMENT_ID);
         $payerId = $this->session->get(Session::PAYER_ID);
+
+        // Set orderId so we can retrieve it later if needed.
+        $this->session->set(Session::ORDER_ID, $orderId);
 
         if (!$payerId || !$paymentId || !$orderId) {
             throw PaymentProcessException::forInsufficientData();
@@ -198,8 +209,8 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         try {
             $paymentPatcher->execute();
         } catch (PayPalConnectionException $exc) {
-            $this->logger->error($exc->getData());
-            throw PaymentProcessException::becausePayPalConnection($exc);
+            $errorData = $this->apiErrorDataExtractor->extractByException($exc);
+            throw PaymentProcessException::byApiErrorData($errorData);
         }
 
         /**
@@ -209,31 +220,37 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
          */
         do_action(PaymentPatcher::ACTION_AFTER_PAYMENT_PATCH);
 
-        $payment = $this->paymentExecutionFactory->create(
-            $order,
-            $payerId,
-            $paymentId,
-            ApiContextFactory::getFromConfiguration()
-        );
-
         try {
-            $payment = $payment->execute();
-
-            /**
-             * Action After Payment has been Executed
-             *
-             * @param Payment $payment
-             * @param WC_Order $order
-             */
-            do_action(self::ACTION_AFTER_PAYMENT_EXECUTION, $payment, $order);
+            $this->execute($order, $payerId, $paymentId);
         } catch (PayPalConnectionException $exc) {
-            $this->logger->error($exc->getData());
-            throw PaymentProcessException::becausePayPalConnection($exc);
+            $errorData = $this->apiErrorDataExtractor->extractByException($exc);
+
+            if (in_array($errorData->code(), ErrorData::REDIRECTABLE_ERROR_CODES, true)) {
+                return [
+                    'result' => 'success',
+                    'redirect' => $this->redirectPayPalUrl(),
+                ];
+            }
+
+            throw PaymentProcessException::byApiErrorData($errorData);
         }
 
         return [
             'result' => 'success',
             'redirect' => $order->get_checkout_order_received_url(),
         ];
+    }
+
+    /**
+     * Retrieve the url to paypal site
+     *
+     * @return string
+     */
+    private function redirectPayPalUrl()
+    {
+        $paymentToken = urlencode($this->session->get(Session::PAYMENT_TOKEN));
+        $environment = $this->isSandboxed() ? 'sandbox' : 'live';
+
+        return "https://www.{$environment}.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token={$paymentToken}&useraction=commit";
     }
 }

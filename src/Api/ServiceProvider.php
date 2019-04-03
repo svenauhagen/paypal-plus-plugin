@@ -14,6 +14,7 @@ use Inpsyde\Lib\PayPal\Auth\OAuthTokenCredential;
 use Inpsyde\Lib\PayPal\Core\PayPalConfigManager;
 use Inpsyde\Lib\PayPal\Core\PayPalCredentialManager;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
+use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
 use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use WCPayPalPlus\Log\PayPalSdkLogFactory;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
@@ -47,6 +48,9 @@ class ServiceProvider implements IntegrationServiceProvider, BootstrappableServi
         };
         $container[PartnerAttributionId::class] = function (Container $container) {
             return new PartnerAttributionId($container[CurrentPaymentMethod::class]);
+        };
+        $container[ApiErrorDataExtractor::class] = function () {
+            return new ApiErrorDataExtractor();
         };
     }
 

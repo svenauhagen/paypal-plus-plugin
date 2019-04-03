@@ -54,7 +54,7 @@ class PaymentPerformer
      * Execute Payment
      * Be aware all of the call made by the PayPal SDK may throw a PayPalConnectionException
      *
-     * @return Payment
+     * @return void
      * @throws PaymentProcessException
      * @throws \InvalidArgumentException
      */
@@ -78,7 +78,5 @@ class PaymentPerformer
         foreach ($this->successHandlers as $success_handler) {
             $success_handler->execute();
         }
-
-        return $payment;
     }
 }

@@ -13,6 +13,7 @@ namespace WCPayPalPlus\Refund;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
+use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
 use WCPayPalPlus\Order\OrderStatuses;
 
 /**
@@ -87,7 +88,6 @@ class Refunder
                 ->get_success_handler($refundedSale->getId())
                 ->execute();
         } catch (PayPalConnectionException $exc) {
-            $this->logger->error($exc->getData());
             return false;
         }
 

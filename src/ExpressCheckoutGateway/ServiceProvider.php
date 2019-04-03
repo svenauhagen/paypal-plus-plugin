@@ -10,12 +10,13 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
+use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
 use function WCPayPalPlus\areAllExpressCheckoutButtonsDisabled;
-use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use function WCPayPalPlus\isGatewayDisabled;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
+use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\WpNonce;
-use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Session\Session;
@@ -61,7 +62,8 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[Session::class],
                 $container[CheckoutDropper::class],
                 $container[PaymentPatchFactory::class],
-                $container[Logger::class]
+                $container[Logger::class],
+                $container[ApiErrorDataExtractor::class]
             );
         };
         $container[CheckoutGatewayOverride::class] = function (Container $container) {
@@ -74,12 +76,6 @@ class ServiceProvider implements BootstrappableServiceProvider
             return new CheckoutAddressOverride(
                 $container[WooCommerce::class],
                 $container[CurrentPaymentMethod::class]
-            );
-        };
-        $container[StorePaymentData::class] = function (Container $container) {
-            return new StorePaymentData(
-                $container[WooCommerce::class],
-                $container[Session::class]
             );
         };
 
@@ -111,7 +107,8 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[AjaxJsonRequest::class],
                 $container[WooCommerce::class],
                 $container[Logger::class],
-                $container[Request::class]
+                $container[Request::class],
+                $container[Session::class]
             );
         };
         $container[SingleProductCheckout::class] = function (Container $container) {
@@ -123,6 +120,18 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[Logger::class]
             );
         };
+
+        $container[PayPalPaymentExecution::class] = function (Container $container) {
+            return new PayPalPaymentExecution(
+                $container[OrderFactory::class],
+                $container[PaymentExecutionFactory::class],
+                $container[Session::class],
+                $container[Logger::class],
+                $container[ExpressCheckoutStorable::class],
+                $container[Request::class],
+                $container[ApiErrorDataExtractor::class]
+            );
+        };
     }
 
     /**
@@ -132,6 +141,7 @@ class ServiceProvider implements BootstrappableServiceProvider
     {
         $gatewayId = Gateway::GATEWAY_ID;
         $gateway = $container[Gateway::class];
+        $payPalPaymentExecution = $container[PayPalPaymentExecution::class];
 
         add_filter('woocommerce_payment_gateways', function ($methods) use ($gateway) {
             $methods[Gateway::class] = $gateway;
@@ -184,12 +194,6 @@ class ServiceProvider implements BootstrappableServiceProvider
             'woocommerce_checkout_process',
             [$container[CheckoutAddressOverride::class], 'addAddressesToCheckoutPostVars']
         );
-        add_action(
-            CartCheckout::ACTION_STORE_PAYMENT_DATA,
-            [$container[StorePaymentData::class], 'addFromAction'],
-            10,
-            2
-        );
 
         add_action(
             "woocommerce_update_options_payment_gateways_{$gatewayId}",
@@ -206,6 +210,10 @@ class ServiceProvider implements BootstrappableServiceProvider
             [$container[CheckoutGatewayOverride::class], 'maybeOverridden'],
             9999
         );
+
+        add_action('wp', function () use ($payPalPaymentExecution) {
+            !is_admin() and $payPalPaymentExecution->execute();
+        });
 
         $this->bootstrapButtons($container);
         $this->bootstrapAjaxRequests($container);
