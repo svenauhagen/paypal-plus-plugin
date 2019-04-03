@@ -42,6 +42,8 @@ interface Storable
 
     const OPTION_INVOICE_PREFIX = 'invoice_prefix';
 
+    const ACTION_AFTER_SETTINGS_UPDATE = 'paypalplus.after_settings_update';
+
     /**
      * @return bool
      */
