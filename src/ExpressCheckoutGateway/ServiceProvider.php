@@ -75,7 +75,8 @@ class ServiceProvider implements BootstrappableServiceProvider
         $container[CheckoutAddressOverride::class] = function (Container $container) {
             return new CheckoutAddressOverride(
                 $container[WooCommerce::class],
-                $container[CurrentPaymentMethod::class]
+                $container[CurrentPaymentMethod::class],
+                $container[Logger::class]
             );
         };
 
