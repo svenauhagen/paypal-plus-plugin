@@ -13,6 +13,7 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 use Exception;
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Api\Transaction;
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Gateway\CurrentPaymentMethod;
@@ -333,10 +334,16 @@ class CheckoutAddressOverride
 
         $paymentId = $this->wooCommerce->session->get(Session::PAYMENT_ID);
         $apiContext = ApiContextFactory::getFromConfiguration();
+        $payment = null;
         try {
             $payment = Payment::get($paymentId, $apiContext);
+        } catch (PayPalConnectionException $exc) {
+            $this->logger->error($exc->getData());
         } catch (Exception $exc) {
             $this->logger->error($exc->getMessage());
+        }
+
+        if (!$payment) {
             wc_add_notice(
                 __('Can not retrieve address from PayPal, try to checkout again.', 'woo-paypalplus'),
                 'error'
