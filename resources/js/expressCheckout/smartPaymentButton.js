@@ -1,6 +1,6 @@
 import { formDataByElement, formDataForCart } from './form'
 import { contextByElement } from './context'
-import * from './utils'
+import * as utils from '../utils'
 
 const SINGLE_PRODUCT_BUTTON = 'paypalplus_ecs_single_product_button'
 const CART_BUTTON = 'paypalplus_ecs_cart_button'
@@ -90,7 +90,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
 
             if (!response.success) {
               try {
-                window.location = redirectUrlByRequest(response, this.cancelUrl)
+                window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
               } catch (e) {
                 return
               }
@@ -100,7 +100,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
 
             if (!orderId) {
               try {
-                window.location = redirectUrlByRequest(response, this.cancelUrl)
+                window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
               } catch (e) {
                 return
               }
@@ -137,7 +137,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
 
             if (!response.success) {
               try {
-                window.location = redirectUrlByRequest(response, this.cancelUrl)
+                window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
               } catch (e) {
                 return
               }
