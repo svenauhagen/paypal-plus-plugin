@@ -74,6 +74,8 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
         const formData = this.formDataByElement(element)
         formData.append('task', TASK_CREATE_ORDER)
 
+        formData.delete('add-to-cart')
+
         return this.request
           .submit(formData)
           .then(response => {
@@ -128,6 +130,8 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
         formData.append('PayerID', data.payerID)
         formData.append('paymentId', data.paymentID)
         formData.append('token', data.paymentToken)
+
+        formData.delete('add-to-cart')
 
         return this.request
           .submit(formData)
