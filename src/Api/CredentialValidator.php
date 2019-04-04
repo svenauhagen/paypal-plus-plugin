@@ -51,7 +51,7 @@ class CredentialValidator
 
         if (!$credential->getClientId() || !$credential->getClientSecret()) {
             return new CredentialValidationResponse(
-                true,
+                false,
                 esc_html_x('Credential are Empty', 'credential', 'woo-paypalplus')
             );
         }
