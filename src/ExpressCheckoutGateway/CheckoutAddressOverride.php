@@ -10,8 +10,11 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
+use Exception;
 use Inpsyde\Lib\PayPal\Api\Payment;
 use Inpsyde\Lib\PayPal\Api\Transaction;
+use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use WCPayPalPlus\Session\Session;
@@ -35,6 +38,11 @@ class CheckoutAddressOverride
      * @var CurrentPaymentMethod
      */
     private $currentPaymentMethod;
+
+    /**
+     * @var Logger
+     */
+    private $logger;
 
     /**
      * @var array Addresses
@@ -67,14 +75,17 @@ class CheckoutAddressOverride
      *
      * @param WooCommerce $wooCommerce
      * @param CurrentPaymentMethod $currentPaymentMethod
+     * @param Logger $logger
      */
     public function __construct(
         WooCommerce $wooCommerce,
-        CurrentPaymentMethod $currentPaymentMethod
+        CurrentPaymentMethod $currentPaymentMethod,
+        Logger $logger
     ) {
 
         $this->wooCommerce = $wooCommerce;
         $this->currentPaymentMethod = $currentPaymentMethod;
+        $this->logger = $logger;
     }
 
     /**
@@ -317,16 +328,29 @@ class CheckoutAddressOverride
      */
     private function getPaymentAddresses()
     {
-        $paymentId = $this->wooCommerce->session->get(Session::PAYMENT_ID);
-        if (! $paymentId ||
-            $this->addresses['billing_first_name'] ||
-            $this->addresses['billing_last_name']
-        ) {
+        if ($this->addresses['billing_first_name'] || $this->addresses['billing_last_name']) {
              return $this->addresses;
         }
 
+        $paymentId = $this->wooCommerce->session->get(Session::PAYMENT_ID);
         $apiContext = ApiContextFactory::getFromConfiguration();
-        $payment = Payment::get($paymentId, $apiContext);
+        $payment = null;
+        try {
+            $payment = Payment::get($paymentId, $apiContext);
+        } catch (PayPalConnectionException $exc) {
+            $this->logger->error($exc->getData());
+        } catch (Exception $exc) {
+            $this->logger->error($exc->getMessage());
+        }
+
+        if (!$payment) {
+            wc_add_notice(
+                __('Can not retrieve address from PayPal, try to checkout again.', 'woo-paypalplus'),
+                'error'
+            );
+            return $this->addresses;
+        }
+
         $payer = $payment->getPayer();
         $payerInfo = $payer->getPayerInfo();
         $billingAddress = $payerInfo->getBillingAddress();
