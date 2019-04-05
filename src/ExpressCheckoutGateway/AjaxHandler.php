@@ -82,9 +82,7 @@ class AjaxHandler
      */
     public function handle()
     {
-        if (!$this->nonce->validate($this->nonceContext)) {
-            return;
-        }
+        $this->validateRequest() or $this->sendErrorResponse();
 
         $context = $this->context();
         $task = $this->task();
@@ -97,6 +95,49 @@ class AjaxHandler
         }
 
         $this->dispatcher->dispatch($context, $task, $requestData);
+    }
+
+    /**
+     * Send an Error Response Back to Customer
+     *
+     * @return void
+     */
+    private function sendErrorResponse()
+    {
+        wc_add_notice(
+            esc_html__(
+                'Sorry, there was an error processing the request, please try to checkout again.',
+                'woo-paypalplus'
+            ),
+            'error'
+        );
+        wp_send_json_error([
+            'redirectUrl' => wc_get_cart_url(),
+        ]);
+    }
+
+    /**
+     * Validate Request
+     *
+     * WooCommerce `nonce_user_logged_out` conflict with our request because we create the nonce
+     * before the WooCommerce session has been set and when we execute tasks at different time we
+     * cannot be sure the customer Id will reflect the correct value.
+     *
+     * So deactivate temporary the WooCommerce filter do the trick.
+     *
+     * @return bool
+     */
+    private function validateRequest()
+    {
+        $isValid = false;
+
+        remove_filter('nonce_user_logged_out', [wc()->session, 'nonce_user_logged_out']);
+        if ($this->nonce->validate($this->nonceContext)) {
+            $isValid = true;
+        }
+        add_filter('nonce_user_logged_out', [wc()->session, 'nonce_user_logged_out']);
+
+        return $isValid;
     }
 
     /**

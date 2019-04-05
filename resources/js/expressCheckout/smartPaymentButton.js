@@ -1,5 +1,6 @@
 import { formDataByElement, formDataForCart } from './form'
 import { contextByElement } from './context'
+import * as utils from '../utils'
 
 const SINGLE_PRODUCT_BUTTON = 'paypalplus_ecs_single_product_button'
 const CART_BUTTON = 'paypalplus_ecs_cart_button'
@@ -24,6 +25,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
   constructor (buttonConfiguration, validContexts, request)
   {
     this.buttonConfiguration = buttonConfiguration
+    this.cancelUrl = this.buttonConfiguration.redirect_urls.cancel_url
     this.validContexts = Array.from(validContexts)
     this.request = request
   }
@@ -79,10 +81,10 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
         return this.request
           .submit(formData)
           .then(response => {
-            if (!('data' in response)) {
+            if (!'data' in response) {
               console.warn('Unable to process the payment, server did not response with valid data')
               try {
-                window.location = this.buttonConfiguration.redirect_urls.cancel_url
+                window.location = this.cancelUrl
               } catch (e) {
                 return
               }
@@ -90,7 +92,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
 
             if (!response.success) {
               try {
-                window.location = this.buttonConfiguration.redirect_urls.cancel_url
+                window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
               } catch (e) {
                 return
               }
@@ -100,7 +102,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
 
             if (!orderId) {
               try {
-                window.location = this.buttonConfiguration.redirect_urls.cancel_url
+                window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
               } catch (e) {
                 return
               }
@@ -136,9 +138,10 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
         return this.request
           .submit(formData)
           .then((response) => {
+
             if (!response.success) {
               try {
-                window.location = this.buttonConfiguration.redirect_urls.cancel_url
+                window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
               } catch (e) {
                 return
               }
