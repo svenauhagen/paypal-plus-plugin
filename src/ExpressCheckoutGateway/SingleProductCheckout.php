@@ -26,7 +26,9 @@ class SingleProductCheckout
 {
     const TASK_CREATE_ORDER = 'createOrder';
 
+    const INPUT_ADD_TO_CART = 'add-to-cart';
     const INPUT_PRODUCT_ID = 'product_id';
+    const INPUT_VARIATION_ID = 'variation_id';
     const INPUT_PRODUCT_QUANTITY = 'quantity';
 
     const FILTER_ADD_TO_CART_PRODUCT_ID = 'woocommerce_add_to_cart_product_id';
@@ -95,7 +97,23 @@ class SingleProductCheckout
      */
     private function addToCart()
     {
-        $productId = (int)$this->request->get(self::INPUT_PRODUCT_ID, FILTER_SANITIZE_NUMBER_INT);
+        $isAddToCartRequest = (bool)$this->request->get(
+            self::INPUT_ADD_TO_CART,
+            FILTER_VALIDATE_BOOLEAN
+        );
+        $productId = (int)$this->request->get(
+            self::INPUT_PRODUCT_ID,
+            FILTER_SANITIZE_NUMBER_INT
+        );
+        $variationId = (int)$this->request->get(
+            self::INPUT_VARIATION_ID,
+            FILTER_SANITIZE_NUMBER_INT
+        );
+
+        // Just to ensure we don't add the product twice into the cart.
+        if ($isAddToCartRequest) {
+            return;
+        }
 
         /**
          * Filter the product Id before create the product
@@ -126,7 +144,6 @@ class SingleProductCheckout
         $quantity = $quantity ? wc_stock_amount($quantity) : 1;
 
         $productStatus = get_post_status($productId);
-        $variationId = 0;
         $variation = [];
 
         /**

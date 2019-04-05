@@ -108,6 +108,7 @@ class PayPalPaymentExecution
         $redirectUrl = null;
         $orderId = $this->session->get(Session::ORDER_ID);
         $cancelUrl = $this->settingRepository->cancelUrl();
+        $doingAjax = defined('DOING_AJAX') && DOING_AJAX;
 
         $requestData = $this->requestData();
         $sessionData = $this->sessionData();
@@ -116,7 +117,7 @@ class PayPalPaymentExecution
             || !$requestData
             || !$sessionData
             || $sessionData !== $requestData
-            || wp_doing_ajax()
+            || $doingAjax
         ) {
             return;
         }
