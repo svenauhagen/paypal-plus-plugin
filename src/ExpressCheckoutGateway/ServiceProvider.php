@@ -17,6 +17,7 @@ use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\WpNonce;
+use WCPayPalPlus\Nonce;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Session\Session;
@@ -44,7 +45,10 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function register(Container $container)
     {
-        $ajaxNonce = new WpNonce(AjaxHandler::ACTION . '_nonce');
+        $ajaxNonce = new Nonce(
+            new WpNonce(AjaxHandler::ACTION . '_nonce'),
+            $container[WooCommerce::class]
+        );
 
         $container[GatewaySettingsModel::class] = function (Container $container) {
             return new GatewaySettingsModel(
