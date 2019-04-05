@@ -12,6 +12,7 @@ namespace WCPayPalPlus\Payment;
 
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 use WC_Order;
+use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 
 /**
  * Class PaymentPatchFactory
@@ -20,10 +21,25 @@ use WC_Order;
 class PaymentPatchFactory
 {
     /**
+     * @var CurrentPaymentMethod
+     */
+    private $currentPaymentMethod;
+
+    /**
+     * PaymentPatchFactory constructor.
+     * @param CurrentPaymentMethod $currentPaymentMethod
+     */
+    public function __construct(CurrentPaymentMethod $currentPaymentMethod)
+    {
+        $this->currentPaymentMethod = $currentPaymentMethod;
+    }
+
+    /**
      * @param WC_Order $order
      * @param string $paymentId
      * @param string $invoicePrefix
      * @param ApiContext $context
+     *
      * @return PaymentPatcher
      */
     public function create(WC_Order $order, $paymentId, $invoicePrefix, ApiContext $context)
@@ -38,7 +54,8 @@ class PaymentPatchFactory
             $paymentId,
             $invoicePrefix,
             $context,
-            $patchProvider
+            $patchProvider,
+            $this->currentPaymentMethod
         );
 
         return new PaymentPatcher($patchData);
