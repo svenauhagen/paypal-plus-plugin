@@ -84,6 +84,14 @@ final class OrderData implements OrderDataProvider
     }
 
     /**
+     * @inheritDoc
+     */
+    public function shippingTax()
+    {
+        return $this->format($this->round($this->order->get_shipping_tax()));
+    }
+
+    /**
      * @inheritdoc
      */
     protected function items()
@@ -113,5 +121,20 @@ final class OrderData implements OrderDataProvider
         }
 
         return $items;
+    }
+
+    /**
+     * Get the subtotal including any additional taxes.
+     *
+     * This is used when the prices are given already including tax.
+     *
+     * @return string
+     */
+    protected function subTotalTaxIncluded()
+    {
+        $shipping_diff = $this->round(
+            $this->order->get_shipping_total() + $this->order->get_shipping_tax()
+        );
+        return $this->format($this->order->get_total() - $shipping_diff);
     }
 }

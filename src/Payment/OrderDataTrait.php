@@ -28,9 +28,10 @@ trait OrderDataTrait
      */
     public function total()
     {
-        $total = $this->subTotal()
-            + $this->shippingTotal()
-            + $this->totalTaxes();
+        $total = $this->subTotal() + $this->shippingTotal();
+        $total += !wc_prices_include_tax()
+            ? $this->totalTaxes()
+            : $this->shippingTax();
 
         $total = $this->format($this->round($total));
 
@@ -47,6 +48,10 @@ trait OrderDataTrait
     {
         $subtotal = 0;
         $items = $this->itemsList()->getItems();
+
+        if (wc_prices_include_tax()) {
+            return $this->subTotalTaxIncluded();
+        }
 
         foreach ($items as $item) {
             $product_price = $item->getPrice();
@@ -94,37 +99,6 @@ trait OrderDataTrait
             ->setQuantity($data->get_quantity())
             ->setPrice($price);
 
-        /*
-         * Address Rounding problems
-         *
-         * The main problem here is how WooCommerce tackle the taxes applied to prices and how
-         * PayPal needs to have those prices.
-         *
-         * Because of intrinsic rounds problems WooCommerce deal with taxes as cent values, means
-         * the numbers used to calculate taxes contains a lot of information.
-         *
-         * PayPal want to have prices 2 decimal rounded, if not the Item::setPrice will format in that way.
-         * What we did in previous versions was to get the price of the product (total) divided by
-         * the quantity see $data->get_price(), this could produce rounding problems because
-         * the division result could contains more than 2 decimal points, then we pass that value
-         * to Item::setPrice that will round it, practically adding some more cents to the price.
-         *
-         * So the price calculated by WooCommerce will not fit the price calculated by our implementation.
-         * The good solution would work as WooCommerce (using cent values) but actually the logic
-         * is too complicated that need a complete separated implementation.
-         *
-         * So as workaround to send to paypal all the items instead only one as done in previous
-         * versions we implemented the following solution.
-         */
-        $paypalTotal = $item->getPrice() * $data->get_quantity();
-        if ($paypalTotal !== $price) {
-            $item
-                ->setName($name . 'x' . $data->get_quantity())
-                ->setCurrency($currency)
-                ->setQuantity(1)
-                ->setPrice($price);
-        }
-
         if (!empty($sku)) {
             $item->setSku($sku);// Similar to `item_number` in Classic API.
         }
@@ -138,4 +112,11 @@ trait OrderDataTrait
      * @return OrderItemDataProvider[]
      */
     abstract protected function items();
+
+    /**
+     * Retrieve the Sub Total Taxes included
+     *
+     * @return float
+     */
+    abstract protected function subTotalTaxIncluded();
 }

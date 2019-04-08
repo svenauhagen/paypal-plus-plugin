@@ -97,13 +97,17 @@ class PatchProvider
     {
         $replacePatch = new Patch();
 
+        $taxes = !wc_prices_include_tax()
+            ? $this->orderData->totalTaxes()
+            : $this->orderData->shippingTax();
+
         $paymentData = [
             'total' => $this->orderData->total(),
             'currency' => get_woocommerce_currency(),
             'details' => [
                 'subtotal' => $this->orderData->subTotal(),
                 'shipping' => $this->orderData->shippingTotal(),
-                'tax' => $this->orderData->totalTaxes(),
+                'tax' => $taxes,
             ],
         ];
 

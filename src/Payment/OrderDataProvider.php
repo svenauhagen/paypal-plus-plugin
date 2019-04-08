@@ -56,6 +56,13 @@ interface OrderDataProvider
     public function shippingTotal();
 
     /**
+     * Retrieve the Total Shipping Taxes
+     *
+     * @return float
+     */
+    public function shippingTax();
+
+    /**
      * Total discount amount.
      *
      * @return float

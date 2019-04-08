@@ -84,6 +84,14 @@ final class CartData implements OrderDataProvider
     }
 
     /**
+     * @inheritDoc
+     */
+    public function shippingTax()
+    {
+        return $this->format($this->round($this->cart->get_shipping_tax()));
+    }
+
+    /**
      * @inheritdoc
      */
     protected function items()
@@ -111,5 +119,22 @@ final class CartData implements OrderDataProvider
         }
 
         return $items;
+    }
+
+    /**
+     * Get the subtotal including any additional taxes.
+     *
+     * This is used when the prices are given already including tax.
+     *
+     * @return string
+     */
+    protected function subTotalTaxIncluded()
+    {
+        return $this->format($this->round(
+            $this->cart->get_cart_contents_total()
+            + $this->cart->get_fee_total()
+            + $this->cart->get_fee_tax()
+            + $this->cart->get_cart_contents_tax()
+        ));
     }
 }
