@@ -59,7 +59,7 @@ trait OrderDataTrait
             $subtotal += $item_price;
         }
 
-        return $subtotal;
+        return $this->format($this->round($subtotal));
     }
 
     /**
