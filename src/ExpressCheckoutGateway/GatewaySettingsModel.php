@@ -199,7 +199,7 @@ final class GatewaySettingsModel implements SettingsGatewayModel
     {
         return [
             'buttons_layout_section' => [
-                'title' => esc_html_x('Buttons Position', 'gateway-settings', 'woo-paypalplus'),
+                'title' => esc_html_x('Buttons Layout', 'gateway-settings', 'woo-paypalplus'),
                 'type' => 'title',
                 'desc' => '',
             ],
