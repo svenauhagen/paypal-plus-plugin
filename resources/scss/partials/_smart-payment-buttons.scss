@@ -1,0 +1,19 @@
+/**
+ * Single Product
+ */
+.single-product {
+    .summary {
+        .woo-paypalplus-checkout-button {
+            margin-top: 1em;
+        }
+    }
+}
+
+/**
+ * Mini Cart
+ */
+.widget_shopping_cart {
+    .woo-paypalplus-checkout-button {
+        padding: 0 1em 1em;
+    }
+}
