@@ -73,13 +73,13 @@ class SmartButtonArguments
                 'disallowed' => self::DISABLED_FUNDING,
             ],
             'style' => [
-                'color' => 'gold',
-                'shape' => 'rect',
-                'size' => 'responsive',
+                'color' => $this->settingRepository->buttonColor(),
+                'shape' => $this->settingRepository->buttonShape(),
+                'size' => $this->settingRepository->buttonSize(),
+                'label' => $this->settingRepository->buttonLabel(),
+                'layout' => 'horizontal',
                 'branding' => true,
                 'tagline' => false,
-                'layout' => 'horizontal',
-                'label' => 'paypal',
             ],
             'redirect_urls' => [
                 'cancel_url' => $this->settingRepository->cancelUrl(),

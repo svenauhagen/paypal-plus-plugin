@@ -10,6 +10,8 @@
 
 namespace WCPayPalPlus\Setting;
 
+use WCPayPalPlus\ExpressCheckoutGateway\GatewaySettingsModel;
+
 /**
  * Trait ExpressCheckoutRepositoryTrait
  * @package WCPayPalPlus\Setting
@@ -17,7 +19,7 @@ namespace WCPayPalPlus\Setting;
 trait ExpressCheckoutRepositoryTrait
 {
     /**
-     * @return bool
+     * @inheritDoc
      */
     public function showOnProductPage()
     {
@@ -30,7 +32,7 @@ trait ExpressCheckoutRepositoryTrait
     }
 
     /**
-     * @return bool
+     * @inheritDoc
      */
     public function showOnMiniCart()
     {
@@ -43,7 +45,7 @@ trait ExpressCheckoutRepositoryTrait
     }
 
     /**
-     * @return bool
+     * @inheritDoc
      */
     public function showOnCart()
     {
@@ -53,5 +55,57 @@ trait ExpressCheckoutRepositoryTrait
         );
 
         return $option === Storable::OPTION_ON;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function buttonColor()
+    {
+        $option = $this->get_option(
+            ExpressCheckoutStorable::OPTION_BUTTON_COLOR,
+            GatewaySettingsModel::DEFAULT_BUTTON_COLOR
+        );
+
+        return $option;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function buttonShape()
+    {
+        $option = $this->get_option(
+            ExpressCheckoutStorable::OPTION_BUTTON_SHAPE,
+            GatewaySettingsModel::DEFAULT_BUTTON_SHAPE
+        );
+
+        return $option;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function buttonSize()
+    {
+        $option = $this->get_option(
+            ExpressCheckoutStorable::OPTION_BUTTON_SIZE,
+            GatewaySettingsModel::DEFAULT_BUTTON_SIZE
+        );
+
+        return $option;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function buttonLabel()
+    {
+        $option = $this->get_option(
+            ExpressCheckoutStorable::OPTION_BUTTON_LABEL,
+            GatewaySettingsModel::DEFAULT_BUTTON_LABEL
+        );
+
+        return $option;
     }
 }

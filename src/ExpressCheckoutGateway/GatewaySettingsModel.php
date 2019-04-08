@@ -26,6 +26,11 @@ final class GatewaySettingsModel implements SettingsGatewayModel
 {
     use SharedFieldsOptionsTrait;
 
+    const DEFAULT_BUTTON_COLOR = 'gold';
+    const DEFAULT_BUTTON_SHAPE = 'rect';
+    const DEFAULT_BUTTON_SIZE = 'responsive';
+    const DEFAULT_BUTTON_LABEL = 'paypal';
+
     /**
      * @var SharedSettingsModel
      */
@@ -52,8 +57,9 @@ final class GatewaySettingsModel implements SettingsGatewayModel
             + $this->sharedSettingsModel->credentials()
             + $this->sharedSettingsModel->webProfile($gateway)
             + $this->gateway()
-            + $this->buttons()
-            + $this->sharedSettingsModel->downloadLog();
+            + $this->buttonsPosition()
+            + $this->buttonsLayout()
+            + $this->sharedSettingsModel->debugLog();
 
         return $settings;
     }
@@ -145,15 +151,16 @@ final class GatewaySettingsModel implements SettingsGatewayModel
     /**
      * @return array
      */
-    private function buttons()
+    private function buttonsPosition()
     {
         return [
+            'buttons_position_section' => [
+                'title' => esc_html_x('Buttons Position', 'gateway-settings', 'woo-paypalplus'),
+                'type' => 'title',
+                'desc' => '',
+            ],
             ExpressCheckoutStorable::OPTION_SHOW_ON_PRODUCT_PAGE => [
-                'title' => esc_html_x(
-                    'Show button on single product pages',
-                    'gateway-setting',
-                    'woo-paypalplus'
-                ),
+                'title' => esc_html_x('Single product pages', 'gateway-setting', 'woo-paypalplus'),
                 'type' => 'checkbox',
                 'default' => Storable::OPTION_ON,
                 'description' => esc_html_x(
@@ -163,11 +170,7 @@ final class GatewaySettingsModel implements SettingsGatewayModel
                 ),
             ],
             ExpressCheckoutStorable::OPTION_SHOW_ON_MINI_CART => [
-                'title' => esc_html_x(
-                    'Show button on mini cart',
-                    'gateway-setting',
-                    'woo-paypalplus'
-                ),
+                'title' => esc_html_x('Mini Cart', 'gateway-setting', 'woo-paypalplus'),
                 'type' => 'checkbox',
                 'default' => Storable::OPTION_ON,
                 'description' => esc_html_x(
@@ -177,15 +180,90 @@ final class GatewaySettingsModel implements SettingsGatewayModel
                 ),
             ],
             ExpressCheckoutStorable::OPTION_SHOW_ON_CART => [
-                'title' => esc_html_x(
-                    'Show button on cart page',
-                    'gateway-setting',
-                    'woo-paypalplus'
-                ),
+                'title' => esc_html_x('Cart Page', 'gateway-setting', 'woo-paypalplus'),
                 'type' => 'checkbox',
                 'default' => Storable::OPTION_ON,
                 'description' => esc_html_x(
                     'Allows you to show or hide the Express Checkout button within the cart page.',
+                    'gateway-setting',
+                    'woo-paypalplus'
+                ),
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    private function buttonsLayout()
+    {
+        return [
+            'buttons_layout_section' => [
+                'title' => esc_html_x('Buttons Position', 'gateway-settings', 'woo-paypalplus'),
+                'type' => 'title',
+                'desc' => '',
+            ],
+            ExpressCheckoutStorable::OPTION_BUTTON_COLOR => [
+                'title' => esc_html_x('Button Color', 'gateway-setting', 'woo-paypalplus'),
+                'type' => 'select',
+                'options' => [
+                    'gold' => esc_html_x('Gold', 'gateway-settings', 'woo-paypalplus'),
+                    'blue' => esc_html_x('Blue', 'gateway-settings', 'woo-paypalplus'),
+                    'silver' => esc_html_x('Silver', 'gateway-settings', 'woo-paypalplus'),
+                    'white' => esc_html_x('White', 'gateway-settings', 'woo-paypalplus'),
+                    'black' => esc_html_x('Black', 'gateway-settings', 'woo-paypalplus'),
+                ],
+                'default' => self::DEFAULT_BUTTON_COLOR,
+                'description' => esc_html_x(
+                    'Choose the color of the Express Checkout button.',
+                    'gateway-setting',
+                    'woo-paypalplus'
+                ),
+            ],
+            ExpressCheckoutStorable::OPTION_BUTTON_SHAPE => [
+                'title' => esc_html_x('Button Shape', 'gateway-setting', 'woo-paypalplus'),
+                'type' => 'select',
+                'options' => [
+                    'rect' => esc_html_x('Rect', 'gateway-settings', 'woo-paypalplus'),
+                    'pill' => esc_html_x('Pill', 'gateway-settings', 'woo-paypalplus'),
+                ],
+                'default' => self::DEFAULT_BUTTON_SHAPE,
+                'description' => esc_html_x(
+                    'Choose the shape of the Express Checkout button.',
+                    'gateway-setting',
+                    'woo-paypalplus'
+                ),
+            ],
+            ExpressCheckoutStorable::OPTION_BUTTON_SIZE => [
+                'title' => esc_html_x('Button Size', 'gateway-setting', 'woo-paypalplus'),
+                'type' => 'select',
+                'options' => [
+                    'small' => esc_html_x('Small', 'gateway-setting', 'woo-paypalplus'),
+                    'medium' => esc_html_x('Medium', 'gateway-setting', 'woo-paypalplus'),
+                    'large' => esc_html_x('Large', 'gateway-setting', 'woo-paypalplus'),
+                    'responsive' => esc_html_x('Responsive', 'gateway-setting', 'woo-paypalplus'),
+                ],
+                'default' => self::DEFAULT_BUTTON_SIZE,
+                'description' => esc_html_x(
+                    'Choose the size of the Express Checkout button, we suggest to use always responsive for best fit the UI of themes.',
+                    'gateway-setting',
+                    'woo-paypalplus'
+                ),
+            ],
+            ExpressCheckoutStorable::OPTION_BUTTON_LABEL => [
+                'title' => esc_html_x('Button Label', 'gateway-setting', 'woo-paypalplus'),
+                'type' => 'select',
+                'options' => [
+                    'checkout' => esc_html_x('Checkout', 'gateway-setting', 'woo-paypalplus'),
+                    'credit' => esc_html_x('Credit', 'gateway-setting', 'woo-paypalplus'),
+                    'pay' => esc_html_x('Pay', 'gateway-setting', 'woo-paypalplus'),
+                    'buynow' => esc_html_x('Buy Now', 'gateway-setting', 'woo-paypalplus'),
+                    'paypal' => esc_html_x('PayPal', 'gateway-setting', 'woo-paypalplus'),
+                    'installment' => esc_html_x('Installment', 'gateway-setting', 'woo-paypalplus'),
+                ],
+                'default' => self::DEFAULT_BUTTON_LABEL,
+                'description' => esc_html_x(
+                    'Choose the label to associate to the Express Checkout button.',
                     'gateway-setting',
                     'woo-paypalplus'
                 ),

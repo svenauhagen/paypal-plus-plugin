@@ -260,7 +260,7 @@ class SharedSettingsModel
     /**
      * @return array
      */
-    public function downloadLog()
+    public function debugLog()
     {
         $settingTabLogUrl = add_query_arg(
             [
@@ -271,6 +271,11 @@ class SharedSettingsModel
         );
 
         return [
+            'debug_section' => [
+                'title' => esc_html_x('Debug', 'shared-settings', 'woo-paypalplus'),
+                'type' => 'title',
+                'desc' => '',
+            ],
             self::OPTION_DOWNLOAD_LOG => [
                 'title' => esc_html_x('Download Log File', 'gateway-setting', 'woo-paypalplus'),
                 'type' => 'html',

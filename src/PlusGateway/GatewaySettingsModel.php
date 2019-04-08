@@ -50,7 +50,7 @@ final class GatewaySettingsModel implements SettingsGatewayModel
             + $this->sharedSettingsModel->credentials()
             + $this->sharedSettingsModel->webProfile($gateway)
             + $this->gatewaySettings()
-            + $this->sharedSettingsModel->downloadLog();
+            + $this->sharedSettingsModel->debugLog();
 
         return $settings;
     }
