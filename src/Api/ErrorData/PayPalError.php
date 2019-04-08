@@ -14,7 +14,7 @@ namespace WCPayPalPlus\Api\ErrorData;
  * Class PayPalErrorData
  * @package WCPayPalPlus\Api
  */
-final class PayPalErrorData implements ErrorData
+final class PayPalError implements Error
 {
     /**
      * @var string

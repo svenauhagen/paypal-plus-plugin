@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
 
-use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
+use WCPayPalPlus\Api\ErrorData\ApiErrorExtractor;
 use function WCPayPalPlus\areAllExpressCheckoutButtonsDisabled;
 use function WCPayPalPlus\isGatewayDisabled;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
@@ -67,7 +67,7 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[CheckoutDropper::class],
                 $container[PaymentPatchFactory::class],
                 $container[Logger::class],
-                $container[ApiErrorDataExtractor::class]
+                $container[ApiErrorExtractor::class]
             );
         };
         $container[CheckoutGatewayOverride::class] = function (Container $container) {
@@ -134,7 +134,7 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[Logger::class],
                 $container[ExpressCheckoutStorable::class],
                 $container[Request::class],
-                $container[ApiErrorDataExtractor::class]
+                $container[ApiErrorExtractor::class]
             );
         };
     }

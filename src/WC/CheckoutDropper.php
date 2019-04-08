@@ -10,8 +10,8 @@
 
 namespace WCPayPalPlus\WC;
 
-use WCPayPalPlus\Api\ErrorData\ErrorData;
-use function WCPayPalPlus\paymentErrorMessage;
+use WCPayPalPlus\Api\ErrorData\Error;
+use WCPayPalPlus\Api\ErrorData\Message;
 use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Setting\Storable;
 
@@ -45,11 +45,12 @@ class CheckoutDropper
     /**
      * Abort Checkout because of PayPal Error
      *
-     * @param ErrorData $errorData
+     * @param Error $apiError
      */
-    public function abortSessionBecauseOfApiError(ErrorData $errorData)
+    public function abortSessionBecauseOfApiError(Error $apiError)
     {
-        $this->abortSessionWithReason(paymentErrorMessage($errorData));
+        $apiErrorMessage = Message::fromError($apiError);
+        $this->abortSessionWithReason($apiErrorMessage());
     }
 
     /**

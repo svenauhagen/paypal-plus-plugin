@@ -12,8 +12,8 @@ namespace WCPayPalPlus\ExpressCheckoutGateway;
 
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\Psr\Log\LoggerInterface;
-use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
-use function WCPayPalPlus\paymentErrorMessage;
+use WCPayPalPlus\Api\ErrorData\ApiErrorExtractor;
+use WCPayPalPlus\Api\ErrorData\Message;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Payment\PaymentExecutionFactory;
 use WCPayPalPlus\Payment\PaymentProcessException;
@@ -63,7 +63,7 @@ class PayPalPaymentExecution
     private $request;
 
     /**
-     * @var ApiErrorDataExtractor
+     * @var ApiErrorExtractor
      */
     private $apiErrorDataExtractor;
 
@@ -75,7 +75,7 @@ class PayPalPaymentExecution
      * @param LoggerInterface $logger
      * @param ExpressCheckoutStorable $settingRepository
      * @param Request $request
-     * @param ApiErrorDataExtractor $apiErrorDataExtractor
+     * @param ApiErrorExtractor $apiErrorDataExtractor
      */
     public function __construct(
         OrderFactory $orderFactory,
@@ -84,7 +84,7 @@ class PayPalPaymentExecution
         LoggerInterface $logger,
         ExpressCheckoutStorable $settingRepository,
         Request $request,
-        ApiErrorDataExtractor $apiErrorDataExtractor
+        ApiErrorExtractor $apiErrorDataExtractor
     ) {
 
         $this->session = $session;
@@ -144,8 +144,9 @@ class PayPalPaymentExecution
                 $requestData[Request::INPUT_PAYER_ID]
             );
         } catch (PayPalConnectionException $exc) {
-            $errorData = $this->apiErrorDataExtractor->extractByException($exc);
-            wc_add_notice(paymentErrorMessage($errorData), 'error');
+            $apiError = $this->apiErrorDataExtractor->extractByException($exc);
+            $apiErrorMessage = Message::fromError($apiError);
+            wc_add_notice($apiErrorMessage(), 'error');
             $redirectUrl = $this->settingRepository->cancelUrl();
         }
 

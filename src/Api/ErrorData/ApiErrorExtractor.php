@@ -16,13 +16,13 @@ use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
  * Class ApiErrorDataExtractor
  * @package WCPayPalPlus\Api
  */
-class ApiErrorDataExtractor
+class ApiErrorExtractor
 {
     /**
      * Extract Error Data by Json String
      *
      * @param $json
-     * @return ErrorData
+     * @return Error
      */
     public function extractByJson($json)
     {
@@ -31,7 +31,7 @@ class ApiErrorDataExtractor
         $data = $this->decodeJson($json);
 
         if ($data === null) {
-            return new NullErrorData();
+            return new NullError();
         }
 
         // I've not used the rest param because I don't know which data can be in the json and which not
@@ -42,21 +42,21 @@ class ApiErrorDataExtractor
 
         $details = $this->extractDetails($details);
 
-        return new PayPalErrorData($name, $details, $message, $debugId);
+        return new PayPalError($name, $details, $message, $debugId);
     }
 
     /**
      * Extract Data By Exception
      *
      * @param PayPalConnectionException $exc
-     * @return ErrorData
+     * @return Error
      */
     public function extractByException(PayPalConnectionException $exc)
     {
-        $errorDataJson = $exc->getData();
-        $errorData = $this->extractByJson($errorDataJson);
+        $apiErrorJson = $exc->getData();
+        $apiError = $this->extractByJson($apiErrorJson);
 
-        return $errorData;
+        return $apiError;
     }
 
     /**

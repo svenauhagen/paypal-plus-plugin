@@ -12,7 +12,6 @@ namespace WCPayPalPlus\Refund;
 
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
-use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
 use WCPayPalPlus\Order\OrderStatuses;
 use WC_Order_Refund;
 

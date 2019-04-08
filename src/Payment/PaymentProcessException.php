@@ -11,8 +11,8 @@
 namespace WCPayPalPlus\Payment;
 
 use Exception;
-use WCPayPalPlus\Api\ErrorData\ErrorData;
-use function WCPayPalPlus\paymentErrorMessage;
+use WCPayPalPlus\Api\ErrorData\Error;
+use WCPayPalPlus\Api\ErrorData\Message;
 
 /**
  * Class PaymentProcessException
@@ -50,12 +50,13 @@ class PaymentProcessException extends Exception
     }
 
     /**
-     * @param ErrorData $errorData
+     * @param Error $apiError
      * @return PaymentProcessException
      */
-    public static function byApiErrorData(ErrorData $errorData)
+    public static function byApiError(Error $apiError)
     {
-        return new self(paymentErrorMessage($errorData));
+        $apiErrorMessage = Message::fromError($apiError);
+        return new self($apiErrorMessage());
     }
 
     /**

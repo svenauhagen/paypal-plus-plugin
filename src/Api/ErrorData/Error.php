@@ -11,40 +11,34 @@
 namespace WCPayPalPlus\Api\ErrorData;
 
 /**
- * Class NullErrorData
+ * Interface ApiErrorData
  * @package WCPayPalPlus\Api
  */
-final class NullErrorData implements ErrorData
+interface Error
 {
     /**
-     * @inheritdoc
+     * Retrieve the Error Code
+     *
+     * @return string
      */
-    public function code()
-    {
-        return '';
-    }
+    public function code();
 
     /**
-     * @inheritdoc
+     * @return Detail[]
      */
-    public function details()
-    {
-        return [];
-    }
+    public function details();
 
     /**
-     * @inheritdoc
+     * Retrieve the Error Message
+     *
+     * @return string
      */
-    public function message()
-    {
-        return '';
-    }
+    public function message();
 
     /**
-     * @inheritdoc
+     * Retrieve the Debug ID for support
+     *
+     * @return mixed
      */
-    public function debugId()
-    {
-        return '';
-    }
+    public function debugId();
 }

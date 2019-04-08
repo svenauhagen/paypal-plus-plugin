@@ -10,7 +10,7 @@
 
 namespace WCPayPalPlus\PlusGateway;
 
-use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
+use WCPayPalPlus\Api\ErrorData\ApiErrorExtractor;
 use function WCPayPalPlus\isGatewayDisabled;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\CredentialValidator;
@@ -73,7 +73,7 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[PaymentExecutionFactory::class],
                 $container[Logger::class],
                 $container[CheckoutDropper::class],
-                $container[ApiErrorDataExtractor::class]
+                $container[ApiErrorExtractor::class]
             );
         };
     }

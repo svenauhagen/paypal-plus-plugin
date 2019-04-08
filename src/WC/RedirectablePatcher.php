@@ -13,7 +13,7 @@ namespace WCPayPalPlus\WC;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
-use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
+use WCPayPalPlus\Api\ErrorData\ApiErrorExtractor;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
@@ -57,7 +57,7 @@ class RedirectablePatcher
     private $logger;
 
     /**
-     * @var ApiErrorDataExtractor
+     * @var ApiErrorExtractor
      */
     private $apiErrorDataExtractor;
 
@@ -69,7 +69,7 @@ class RedirectablePatcher
      * @param Session $session
      * @param CheckoutDropper $checkoutDropper
      * @param Logger $logger
-     * @param ApiErrorDataExtractor $apiErrorDataExtractor
+     * @param ApiErrorExtractor $apiErrorDataExtractor
      */
     public function __construct(
         OrderFactory $orderFactory,
@@ -78,7 +78,7 @@ class RedirectablePatcher
         Session $session,
         CheckoutDropper $checkoutDropper,
         Logger $logger,
-        ApiErrorDataExtractor $apiErrorDataExtractor
+        ApiErrorExtractor $apiErrorDataExtractor
     ) {
 
         $this->orderFactory = $orderFactory;
@@ -115,8 +115,8 @@ class RedirectablePatcher
         try {
             $paymentPatcher->execute();
         } catch (PayPalConnectionException $exc) {
-            $errorData = $this->apiErrorDataExtractor->extractByException($exc);
-            $this->checkoutDropper->abortSessionBecauseOfApiError($errorData);
+            $apiError = $this->apiErrorDataExtractor->extractByException($exc);
+            $this->checkoutDropper->abortSessionBecauseOfApiError($apiError);
         }
 
         wp_enqueue_script('paypalplus-woocommerce-plus-paypal-redirect');

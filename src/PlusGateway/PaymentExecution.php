@@ -13,7 +13,7 @@ namespace WCPayPalPlus\PlusGateway;
 use Inpsyde\Lib\PayPal\Exception\PayPalConnectionException;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
-use WCPayPalPlus\Api\ErrorData\ApiErrorDataExtractor;
+use WCPayPalPlus\Api\ErrorData\ApiErrorExtractor;
 use WCPayPalPlus\ExpressCheckoutGateway\PaymentExecutionTrait;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Payment\PaymentExecutionFactory;
@@ -57,7 +57,7 @@ class PaymentExecution
     private $checkoutDropper;
 
     /**
-     * @var ApiErrorDataExtractor
+     * @var ApiErrorExtractor
      */
     private $apiErrorDataExtractor;
 
@@ -68,7 +68,7 @@ class PaymentExecution
      * @param PaymentExecutionFactory $paymentExecutionFactory
      * @param Logger $logger
      * @param CheckoutDropper $checkoutDropper
-     * @param ApiErrorDataExtractor $apiErrorDataExtractor
+     * @param ApiErrorExtractor $apiErrorDataExtractor
      */
     public function __construct(
         OrderFactory $orderFactory,
@@ -76,7 +76,7 @@ class PaymentExecution
         PaymentExecutionFactory $paymentExecutionFactory,
         Logger $logger,
         CheckoutDropper $checkoutDropper,
-        ApiErrorDataExtractor $apiErrorDataExtractor
+        ApiErrorExtractor $apiErrorDataExtractor
     ) {
 
         $this->orderFactory = $orderFactory;
@@ -117,8 +117,8 @@ class PaymentExecution
         try {
             $payment->execute();
         } catch (PayPalConnectionException $exc) {
-            $errorData = $this->apiErrorDataExtractor->extractByException($exc);
-            $this->checkoutDropper->abortSessionBecauseOfApiError($errorData);
+            $apiError = $this->apiErrorDataExtractor->extractByException($exc);
+            $this->checkoutDropper->abortSessionBecauseOfApiError($apiError);
         }
 
         /**
