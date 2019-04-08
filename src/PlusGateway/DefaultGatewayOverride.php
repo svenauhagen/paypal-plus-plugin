@@ -68,7 +68,7 @@ class DefaultGatewayOverride
     {
         if (!$this->isValidRequest()
             || $this->repository->isDisableGatewayOverrideEnabled()
-            || $this->currentPaymentMethod === ExpressCheckoutGateway::GATEWAY_ID
+            || $this->currentPaymentMethod->payment() === ExpressCheckoutGateway::GATEWAY_ID
         ) {
             return;
         }
