@@ -10,6 +10,9 @@
 
 namespace WCPayPalPlus\PlusGateway;
 
+use \WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
+use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
+use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Setting;
 use OutOfBoundsException;
@@ -36,17 +39,25 @@ class DefaultGatewayOverride
     private $session;
 
     /**
+     * @var CurrentPaymentMethod
+     */
+    private $currentPaymentMethod;
+
+    /**
      * DefaultGatewayOverride constructor.
      * @param Setting\PlusStorable $repository
      * @param Session $session
+     * @param CurrentPaymentMethod $currentPaymentMethod
      */
     public function __construct(
         Setting\PlusStorable $repository,
-        Session $session
+        Session $session,
+        CurrentPaymentMethod $currentPaymentMethod
     ) {
 
         $this->repository = $repository;
         $this->session = $session;
+        $this->currentPaymentMethod = $currentPaymentMethod;
     }
 
     /**
@@ -57,11 +68,12 @@ class DefaultGatewayOverride
     {
         if (!$this->isValidRequest()
             || $this->repository->isDisableGatewayOverrideEnabled()
+            || $this->currentPaymentMethod === ExpressCheckoutGateway::GATEWAY_ID
         ) {
             return;
         }
 
-        $this->setChosenPaymentMethod(Gateway::GATEWAY_ID);
+        $this->setChosenPaymentMethod(PlusGateway::GATEWAY_ID);
         $this->setSessionFlag();
     }
 

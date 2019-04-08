@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\PlusGateway;
 
 use WCPayPalPlus\Api\ErrorData\ApiErrorExtractor;
+use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use function WCPayPalPlus\isGatewayDisabled;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\CredentialValidator;
@@ -48,7 +49,8 @@ class ServiceProvider implements BootstrappableServiceProvider
         $container[DefaultGatewayOverride::class] = function (Container $container) {
             return new DefaultGatewayOverride(
                 $container[PlusStorable::class],
-                $container[Session::class]
+                $container[Session::class],
+                $container[CurrentPaymentMethod::class]
             );
         };
         $container[Gateway::class] = function (Container $container) {
