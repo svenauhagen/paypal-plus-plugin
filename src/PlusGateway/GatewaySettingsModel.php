@@ -175,7 +175,7 @@ final class GatewaySettingsModel implements SettingsGatewayModel
                 'label' => esc_html_x('Disable', 'gateway-setting', 'woo-paypalplus'),
                 'default' => 'no',
                 'description' => esc_html_x(
-                    'PayPal PLUS will be selected as default payment gateway regardless of its position in the list of enabled gateways. You can turn off this behaviour here',
+                    'PayPal PLUS will be selected as default payment gateway regardless of its position in the list of enabled gateways. You can turn off this behaviour here.',
                     'gateway-setting',
                     'woo-paypalplus'
                 ),

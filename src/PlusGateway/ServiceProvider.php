@@ -91,7 +91,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         }
 
         add_action(
-            'wp_loaded',
+            'wp',
             [$container[DefaultGatewayOverride::class], 'maybeOverride']
         );
 
