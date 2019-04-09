@@ -40,6 +40,12 @@ class Message
 
         switch ($code) {
             case Codes::ERROR_INVALID_RESOURCE_ID:
+                $message = esc_html_x(
+                    'Sorry, an internal problem prevent you to complete the payment, please contact our help support. Or try a different payment method.',
+                    'api-error-code-message',
+                    'woo-paypalplus'
+                );
+                break;
             case Codes::ERROR_INSTRUMENT_DECLINED:
                 $message = esc_html_x(
                     'Sorry we cannot process your PayPal payment at the moment, please contact PayPal customer service.',
