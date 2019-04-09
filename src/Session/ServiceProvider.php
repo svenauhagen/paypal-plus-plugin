@@ -10,15 +10,16 @@
 
 namespace WCPayPalPlus\Session;
 
+use WCPayPalPlus\Gateway\CurrentPaymentMethod;
+use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
-use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
 use WooCommerce;
 
 /**
  * Class ServiceProvider
  * @package WCPayPalPlus\Session
  */
-class ServiceProvider implements ServiceProviderInterface
+class ServiceProvider implements BootstrappableServiceProvider
 {
     /**
      * @inheritdoc
@@ -30,5 +31,22 @@ class ServiceProvider implements ServiceProviderInterface
                 $container[WooCommerce::class]
             );
         };
+        $container[SessionCleaner::class] = function (Container $container) {
+            return new SessionCleaner(
+                $container[Session::class],
+                $container[CurrentPaymentMethod::class]
+            );
+        };
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function bootstrap(Container $container)
+    {
+        add_filter(
+            'template_redirect',
+            [$container[SessionCleaner::class], 'cleanByReferer']
+        );
     }
 }

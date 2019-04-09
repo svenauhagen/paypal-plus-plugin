@@ -21,6 +21,7 @@ use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Payment\PaymentPatcher;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Payment\PaymentProcessException;
+use WCPayPalPlus\Session\SessionCleaner;
 use WCPayPalPlus\Setting\ExpressCheckoutRepositoryTrait;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\GatewaySharedSettingsTrait;
@@ -112,6 +113,11 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
     private $apiErrorDataExtractor;
 
     /**
+     * @var SessionCleaner
+     */
+    private $sessionCleaner;
+
+    /**
      * Gateway constructor.
      * @param WooCommerce $wooCommerce
      * @param CredentialValidator $credentialValidator
@@ -124,6 +130,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
      * @param PaymentPatchFactory $paymentPatchFactory
      * @param Logger $logger
      * @param ApiErrorExtractor $apiErrorDataExtractor
+     * @param SessionCleaner $sessionCleaner
      */
     public function __construct(
         WooCommerce $wooCommerce,
@@ -136,7 +143,8 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         CheckoutDropper $checkoutDropper,
         PaymentPatchFactory $paymentPatchFactory,
         Logger $logger,
-        ApiErrorExtractor $apiErrorDataExtractor
+        ApiErrorExtractor $apiErrorDataExtractor,
+        SessionCleaner $sessionCleaner
     ) {
 
         $this->wooCommerce = $wooCommerce;
@@ -151,6 +159,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         $this->logger = $logger;
         $this->id = self::GATEWAY_ID;
         $this->apiErrorDataExtractor = $apiErrorDataExtractor;
+        $this->sessionCleaner = $sessionCleaner;
 
         $this->init_form_fields();
         $this->init_settings();
@@ -226,6 +235,7 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
             $apiError = $this->apiErrorDataExtractor->extractByException($exc);
 
             if (in_array($apiError->code(), Codes::REDIRECTABLE_ERROR_CODES, true)) {
+                $this->sessionCleaner->cleanChosenPaymentMethod();
                 return [
                     'result' => 'success',
                     'redirect' => $this->redirectPayPalUrl(),

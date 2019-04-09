@@ -21,6 +21,7 @@ use WCPayPalPlus\Nonce;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Session\Session;
+use WCPayPalPlus\Session\SessionCleaner;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
 use WCPayPalPlus\Setting\SharedSettingsModel;
 use WCPayPalPlus\Utils\AjaxJsonRequest;
@@ -67,12 +68,12 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[CheckoutDropper::class],
                 $container[PaymentPatchFactory::class],
                 $container[Logger::class],
-                $container[ApiErrorExtractor::class]
+                $container[ApiErrorExtractor::class],
+                $container[SessionCleaner::class]
             );
         };
         $container[CheckoutGatewayOverride::class] = function (Container $container) {
             return new CheckoutGatewayOverride(
-                $container[Session::class],
                 $container[CurrentPaymentMethod::class]
             );
         };
@@ -206,10 +207,6 @@ class ServiceProvider implements BootstrappableServiceProvider
             10
         );
 
-        add_filter(
-            'template_redirect',
-            [$container[CheckoutGatewayOverride::class], 'maybeReset']
-        );
         add_filter(
             'woocommerce_available_payment_gateways',
             [$container[CheckoutGatewayOverride::class], 'maybeOverridden'],
