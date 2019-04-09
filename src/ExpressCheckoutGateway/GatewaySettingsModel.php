@@ -254,12 +254,8 @@ final class GatewaySettingsModel implements SettingsGatewayModel
                 'title' => esc_html_x('Button Label', 'gateway-setting', 'woo-paypalplus'),
                 'type' => 'select',
                 'options' => [
-                    'checkout' => esc_html_x('Checkout', 'gateway-setting', 'woo-paypalplus'),
-                    'credit' => esc_html_x('Credit', 'gateway-setting', 'woo-paypalplus'),
                     'pay' => esc_html_x('Pay', 'gateway-setting', 'woo-paypalplus'),
-                    'buynow' => esc_html_x('Buy Now', 'gateway-setting', 'woo-paypalplus'),
                     'paypal' => esc_html_x('PayPal', 'gateway-setting', 'woo-paypalplus'),
-                    'installment' => esc_html_x('Installment', 'gateway-setting', 'woo-paypalplus'),
                 ],
                 'default' => self::DEFAULT_BUTTON_LABEL,
                 'description' => esc_html_x(
