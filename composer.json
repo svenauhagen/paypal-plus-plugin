@@ -3,7 +3,7 @@
     "description": "PayPal PLUS - the official WordPress Plugin for WooCommerce",
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "license": "GPL-2.0-or-later",
+    "license": "GPLv2.0+",
     "type": "wordpress-plugin",
     "authors": [
         {
