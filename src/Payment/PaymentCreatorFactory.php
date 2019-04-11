@@ -11,14 +11,8 @@
 namespace WCPayPalPlus\Payment;
 
 use WCPayPalPlus\Api\ApiContextFactory;
-use WCPayPalPlus\Order\OrderFactory;
-use WCPayPalPlus\Session\Session;
+use WCPayPalPlus\Order\OrderDataProviderFactory;
 use WCPayPalPlus\Setting\Storable;
-use WC_Order;
-use WC_Order_Refund;
-use RuntimeException;
-use Exception;
-use WooCommerce;
 
 /**
  * Class PaymentCreatorFactory
@@ -27,35 +21,17 @@ use WooCommerce;
 class PaymentCreatorFactory
 {
     /**
-     * @var OrderFactory
+     * @var OrderDataProviderFactory
      */
-    private $orderFactory;
-
-    /**
-     * @var WooCommerce
-     */
-    private $wooCommerce;
-
-    /**
-     * @var Session
-     */
-    private $session;
+    private $orderDataFactory;
 
     /**
      * PaymentCreatorFactory constructor.
-     * @param WooCommerce $wooCommerce
-     * @param OrderFactory $orderFactory
-     * @param Session $session
+     * @param OrderDataProviderFactory $orderDataFactory
      */
-    public function __construct(
-        WooCommerce $wooCommerce,
-        OrderFactory $orderFactory,
-        Session $session
-    ) {
-
-        $this->wooCommerce = $wooCommerce;
-        $this->orderFactory = $orderFactory;
-        $this->session = $session;
+    public function __construct(OrderDataProviderFactory $orderDataFactory)
+    {
+        $this->orderDataFactory = $orderDataFactory;
     }
 
     /**
@@ -69,13 +45,7 @@ class PaymentCreatorFactory
         assert(is_string($returnUrl));
         assert(is_string($notifyUrl));
 
-        try {
-            $orderData = $this->retrieveOrderByRequest($this->session);
-            $orderData = new OrderData($orderData);
-        } catch (Exception $exc) {
-            $orderData = new CartData($this->wooCommerce->cart);
-        }
-
+        $orderData = $this->orderDataFactory->create();
         $cancelUrl = $settings->cancelUrl();
         $experienceProfile = $settings->experienceProfileId();
 
@@ -88,26 +58,5 @@ class PaymentCreatorFactory
         );
 
         return new PaymentCreator($paymentData, $orderData);
-    }
-
-    /**
-     * @param Session $session
-     * @return WC_Order|WC_Order_Refund
-     * @throws RuntimeException
-     */
-    private function retrieveOrderByRequest(Session $session)
-    {
-        $key = filter_input(INPUT_GET, 'key');
-
-        if (!$key) {
-            throw new RuntimeException('Key for order not provided by the current request.');
-        }
-
-        $order = $this->orderFactory->createByOrderKey($key);
-
-        // TODO Understand why the ppp_order_id is set twice.
-        $session->set(Session::ORDER_ID, $order->get_id());
-
-        return $order;
     }
 }

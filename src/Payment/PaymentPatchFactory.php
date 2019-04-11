@@ -13,6 +13,7 @@ namespace WCPayPalPlus\Payment;
 use Inpsyde\Lib\PayPal\Rest\ApiContext;
 use WC_Order;
 use WCPayPalPlus\Gateway\CurrentPaymentMethod;
+use WCPayPalPlus\Order\OrderDataProviderFactory;
 
 /**
  * Class PaymentPatchFactory
@@ -26,12 +27,22 @@ class PaymentPatchFactory
     private $currentPaymentMethod;
 
     /**
+     * @var OrderDataProviderFactory
+     */
+    private $orderDataProviderFactory;
+
+    /**
      * PaymentPatchFactory constructor.
      * @param CurrentPaymentMethod $currentPaymentMethod
+     * @param OrderDataProviderFactory $orderDataProviderFactory
      */
-    public function __construct(CurrentPaymentMethod $currentPaymentMethod)
-    {
+    public function __construct(
+        CurrentPaymentMethod $currentPaymentMethod,
+        OrderDataProviderFactory $orderDataProviderFactory
+    ) {
+
         $this->currentPaymentMethod = $currentPaymentMethod;
+        $this->orderDataProviderFactory = $orderDataProviderFactory;
     }
 
     /**
@@ -47,8 +58,8 @@ class PaymentPatchFactory
         assert(is_string($paymentId));
         assert(is_string($invoicePrefix));
 
-        $orderData = new OrderData($order);
-        $patchProvider = new PatchProvider($order, $orderData);
+        $orderDataProvider = $this->orderDataProviderFactory->create();
+        $patchProvider = new PatchProvider($order, $orderDataProvider);
         $patchData = new PaymentPatchData(
             $order,
             $paymentId,

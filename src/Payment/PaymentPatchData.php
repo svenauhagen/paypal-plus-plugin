@@ -164,13 +164,14 @@ class PaymentPatchData
         $paymentMethod = $this->currentPaymentMethod->payment();
 
         $patches = [
-            $this->patchProvider->get_payment_amount_patch(),
-            $this->patchProvider->get_custom_patch(),
-            $this->patchProvider->get_invoice_patch($this->invoicePrefix),
+            $this->patchProvider->amount(),
+            $this->patchProvider->custom(),
+            $this->patchProvider->invoice($this->invoicePrefix),
+            $this->patchProvider->items(),
         ];
 
         if ($orderNeedProcessing && $paymentMethod !== ExpressCheckoutGateway::GATEWAY_ID) {
-            $patches[] = $this->patchProvider->get_shipping_patch();
+            $patches[] = $this->patchProvider->shipping();
         }
 
         return $patches;

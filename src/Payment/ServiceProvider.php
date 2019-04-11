@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\Payment;
 
 use WCPayPalPlus\Gateway\CurrentPaymentMethod;
+use WCPayPalPlus\Order\OrderDataProviderFactory;
 use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
@@ -30,9 +31,7 @@ class ServiceProvider implements BootstrappableServiceProvider
     {
         $container[PaymentCreatorFactory::class] = function (Container $container) {
             return new PaymentCreatorFactory(
-                $container[WooCommerce::class],
-                $container[OrderFactory::class],
-                $container[Session::class]
+                $container[OrderDataProviderFactory::class]
             );
         };
         $container[PaymentExecutionFactory::class] = function (Container $container) {
@@ -42,7 +41,8 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[PaymentPatchFactory::class] = function (Container $container) {
             return new PaymentPatchFactory(
-                $container[CurrentPaymentMethod::class]
+                $container[CurrentPaymentMethod::class],
+                $container[OrderDataProviderFactory::class]
             );
         };
     }

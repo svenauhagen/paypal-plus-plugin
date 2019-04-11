@@ -14,6 +14,7 @@ use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\ServiceProvider as ServiceProviderInterface;
+use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Setting\Storable;
 use WooCommerce;
 
@@ -42,6 +43,13 @@ class ServiceProvider implements ServiceProviderInterface
                 $container[Request::class],
                 $container[Storable::class],
                 $container[Logger::class]
+            );
+        };
+        $container[OrderDataProviderFactory::class] = function (Container $container) {
+            return new OrderDataProviderFactory(
+                $container[OrderFactory::class],
+                $container[Session::class],
+                $container[WooCommerce::class]
             );
         };
     }

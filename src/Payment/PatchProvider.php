@@ -23,6 +23,7 @@ use WCPayPalPlus\Utils\PriceFormatterTrait;
 class PatchProvider
 {
     use PriceFormatterTrait;
+    use ItemsProviderTrait;
 
     const RECEIPT_NAME = 'recipient_name';
     const LINE_ONE = 'line1';
@@ -40,20 +41,22 @@ class PatchProvider
     private $order;
 
     /**
-     * @var OrderData
+     * OrderDataProvider consumed by `ItemsProviderTrait`
+     *
+     * @var OrderDataProvider
      */
-    private $orderData;
+    private $orderDataProvider;
 
     /**
      * PatchProvider constructor.
      *
      * @param WC_Order $order WooCommerce Order object.
-     * @param OrderData $orderData Order data provider.
+     * @param OrderDataProvider $orderDataProvider
      */
-    public function __construct(WC_Order $order, OrderData $orderData)
+    public function __construct(WC_Order $order, OrderDataProvider $orderDataProvider)
     {
         $this->order = $order;
-        $this->orderData = $orderData;
+        $this->orderDataProvider = $orderDataProvider;
     }
 
     /**
@@ -61,7 +64,7 @@ class PatchProvider
      * @return Patch
      * @throws InvalidArgumentException
      */
-    public function get_invoice_patch($invoice_prefix)
+    public function invoice($invoice_prefix)
     {
         $invoice_number = preg_replace('/[^a-zA-Z0-9]/', '', $this->order->get_order_number());
 
@@ -78,7 +81,7 @@ class PatchProvider
      * @return Patch
      * @throws InvalidArgumentException
      */
-    public function get_custom_patch()
+    public function custom()
     {
         $custom_patch = new Patch();
         $custom_patch
@@ -93,20 +96,20 @@ class PatchProvider
      * @return Patch
      * @throws InvalidArgumentException
      */
-    public function get_payment_amount_patch()
+    public function amount()
     {
         $replacePatch = new Patch();
 
         $taxes = !wc_prices_include_tax()
-            ? $this->orderData->totalTaxes()
-            : $this->orderData->shippingTax();
+            ? $this->orderDataProvider->totalTaxes()
+            : $this->orderDataProvider->shippingTax();
 
         $paymentData = [
-            'total' => $this->orderData->total(),
+            'total' => $this->orderDataProvider->total(),
             'currency' => get_woocommerce_currency(),
             'details' => [
-                'subtotal' => $this->orderData->subTotal(),
-                'shipping' => $this->orderData->shippingTotal(),
+                'subtotal' => $this->orderDataProvider->subTotal(),
+                'shipping' => $this->orderDataProvider->shippingTotal(),
                 'tax' => $taxes,
             ],
         ];
@@ -123,11 +126,29 @@ class PatchProvider
      * @return Patch
      * @throws InvalidArgumentException
      */
-    public function get_shipping_patch()
+    public function items()
     {
-        $addressData = $this->has_shipping_data()
-            ? $this->get_shipping_address_data()
-            : $this->get_billing_address_data();
+        $itemsPatch = new Patch();
+
+        $items = $this->itemsList();
+
+        $itemsPatch
+            ->setOp('replace')
+            ->setPath('/transactions/0/item_list')
+            ->setValue($items);
+
+        return $itemsPatch;
+    }
+
+    /**
+     * @return Patch
+     * @throws InvalidArgumentException
+     */
+    public function shipping()
+    {
+        $addressData = $this->shippingData()
+            ? $this->shippingAddressData()
+            : $this->billingAddressData();
 
         $shippingPatch = new Patch();
         $shippingPatch
@@ -143,7 +164,7 @@ class PatchProvider
      *
      * @return bool
      */
-    private function has_shipping_data()
+    private function shippingData()
     {
         return !empty($this->order->get_shipping_country());
     }
@@ -153,7 +174,7 @@ class PatchProvider
      *
      * @return array
      */
-    private function get_shipping_address_data()
+    private function shippingAddressData()
     {
         return [
             self::RECEIPT_NAME => $this->order->get_shipping_first_name() . ' ' . $this->order->get_shipping_last_name(),
@@ -171,7 +192,7 @@ class PatchProvider
      *
      * @return array
      */
-    private function get_billing_address_data()
+    private function billingAddressData()
     {
         return [
             self::RECEIPT_NAME => $this->order->get_billing_first_name() . ' ' . $this->order->get_billing_last_name(),
