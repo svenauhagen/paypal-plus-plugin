@@ -72,7 +72,6 @@ function copyPackageFiles (done) {
         '!./lib/__classes',
         './public/**/*',
         './src/**/*',
-        './LICENSE',
         './paypalplus-woocommerce.php',
         './readme.txt',
         './uninstall.php',
