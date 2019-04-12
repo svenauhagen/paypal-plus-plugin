@@ -130,6 +130,19 @@ Vendors usually get the money directly after the transaction, no matter which of
 
 At the moment, PayPal Plus can only be used by vendors in Germany. But their buyers can buy and pay worldwide.
 
+= How can I disable the PayPal Express Checkout button?
+
+The Paypal Express Checkout button is available in the following places:
+– Single Product Page
+– Cart Page
+– Mini Cart
+
+For each of these, you can decide to enable/disable the button.
+To do so just go into WooCommerce > Settings and select the Paypal Express Checkout settings page
+
+In the page you get is possible to select where you want to see the buttons.
+
+If you don’t want to have Express Checkout Gateway enabled just disable it from the same page.
 
 == Screenshots ==
 
