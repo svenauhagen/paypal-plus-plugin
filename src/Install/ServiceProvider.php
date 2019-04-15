@@ -28,8 +28,7 @@ class ServiceProvider implements BootstrappableServiceProvider
     {
         $container[Installer::class] = function (Container $container) {
             return new Installer(
-                $container[SharedPersistor::class],
-                $container[ExpressCheckoutGateway::class]
+                $container[SharedPersistor::class]
             );
         };
     }
