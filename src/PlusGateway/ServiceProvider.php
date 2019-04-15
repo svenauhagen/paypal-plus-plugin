@@ -85,17 +85,25 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function bootstrap(Container $container)
     {
-        $gatewayId = Gateway::GATEWAY_ID;
         $gateway = $container[Gateway::class];
 
         if (!is_admin() && isGatewayDisabled($gateway)) {
             return;
         }
 
-        add_action(
-            'wp',
-            [$container[DefaultGatewayOverride::class], 'maybeOverride']
-        );
+        is_admin() and $this->bootstrapBackend($container);
+        !is_admin() and $this->bootstrapFrontend($container);
+    }
+
+    /**
+     * Bootstrap Backend
+     *
+     * @param Container $container
+     */
+    private function bootstrapBackend(Container $container)
+    {
+        $gatewayId = Gateway::GATEWAY_ID;
+        $gateway = $container[Gateway::class];
 
         add_filter('woocommerce_payment_gateways', function ($methods) use ($gateway) {
             $methods[Gateway::class] = $gateway;
@@ -107,10 +115,24 @@ class ServiceProvider implements BootstrappableServiceProvider
             [$gateway, 'process_admin_options'],
             10
         );
+
         add_action(
             'woocommerce_api_' . $gatewayId,
             [$container[PaymentExecution::class], 'execute'],
             12
+        );
+    }
+
+    /**
+     * Bootstrap Frontend
+     *
+     * @param Container $container
+     */
+    private function bootstrapFrontend(Container $container)
+    {
+        add_action(
+            'wp',
+            [$container[DefaultGatewayOverride::class], 'maybeOverride']
         );
     }
 }

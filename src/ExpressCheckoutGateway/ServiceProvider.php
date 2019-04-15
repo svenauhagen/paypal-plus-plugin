@@ -145,9 +145,7 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function bootstrap(Container $container)
     {
-        $gatewayId = Gateway::GATEWAY_ID;
         $gateway = $container[Gateway::class];
-        $payPalPaymentExecution = $container[PayPalPaymentExecution::class];
 
         add_filter('woocommerce_payment_gateways', function ($methods) use ($gateway) {
             $methods[Gateway::class] = $gateway;
@@ -159,6 +157,22 @@ class ServiceProvider implements BootstrappableServiceProvider
         if (!is_admin() && (isGatewayDisabled($gateway) || areAllExpressCheckoutButtonsDisabled())) {
             return;
         }
+
+        $this->bootstrapAjaxRequests($container);
+
+        !is_admin() and $this->bootstrapFrontend($container);
+    }
+
+    /**
+     * Bootstrap Frontend
+     *
+     * @param Container $container
+     */
+    private function bootstrapFrontend(Container $container)
+    {
+        $gatewayId = Gateway::GATEWAY_ID;
+        $gateway = $container[Gateway::class];
+        $payPalPaymentExecution = $container[PayPalPaymentExecution::class];
 
         add_filter(
             'woocommerce_cart_needs_shipping_address',
@@ -218,7 +232,6 @@ class ServiceProvider implements BootstrappableServiceProvider
         });
 
         $this->bootstrapButtons($container);
-        $this->bootstrapAjaxRequests($container);
     }
 
     /**
