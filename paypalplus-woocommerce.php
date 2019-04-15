@@ -10,7 +10,6 @@
  * WC requires at least: 3.2.0
  * WC tested up to: 3.5.7
  * License:     GPLv2+
- * License URI: https://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain: woo-paypalplus
  * Domain Path: /languages/
  */
