@@ -154,6 +154,9 @@ If you don’t want to have Express Checkout Gateway enabled just disable it fro
 6. The PayPal Plus form when paying upon invoice.
 
 == Changelog ==
+= 2.0.1 =
+ - Fix: Do not execute Frontend actions/filters in Admin context because WooCommerce Session isn't allowed in admin
+
 = 2.0.0 =
  - Fix: IPN return 500 because of custom patch is not set correctly on PayPal
  - Fix: Do not send shipping address for digital goods
