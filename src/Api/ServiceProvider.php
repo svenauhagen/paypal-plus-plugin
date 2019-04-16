@@ -70,11 +70,14 @@ class ServiceProvider implements IntegrationServiceProvider, BootstrappableServi
             ]
         );
 
-        if (\is_writable(\get_temp_dir())) {
+        $logDir = (defined('WC_LOG_DIR') && WC_LOG_DIR) ? WC_LOG_DIR : \get_temp_dir();
+        $logDir = untrailingslashit($logDir);
+
+        if (\is_writable($logDir)) {
             $container[PayPalConfigManager::class]->addConfigs(
                 [
                     'cache.enabled' => 'true',
-                    'cache.FileName' => \get_temp_dir() . '/.ppp_auth.cache',
+                    'cache.FileName' => "{$logDir}/.ppp_auth.cache",
                 ]
             );
         }

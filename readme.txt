@@ -158,6 +158,7 @@ If you don’t want to have Express Checkout Gateway enabled just disable it fro
  - Fix: PayPal Express Checkout doesn't support formal and informal locales
  - Fix: Do not execute Frontend actions/filters in Admin context because WooCommerce Session isn't allowed in admin
  - Fix: Do not activate PayPal Express Checkout automatically on plugin installation or update
+ - Fix: Use WooCommerce Logs instead of system temporary directory
 
 = 2.0.0 =
  - Fix: IPN return 500 because of custom patch is not set correctly on PayPal
