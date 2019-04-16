@@ -160,7 +160,25 @@ class ServiceProvider implements BootstrappableServiceProvider
 
         $this->bootstrapAjaxRequests($container);
 
+        is_admin() and $this->bootstrapBackend($container);
         !is_admin() and $this->bootstrapFrontend($container);
+    }
+
+    /**
+     * Bootstrap Backend
+     *
+     * @param Container $container
+     */
+    private function bootstrapBackend(Container $container)
+    {
+        $gatewayId = Gateway::GATEWAY_ID;
+        $gateway = $container[Gateway::class];
+
+        add_action(
+            "woocommerce_update_options_payment_gateways_{$gatewayId}",
+            [$gateway, 'process_admin_options'],
+            10
+        );
     }
 
     /**
@@ -170,8 +188,6 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     private function bootstrapFrontend(Container $container)
     {
-        $gatewayId = Gateway::GATEWAY_ID;
-        $gateway = $container[Gateway::class];
         $payPalPaymentExecution = $container[PayPalPaymentExecution::class];
 
         add_filter(
@@ -213,12 +229,6 @@ class ServiceProvider implements BootstrappableServiceProvider
         add_action(
             'woocommerce_checkout_process',
             [$container[CheckoutAddressOverride::class], 'addAddressesToCheckoutPostVars']
-        );
-
-        add_action(
-            "woocommerce_update_options_payment_gateways_{$gatewayId}",
-            [$gateway, 'process_admin_options'],
-            10
         );
 
         add_filter(
