@@ -74,5 +74,21 @@ class ServiceProvider implements BootstrappableServiceProvider
             'wp_enqueue_scripts',
             [$container[AssetManager::class], 'enqueueFrontendStyles']
         );
+
+        add_filter(
+            SmartButtonArguments::FILTER_LOCALE,
+            function ($locale) {
+                switch ($locale) {
+                    case 'de_DE_formal':
+                        $locale = 'de_DE';
+                        break;
+                    case 'de_CH_informal':
+                        $locale = 'de_CH';
+                        break;
+                }
+
+                return $locale;
+            }
+        );
     }
 }
