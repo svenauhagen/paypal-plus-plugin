@@ -1,6 +1,7 @@
 {
   "name": "paypalplus-woocommerce",
   "version": "2.0.0",
+  "license": "GPL-2.0-or-later",
   "description": "PayPal PLUS - the official WordPress Plugin for WooCommerce",
   "keywords": [
     "PayPal",
@@ -31,7 +32,6 @@
       "role": "Developer"
     }
   ],
-  "license": "MIT",
   "homepage": "https://bitbucket.org/inpsyde/paypalplus-woocommerce#readme",
   "main": "gulpfile.js",
   "repository": {

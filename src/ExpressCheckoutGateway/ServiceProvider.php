@@ -1,11 +1,6 @@
 <?php # -*- coding: utf-8 -*-
 /*
  * This file is part of the PayPal PLUS for WooCommerce package.
- *
- * (c) Inpsyde GmbH
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
  */
 
 namespace WCPayPalPlus\ExpressCheckoutGateway;
@@ -145,9 +140,7 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function bootstrap(Container $container)
     {
-        $gatewayId = Gateway::GATEWAY_ID;
         $gateway = $container[Gateway::class];
-        $payPalPaymentExecution = $container[PayPalPaymentExecution::class];
 
         add_filter('woocommerce_payment_gateways', function ($methods) use ($gateway) {
             $methods[Gateway::class] = $gateway;
@@ -159,6 +152,38 @@ class ServiceProvider implements BootstrappableServiceProvider
         if (!is_admin() && (isGatewayDisabled($gateway) || areAllExpressCheckoutButtonsDisabled())) {
             return;
         }
+
+        $this->bootstrapAjaxRequests($container);
+
+        is_admin() and $this->bootstrapBackend($container);
+        !is_admin() and $this->bootstrapFrontend($container);
+    }
+
+    /**
+     * Bootstrap Backend
+     *
+     * @param Container $container
+     */
+    private function bootstrapBackend(Container $container)
+    {
+        $gatewayId = Gateway::GATEWAY_ID;
+        $gateway = $container[Gateway::class];
+
+        add_action(
+            "woocommerce_update_options_payment_gateways_{$gatewayId}",
+            [$gateway, 'process_admin_options'],
+            10
+        );
+    }
+
+    /**
+     * Bootstrap Frontend
+     *
+     * @param Container $container
+     */
+    private function bootstrapFrontend(Container $container)
+    {
+        $payPalPaymentExecution = $container[PayPalPaymentExecution::class];
 
         add_filter(
             'woocommerce_cart_needs_shipping_address',
@@ -201,12 +226,6 @@ class ServiceProvider implements BootstrappableServiceProvider
             [$container[CheckoutAddressOverride::class], 'addAddressesToCheckoutPostVars']
         );
 
-        add_action(
-            "woocommerce_update_options_payment_gateways_{$gatewayId}",
-            [$gateway, 'process_admin_options'],
-            10
-        );
-
         add_filter(
             'woocommerce_available_payment_gateways',
             [$container[CheckoutGatewayOverride::class], 'maybeOverridden'],
@@ -218,7 +237,6 @@ class ServiceProvider implements BootstrappableServiceProvider
         });
 
         $this->bootstrapButtons($container);
-        $this->bootstrapAjaxRequests($container);
     }
 
     /**

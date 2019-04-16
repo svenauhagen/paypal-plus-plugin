@@ -1,11 +1,6 @@
 <?php
 /*
  * This file is part of the PayPal PLUS for WooCommerce package.
- *
- * (c) Inpsyde GmbH
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
  */
 
 namespace WCPayPalPlus\Assets;
@@ -73,6 +68,22 @@ class ServiceProvider implements BootstrappableServiceProvider
         add_action(
             'wp_enqueue_scripts',
             [$container[AssetManager::class], 'enqueueFrontendStyles']
+        );
+
+        add_filter(
+            SmartButtonArguments::FILTER_LOCALE,
+            function ($locale) {
+                switch ($locale) {
+                    case 'de_DE_formal':
+                        $locale = 'de_DE';
+                        break;
+                    case 'de_CH_informal':
+                        $locale = 'de_CH';
+                        break;
+                }
+
+                return $locale;
+            }
         );
     }
 }

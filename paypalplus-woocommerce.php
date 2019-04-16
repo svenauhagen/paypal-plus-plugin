@@ -186,6 +186,9 @@ $bootstrap = \Closure::bind(function () {
     }
 
     add_action('plugins_loaded', __NAMESPACE__ . '\\bootstrap', 0);
+    add_action('init', function () {
+        load_plugin_textdomain('woo-paypalplus');
+    });
 }, null);
 
 $bootstrap();
