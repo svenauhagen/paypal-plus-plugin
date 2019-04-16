@@ -3,7 +3,7 @@ Contributors: inpsyde, biont, cocreation
 Tags: paypal, paypal plus, express checkout, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
 Requires at least: 4.4
 Tested up to: 5.1.1
-Stable tag: 2.0.0
+Stable tag: 2.0.1
 Requires PHP: 5.6
 License: GPLv2+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
@@ -56,7 +56,7 @@ Please read the FAQ (frequently asked questions) first and make sure you have in
 
 = Minimum Requirements =
 
-* WooCommerce >= 3.0
+* WooCommerce >= 3.2.0
 Further minimum requirements are determined by the requirements for WooCommerce:
 * PHP 5.6 or greater
 * MySQL 5.6 or greater
