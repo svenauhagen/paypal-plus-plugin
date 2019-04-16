@@ -86,6 +86,17 @@ class ServiceProvider implements BootstrappableServiceProvider
             return;
         }
 
+        add_filter('woocommerce_payment_gateways', function ($methods) use ($gateway) {
+            $methods[Gateway::class] = $gateway;
+            return $methods;
+        });
+
+        add_action(
+            'woocommerce_api_' . Gateway::GATEWAY_ID,
+            [$container[PaymentExecution::class], 'execute'],
+            12
+        );
+
         is_admin() and $this->bootstrapBackend($container);
         !is_admin() and $this->bootstrapFrontend($container);
     }
@@ -100,21 +111,10 @@ class ServiceProvider implements BootstrappableServiceProvider
         $gatewayId = Gateway::GATEWAY_ID;
         $gateway = $container[Gateway::class];
 
-        add_filter('woocommerce_payment_gateways', function ($methods) use ($gateway) {
-            $methods[Gateway::class] = $gateway;
-            return $methods;
-        });
-
         add_action(
             "woocommerce_update_options_payment_gateways_{$gatewayId}",
             [$gateway, 'process_admin_options'],
             10
-        );
-
-        add_action(
-            'woocommerce_api_' . $gatewayId,
-            [$container[PaymentExecution::class], 'execute'],
-            12
         );
     }
 
