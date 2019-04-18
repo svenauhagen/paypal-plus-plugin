@@ -88,7 +88,7 @@ class WooCommerceSession implements Session
     /**
      * Lazy load the session because WooCommerce set the session during init hook
      *
-     * @return WC_Session_Handler
+     * @return WC_Session_Handler|NullWooCommerceSession
      *
      * phpcs:disable Generic.NamingConventions.ConstructorName.OldStyle
      */
@@ -96,17 +96,21 @@ class WooCommerceSession implements Session
     {
         // phpcs:enable
 
-        if (!did_action('init')) {
+        if (!did_action('woocommerce_init')) {
             _doing_it_wrong(__METHOD__, 'Cannot be called before WordPress init.', '2.0.0');
         }
 
-        static $session = null;
-
-        if ($session !== null) {
-            return $session;
-        }
+        static $nullSessionObject = null;
 
         $session = $this->wooCommerce->session;
+
+        if (!$session && $nullSessionObject === null) {
+            $nullSessionObject = new NullWooCommerceSession();
+        }
+
+        if (!$session) {
+            return $nullSessionObject;
+        }
 
         return $session;
     }
