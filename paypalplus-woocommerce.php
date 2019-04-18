@@ -85,10 +85,10 @@ $bootstrap = \Closure::bind(function () {
             return false;
         }
 
-        if (version_compare(wc()->version, '3.0.0', '<')) {
+        if (version_compare(wc()->version, '3.2.0', '<')) {
             adminNotice(
                 __(
-                    'PayPal PLUS requires WooCommerce version 3.0 or higher .',
+                    'PayPal PLUS requires WooCommerce version 3.2 or higher.',
                     'woo-paypalplus'
                 )
             );
