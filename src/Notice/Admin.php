@@ -44,7 +44,10 @@ class Admin
 
         if ($this->id === false || $this->content === false) {
             $this->id = uniqid();
-            $this->content = file_get_contents(self::NOTICE_URL);
+
+            $apiResponse = wp_remote_get(self::NOTICE_URL, ['timeout' => 3]);
+            $this->content = wp_remote_retrieve_body($apiResponse);
+
             set_site_transient(
                 self::SITE_TRANSIENT_MESSAGE_ID,
                 $this->id
