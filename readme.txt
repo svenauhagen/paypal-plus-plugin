@@ -138,9 +138,9 @@ The Paypal Express Checkout button is available in the following places:
 – Mini Cart
 
 For each of these, you can decide to enable/disable the button.
-To do so just go into WooCommerce > Settings and select the Paypal Express Checkout settings page
+To do so just go into WooCommerce > Settings and select the Paypal Express Checkout settings page.
 
-In the page you get is possible to select where you want to see the buttons.
+In the page you get it is possible to select where you want to see the buttons.
 
 If you don’t want to have Express Checkout Gateway enabled just disable it from the same page.
 
