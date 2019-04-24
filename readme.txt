@@ -3,7 +3,7 @@ Contributors: inpsyde, biont, cocreation
 Tags: paypal, paypal plus, express checkout, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
 Requires at least: 4.4
 Tested up to: 5.1.1
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 Requires PHP: 5.6
 License: GPLv2+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
@@ -154,6 +154,10 @@ If you don’t want to have Express Checkout Gateway enabled just disable it fro
 6. The PayPal Plus form when paying upon invoice.
 
 == Changelog ==
+= 2.0.2 =
+ - Fix: Admin Notice and `file_get_contents` unable to retrieve content from Url
+ - Fix: Fatal Error in WooCommerce 3.6 because of WooCommerceSession methods are accessed too early
+
 = 2.0.1 =
  - Fix: PayPal Express Checkout doesn't support formal and informal locales
  - Fix: Do not execute Frontend actions/filters in Admin context because WooCommerce Session isn't allowed in admin
@@ -178,11 +182,14 @@ If you don’t want to have Express Checkout Gateway enabled just disable it fro
  - Fix: Error processing checkout - with Germanized and gateway fee
  - Add: BN-Codes
  - Add: Change the PayPalPlus description on payment overview page
+
 = 1.0.8 =
-Fixed compatibility with WooCommerce 3.4.0
+ - Fix: compatibility with WooCommerce 3.4.0
+
 = 1.0.7 =
  - Fix gateway description hidden on checkout page
  - Fix compatibility with WooCommerce 3.3.5
+
 = 1.0.6 =
  - Fix incompatibility with plugins changing the order number
  - Fix -1 for error during checkout
@@ -191,14 +198,17 @@ Fixed compatibility with WooCommerce 3.4.0
  - Fix redirecting to blank page when credit card is not accepted
  - Fix incompatibility with jQuery 3.x
  - Fix legal note is shown with paragraph tag in email
+
 = 1.0.5 =
  - Fix checkout error when adding or removing coupons on checkout page
  - Fix download of log file
  - Add WC compatibility headers
+
 = 1.0.4 =
  - Make PayPal frame always visible
  - Allow cancelation URL to be set to custom a page
  - Fix handling of coupons
+
 = 1.0.3 =
  - Allow user to download log
  - Fix to allow working with prices inclusive of tax
@@ -206,10 +216,12 @@ Fixed compatibility with WooCommerce 3.4.0
  - Another fix for price decimals
  - Move PayPal SDK in dedicated namespace to avoid collisions
  - Fix a possible shutdown if session data was cleared unexpectedly while performing the payment
+
 = 1.0.2 =
  - Fix address patch request not always being included.
  - Fix an error with price decimals.
  - Improve session data handling.
+
 = 1.0 =
 Initial Release
 
