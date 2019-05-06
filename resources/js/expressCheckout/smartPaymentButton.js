@@ -78,42 +78,39 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
 
         formData.delete('add-to-cart')
 
-        return this.request
-          .submit(formData)
-          .then(response => {
-            if (!'data' in response) {
-              console.warn('Unable to process the payment, server did not response with valid data')
-              try {
-                window.location = this.cancelUrl
-              } catch (e) {
-                return
-              }
+        return this.request.submit(formData).then(response => {
+          if (!'data' in response) {
+            console.warn('Unable to process the payment, server did not response with valid data')
+            try {
+              window.location = this.cancelUrl
+            } catch (e) {
+              return
             }
+          }
 
-            if (!response.success) {
-              try {
-                window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
-              } catch (e) {
-                return
-              }
+          if (!response.success) {
+            try {
+              window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
+            } catch (e) {
+              return
             }
+          }
 
-            const orderId = 'orderId' in response.data ? response.data.orderId : ''
+          const orderId = 'orderId' in response.data ? response.data.orderId : ''
 
-            if (!orderId) {
-              try {
-                window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
-              } catch (e) {
-                return
-              }
+          if (!orderId) {
+            try {
+              window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
+            } catch (e) {
+              return
             }
+          }
 
-            return orderId
-          })
-          .catch(error => {
-            const textStatus = 'textStatus' in error ? error.textStatus : 'Unknown Error during payment'
-            console.warn(textStatus)
-          })
+          return orderId
+        }).catch(error => {
+          const textStatus = 'textStatus' in error ? error.textStatus : 'Unknown Error during payment'
+          console.warn(textStatus)
+        })
       },
 
       /**
@@ -135,28 +132,26 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
 
         formData.delete('add-to-cart')
 
-        return this.request
-          .submit(formData)
-          .then((response) => {
+        return this.request.submit(formData).then((response) => {
 
-            if (!response.success) {
-              try {
-                window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
-              } catch (e) {
-                return
-              }
+          if (!response.success) {
+            try {
+              window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
+            } catch (e) {
+              return
             }
+          }
 
-            let returnUrl = ''
+          let returnUrl = ''
 
-            if ('redirect_urls' in this.buttonConfiguration
-              && 'return_url' in this.buttonConfiguration.redirect_urls
-            ) {
-              returnUrl = this.buttonConfiguration.redirect_urls.return_url
-            }
+          if ('redirect_urls' in this.buttonConfiguration
+            && 'return_url' in this.buttonConfiguration.redirect_urls
+          ) {
+            returnUrl = this.buttonConfiguration.redirect_urls.return_url
+          }
 
-            returnUrl && actions.redirect(null, returnUrl)
-          })
+          returnUrl && actions.redirect(null, returnUrl)
+        })
       },
 
       /**
@@ -174,7 +169,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
       onError: (data, actions) => {
         console.log('ON ERROR', data, actions)
         // TODO Redirect to cart and show customizable notice with message.
-      }
+      },
 
     }, element)
   }
@@ -193,7 +188,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
 
     if (!this.validContexts.includes(context)) {
       throw new Error(
-        'Invalid context when try to retrieve the form data during express checkout request.'
+        'Invalid context when try to retrieve the form data during express checkout request.',
       )
     }
 
