@@ -41,7 +41,7 @@ const Request = class Request
         method: 'POST',
         data: dataObject,
         error: reject,
-        success: resolve
+        success: resolve,
       })
     })
   }

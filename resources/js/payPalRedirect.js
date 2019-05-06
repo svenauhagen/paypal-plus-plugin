@@ -5,7 +5,7 @@ function plusRedirect (message)
     baseZ: 99999,
     overlayCSS: {
       background: '#fff',
-      opacity: 0.6
+      opacity: 0.6,
     },
     css: {
       padding: '20px',
@@ -15,8 +15,8 @@ function plusRedirect (message)
       border: '3px solid #aaa',
       backgroundColor: '#fff',
       cursor: 'wait',
-      lineHeight: '24px'
-    }
+      lineHeight: '24px',
+    },
   })
 
   if (typeof PAYPAL !== 'undefined') {

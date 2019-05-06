@@ -2,12 +2,12 @@ const TEST_MODE_SELECTOR_ID = 'paypalplus_testmode'
 const SANDBOX_DATA_SELECTORS = [
   'paypalplus_rest_client_id_sandbox',
   'paypalplus_rest_secret_id_sandbox',
-  'paypalplus_sandbox_experience_profile_id'
+  'paypalplus_sandbox_experience_profile_id',
 ]
 const PRODUCTION_DATA_SELECTORS = [
   'paypalplus_rest_client_id',
   'paypalplus_rest_secret_id',
-  'paypalplus_live_experience_profile_id'
+  'paypalplus_live_experience_profile_id',
 ]
 
 /**
@@ -71,6 +71,6 @@ export function envOptionsInitialize ()
     'change',
     (event) => {
       environmentToggler(event.currentTarget)
-    }
+    },
   )
 }

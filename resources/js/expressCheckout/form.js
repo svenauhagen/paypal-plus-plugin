@@ -14,7 +14,7 @@ export function formDataByElement (element)
 
   if (!form) {
     throw new Error(
-      'Unable to retrieve form. Form element does not exists or is not a parent of the given element.'
+      'Unable to retrieve form. Form element does not exists or is not a parent of the given element.',
     )
   }
 
@@ -63,6 +63,6 @@ function retrieveNonceForCart (element)
 
   return [
     nonceName,
-    nonceValue
+    nonceValue,
   ]
 }
