@@ -6,7 +6,7 @@ const CART_BUTTON_SELECTOR = 'woo-paypalplus-checkout-nonce'
  * Create a FormData object by the closest form of the given element
  *
  * @param element
- * @returns {FormData}
+ * @returns {String}
  */
 export function formDataByElement (element)
 {
@@ -18,8 +18,10 @@ export function formDataByElement (element)
     )
   }
 
-  const formData = new FormData(form)
-  formData.append('context', contextByElement(element))
+  let formData = jQuery(form).serialize()
+  const context = contextByElement(element)
+
+  formData += `&context=${context}`
 
   return formData
 }
@@ -29,20 +31,16 @@ export function formDataByElement (element)
  * WooCommerce mini cart doesn't have any form associated with it
  *
  * @param element
- * @returns {FormData}
+ * @returns {String}
  */
 export function formDataForCart (element)
 {
   try {
     const [nonceName, nonceValue] = retrieveNonceForCart(element)
-    const formData = new FormData()
-
-    formData.append('context', contextByElement(element))
-    formData.append(nonceName, nonceValue)
-
-    return formData
+    const context = contextByElement(element)
+    return `context=${context}&${nonceName}=${nonceValue}`
   } catch (err) {
-    return new FormData()
+    return ''
   }
 }
 

@@ -73,10 +73,8 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
        * @returns {*}
        */
       payment: () => {
-        const formData = this.formDataByElement(element)
-        formData.append('task', TASK_CREATE_ORDER)
-
-        formData.delete('add-to-cart')
+        let formData = this.formDataByElement(element)
+        formData += `&task=${TASK_CREATE_ORDER}`
 
         return this.request.submit(formData).then(response => {
           if (!'data' in response) {
@@ -122,15 +120,13 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
        */
       onAuthorize: (data, actions) => {
         // TODO Ensure return_url exists.
-        const formData = this.formDataByElement(element)
+        let formData = this.formDataByElement(element)
 
-        formData.append('task', TASK_STORE_PAYMENT_DATA)
-        formData.append('orderId', data.orderID)
-        formData.append('PayerID', data.payerID)
-        formData.append('paymentId', data.paymentID)
-        formData.append('token', data.paymentToken)
-
-        formData.delete('add-to-cart')
+        formData += `&task=${TASK_STORE_PAYMENT_DATA}`;
+        formData += `&orderId=${data.OrderID}`;
+        formData += `&PayerID=${data.payerID}`;
+        formData += `&paymentId=${data.paymentID}`;
+        formData += `&token=${data.paymentToken}`;
 
         return this.request.submit(formData).then((response) => {
 
@@ -178,12 +174,12 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
    * Retrieve context for FormData instance by the Given Element
    *
    * @param element
-   * @returns {FormData}
+   * @returns {String}
    */
   // TODO Make it private if not possible move it as closure within the render function.
   formDataByElement (element)
   {
-    let formData = new FormData()
+    let formData = ''
     const context = contextByElement(element)
 
     if (!this.validContexts.includes(context)) {
