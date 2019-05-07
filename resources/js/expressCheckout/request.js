@@ -22,14 +22,16 @@ const Request = class Request
       return Promise.reject('No formData to send to the server.')
     }
 
-    formData += `&action=${this.action}`;
+    const data = {};
+    formData = formData.concat([{name: 'action', value: encodeURIComponent(this.action)}])
+    formData.forEach(item => {data[item.name] = item.value})
 
     return new Promise((resolve, reject) => {
       jQuery.ajax({
         traditional: true,
         url: this.ajaxUrl,
         method: 'POST',
-        data: formData,
+        data: data,
         error: reject,
         success: resolve,
       })

@@ -18,10 +18,11 @@ export function formDataByElement (element)
     )
   }
 
-  let formData = $form.serialize()
+  let formData = $form.serializeArray()
   const context = contextByElement(element)
 
-  formData += `&context=${context}`
+  formData = formData.concat([{name: 'context', value: context}])
+  formData = formData.filter(item => item.name !== 'add-to-cart')
 
   return formData
 }
@@ -31,16 +32,20 @@ export function formDataByElement (element)
  * WooCommerce mini cart doesn't have any form associated with it
  *
  * @param element
- * @returns {String}
+ * @returns {Array}
  */
 export function formDataForCart (element)
 {
   try {
     const [nonceName, nonceValue] = retrieveNonceForCart(element)
     const context = contextByElement(element)
-    return `context=${context}&${nonceName}=${nonceValue}`
+
+    return [
+      {name: 'context', value: encodeURIComponent(context)},
+      {name: nonceName, value: encodeURIComponent(nonceValue)},
+    ]
   } catch (err) {
-    return ''
+    return []
   }
 }
 
