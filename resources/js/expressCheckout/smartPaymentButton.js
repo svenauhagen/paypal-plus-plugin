@@ -26,7 +26,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
   {
     this.buttonConfiguration = buttonConfiguration
     this.cancelUrl = this.buttonConfiguration.redirect_urls.cancel_url
-    this.validContexts = Array.from(validContexts)
+    this.validContexts = validContexts
     this.request = request
   }
 
