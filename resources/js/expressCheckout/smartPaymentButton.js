@@ -76,6 +76,8 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
         let formData = this.formDataByElement(element)
         formData += `&task=${TASK_CREATE_ORDER}`
 
+        formData = formData.replace(/&add-to-cart=[0-9]+/, '')
+
         return this.request.submit(formData).then(response => {
           if (!'data' in response) {
             console.warn('Unable to process the payment, server did not response with valid data')
@@ -127,6 +129,8 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
         formData += `&PayerID=${data.payerID}`;
         formData += `&paymentId=${data.paymentID}`;
         formData += `&token=${data.paymentToken}`;
+
+        formData = formData.replace(/&add-to-cart=[0-9]+/, '')
 
         return this.request.submit(formData).then((response) => {
 
