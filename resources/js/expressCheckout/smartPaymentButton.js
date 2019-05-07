@@ -186,7 +186,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
     let formData = ''
     const context = contextByElement(element)
 
-    if (!this.validContexts.includes(context)) {
+    if (-1 === this.validContexts.indexOf(context)) {
       throw new Error(
         'Invalid context when try to retrieve the form data during express checkout request.',
       )
