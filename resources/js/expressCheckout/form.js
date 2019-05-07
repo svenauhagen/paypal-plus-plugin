@@ -10,15 +10,15 @@ const CART_BUTTON_SELECTOR = 'woo-paypalplus-checkout-nonce'
  */
 export function formDataByElement (element)
 {
-  const form = element.closest('form')
+  const $form = jQuery(element).closest('form')
 
-  if (!form) {
+  if (!$form.length) {
     throw new Error(
       'Unable to retrieve form. Form element does not exists or is not a parent of the given element.',
     )
   }
 
-  let formData = jQuery(form).serialize()
+  let formData = $form.serialize()
   const context = contextByElement(element)
 
   formData += `&context=${context}`
