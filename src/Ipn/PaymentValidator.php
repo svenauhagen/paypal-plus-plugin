@@ -171,10 +171,11 @@ class PaymentValidator
      */
     public function is_valid_refund()
     {
-        $currency = $this->request->get(self::CURRENCY_DATA_KEY, FILTER_SANITIZE_STRING);
-
+        $amount = (string)$this->request->get(self::AMOUNT_DATA_KEY, FILTER_SANITIZE_STRING);
         $total = $this->sanitize_string_amount((string)$this->order->get_total());
-        $paypalTotal = $this->sanitize_string_amount((string)$currency) * -1;
+
+        $paypalTotal = $amount * -1;
+        $paypalTotal = $this->sanitize_string_amount((string)$paypalTotal);
 
         $total = $this->format($total);
         $paypalTotal = $this->format($paypalTotal);
