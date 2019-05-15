@@ -212,8 +212,8 @@ class ServiceProvider implements BootstrappableServiceProvider
             [$container[CheckoutAddressOverride::class], 'filterSaveCustomerData']
         );
         add_filter(
-            'woocommerce_default_address_fields',
-            [$container[CheckoutAddressOverride::class], 'filterDefaultAddressFields'],
+            'woocommerce_shipping_fields',
+            [$container[CheckoutAddressOverride::class], 'filterShippingFields'],
             9999
         );
         add_filter(
