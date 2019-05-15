@@ -9,6 +9,39 @@ const TASK_CREATE_ORDER = 'createOrder'
 const TASK_STORE_PAYMENT_DATA = 'storePaymentData'
 
 /**
+ * Retrieve Form Data values by the Given Element and context
+ *
+ * @params element
+ * @params {Array} context
+ * @returns {Array}
+ */
+function formDataByContext (element, validContexts)
+{
+  let formData = []
+  const context = contextByElement(element)
+
+  if (-1 === validContexts.indexOf(context)) {
+    throw new Error(
+      'Invalid context when try to retrieve the form data during express checkout request.',
+    )
+  }
+
+  try {
+    switch (context) {
+      case 'cart':
+        formData = formDataForCart(element)
+        break
+      case 'product':
+        formData = formDataByElement(element)
+        break
+    }
+  } catch (err) {
+  }
+
+  return formData
+}
+
+/**
  * Class Smart Payment Button Renderer
  *
  * @type {SmartPaymentButtonRenderer}
@@ -26,7 +59,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
   {
     this.buttonConfiguration = buttonConfiguration
     this.cancelUrl = this.buttonConfiguration.redirect_urls.cancel_url
-    this.validContexts = Array.from(validContexts)
+    this.validContexts = validContexts
     this.request = request
   }
 
@@ -62,7 +95,7 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
     }
 
     const button = element.querySelector('.paypal-button')
-    button && button.remove()
+    button && button.parentNode.removeChild(button)
 
     paypal.Button.render({
       ...this.buttonConfiguration,
@@ -73,67 +106,66 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
        * @returns {*}
        */
       payment: () => {
-        const formData = this.formDataByElement(element)
-        formData.append('task', TASK_CREATE_ORDER)
+        let formData = formDataByContext(element, this.validContexts)
+        formData = formData.concat([{name: 'task', value: TASK_CREATE_ORDER}])
 
-        formData.delete('add-to-cart')
-
-        return this.request.submit(formData).then(response => {
-          if (!'data' in response) {
-            console.warn('Unable to process the payment, server did not response with valid data')
-            try {
-              window.location = this.cancelUrl
-            } catch (e) {
-              return
+        return this.request
+          .submit(formData)
+          .then(response => {
+            if (!'data' in response) {
+              console.warn('Unable to process the payment, server did not response with valid data')
+              try {
+                window.location = this.cancelUrl
+              } catch (e) {
+                return
+              }
             }
-          }
 
-          if (!response.success) {
-            try {
-              window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
-            } catch (e) {
-              return
+            if (!response.success) {
+              try {
+                window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
+              } catch (e) {
+                return
+              }
             }
-          }
 
-          const orderId = 'orderId' in response.data ? response.data.orderId : ''
+            const orderId = 'orderId' in response.data ? response.data.orderId : ''
 
-          if (!orderId) {
-            try {
-              window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
-            } catch (e) {
-              return
+            if (!orderId) {
+              try {
+                window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
+              } catch (e) {
+                return
+              }
             }
-          }
 
-          return orderId
-        }).catch(error => {
-          const textStatus = 'textStatus' in error ? error.textStatus : 'Unknown Error during payment'
-          console.warn(textStatus)
-        })
+            return orderId
+          }).catch(error => {
+            const textStatus = 'textStatus' in error ? error.textStatus : 'Unknown Error during payment'
+            console.warn(textStatus)
+          })
       },
 
       /**
        * Execute Authorization
        *
-       * @param data
+       * @param {Array} data
        * @param actions
        * @returns {*}
        */
       onAuthorize: (data, actions) => {
         // TODO Ensure return_url exists.
-        const formData = this.formDataByElement(element)
+        let formData = formDataByContext(element, this.validContexts)
 
-        formData.append('task', TASK_STORE_PAYMENT_DATA)
-        formData.append('orderId', data.orderID)
-        formData.append('PayerID', data.payerID)
-        formData.append('paymentId', data.paymentID)
-        formData.append('token', data.paymentToken)
+        formData = formData.concat(formData, [
+          {name: 'task', value: TASK_STORE_PAYMENT_DATA},
+          {name: 'orderId', value: encodeURIComponent(data.OrderID)},
+          {name: 'PayerID', value: encodeURIComponent(data.payerID)},
+          {name: 'paymentId', value: encodeURIComponent(data.paymentID)},
+          {name: 'token', value: encodeURIComponent(data.paymentToken)},
+        ])
 
-        formData.delete('add-to-cart')
-
-        return this.request.submit(formData).then((response) => {
-
+        return this.request.submit(formData).then(response => {
           if (!response.success) {
             try {
               window.location = utils.redirectUrlByRequest(response, this.cancelUrl)
@@ -172,39 +204,6 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
       },
 
     }, element)
-  }
-
-  /**
-   * Retrieve context for FormData instance by the Given Element
-   *
-   * @param element
-   * @returns {FormData}
-   */
-  // TODO Make it private if not possible move it as closure within the render function.
-  formDataByElement (element)
-  {
-    let formData = new FormData()
-    const context = contextByElement(element)
-
-    if (!this.validContexts.includes(context)) {
-      throw new Error(
-        'Invalid context when try to retrieve the form data during express checkout request.',
-      )
-    }
-
-    try {
-      switch (context) {
-        case 'cart':
-          formData = formDataForCart(element)
-          break
-        case 'product':
-          formData = formDataByElement(element)
-          break
-      }
-    } catch (err) {
-    }
-
-    return formData
   }
 }
 
