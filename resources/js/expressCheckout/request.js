@@ -12,34 +12,26 @@ const Request = class Request
     this.action = action
   }
 
-  formDataObject (formData)
-  {
-    const formDataEntries = [...formData.entries(), ['action', this.action]]
-    const dataObject = formDataEntries.reduce((obj, [key, value]) => {
-      obj[key] = value
-      return obj
-    }, {})
-
-    return dataObject
-  }
-
   submit (formData)
   {
     // TODO Extract specific data such as: action, nonce, task, context and
     //      put the rest within a specific object.
     //      Make a separation for data controls and real request data.
 
-    const dataObject = this.formDataObject(formData)
-
-    if (_.isEmpty(dataObject)) {
+    if (_.isEmpty(formData)) {
       return Promise.reject('No formData to send to the server.')
     }
 
+    const data = {};
+    formData = formData.concat([{name: 'action', value: encodeURIComponent(this.action)}])
+    formData.forEach(item => {data[item.name] = item.value})
+
     return new Promise((resolve, reject) => {
       jQuery.ajax({
+        traditional: true,
         url: this.ajaxUrl,
         method: 'POST',
-        data: dataObject,
+        data: data,
         error: reject,
         success: resolve,
       })

@@ -64,12 +64,5 @@ class RefundSuccess implements RequestSuccessHandler
         $this->reason and $this->order->add_order_note(
             esc_html__('Reason for Refund :', 'woo-paypalplus') . $this->reason
         );
-
-        $maxRemainingRefund = $this->order->get_total() - $this->order->get_total_refunded();
-        $maxRemainingRefund = $this->format($maxRemainingRefund);
-
-        if ($maxRemainingRefund <= 0) {
-            $this->order->update_status('refunded');
-        }
     }
 }

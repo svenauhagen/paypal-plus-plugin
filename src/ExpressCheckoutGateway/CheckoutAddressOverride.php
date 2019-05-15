@@ -42,28 +42,7 @@ class CheckoutAddressOverride
     /**
      * @var array Addresses
      */
-    private $addresses = [
-        'billing_first_name' => '',
-        'billing_last_name' => '',
-        'billing_company' => '',
-        'billing_country' => '',
-        'billing_address_1' => '',
-        'billing_address_2' => '',
-        'billing_city' => '',
-        'billing_postcode' => '',
-        'billing_state' => '',
-        'billing_email' => '',
-        'billing_phone' => '',
-        'shipping_first_name' => '',
-        'shipping_last_name' => '',
-        'shipping_company' => '',
-        'shipping_country' => '',
-        'shipping_address_1' => '',
-        'shipping_address_2' => '',
-        'shipping_city' => '',
-        'shipping_postcode' => '',
-        'shipping_state' => '',
-    ];
+    private $addresses = [];
 
     /**
      * CheckoutAddressOverride constructor.
@@ -217,30 +196,31 @@ class CheckoutAddressOverride
     }
 
     /**
-     * Change fields to not required and change field type
+     * Set shipping fields to not required that are not in the default fields
      *
-     * @wp-hook woocommerce_default_address_fields
+     * @wp-hook woocommerce_shipping_fields
      *
      * @param array $fields
      *
      * @return array
      */
-    public function filterDefaultAddressFields(Array $fields)
+    public function filterShippingFields(Array $fields)
     {
         if (! $this->isExpressCheckout()) {
             return $fields;
         }
 
         $addressFieldsToChange = [
-            'first_name',
-            'last_name',
-            'company',
-            'country',
-            'address_1',
-            'address_2',
-            'city',
-            'postcode',
-            'state',
+            'shipping_title',
+            'shipping_first_name',
+            'shipping_last_name',
+            'shipping_company',
+            'shipping_country',
+            'shipping_address_1',
+            'shipping_address_2',
+            'shipping_city',
+            'shipping_postcode',
+            'shipping_state',
         ];
 
         foreach ($fields as $key => $field) {
@@ -272,6 +252,14 @@ class CheckoutAddressOverride
             return $fields;
         }
 
+        if (isset($fields['billing_first_name'])) {
+            $fields['billing_first_name']['custom_attributes'] = ['readonly' => 'readonly'];
+            $fields['billing_first_name']['type'] = self::FIELD_TYPE_ID;
+        }
+        if (isset($fields['billing_last_name'])) {
+            $fields['billing_last_name']['custom_attributes'] = ['readonly' => 'readonly'];
+            $fields['billing_last_name']['type'] = self::FIELD_TYPE_ID;
+        }
         if (isset($fields['billing_email'])) {
             $fields['billing_email']['custom_attributes'] = ['readonly' => 'readonly'];
             $fields['billing_email']['type'] = self::FIELD_TYPE_ID;
@@ -291,17 +279,8 @@ class CheckoutAddressOverride
             return;
         }
 
-        $addresses = $this->getPaymentAddresses();
-        $needsShipping = $this->wooCommerce->cart->needs_shipping();
-
         $_POST['payment_method'] = Gateway::GATEWAY_ID;
         $_POST['ship_to_different_address'] = 1;
-        foreach ($addresses as $key => $value) {
-            if ('billing_phone' === $key || (!$needsShipping && 0 === strpos($key, 'shipping_'))) {
-                continue;
-            }
-            $_POST[$key] = $value;
-        }
     }
 
     /**
@@ -323,7 +302,7 @@ class CheckoutAddressOverride
      */
     private function getPaymentAddresses()
     {
-        if ($this->addresses['billing_first_name'] || $this->addresses['billing_last_name']) {
+        if ($this->addresses) {
              return $this->addresses;
         }
 
@@ -348,40 +327,59 @@ class CheckoutAddressOverride
 
         $payer = $payment->getPayer();
         $payerInfo = $payer->getPayerInfo();
-        $billingAddress = $payerInfo->getBillingAddress();
+
+        $shippingAddress = null;
+        $transactions = $payment->getTransactions();
+        if ($transactions && $transactions[0] instanceof Transaction) {
+            $itemList = $transactions[0]->getItemList();
+            $shippingAddress = $itemList->getShippingAddress();
+        }
 
         $this->addresses['billing_first_name'] = $payerInfo->getFirstName();
         $this->addresses['billing_last_name'] = $payerInfo->getLastName();
+        $this->addresses['billing_company'] = '';
         $this->addresses['billing_email'] = $payerInfo->getEmail();
         $this->addresses['billing_phone'] = $payerInfo->getPhone();
         $this->addresses['billing_country'] = $payerInfo->getCountryCode();
-        if ($billingAddress) {
-            $this->addresses['billing_address_1'] = $billingAddress->getLine1();
-            $this->addresses['billing_address_2'] = $billingAddress->getLine2();
-            $this->addresses['billing_city'] = $billingAddress->getCity();
-            $this->addresses['billing_country'] = $billingAddress->getCountryCode();
-            $this->addresses['billing_postcode'] = $billingAddress->getPostalCode();
-            $this->addresses['billing_state'] = $billingAddress->getState();
+
+        $apiBillingAddress = $payerInfo->getBillingAddress();
+        $sessionCustomer = $this->wooCommerce->customer;
+        if ($apiBillingAddress) {
+            $this->addresses['billing_address_1'] = $apiBillingAddress->getLine1();
+            $this->addresses['billing_address_2'] = $apiBillingAddress->getLine2();
+            $this->addresses['billing_city'] = $apiBillingAddress->getCity();
+            $this->addresses['billing_country'] = $apiBillingAddress->getCountryCode();
+            $this->addresses['billing_postcode'] = $apiBillingAddress->getPostalCode();
+            $this->addresses['billing_state'] = $apiBillingAddress->getState();
+        }
+        if (!$apiBillingAddress && $sessionCustomer->get_billing_address_1()) {
+            $this->addresses['billing_company'] = $sessionCustomer->get_billing_company();
+            $this->addresses['billing_address_1'] = $sessionCustomer->get_billing_address_1();
+            $this->addresses['billing_address_2'] = $sessionCustomer->get_billing_address_2();
+            $this->addresses['billing_city'] = $sessionCustomer->get_billing_city();
+            $this->addresses['billing_country'] = $sessionCustomer->get_billing_country();
+            $this->addresses['billing_postcode'] = $sessionCustomer->get_billing_postcode();
+            $this->addresses['billing_state'] = $sessionCustomer->get_billing_state();
+        }
+        if (!$apiBillingAddress && !isset($this->addresses['billing_address_1'])) {
+            $this->addresses['billing_address_1'] = $shippingAddress->getLine1();
+            $this->addresses['billing_address_2'] = $shippingAddress->getLine2();
+            $this->addresses['billing_city'] = $shippingAddress->getCity();
+            $this->addresses['billing_country'] = $shippingAddress->getCountryCode();
+            $this->addresses['billing_postcode'] = $shippingAddress->getPostalCode();
+            $this->addresses['billing_state'] = $shippingAddress->getState();
         }
 
-        if (! $this->wooCommerce->cart->needs_shipping()) {
-            return $this->addresses;
+        if ($shippingAddress) {
+            list($this->addresses['shipping_first_name'], $this->addresses['shipping_last_name']) =
+                explode(' ', $shippingAddress->getRecipientName(), 2);
+            $this->addresses['shipping_address_1'] = $shippingAddress->getLine1();
+            $this->addresses['shipping_address_2'] = $shippingAddress->getLine2();
+            $this->addresses['shipping_city'] = $shippingAddress->getCity();
+            $this->addresses['shipping_country'] = $shippingAddress->getCountryCode();
+            $this->addresses['shipping_postcode'] = $shippingAddress->getPostalCode();
+            $this->addresses['shipping_state'] = $shippingAddress->getState();
         }
-
-        $transactions = $payment->getTransactions();
-        if (! $transactions || ! $transactions[0] instanceof Transaction) {
-            return $this->addresses;
-        }
-        $itemList = $transactions[0]->getItemList();
-        $shippingAddress = $itemList->getShippingAddress();
-        list($this->addresses['shipping_first_name'], $this->addresses['shipping_last_name']) =
-            explode(' ', $shippingAddress->getRecipientName(), 2);
-        $this->addresses['shipping_address_1'] = $shippingAddress->getLine1();
-        $this->addresses['shipping_address_2'] = $shippingAddress->getLine2();
-        $this->addresses['shipping_city'] = $shippingAddress->getCity();
-        $this->addresses['shipping_country'] = $shippingAddress->getCountryCode();
-        $this->addresses['shipping_postcode'] = $shippingAddress->getPostalCode();
-        $this->addresses['shipping_state'] = $shippingAddress->getState();
 
         return $this->addresses;
     }

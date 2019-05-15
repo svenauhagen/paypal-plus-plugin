@@ -247,8 +247,7 @@ class OrderUpdater
     public function payment_status_refunded()
     {
         if ($this->validator->is_valid_refund()) {
-            $this->order->update_status(
-                OrderStatuses::ORDER_STATUS_REFUNDED,
+            $this->order->add_order_note(
                 sprintf(
                     esc_html__('Payment %s via IPN.', 'woo-paypalplus'),
                     $this->request->get(Request::KEY_PAYMENT_STATUS, FILTER_SANITIZE_STRING)

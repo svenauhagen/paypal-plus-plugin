@@ -127,6 +127,12 @@ class AssetManager
         list($assetPath, $assetUrl) = $this->assetUrlPath();
 
         wp_register_script(
+            'bluebird',
+            'https://cdn.jsdelivr.net/npm/bluebird@3.5.3/js/browser/bluebird.js',
+            []
+        );
+
+        wp_register_script(
             'paypalplus-woocommerce-plus-paypal-redirect',
             "{$assetUrl}/public/js/payPalRedirect.min.js",
             ['jquery'],
@@ -147,7 +153,7 @@ class AssetManager
         wp_enqueue_script(
             'paypalplus-express-checkout',
             "{$assetUrl}/public/js/expressCheckout.min.js",
-            ['underscore', 'jquery', 'paypal-express-checkout'],
+            ['underscore', 'jquery', 'paypal-express-checkout', 'bluebird'],
             filemtime("{$assetPath}/public/js/expressCheckout.min.js"),
             true
         );
