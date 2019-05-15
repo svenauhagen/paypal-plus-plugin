@@ -156,6 +156,7 @@ If you don’t want to have Express Checkout Gateway enabled just disable it fro
 == Changelog ==
 = 2.0.3 =
 - Fix: Non numeric value encountered when validate Refund Payment
+- Fix: Ipn Order Note not added because order transition already changed by WooCommerce
 - Fix: Support for IE 11 because of es6 transpilation and unavailable features
 - Fix: Billing address fields are not editable on place order page
 
