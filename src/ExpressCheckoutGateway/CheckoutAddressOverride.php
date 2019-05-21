@@ -22,8 +22,6 @@ use WooCommerce;
 class CheckoutAddressOverride
 {
 
-    const FIELD_TYPE_ID = 'ppp_ec_field';
-
     /**
      * @var WooCommerce
      */
@@ -81,93 +79,6 @@ class CheckoutAddressOverride
     }
 
     /**
-     * We use shipping Address from Paypal and Billing address has not all information
-     *
-     * @wp-hook woocommerce_cart_needs_shipping_address
-     *
-     * @param bool $current
-     *
-     * @return bool
-     */
-    public function filterCartNeedsShippingAddress($current)
-    {
-        if (! $this->isExpressCheckout()) {
-            return $current;
-        }
-
-        if (! $this->wooCommerce->cart->needs_shipping()) {
-            return $current;
-        }
-
-        return true;
-    }
-
-    /**
-     * Activate shipping to different address in the form
-     *
-     * @wp-hook filterShipToDifferentAddress
-     *
-     * @param int $current
-     *
-     * @return int
-     */
-    public function filterShipToDifferentAddress($current)
-    {
-        if (! $this->isExpressCheckout()) {
-            return $current;
-        }
-
-        return 1;
-    }
-
-    /**
-     * Output special form field
-     *
-     * @wp-hook woocommerce_form_field_{Type ID}
-     *
-     * @param $field
-     * @param $key
-     * @param array $args
-     * @param $value
-     *
-     * @return string
-     */
-    public function filterFieldType($field, $key, Array $args, $value)
-    {
-        $addresses = $this->getPaymentAddresses();
-        if (isset($addresses[$key])) {
-            $value = $addresses[$key];
-        }
-        $displayValue = $value;
-        if ('billing_country' === $key || 'shipping_country' === $key) {
-            $countries = $this->wooCommerce->countries->get_countries();
-            if (isset($countries[$value])) {
-                $displayValue = $countries[$value];
-            }
-        }
-        if (! $value) {
-            return $field . '<input type="hidden" class="input-text ' .
-                   esc_attr(implode(' ', $args['input_class'])) .
-                   '" name="' . esc_attr($key) . '" id="' . esc_attr($args['id']) .
-                   '" value="' . esc_attr($value) . '" ' . implode(' ', $args['custom_attributes']) . ' />';
-        }
-        $field .= '<p class="form-row ' . esc_attr(implode(' ', $args['class'])) .
-                  '" id="' . esc_attr($args['id']) . '_field' . '">' .
-                  '<label for="' . esc_attr($args['id']) . '" class="' . esc_attr(
-                      implode(' ', $args['label_class'])
-                  ) . '">' . $args['label'] . '</label>' .
-                  '<span class="woocommerce-input-wrapper">' .
-                  '<input type="hidden" class="input-text ' .
-                  esc_attr(implode(' ', $args['input_class'])) .
-                  '" name="' . esc_attr($key) . '" id="' . esc_attr($args['id']) .
-                  '" value="' . esc_attr($value) . '" ' . implode(' ', $args['custom_attributes']) . ' />' .
-                  esc_attr($displayValue) .
-                  '</span></p>';
-
-        return $field;
-    }
-
-    /**
      * Overwrite real customer data with session customer data
      *
      * @wp-hook woocommerce_checkout_get_value
@@ -193,94 +104,6 @@ class CheckoutAddressOverride
         }
 
         return $default;
-    }
-
-    /**
-     * Set shipping fields to not required that are not in the default fields
-     *
-     * @wp-hook woocommerce_shipping_fields
-     *
-     * @param array $fields
-     *
-     * @return array
-     */
-    public function filterShippingFields(Array $fields)
-    {
-        if (! $this->isExpressCheckout()) {
-            return $fields;
-        }
-
-        $addressFieldsToChange = [
-            'shipping_title',
-            'shipping_first_name',
-            'shipping_last_name',
-            'shipping_company',
-            'shipping_country',
-            'shipping_address_1',
-            'shipping_address_2',
-            'shipping_city',
-            'shipping_postcode',
-            'shipping_state',
-        ];
-
-        foreach ($fields as $key => $field) {
-            if (! in_array($key, $addressFieldsToChange, true)) {
-                continue;
-            }
-            if (! empty($field['required'])) {
-                $fields[$key]['required'] = false;
-            }
-            $fields[$key]['custom_attributes'] = ['readonly' => 'readonly'];
-            $fields[$key]['type'] = self::FIELD_TYPE_ID;
-        }
-
-        return $fields;
-    }
-
-    /**
-     * Set billing fields to not required that are not in the default fields
-     *
-     * @wp-hook woocommerce_billing_fields
-     *
-     * @param array $fields
-     *
-     * @return array
-     */
-    public function filterBillingFields(Array $fields)
-    {
-        if (! $this->isExpressCheckout()) {
-            return $fields;
-        }
-
-        if (isset($fields['billing_first_name'])) {
-            $fields['billing_first_name']['custom_attributes'] = ['readonly' => 'readonly'];
-            $fields['billing_first_name']['type'] = self::FIELD_TYPE_ID;
-        }
-        if (isset($fields['billing_last_name'])) {
-            $fields['billing_last_name']['custom_attributes'] = ['readonly' => 'readonly'];
-            $fields['billing_last_name']['type'] = self::FIELD_TYPE_ID;
-        }
-        if (isset($fields['billing_email'])) {
-            $fields['billing_email']['custom_attributes'] = ['readonly' => 'readonly'];
-            $fields['billing_email']['type'] = self::FIELD_TYPE_ID;
-        }
-
-        return $fields;
-    }
-
-    /**
-     * Overwrite post vars addresses with payment addresses so that they can't be changed
-     *
-     * @wp-hook woocommerce_checkout_process
-     */
-    public function addAddressesToCheckoutPostVars()
-    {
-        if (! $this->isExpressCheckout()) {
-            return;
-        }
-
-        $_POST['payment_method'] = Gateway::GATEWAY_ID;
-        $_POST['ship_to_different_address'] = 1;
     }
 
     /**
