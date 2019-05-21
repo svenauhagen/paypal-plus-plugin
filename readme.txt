@@ -2,8 +2,8 @@
 Contributors: inpsyde, biont, cocreation
 Tags: paypal, paypal plus, express checkout, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
 Requires at least: 4.4
-Tested up to: 5.1.1
-Stable tag: 2.0.2
+Tested up to: 5.2
+Stable tag: 2.0.3
 Requires PHP: 5.6
 License: GPLv2+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
@@ -154,6 +154,12 @@ If you don’t want to have Express Checkout Gateway enabled just disable it fro
 6. The PayPal Plus form when paying upon invoice.
 
 == Changelog ==
+= 2.0.3 =
+- Fix: Non numeric value encountered when validate Refund Payment
+- Fix: Ipn Order Note not added because order transition already changed by WooCommerce
+- Fix: Support for IE 11 because of es6 transpilation and unavailable features
+- Fix: Billing address fields are not editable on place order page
+
 = 2.0.2 =
  - Fix: Admin Notice and `file_get_contents` unable to retrieve content from Url
  - Fix: Fatal Error in WooCommerce 3.6 because of WooCommerceSession methods are accessed too early
