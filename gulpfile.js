@@ -13,8 +13,16 @@ const PACKAGE_DESTINATION = './dist'
 const PACKAGE_PATH = `${PACKAGE_DESTINATION}/${PACKAGE_NAME}`
 
 const options = minimist(process.argv.slice(2), {
-  string: ['packageVersion', 'compressPath'],
-  default: { compressPath: process.compressPath || '.' }
+  string: [
+    'packageVersion',
+    'compressPath',
+    'compressedName',
+  ],
+  default: {
+    compressPath: process.compressPath || '.',
+    packageVersion: process.packageVersion || '',
+    compressedName: process.compressedName || '',
+  },
 })
 
 /**
@@ -22,14 +30,21 @@ const options = minimist(process.argv.slice(2), {
  * @param done
  * @throws Error if the package version option isn't found
  */
-async function checkPackageVersion (done) {
+async function validatePackageVersion (done)
+{
   await 1
 
-  if ('packageVersion' in options) {
+  if (!'packageVersion' in options || '' === options.packageVersion) {
     done()
   }
 
-  throw new Error('Missing --packageVersion option with a semver value.')
+  if (semver.valid(options.packageVersion) === null) {
+    throw new Error(
+      'Invalid package version, please follow MAJOR.MINOR.PATCH semver convention.',
+    )
+  }
+
+  done()
 }
 
 /**
@@ -90,12 +105,14 @@ function copyPackageFiles (done) {
  * Compress the package
  * @returns {*}
  */
-function compressPackage (done) {
+function compressPackage (done)
+{
   const { packageVersion, compressPath } = options
   const timeStamp = new Date().getTime()
 
   if (!fs.existsSync(PACKAGE_DESTINATION)) {
-    throw new Error(`Cannot create package, ${PACKAGE_DESTINATION} doesn't exists.`)
+    throw new Error(
+      `Cannot create package, ${PACKAGE_DESTINATION} doesn't exists.`)
   }
 
   gulpDel.sync(
@@ -123,8 +140,8 @@ function compressPackage (done) {
       `${PACKAGE_DESTINATION}/**/bin`,
       `${PACKAGE_DESTINATION}/vendor/**/readme.txt`,
       `${PACKAGE_DESTINATION}/vendor/**/CONTRIBUTING.md`,
-      `${PACKAGE_DESTINATION}/vendor/**/CONTRIBUTING`
-    ]
+      `${PACKAGE_DESTINATION}/vendor/**/CONTRIBUTING`,
+    ],
   )
 
   return new Promise(() => {
@@ -133,12 +150,14 @@ function compressPackage (done) {
       {},
       (error, stdout) => {
         let shortHash = error ? timeStamp : stdout
+        const compressedName = options.compressedName ||
+          `${PACKAGE_NAME}-${packageVersion}-${shortHash}`
 
         pump(
           gulp.src(`${PACKAGE_DESTINATION}/**/*`, {
             base: PACKAGE_DESTINATION,
           }),
-          gulpZip(`${PACKAGE_NAME}-${packageVersion}-${shortHash}.zip`),
+          gulpZip(`${compressedName}.zip`),
           gulp.dest(
             compressPath,
             {
@@ -184,9 +203,10 @@ exports.tests = gulp.series(
  * @task {dist}
  * @arg {packageVersion} Package version, the version must to be conformed to semver.
  * @arg {compressPath} Where the resulting package zip have to be stored.
+ * @arg {compressedName} The name to give to the package instead of the default one.
  */
 exports.dist = gulp.series(
-  checkPackageVersion,
+  validatePackageVersion,
   cleanDist,
   copyPackageFiles,
   composer,
