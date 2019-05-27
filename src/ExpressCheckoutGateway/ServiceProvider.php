@@ -186,44 +186,14 @@ class ServiceProvider implements BootstrappableServiceProvider
         $payPalPaymentExecution = $container[PayPalPaymentExecution::class];
 
         add_filter(
-            'woocommerce_cart_needs_shipping_address',
-            [$container[CheckoutAddressOverride::class], 'filterCartNeedsShippingAddress'],
-            9999
-        );
-        add_filter(
-            'woocommerce_ship_to_different_address_checked',
-            [$container[CheckoutAddressOverride::class], 'filterShipToDifferentAddress'],
-            9999
-        );
-        add_filter(
             'woocommerce_checkout_get_value',
             [$container[CheckoutAddressOverride::class], 'filterCheckoutValues'],
             20,
             2
         );
         add_filter(
-            'woocommerce_form_field_' . CheckoutAddressOverride::FIELD_TYPE_ID,
-            [$container[CheckoutAddressOverride::class], 'filterFieldType'],
-            10,
-            4
-        );
-        add_filter(
             'woocommerce_checkout_update_customer_data',
             [$container[CheckoutAddressOverride::class], 'filterSaveCustomerData']
-        );
-        add_filter(
-            'woocommerce_shipping_fields',
-            [$container[CheckoutAddressOverride::class], 'filterShippingFields'],
-            9999
-        );
-        add_filter(
-            'woocommerce_billing_fields',
-            [$container[CheckoutAddressOverride::class], 'filterBillingFields'],
-            9999
-        );
-        add_action(
-            'woocommerce_checkout_process',
-            [$container[CheckoutAddressOverride::class], 'addAddressesToCheckoutPostVars']
         );
 
         add_filter(

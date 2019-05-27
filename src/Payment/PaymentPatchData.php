@@ -156,7 +156,6 @@ class PaymentPatchData
     private function get_patches()
     {
         $orderNeedProcessing = $this->order->needs_processing();
-        $paymentMethod = $this->currentPaymentMethod->payment();
 
         $patches = [
             $this->patchProvider->amount(),
@@ -165,7 +164,7 @@ class PaymentPatchData
             $this->patchProvider->items(),
         ];
 
-        if ($orderNeedProcessing && $paymentMethod !== ExpressCheckoutGateway::GATEWAY_ID) {
+        if ($orderNeedProcessing) {
             $patches[] = $this->patchProvider->shipping();
         }
 
