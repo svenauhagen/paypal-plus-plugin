@@ -9,6 +9,7 @@
 
     <config name="text_domain" value="woo-paypalplus"/>
     <config name="testVersion" value="5.6"/>
+    <config name="ignore_warnings_on_exit" value="1"/>
 
     <rule ref="Inpsyde">
         <exclude name="NeutronStandard.StrictTypes.RequireStrictTypes.StrictTypes"/>
