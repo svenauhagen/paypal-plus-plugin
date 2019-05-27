@@ -29,6 +29,8 @@ class View
 
     /**
      * Render the instructions table on the thank you page
+     *
+     * phpcs:disable WordPress.XSS.EscapeOutput.OutputNotEscaped
      */
     public function thankyouPage()
     {
@@ -36,6 +38,7 @@ class View
             'Please transfer the complete amount to the bank account provided below.',
             'woo-paypalplus'
         );
+        // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
         echo PHP_EOL;
         ?>
         <h2><?php esc_html_e('PayPal Bank Details', 'woo-paypalplus'); ?></h2>
@@ -84,6 +87,7 @@ class View
                 'Please transfer the complete amount to the bank account provided below.',
                 'woo-paypalplus'
             );
+            // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
             echo PHP_EOL;
 
             printf(
@@ -93,32 +97,43 @@ class View
                     'woo-paypalplus'
                 )
             );
+            // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
             echo PHP_EOL;
 
+            // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
             echo '<ul class="wc-bacs-bank-details order_details bacs_details">' . PHP_EOL;
             foreach ($this->getAccountFields() as $field_key => $field) {
                 if (!empty($field['value'])) {
-                    echo '<li class="' . esc_attr($field_key) . '">' . esc_attr($field['label']) . ': <strong>' . wptexturize($field['value']) . '</strong></li>' . PHP_EOL;
+                    echo '<li class="' . esc_attr($field_key) . '">'
+                        . esc_attr($field['label']) . ': <strong>' . wptexturize($field['value'])
+                        // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+                        . '</strong></li>' . PHP_EOL;
                 }
             }
             echo '</ul>';
 
+            // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
             echo $this->data->legalNote() . PHP_EOL;
         } else {
             esc_html_e(
                 'Please transfer the complete amount to the bank account provided below.',
                 'woo-paypalplus'
             );
+            // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
             echo PHP_EOL;
             esc_html_e('PayPal Bank Details', 'woo-paypalplus');
+            // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
             echo PHP_EOL;
 
             foreach ($this->getAccountFields() as $field_key => $field) {
                 if (!empty($field['value'])) {
-                    echo ' - ' . esc_attr($field['label']) . ': ' . wptexturize($field['value']) . PHP_EOL;
+                    echo ' - ' . esc_attr($field['label'])
+                        // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
+                        . ': ' . wptexturize($field['value']) . PHP_EOL;
                 }
             }
 
+            // phpcs:ignore WordPress.XSS.EscapeOutput.OutputNotEscaped
             echo PHP_EOL . esc_html(strip_tags($this->data->legalNote())) . PHP_EOL;
         }
     }
