@@ -7,6 +7,7 @@ const fs = require('fs')
 const pump = require('pump')
 const usage = require('gulp-help-doc')
 const { exec } = require('child_process')
+const semver = require('semver')
 
 const PACKAGE_NAME = 'paypalplus-woocommerce'
 const PACKAGE_DESTINATION = './dist'
