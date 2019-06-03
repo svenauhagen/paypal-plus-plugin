@@ -6,6 +6,7 @@
 namespace WCPayPalPlus\Order;
 
 use UnexpectedValueException;
+use WC_Abstract_Order;
 use WC_Order;
 use WC_Order_Refund;
 
@@ -52,7 +53,7 @@ class OrderFactory
 
         $order = wc_get_order($orderId);
 
-        if (!in_array(get_class($order), [WC_Order::class, WC_Order_Refund::class], true)) {
+        if (!$order instanceof WC_Abstract_Order) {
             throw OrderFactoryException::forInvalidOrderId($orderId);
         }
 
@@ -66,9 +67,9 @@ class OrderFactory
      *
      * To prevent orders are not full filled after the update of the plugin, we'll keep it for a while.
      *
-     * @deprecated since 2.0.0 This will be removed in a future version
      * @param $customData
      * @return string
+     * @deprecated since 2.0.0 This will be removed in a future version
      */
     private function orderKeyByJson($customData)
     {
