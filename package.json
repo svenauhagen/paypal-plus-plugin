@@ -51,6 +51,7 @@
     "minimist": "^1.2.0",
     "pump": "^3.0.0",
     "raw-loader": "^1.0.0",
+    "semver": "^6.1.1",
     "standard": "^12.0.1",
     "webpack": "^4.29.5",
     "webpack-cli": "^3.2.3"
