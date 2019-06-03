@@ -154,6 +154,9 @@ If you don’t want to have Express Checkout Gateway enabled just disable it fro
 6. The PayPal Plus form when paying upon invoice.
 
 == Changelog ==
+= 2.0.4 =
+- Fix: Compatibility with WooCommerce Admin plugin
+
 = 2.0.3 =
 - Fix: Non numeric value encountered when validate Refund Payment
 - Fix: Ipn Order Note not added because order transition already changed by WooCommerce
