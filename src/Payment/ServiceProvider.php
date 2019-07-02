@@ -5,10 +5,10 @@
 
 namespace WCPayPalPlus\Payment;
 
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Gateway\CurrentPaymentMethod;
 use WCPayPalPlus\Order\OrderDataProviderFactory;
 use WCPayPalPlus\Session\Session;
-use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WooCommerce;
@@ -39,6 +39,12 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[CurrentPaymentMethod::class],
                 $container[OrderDataProviderFactory::class]
             );
+        };
+        $container[PaymentIdValidator::class] = function (Container $container) {
+            return new PaymentIdValidator($container[Logger::class]);
+        };
+        $container[PaymentSessionDestructor::class] = function (Container $container) {
+            return new PaymentSessionDestructor($container[Session::class]);
         };
     }
 

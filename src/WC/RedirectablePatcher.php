@@ -10,6 +10,8 @@ use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\ApiContextFactory;
 use WCPayPalPlus\Api\ErrorData\ApiErrorExtractor;
 use WCPayPalPlus\Order\OrderFactory;
+use WCPayPalPlus\Payment\PaymentIdValidator;
+use WCPayPalPlus\Payment\PaymentSessionDestructor;
 use WCPayPalPlus\Setting\PlusStorable;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Session\Session;
@@ -57,6 +59,16 @@ class RedirectablePatcher
     private $apiErrorDataExtractor;
 
     /**
+     * @var PaymentIdValidator
+     */
+    private $paymentIdValidator;
+
+    /**
+     * @var PaymentSessionDestructor
+     */
+    private $paymentSessionDestructor;
+
+    /**
      * ReceiptPageRenderer constructor.
      * @param OrderFactory $orderFactory
      * @param PaymentPatchFactory $paymentPatchFactory
@@ -65,6 +77,8 @@ class RedirectablePatcher
      * @param CheckoutDropper $checkoutDropper
      * @param Logger $logger
      * @param ApiErrorExtractor $apiErrorDataExtractor
+     * @param PaymentIdValidator $paymentIdValidator
+     * @param PaymentSessionDestructor $paymentSessionDestructor
      */
     public function __construct(
         OrderFactory $orderFactory,
@@ -73,7 +87,9 @@ class RedirectablePatcher
         Session $session,
         CheckoutDropper $checkoutDropper,
         Logger $logger,
-        ApiErrorExtractor $apiErrorDataExtractor
+        ApiErrorExtractor $apiErrorDataExtractor,
+        PaymentIdValidator $paymentIdValidator,
+        PaymentSessionDestructor $paymentSessionDestructor
     ) {
 
         $this->orderFactory = $orderFactory;
@@ -83,6 +99,8 @@ class RedirectablePatcher
         $this->checkoutDropper = $checkoutDropper;
         $this->logger = $logger;
         $this->apiErrorDataExtractor = $apiErrorDataExtractor;
+        $this->paymentIdValidator = $paymentIdValidator;
+        $this->paymentSessionDestructor = $paymentSessionDestructor;
     }
 
     /**
@@ -99,6 +117,12 @@ class RedirectablePatcher
         $paymentId = $this->session->get(Session::PAYMENT_ID);
 
         $paymentId or $this->abortPatchingBecausePaymentId($paymentId);
+
+        if (!$this->paymentIdValidator->isPaymentIdValid($paymentId)) {
+            $this->paymentSessionDestructor->becauseInvalidPaymentId();
+            wp_safe_redirect(wc_get_cart_url());
+            exit;
+        }
 
         $paymentPatcher = $this->paymentPatchFactory->create(
             $order,

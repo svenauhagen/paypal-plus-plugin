@@ -13,9 +13,11 @@ use WCPayPalPlus\Api\ErrorData\Codes;
 use WCPayPalPlus\Api\ErrorData\ApiErrorExtractor;
 use WCPayPalPlus\Gateway\MethodsTrait;
 use WCPayPalPlus\Order\OrderFactory;
+use WCPayPalPlus\Payment\PaymentIdValidator;
 use WCPayPalPlus\Payment\PaymentPatcher;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
 use WCPayPalPlus\Payment\PaymentProcessException;
+use WCPayPalPlus\Payment\PaymentSessionDestructor;
 use WCPayPalPlus\Session\SessionCleaner;
 use WCPayPalPlus\Setting\ExpressCheckoutRepositoryTrait;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
@@ -113,6 +115,16 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
     private $sessionCleaner;
 
     /**
+     * @var PaymentIdValidator
+     */
+    private $paymentIdValidator;
+
+    /**
+     * @var PaymentSessionDestructor
+     */
+    private $paymentSessionDestructor;
+
+    /**
      * Gateway constructor.
      * @param WooCommerce $wooCommerce
      * @param CredentialValidator $credentialValidator
@@ -126,6 +138,8 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
      * @param Logger $logger
      * @param ApiErrorExtractor $apiErrorDataExtractor
      * @param SessionCleaner $sessionCleaner
+     * @param PaymentIdValidator $paymentIdValidator
+     * @param PaymentSessionDestructor $paymentSessionDestructor
      */
     public function __construct(
         WooCommerce $wooCommerce,
@@ -139,7 +153,9 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         PaymentPatchFactory $paymentPatchFactory,
         Logger $logger,
         ApiErrorExtractor $apiErrorDataExtractor,
-        SessionCleaner $sessionCleaner
+        SessionCleaner $sessionCleaner,
+        PaymentIdValidator $paymentIdValidator,
+        PaymentSessionDestructor $paymentSessionDestructor
     ) {
 
         $this->wooCommerce = $wooCommerce;
@@ -173,6 +189,8 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
             'products',
             'refunds',
         ];
+        $this->paymentIdValidator = $paymentIdValidator;
+        $this->paymentSessionDestructor = $paymentSessionDestructor;
     }
 
     /**
@@ -193,8 +211,28 @@ final class Gateway extends WC_Payment_Gateway implements ExpressCheckoutStorabl
         // Set orderId so we can retrieve it later if needed.
         $this->session->set(Session::ORDER_ID, $orderId);
 
-        if (!$payerId || !$paymentId || !$orderId) {
+        if (!$payerId || !$orderId) {
             throw PaymentProcessException::forInsufficientData();
+        }
+
+        /*
+         * Cannot use paymentSessionDestructor->becauseInvalidPaymentId() here because
+         * we are in ajax context and WooCommerce doesn't allow us to do custom redirect at this
+         * point, we can only thrown an exception but that's not enough because if we do not
+         * throw any exception the `\WC_Checkout::send_ajax_failure_response` will be called that
+         * not do any redirection plus throw an exception will add a notice as feedback to the user
+         * and then will call `\WC_Checkout::send_ajax_failure_response`.
+         *
+         * So Since we need to redirect the user to a different page to ask to start the
+         * payment process again in order to create a new payment id the only solution is to mark
+         * the payment as success and pass the url where we want to redirect the user.
+         */
+        if (!$this->paymentIdValidator->isPaymentIdValid($paymentId)) {
+            $this->paymentSessionDestructor->becauseInvalidPaymentId();
+            return [
+                'result' => 'success',
+                'redirect' => wc_get_cart_url(),
+            ];
         }
 
         try {
