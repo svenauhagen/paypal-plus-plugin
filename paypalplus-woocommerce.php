@@ -34,6 +34,8 @@ $bootstrap = \Closure::bind(function () {
         if (file_exists($autoloader)) {
             /** @noinspection PhpIncludeInspection */
             require $autoloader;
+
+            require_once __DIR__ . '/src/inc/functions.php';
         }
 
         return class_exists(PayPalPlus::class);

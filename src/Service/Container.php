@@ -8,7 +8,7 @@ namespace WCPayPalPlus\Service;
 /**
  * Append-only container implementation to be used for dependency management.
  */
-final class Container implements \ArrayAccess
+class Container implements \ArrayAccess
 {
     /**
      * @var callable[]

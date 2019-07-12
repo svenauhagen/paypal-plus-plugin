@@ -36,16 +36,21 @@
         "paypal/rest-api-sdk-php": "~1.14.0",
         "coenjacobs/mozart": "^0.3.0",
         "inpsyde/php-coding-standards": "^0.13.3",
-        "barryvdh/composer-cleanup-plugin": "^0.2.0"
+        "barryvdh/composer-cleanup-plugin": "^0.2.0",
+        "brain/monkey": "^2.2"
     },
     "autoload": {
         "psr-4": {
             "WCPayPalPlus\\": "src/",
             "Inpsyde\\Lib\\": "lib/"
-        },
-        "files": [
-            "src/inc/functions.php"
-        ]
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "WCPayPalPlus\\Tests\\": "tests/php",
+            "WCPayPalPlus\\Tests\\Unit\\": "tests/php/Unit",
+            "WCPayPalPlus\\Tests\\Integration\\": "tests/php/Integration"
+        }
     },
     "extra": {
         "mozart": {
