@@ -1,6 +1,5 @@
 .idea
 .sass-cache
-composer.lock
 phpunit.xml
 /lib/__classes
 /vendor/
