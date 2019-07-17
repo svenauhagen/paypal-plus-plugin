@@ -14,9 +14,9 @@ use function Brain\Monkey\Actions\expectAdded as expectActionAdded;
 use function Brain\Monkey\Functions\expect;
 use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler;
-use PHPUnit\Framework\TestCase;
 use WCPayPalPlus\Http\ServiceProvider as Testee;
 use WCPayPalPlus\Service\Container;
+use WCPayPalPlus\Tests\TestCase;
 
 /**
  * Class ServiceProviderTest
