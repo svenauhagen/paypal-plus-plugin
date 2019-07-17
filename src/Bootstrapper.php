@@ -105,6 +105,7 @@ class Bootstrapper
             ->add(new Core\ServiceProvider())
             ->add(new Install\ServiceProvider())
             ->add(new Uninstall\ServiceProvider())
+            ->add(new Deactivate\ServiceProvider())
             ->add(new Utils\ServiceProvider())
             ->add(new Notice\ServiceProvider())
             ->add(new Assets\ServiceProvider())

@@ -42,9 +42,9 @@ class StorerCronTest extends TestCase
     }
 
     /*
-     * Test execute
+     * Test update
      */
-    public function testExecute()
+    public function testUpdate()
     {
         /*
          * Set Dependencies
@@ -67,7 +67,7 @@ class StorerCronTest extends TestCase
         list($testee, $testeeMethod) = $this->buildTesteeMethodMock(
             Testee::class,
             [$remoteResourcesStorer, $resourceDictionary],
-            'execute',
+            'update',
             []
         );
 
