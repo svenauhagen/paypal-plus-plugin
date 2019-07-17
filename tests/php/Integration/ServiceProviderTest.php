@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\Tests\Integration\Http;
 
+use function Brain\Monkey\Actions\expectAdded as expectActionAdded;
 use function Brain\Monkey\Functions\when;
 use function Brain\Monkey\Functions\expect;
 use UnexpectedValueException;
@@ -133,6 +134,7 @@ class ServiceProviderTest extends TestCase
             ->setMethods(['get'])
             ->getMock();
 
+        $storeCron = $this->createMock(StoreCron::class);
         $cronScheduler = $this
             ->getMockBuilder(CronScheduler::class)
             ->disableOriginalConstructor()
@@ -153,10 +155,16 @@ class ServiceProviderTest extends TestCase
          * Expect to retrieve the CronScheduler from Container
          */
         $container
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('get')
-            ->with(CronScheduler::class)
-            ->willReturn($cronScheduler);
+            ->withConsecutive(
+                [CronScheduler::class],
+                [StoreCron::class]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $cronScheduler,
+                $storeCron
+            );
 
         /*
          * Expect to set the schedule
@@ -175,6 +183,13 @@ class ServiceProviderTest extends TestCase
                     $filterCallbackHolder = $callback;
                 }
             );
+
+        /*
+         * Expects actions
+         */
+        expectActionAdded(CronScheduler::CRON_HOOK_NAME)
+            ->once()
+            ->with([$storeCron, 'execute']);
 
         /*
          * Execute Testee

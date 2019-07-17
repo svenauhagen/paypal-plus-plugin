@@ -50,7 +50,7 @@ class RemoteResourcesStorer
         }
 
         foreach ($resourceDictionaryList as $localFilePath => $remoteFilePath) {
-            $response = wp_safe_remote_post($remoteFilePath);
+            $response = wp_safe_remote_get($remoteFilePath);
             $fileContent = wp_remote_retrieve_body($response);
 
             if (!$fileContent) {
@@ -75,6 +75,7 @@ class RemoteResourcesStorer
         assert(is_string($filePath) && !empty($filePath));
         assert(is_string($fileContent) && !empty($fileContent));
 
+        $dir = dirname($filePath);
         $fileExists = $this->fileSystem->exists($filePath);
         $deleted = false;
 
@@ -86,6 +87,29 @@ class RemoteResourcesStorer
             return;
         }
 
+        $this->maybeMkdir($dir);
+
         $this->fileSystem->put_contents($filePath, $fileContent, FS_CHMOD_FILE);
+    }
+
+    /**
+     * Make a dir if possible
+     *
+     * We don't use the fileSystem mkdir because that doesn't allow us to recursively
+     * create the directories.
+     *
+     * @param string $path
+     */
+    protected function maybeMkdir($path)
+    {
+        assert(is_string($path) && !empty($path));
+
+        if (file_exists($path)) {
+            return;
+        }
+
+        $path = untrailingslashit($path);
+
+        @mkdir($path, FS_CHMOD_FILE, true);
     }
 }

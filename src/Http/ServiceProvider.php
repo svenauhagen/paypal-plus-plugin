@@ -98,6 +98,8 @@ class ServiceProvider implements BootstrappableServiceProvider
         );
 
         $cronScheduler->schedule();
+
+        add_action(CronScheduler::CRON_HOOK_NAME, [$container->get(StoreCron::class), 'execute']);
     }
 
     /**

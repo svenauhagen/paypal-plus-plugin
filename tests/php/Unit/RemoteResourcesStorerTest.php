@@ -11,16 +11,19 @@
 namespace WCPayPalPlus\Tests\Unit\Http\PayPalAssetsCache;
 
 use function Brain\Monkey\Functions\expect;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
 use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorer as Testee;
 use WCPayPalPlus\Tests\TestCase;
 
 /**
- * Class ResourcesDownloaderTest
+ * Class RemoteResourcesStorerTest
  * @package WCPayPalPlus\Tests\Unit\Http\PayPalAssetsCache
  */
-class ResourcesDownloaderTest extends TestCase
+class RemoteResourcesStorerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * Test Instance
      */
@@ -53,7 +56,7 @@ class ResourcesDownloaderTest extends TestCase
         /*
          * Stubs
          *
-         * - The httpResponse variable simulate a response array returned by wp_safe_remote_post
+         * - The httpResponse variable simulate a response array returned by wp_safe_remote_get
          */
         $localFilePath = uniqid();
         $remoteResourcePath = uniqid();
@@ -102,9 +105,9 @@ class ResourcesDownloaderTest extends TestCase
 
         /*
          * Expect to retrieve the file content by using WordPress function
-         * wp_safe_remote_post.
+         * wp_safe_remote_get.
          */
-        expect('wp_safe_remote_post')
+        expect('wp_safe_remote_get')
             ->once()
             ->with($remoteResourcePath)
             ->andReturn($httpResponse);
@@ -201,7 +204,7 @@ class ResourcesDownloaderTest extends TestCase
         /*
          * Stubs
          *
-         * - The httpResponse variable simulate a response array returned by wp_safe_remote_post
+         * - The httpResponse variable simulate a response array returned by wp_safe_remote_get
          */
         $localFilePath = uniqid();
         $remoteResourcePath = uniqid();
@@ -250,9 +253,9 @@ class ResourcesDownloaderTest extends TestCase
 
         /*
          * Expect to retrieve the file content by using WordPress function
-         * wp_safe_remote_post.
+         * wp_safe_remote_get.
          */
-        expect('wp_safe_remote_post')
+        expect('wp_safe_remote_get')
             ->once()
             ->with($remoteResourcePath)
             ->andReturn($httpResponse);
@@ -310,7 +313,7 @@ class ResourcesDownloaderTest extends TestCase
             Testee::class,
             [$wpFileSystem],
             'storeFileContent',
-            []
+            ['maybeMkdir']
         );
 
         /*
@@ -334,6 +337,13 @@ class ResourcesDownloaderTest extends TestCase
             ->method('put_contents')
             ->with($expectedLocalPath, $fileContent, FS_CHMOD_FILE)
             ->willReturn(true);
+
+        /*
+         * Expect to create the directory
+         */
+        $testee
+            ->expects($this->once())
+            ->method('maybeMkdir');
 
         /*
          * Execute Test
@@ -396,5 +406,97 @@ class ResourcesDownloaderTest extends TestCase
          * Execute Test
          */
         $testeeMethod->invoke($testee, $expectedLocalPath, $fileContent);
+    }
+
+    /* -------------------------------------------------------------------
+       Test maybeMkdir
+       ---------------------------------------------------------------- */
+
+    /**
+     * Test maybeMkdir
+     */
+    public function testMaybeMkdir()
+    {
+        /*
+         * Stubs
+         */
+        $path = uniqid();
+
+        /*
+         * Setup Testee
+         */
+        list($testee, $testeeMethod) = $this->buildTesteeMethodMock(
+            Testee::class,
+            [],
+            'maybeMkdir',
+            []
+        );
+
+        /*
+         * Expect file not exists
+         */
+        expect('file_exists')
+            ->once()
+            ->with($path)
+            ->andReturn(false);
+
+        /*
+         * Expect to clean the path
+         */
+        expect('untrailingslashit')
+            ->once()
+            ->with($path)
+            ->andReturn($path);
+
+        /*
+         * Expect to call mkdir
+         */
+        expect('mkdir')
+            ->once()
+            ->with($path, FS_CHMOD_FILE, true);
+
+        /*
+         * Execute Test
+         */
+        $testeeMethod->invoke($testee, $path);
+    }
+
+    /**
+     * Test directory is not created because it already exists
+     */
+    public function testMaybeMkdirDoesNotCreateDirectoryBecauseExists()
+    {
+        /*
+         * Stubs
+         */
+        $path = uniqid();
+
+        /*
+         * Setup Testee
+         */
+        list($testee, $testeeMethod) = $this->buildTesteeMethodMock(
+            Testee::class,
+            [],
+            'maybeMkdir',
+            []
+        );
+
+        /*
+         * Expect file not exists
+         */
+        expect('file_exists')
+            ->once()
+            ->with($path)
+            ->andReturn(true);
+
+        /*
+         * Expect to call mkdir
+         */
+        expect('mkdir')->never();
+
+        /*
+         * Execute Test
+         */
+        $testeeMethod->invoke($testee, $path);
     }
 }
