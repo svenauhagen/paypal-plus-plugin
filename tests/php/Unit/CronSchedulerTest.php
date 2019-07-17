@@ -11,6 +11,7 @@
 namespace WCPayPalPlus\Tests\Unit\Http\PayPalAssetsCache;
 
 use function Brain\Monkey\Functions\expect;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler as Testee;
 use WCPayPalPlus\Tests\TestCase;
 
@@ -20,6 +21,8 @@ use WCPayPalPlus\Tests\TestCase;
  */
 class CronSchedulerTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
     /**
      * Test Instance
      */
@@ -76,7 +79,7 @@ class CronSchedulerTest extends TestCase
             ->andReturn($time);
 
         expect('wp_schedule_event')
-            ->with($time, 'weekly', Testee::CRON_HOOK_NAME);
+            ->with($time + MINUTE_IN_SECONDS, 'weekly', Testee::CRON_HOOK_NAME);
 
         /*
          * Execute Test

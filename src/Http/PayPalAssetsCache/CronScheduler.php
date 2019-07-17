@@ -42,7 +42,7 @@ class CronScheduler
     public function schedule()
     {
         if (!wp_next_scheduled(self::CRON_HOOK_NAME)) {
-            wp_schedule_event(time(), 'weekly', self::CRON_HOOK_NAME);
+            wp_schedule_event(time() + MINUTE_IN_SECONDS, 'weekly', self::CRON_HOOK_NAME);
         }
     }
 }
