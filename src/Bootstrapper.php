@@ -31,12 +31,21 @@ class Bootstrapper
     private $container;
 
     /**
+     * @var string
+     */
+    private $pluginFile;
+
+    /**
      * Bootstrapper constructor.
      * @param Container $container
+     * @param $pluginFile
      */
-    public function __construct(Container $container)
+    public function __construct(Container $container, $pluginFile)
     {
+        assert(is_string($pluginFile) && !empty($pluginFile));
+
         $this->container = $container;
+        $this->pluginFile = $pluginFile;
     }
 
     /**
@@ -68,8 +77,6 @@ class Bootstrapper
             $serviceProviders = $this->serviceProviders();
             $payPalPlus = new PayPalPlus($this->container, $serviceProviders);
             $bootstrapped = $payPalPlus->bootstrap();
-
-            unset($providers);
         } catch (Exception $exc) {
             do_action(self::ACTION_LOG, WC_Log_Levels::ERROR, $exc->getMessage(), compact($exc));
 
@@ -90,7 +97,7 @@ class Bootstrapper
     {
         $this->container->shareValue(
             PluginProperties::class,
-            new PluginProperties(__FILE__)
+            new PluginProperties($this->pluginFile)
         );
 
         $providers = new ServiceProvidersCollection();

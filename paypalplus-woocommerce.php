@@ -41,7 +41,7 @@ $bootstrap = Closure::bind(
         return;
     }
 
-    $bootstrapper = new Bootstrapper(resolve());
+    $bootstrapper = new Bootstrapper(resolve(), __FILE__);
 
     add_action('plugins_loaded', [$bootstrapper, 'bootstrap'], 0);
     add_action('init', function () {

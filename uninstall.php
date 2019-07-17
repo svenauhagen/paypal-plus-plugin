@@ -20,7 +20,7 @@ if (!class_exists(PayPalPlus::class)) {
 }
 
 $container = resolve();
-$bootstrapper = new Bootstrapper($container);
+$bootstrapper = new Bootstrapper($container, __DIR__ . '/paypalplus-woocommerce.php');
 $bootstrapper->bootstrap();
 
 $uninstaller = $container->get(Uninstaller::class);
