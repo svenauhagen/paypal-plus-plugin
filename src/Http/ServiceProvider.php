@@ -16,7 +16,6 @@ use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler;
 use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorer;
 use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
 use WCPayPalPlus\Http\PayPalAssetsCache\StoreCron;
-use WCPayPalPlus\PluginProperties;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WP_Filesystem_Base;
