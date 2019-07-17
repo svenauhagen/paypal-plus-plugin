@@ -110,6 +110,10 @@ class ServiceProvider implements BootstrappableServiceProvider
     {
         global $wp_filesystem;
 
+        if (!function_exists('WP_Filesystem')) {
+            require_once ABSPATH . '/wp-admin/includes/file.php';
+        }
+
         $initilized = WP_Filesystem();
 
         if (!$initilized || !$wp_filesystem instanceof WP_Filesystem_Base) {
