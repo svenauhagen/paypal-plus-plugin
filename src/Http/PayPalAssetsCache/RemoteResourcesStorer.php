@@ -36,13 +36,10 @@ class RemoteResourcesStorer
      * Update Resources
      *
      * @param ResourceDictionary $resourceDictionary
-     * @param $baseLocalPath
      * @return void
      */
-    public function update(ResourceDictionary $resourceDictionary, $baseLocalPath)
+    public function update(ResourceDictionary $resourceDictionary)
     {
-        assert(is_string($baseLocalPath) && !empty($baseLocalPath));
-
         $resourceDictionaryList = $resourceDictionary->resourcesList();
 
         if (!$resourceDictionaryList) {
@@ -57,9 +54,7 @@ class RemoteResourcesStorer
                 continue;
             }
 
-            $storeFilePath = trailingslashit($baseLocalPath) . ltrim($localFilePath, '/');
-
-            $this->storeFileContent($storeFilePath, $fileContent);
+            $this->storeFileContent($localFilePath, $fileContent);
         }
     }
 

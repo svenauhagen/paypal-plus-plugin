@@ -69,8 +69,6 @@ class RemoteResourcesStorerTest extends TestCase
             $localFilePath => $remoteResourcePath,
         ];
 
-        $baseLocalPath = uniqid();
-
         $resourceDictionary = $this
             ->getMockBuilder(ResourceDictionary::class)
             ->disableOriginalConstructor()
@@ -120,26 +118,18 @@ class RemoteResourcesStorerTest extends TestCase
             ->with($httpResponse)
             ->andReturn($fileContent);
 
-        /*
-         * Expect to clean the baseLocalPath before build the final file path
-         */
-        expect('trailingslashit')
-            ->once()
-            ->with($baseLocalPath)
-            ->andReturn("{$baseLocalPath}/");
-
        /*
         * Expect to store the file content
         */
        $testee
            ->expects($this->once())
            ->method('storeFileContent')
-           ->with("{$baseLocalPath}/{$localFilePath}", $fileContent);
+           ->with($localFilePath, $fileContent);
 
         /*
          * Execute Test
          */
-        $testeeMethod->invoke($testee, $resourceDictionary, $baseLocalPath);
+        $testeeMethod->invoke($testee, $resourceDictionary);
     }
 
     /**
@@ -150,8 +140,6 @@ class RemoteResourcesStorerTest extends TestCase
         /*
          * Stubs
          */
-        $baseLocalPath = uniqid();
-
         $resourceDictionary = $this
             ->getMockBuilder(ResourceDictionary::class)
             ->disableOriginalConstructor()
@@ -193,7 +181,7 @@ class RemoteResourcesStorerTest extends TestCase
         /*
          * Execute Test
          */
-        $testeeMethod->invoke($testee, $resourceDictionary, $baseLocalPath);
+        $testeeMethod->invoke($testee, $resourceDictionary);
     }
 
     /**
@@ -216,8 +204,6 @@ class RemoteResourcesStorerTest extends TestCase
         $resourcesList = [
             $localFilePath => $remoteResourcePath,
         ];
-
-        $baseLocalPath = uniqid();
 
         $resourceDictionary = $this
             ->getMockBuilder(ResourceDictionary::class)
@@ -278,7 +264,7 @@ class RemoteResourcesStorerTest extends TestCase
         /*
          * Execute Test
          */
-        $testeeMethod->invoke($testee, $resourceDictionary, $baseLocalPath);
+        $testeeMethod->invoke($testee, $resourceDictionary);
     }
 
     /* -------------------------------------------------------------------
@@ -295,8 +281,6 @@ class RemoteResourcesStorerTest extends TestCase
          */
         $localFilePath = uniqid();
         $fileContent = uniqid();
-        $baseLocalPath = uniqid();
-        $expectedLocalPath = "{$baseLocalPath}/{$localFilePath}";
 
         /*
          * Setup Dependencies
@@ -323,19 +307,19 @@ class RemoteResourcesStorerTest extends TestCase
         $wpFileSystem
             ->expects($this->once())
             ->method('exists')
-            ->with($expectedLocalPath)
+            ->with($localFilePath)
             ->willReturn(true);
 
         $wpFileSystem
             ->expects($this->once())
             ->method('delete')
-            ->with($expectedLocalPath)
+            ->with($localFilePath)
             ->willReturn(true);
 
         $wpFileSystem
             ->expects($this->once())
             ->method('put_contents')
-            ->with($expectedLocalPath, $fileContent, FS_CHMOD_FILE)
+            ->with($localFilePath, $fileContent, FS_CHMOD_FILE)
             ->willReturn(true);
 
         /*
@@ -348,7 +332,7 @@ class RemoteResourcesStorerTest extends TestCase
         /*
          * Execute Test
          */
-        $testeeMethod->invoke($testee, $expectedLocalPath, $fileContent);
+        $testeeMethod->invoke($testee, $localFilePath, $fileContent);
     }
 
     /**
@@ -361,8 +345,6 @@ class RemoteResourcesStorerTest extends TestCase
          */
         $localFilePath = uniqid();
         $fileContent = uniqid();
-        $baseLocalPath = uniqid();
-        $expectedLocalPath = "{$baseLocalPath}/{$localFilePath}";
 
         /*
          * Setup Dependencies
@@ -389,13 +371,13 @@ class RemoteResourcesStorerTest extends TestCase
         $wpFileSystem
             ->expects($this->once())
             ->method('exists')
-            ->with($expectedLocalPath)
+            ->with($localFilePath)
             ->willReturn(true);
 
         $wpFileSystem
             ->expects($this->once())
             ->method('delete')
-            ->with($expectedLocalPath)
+            ->with($localFilePath)
             ->willReturn(false);
 
         $wpFileSystem
@@ -405,7 +387,7 @@ class RemoteResourcesStorerTest extends TestCase
         /*
          * Execute Test
          */
-        $testeeMethod->invoke($testee, $expectedLocalPath, $fileContent);
+        $testeeMethod->invoke($testee, $localFilePath, $fileContent);
     }
 
     /* -------------------------------------------------------------------

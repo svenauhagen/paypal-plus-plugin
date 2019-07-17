@@ -22,11 +22,6 @@ class StoreCron
     private $resourceDictionary;
 
     /**
-     * @var string
-     */
-    private $baseStorePath;
-
-    /**
      * @var RemoteResourcesStorer
      */
     private $remoteResourcesStorer;
@@ -35,19 +30,14 @@ class StoreCron
      * StorerCron constructor.
      * @param RemoteResourcesStorer $remoteResourcesStorer
      * @param ResourceDictionary $resourceDictionary
-     * @param string $baseStorePath
      */
     public function __construct(
         RemoteResourcesStorer $remoteResourcesStorer,
-        ResourceDictionary $resourceDictionary,
-        $baseStorePath
+        ResourceDictionary $resourceDictionary
     ) {
-
-        assert(is_string($baseStorePath) && !empty($baseStorePath));
 
         $this->remoteResourcesStorer = $remoteResourcesStorer;
         $this->resourceDictionary = $resourceDictionary;
-        $this->baseStorePath = $baseStorePath;
     }
 
     /**
@@ -55,6 +45,6 @@ class StoreCron
      */
     public function execute()
     {
-        $this->remoteResourcesStorer->update($this->resourceDictionary, $this->baseStorePath);
+        $this->remoteResourcesStorer->update($this->resourceDictionary);
     }
 }

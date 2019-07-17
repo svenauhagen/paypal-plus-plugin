@@ -11,9 +11,7 @@
 namespace WCPayPalPlus\Tests\Integration\Http;
 
 use function Brain\Monkey\Actions\expectAdded as expectActionAdded;
-use function Brain\Monkey\Functions\when;
 use function Brain\Monkey\Functions\expect;
-use UnexpectedValueException;
 use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler;
 use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorer;
 use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
@@ -21,7 +19,6 @@ use WCPayPalPlus\Http\PayPalAssetsCache\StoreCron;
 use WCPayPalPlus\Http\ServiceProvider as Testee;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Tests\TestCase;
-use WP_Filesystem_Base;
 
 /**
  * Class ServiceProviderTest
@@ -53,6 +50,11 @@ class ServiceProviderTest extends TestCase
          */
         $container = new Container();
 
+        $container->addValue(
+            'wp_filesystem',
+            $this->getMockBuilder('\\WP_Filesystem_Base')->getMock()
+        );
+
         /*
          * Setup Testee
          */
@@ -64,11 +66,6 @@ class ServiceProviderTest extends TestCase
         );
 
         /*
-         * Stubs WordPress functions
-         */
-        when('WP_Filesystem')->justReturn(true);
-
-        /*
          * Expect to retrieve the base store dir from WordPress by calling `wp_upload_dir`
          */
         expect('wp_upload_dir')
@@ -78,14 +75,6 @@ class ServiceProviderTest extends TestCase
                     'basedir' => uniqid(),
                 ]
             );
-
-        /*
-         * Expect to get a valid Wp Filesystem Instance
-         */
-        $testee
-            ->expects($this->once())
-            ->method('fileSystem')
-            ->willReturn($this->getMockBuilder('\\WP_Filesystem_Base')->getMock());
 
         /*
          * Execute Test
@@ -210,89 +199,5 @@ class ServiceProviderTest extends TestCase
                 $filterCallbackHolder($schedules);
             }
         );
-    }
-
-    /* ------------------------------------------------------------------
-       Test fileSystem
-       --------------------------------------------------------------- */
-
-    /**
-     * Test fileSystem
-     */
-    public function testFileSystem()
-    {
-        global $wp_filesystem;
-
-        $fileSystem = $this->getMockBuilder('\\WP_Filesystem_Base')->getMock();
-
-        /*
-         * Setup Testee
-         */
-        list($testee, $testeeMethod) = $this->buildTesteeMethodMock(
-            Testee::class,
-            [],
-            'fileSystem',
-            []
-        );
-
-        /*
-         * Expect to call WP_Filesystem in order to create the right instance of the
-         * Wp Filesystem
-         */
-        expect('WP_Filesystem')
-            ->once()
-            ->andReturnUsing(
-                function () use ($fileSystem) {
-                    global $wp_filesystem;
-                    $wp_filesystem = $fileSystem;
-                    return true;
-                }
-            );
-
-        /*
-         * Execute Test
-         */
-        $result = $testeeMethod->invoke($testee);
-
-        self::assertEquals($wp_filesystem, $result);
-    }
-
-    /**
-     * Test fileSystem doesnt work because WP_Filesystem cannot create a valid filesystem instance
-     */
-    public function testFileSystemThrowUnexpectedExceptionBecauseOfWpFilesystemReturnFalse()
-    {
-        /*
-         * Setup Testee
-         */
-        list($testee, $testeeMethod) = $this->buildTesteeMethodMock(
-            Testee::class,
-            [],
-            'fileSystem',
-            []
-        );
-
-        /*
-         * Expect to call WP_Filesystem in order to create the right instance of the
-         * Wp Filesystem
-         */
-        expect('WP_Filesystem')
-            ->once()
-            ->andReturnUsing(
-                function () {
-                    return false;
-                }
-            );
-
-        /*
-         * Expect Exception
-         */
-        $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('There were problem in initializing Wp FileSystem');
-
-        /*
-         * Execute Test
-         */
-        $testeeMethod->invoke($testee);
     }
 }

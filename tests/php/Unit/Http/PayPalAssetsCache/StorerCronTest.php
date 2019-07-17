@@ -61,14 +61,12 @@ class StorerCronTest extends TestCase
             ->setMethods(['resourcesList'])
             ->getMock();
 
-        $baseStorePath = uniqid();
-
         /*
          * Setup Testee
          */
         list($testee, $testeeMethod) = $this->buildTesteeMethodMock(
             Testee::class,
-            [$remoteResourcesStorer, $resourceDictionary, $baseStorePath],
+            [$remoteResourcesStorer, $resourceDictionary],
             'execute',
             []
         );
@@ -79,7 +77,7 @@ class StorerCronTest extends TestCase
         $remoteResourcesStorer
             ->expects($this->once())
             ->method('update')
-            ->with($resourceDictionary, $baseStorePath);
+            ->with($resourceDictionary);
 
         /*
          * Execute Test

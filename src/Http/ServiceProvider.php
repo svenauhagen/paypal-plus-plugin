@@ -18,7 +18,6 @@ use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
 use WCPayPalPlus\Http\PayPalAssetsCache\StoreCron;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
-use WP_Filesystem_Base;
 
 /**
  * Class ServiceProvider
@@ -39,7 +38,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         }
 
         try {
-            $fileSystem = $this->fileSystem();
+            $fileSystem = $container->get('wp_filesystem');
         } catch (UnexpectedValueException $exc) {
             $container->get(Logger::class)->warning($exc->getMessage());
             return;
@@ -73,11 +72,10 @@ class ServiceProvider implements BootstrappableServiceProvider
 
         $container->addService(
             StoreCron::class,
-            function (Container $container) use ($uploadDir) {
+            function (Container $container) {
                 return new StoreCron(
                     $container->get(RemoteResourcesStorer::class),
-                    $container->get(ResourceDictionary::class),
-                    $uploadDir
+                    $container->get(ResourceDictionary::class)
                 );
             }
         );
@@ -100,28 +98,5 @@ class ServiceProvider implements BootstrappableServiceProvider
         $cronScheduler->schedule();
 
         add_action(CronScheduler::CRON_HOOK_NAME, [$container->get(StoreCron::class), 'execute']);
-    }
-
-    /**
-     * Retrieve a WP_Filesystem_Base instance
-     *
-     * @return WP_Filesystem_Base
-     * @throws UnexpectedValueException
-     */
-    protected function fileSystem()
-    {
-        global $wp_filesystem;
-
-        if (!function_exists('WP_Filesystem')) {
-            require_once ABSPATH . '/wp-admin/includes/file.php';
-        }
-
-        $initilized = WP_Filesystem();
-
-        if (!$initilized || !$wp_filesystem instanceof WP_Filesystem_Base) {
-            throw new UnexpectedValueException('There were problem in initializing Wp FileSystem');
-        }
-
-        return $wp_filesystem;
     }
 }
