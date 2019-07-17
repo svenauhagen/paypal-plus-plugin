@@ -72,5 +72,10 @@
             "\"vendor/bin/mozart\" compose",
             "composer dump-autoload"
         ]
+    },
+    "config": {
+        "platform": {
+            "php": "7.0.33"
+        }
     }
 }
