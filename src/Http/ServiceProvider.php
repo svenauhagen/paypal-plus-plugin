@@ -15,7 +15,7 @@ use UnexpectedValueException;
 use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler;
 use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorer;
 use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
-use WCPayPalPlus\Http\PayPalAssetsCache\StoreCron;
+use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 
@@ -60,20 +60,20 @@ class ServiceProvider implements BootstrappableServiceProvider
 
         $container->addService(
             ResourceDictionary::class,
-            function () {
+            function () use ($uploadDir) {
                 return new ResourceDictionary(
                     [
-                        'woo-paypalplus/resources/js/paypal/expressCheckout.min.js' => 'https://www.paypalobjects.com/api/checkout.min.js',
-                        'woo-paypalplus/resources/js/paypal/payPalplus.min.js' => 'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
+                        "{$uploadDir}/woo-paypalplus/resources/js/paypal/expressCheckout.min.js" => 'https://www.paypalobjects.com/api/checkout.min.js',
+                        "{$uploadDir}/woo-paypalplus/resources/js/paypal/payPalplus.min.js" => 'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
                     ]
                 );
             }
         );
 
         $container->addService(
-            StoreCron::class,
+            AssetsStoreUpdater::class,
             function (Container $container) {
-                return new StoreCron(
+                return new AssetsStoreUpdater(
                     $container->get(RemoteResourcesStorer::class),
                     $container->get(ResourceDictionary::class)
                 );
@@ -97,6 +97,9 @@ class ServiceProvider implements BootstrappableServiceProvider
 
         $cronScheduler->schedule();
 
-        add_action(CronScheduler::CRON_HOOK_NAME, [$container->get(StoreCron::class), 'execute']);
+        add_action(
+            CronScheduler::CRON_HOOK_NAME,
+            [$container->get(AssetsStoreUpdater::class), 'update']
+        );
     }
 }

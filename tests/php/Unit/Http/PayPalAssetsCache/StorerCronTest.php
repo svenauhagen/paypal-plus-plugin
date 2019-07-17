@@ -12,7 +12,7 @@ namespace WCPayPalPlus\Tests\Unit\Http\PayPalAssetsCache;
 
 use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorer;
 use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
-use WCPayPalPlus\Http\PayPalAssetsCache\StoreCron as Testee;
+use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater as Testee;
 use WCPayPalPlus\Tests\TestCase;
 
 /**

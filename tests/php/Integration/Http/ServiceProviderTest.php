@@ -15,7 +15,7 @@ use function Brain\Monkey\Functions\expect;
 use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler;
 use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorer;
 use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
-use WCPayPalPlus\Http\PayPalAssetsCache\StoreCron;
+use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Http\ServiceProvider as Testee;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Tests\TestCase;
@@ -97,8 +97,8 @@ class ServiceProviderTest extends TestCase
             $container->get(ResourceDictionary::class)
         );
         self::assertInstanceOf(
-            StoreCron::class,
-            $container->get(StoreCron::class)
+            AssetsStoreUpdater::class,
+            $container->get(AssetsStoreUpdater::class)
         );
     }
 
@@ -123,7 +123,7 @@ class ServiceProviderTest extends TestCase
             ->setMethods(['get'])
             ->getMock();
 
-        $storeCron = $this->createMock(StoreCron::class);
+        $storeCron = $this->createMock(AssetsStoreUpdater::class);
         $cronScheduler = $this
             ->getMockBuilder(CronScheduler::class)
             ->disableOriginalConstructor()
@@ -148,7 +148,7 @@ class ServiceProviderTest extends TestCase
             ->method('get')
             ->withConsecutive(
                 [CronScheduler::class],
-                [StoreCron::class]
+                [AssetsStoreUpdater::class]
             )
             ->willReturnOnConsecutiveCalls(
                 $cronScheduler,

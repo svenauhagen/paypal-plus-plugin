@@ -11,10 +11,10 @@
 namespace WCPayPalPlus\Http\PayPalAssetsCache;
 
 /**
- * Class StorerCron
+ * Class AssetsStoreUpdater
  * @package WCPayPalPlus\Http\PayPalAssetsCache
  */
-class StoreCron
+class AssetsStoreUpdater
 {
     /**
      * @var ResourceDictionary
@@ -43,7 +43,7 @@ class StoreCron
     /**
      * Execute Cron Event
      */
-    public function execute()
+    public function update()
     {
         $this->remoteResourcesStorer->update($this->resourceDictionary);
     }
