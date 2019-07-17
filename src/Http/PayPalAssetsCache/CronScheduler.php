@@ -18,6 +18,12 @@ class CronScheduler
 {
     const CRON_HOOK_NAME = 'paypalplus.assets_cache_cron_schedule_hook';
 
+    /**
+     * Add new Schedule Recurrence
+     *
+     * @param array $schedules
+     * @return array
+     */
     public function addWeeklyRecurrence(array $schedules)
     {
         !isset($schedules['weekly']) and $schedules['weekly'] = [
