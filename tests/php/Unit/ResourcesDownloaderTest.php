@@ -70,6 +70,7 @@ class ResourcesDownloaderTest extends TestCase
 
         $resourceDictionary = $this
             ->getMockBuilder(ResourceDictionary::class)
+            ->disableOriginalConstructor()
             ->setMethods(['resourcesList'])
             ->getMock();
 
@@ -150,6 +151,7 @@ class ResourcesDownloaderTest extends TestCase
 
         $resourceDictionary = $this
             ->getMockBuilder(ResourceDictionary::class)
+            ->disableOriginalConstructor()
             ->setMethods(['resourcesList'])
             ->getMock();
 
@@ -216,6 +218,7 @@ class ResourcesDownloaderTest extends TestCase
 
         $resourceDictionary = $this
             ->getMockBuilder(ResourceDictionary::class)
+            ->disableOriginalConstructor()
             ->setMethods(['resourcesList'])
             ->getMock();
 
