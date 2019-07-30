@@ -84,13 +84,6 @@ class ServiceProviderTest extends TestCase
             );
 
         /*
-         * Expect to set the schedule
-         */
-        $cronScheduler
-            ->expects($this->once())
-            ->method('schedule');
-
-        /*
          * Intercept the filter of `cron_schedules` for CronScheduler::addWeeklyRecurrence expectation
          */
         expect('add_filter')
@@ -107,6 +100,10 @@ class ServiceProviderTest extends TestCase
         expectActionAdded(CronScheduler::CRON_HOOK_NAME)
             ->once()
             ->with([$storeCron, 'update']);
+
+        expectActionAdded('wp_enqueue_scripts')
+            ->once()
+            ->with([$cronScheduler, 'schedule'], 0);
 
         /*
          * Execute Testee
