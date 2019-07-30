@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\Tests\Unit\Http\PayPalAssetsCache;
 
+use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use function Brain\Monkey\Functions\expect;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler as Testee;
@@ -29,15 +30,20 @@ class CronSchedulerTest extends TestCase
     public function testInstance()
     {
         /*
+         * Setup Dependencies
+         */
+        $assetsStoreUpdater = $this->createMock(AssetsStoreUpdater::class);
+
+        /*
          * Execute Test
          */
-        $testee = new Testee();
+        $testee = new Testee($assetsStoreUpdater);
 
         self::assertInstanceOf(Testee::class, $testee);
     }
 
     /* -------------------------------------------------------------
-       schedule
+       Test schedule
        ---------------------------------------------------------- */
 
     /**
@@ -51,11 +57,20 @@ class CronSchedulerTest extends TestCase
         $time = time();
 
         /*
+         * Setup Dependencies
+         */
+        $assetsStoreUpdater = $this
+            ->getMockBuilder(AssetsStoreUpdater::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['update'])
+            ->getMock();
+
+        /*
          * Setup Testee
          */
         list($testee, $testeeMethod) = $this->buildTesteeMethodMock(
             Testee::class,
-            [],
+            [$assetsStoreUpdater],
             'schedule',
             []
         );
@@ -82,13 +97,20 @@ class CronSchedulerTest extends TestCase
             ->with($time + MINUTE_IN_SECONDS, 'weekly', Testee::CRON_HOOK_NAME);
 
         /*
+         * Expect the scripts files are updated the first time when schedule a new event.
+         */
+        $assetsStoreUpdater
+            ->expects($this->once())
+            ->method('update');
+
+        /*
          * Execute Test
          */
         $testeeMethod->invoke($testee);
     }
 
     /* -------------------------------------------------------------
-       addWeeklyRecurrence
+       Test addWeeklyRecurrence
        ---------------------------------------------------------- */
 
     /**

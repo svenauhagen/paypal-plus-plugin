@@ -46,8 +46,10 @@ class ServiceProvider implements BootstrappableServiceProvider
 
         $container->addService(
             CronScheduler::class,
-            function () {
-                return new CronScheduler();
+            function (Container $container) {
+                return new CronScheduler(
+                    $container[AssetsStoreUpdater::class]
+                );
             }
         );
 
@@ -95,7 +97,7 @@ class ServiceProvider implements BootstrappableServiceProvider
             }
         );
 
-        $cronScheduler->schedule();
+        add_action('wp_enqueue_scripts', [$cronScheduler, 'schedule'], 0);
 
         add_action(
             CronScheduler::CRON_HOOK_NAME,

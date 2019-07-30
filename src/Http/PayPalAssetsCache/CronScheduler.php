@@ -19,6 +19,20 @@ class CronScheduler
     const CRON_HOOK_NAME = 'paypalplus.assets_cache_cron_schedule_hook';
 
     /**
+     * @var AssetsStoreUpdater
+     */
+    private $assetsStoreUpdater;
+
+    /**
+     * CronScheduler constructor.
+     * @param AssetsStoreUpdater $assetsStoreUpdater
+     */
+    public function __construct(AssetsStoreUpdater $assetsStoreUpdater)
+    {
+        $this->assetsStoreUpdater = $assetsStoreUpdater;
+    }
+
+    /**
      * Add new Schedule Recurrence
      *
      * @param array $schedules
@@ -43,6 +57,7 @@ class CronScheduler
     {
         if (!wp_next_scheduled(self::CRON_HOOK_NAME)) {
             wp_schedule_event(time() + MINUTE_IN_SECONDS, 'weekly', self::CRON_HOOK_NAME);
+            $this->assetsStoreUpdater->update();
         }
     }
 }
