@@ -71,7 +71,10 @@ class PayPalAssetManager
             );
         }
 
-        if ($this->isCheckout() && !isGatewayDisabled($this->plusGateway)) {
+        if ($this->isCheckout()
+            && !isGatewayDisabled($this->plusGateway)
+            && file_exists($paypalPlusFilePath)
+        ) {
             wp_enqueue_script(
                 'ppplus',
                 "{$uploadUrl}/woo-paypalplus/resources/js/paypal/payPalplus.min.js",
