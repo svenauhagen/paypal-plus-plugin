@@ -1,7 +1,7 @@
 .idea
 .sass-cache
-composer.lock
 phpunit.xml
+/coverage/
 /lib/__classes
 /vendor/
 /node_modules/

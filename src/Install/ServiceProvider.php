@@ -6,6 +6,7 @@
 namespace WCPayPalPlus\Install;
 
 use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
+use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\SharedPersistor;
@@ -23,7 +24,8 @@ class ServiceProvider implements BootstrappableServiceProvider
     {
         $container[Installer::class] = function (Container $container) {
             return new Installer(
-                $container[SharedPersistor::class]
+                $container[SharedPersistor::class],
+                $container->get(AssetsStoreUpdater::class)
             );
         };
     }

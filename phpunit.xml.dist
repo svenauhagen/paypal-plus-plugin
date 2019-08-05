@@ -1,15 +1,35 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <phpunit
-	bootstrap="vendor/autoload.php"
-	backupGlobals="false"
-	colors="true"
-	convertErrorsToExceptions="true"
-	convertNoticesToExceptions="true"
-	convertWarningsToExceptions="true"
-	>
-	<testsuites>
-		<testsuite name="PayPal PLUS for WooCommerce php unit tests">
-			<directory suffix="Test.php">./tests/PHPUnit</directory>
-		</testsuite>
-	</testsuites>
+        bootstrap="./tests/php/bootstrap.php"
+        colors="true"
+        beStrictAboutOutputDuringTests="true"
+        beStrictAboutChangesToGlobalState="true"
+        backupGlobals="true"
+        backupStaticAttributes="true"
+        processIsolation="true"
+        stopOnError="false"
+        stopOnFailure="false">
+    <testsuites>
+        <testsuite name="Test">
+            <directory suffix="Test.php">./tests/php/Unit/</directory>
+            <directory suffix="Test.php">./tests/php/Integration/</directory>
+        </testsuite>
+        <testsuite name="Http">
+            <directory suffix="Test.php">./tests/php/Unit/Http/</directory>
+            <directory suffix="Test.php">./tests/php/Integration/Http/</directory>
+        </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory suffix=".php">./src/</directory>
+            <file>./</file>
+        </whitelist>
+    </filter>
+    <logging>
+        <log type="coverage-clover" target="coverage/report/clover.xml"/>
+        <log type="coverage-html"
+             target="coverage/report/html"
+             lowUpperBound="35"
+             highLowerBound="70"
+        />
+    </logging>
 </phpunit>

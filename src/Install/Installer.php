@@ -5,6 +5,7 @@
 
 namespace WCPayPalPlus\Install;
 
+use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Setting\SharedPersistor;
 
 /**
@@ -21,12 +22,22 @@ class Installer
     private $sharedPersistor;
 
     /**
+     * @var AssetsStoreUpdater
+     */
+    private $assetsStoreUpdater;
+
+    /**
      * Installer constructor.
      * @param SharedPersistor $sharedPersistor
+     * @param AssetsStoreUpdater $assetsStoreUpdater
      */
-    public function __construct(SharedPersistor $sharedPersistor)
-    {
+    public function __construct(
+        SharedPersistor $sharedPersistor,
+        AssetsStoreUpdater $assetsStoreUpdater
+    ) {
+
         $this->sharedPersistor = $sharedPersistor;
+        $this->assetsStoreUpdater = $assetsStoreUpdater;
     }
 
     /**
@@ -35,6 +46,7 @@ class Installer
     public function afterInstall()
     {
         $this->migrateSharedOptions();
+        $this->assetsStoreUpdater->update();
     }
 
     /**

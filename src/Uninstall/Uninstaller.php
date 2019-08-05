@@ -5,9 +5,11 @@
 
 namespace WCPayPalPlus\Uninstall;
 
+use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
 use WCPayPalPlus\Notice\DismissibleNoticeOption;
 use WCPayPalPlus\Setting\SharedPersistor;
 use WCPayPalPlus\Utils\NetworkState;
+use WP_Filesystem_Base;
 use wpdb;
 
 /**
@@ -27,12 +29,24 @@ class Uninstaller
     private $wpdb;
 
     /**
+     * @var ResourceDictionary
+     */
+    private $resourceDictionary;
+
+    /**
+     * @var WP_Filesystem_Base
+     */
+    private $fileSystem;
+
+    /**
      * Uninstaller constructor.
      * @param wpdb $wpdb
+     * @param WP_Filesystem_Base $fileSystem
      */
-    public function __construct(wpdb $wpdb)
+    public function __construct(wpdb $wpdb, WP_Filesystem_Base $fileSystem)
     {
         $this->wpdb = $wpdb;
+        $this->fileSystem = $fileSystem;
     }
 
     /**
@@ -55,6 +69,7 @@ class Uninstaller
         $networkState->restore();
 
         $this->cleanUp();
+        $this->deleteCacheAssetsFiles();
     }
 
     /**
@@ -64,6 +79,26 @@ class Uninstaller
     {
         $this->deleteOptions();
         $this->cleanUp();
+        $this->deleteCacheAssetsFiles();
+    }
+
+    /**
+     * Delete PayPal Assets Files
+     */
+    protected function deleteCacheAssetsFiles()
+    {
+        $uploadDir = wp_upload_dir();
+        $uploadDir = isset($uploadDir['basedir']) ? $uploadDir['basedir'] : '';
+        $uploadDir = untrailingslashit($uploadDir);
+
+        if (!$uploadDir) {
+            return;
+        }
+
+        $this->fileSystem->exists("{$uploadDir}/woo-paypalplus") and $this->fileSystem->delete(
+            "{$uploadDir}/woo-paypalplus",
+            true
+        );
     }
 
     /**
