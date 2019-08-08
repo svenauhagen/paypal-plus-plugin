@@ -52,7 +52,7 @@ class PaymentIdValidator
         try {
             Payment::get($paymentId, ApiContextFactory::getFromConfiguration());
         } catch (PayPalConnectionException $exc) {
-            $this->logger->error("Validate Payment ID: {$paymentId}: " . $exc->getData());
+            $this->logger->error("Validate Payment ID: {$paymentId}: Failed" . $exc->getData());
             return false;
         }
 
