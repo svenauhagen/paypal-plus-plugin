@@ -12,7 +12,9 @@ use WCPayPalPlus\Api\ErrorData\ApiErrorExtractor;
 use WCPayPalPlus\ExpressCheckoutGateway\PaymentExecutionTrait;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Payment\PaymentExecutionFactory;
+use WCPayPalPlus\Payment\PaymentIdValidator;
 use WCPayPalPlus\Payment\PaymentPatcher;
+use WCPayPalPlus\Payment\PaymentSessionDestructor;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Session\Session;
 use WC_Order;
@@ -57,6 +59,16 @@ class PaymentExecution
     private $apiErrorDataExtractor;
 
     /**
+     * @var PaymentIdValidator
+     */
+    private $paymentIdValidator;
+
+    /**
+     * @var PaymentSessionDestructor
+     */
+    private $paymentSessionDestructor;
+
+    /**
      * PaymentExecution constructor.
      * @param OrderFactory $orderFactory
      * @param Session $session
@@ -64,6 +76,8 @@ class PaymentExecution
      * @param Logger $logger
      * @param CheckoutDropper $checkoutDropper
      * @param ApiErrorExtractor $apiErrorDataExtractor
+     * @param PaymentIdValidator $paymentIdValidator
+     * @param PaymentSessionDestructor $paymentSessionDestructor
      */
     public function __construct(
         OrderFactory $orderFactory,
@@ -71,7 +85,9 @@ class PaymentExecution
         PaymentExecutionFactory $paymentExecutionFactory,
         Logger $logger,
         CheckoutDropper $checkoutDropper,
-        ApiErrorExtractor $apiErrorDataExtractor
+        ApiErrorExtractor $apiErrorDataExtractor,
+        PaymentIdValidator $paymentIdValidator,
+        PaymentSessionDestructor $paymentSessionDestructor
     ) {
 
         $this->orderFactory = $orderFactory;
@@ -80,6 +96,8 @@ class PaymentExecution
         $this->logger = $logger;
         $this->checkoutDropper = $checkoutDropper;
         $this->apiErrorDataExtractor = $apiErrorDataExtractor;
+        $this->paymentIdValidator = $paymentIdValidator;
+        $this->paymentSessionDestructor = $paymentSessionDestructor;
     }
 
     /**
@@ -96,8 +114,19 @@ class PaymentExecution
         if (!$paymentId) {
             $paymentId = $this->session->get(Session::PAYMENT_ID);
         }
-        if (!$payerId || !$paymentId || !$orderId) {
+        if (!$payerId || !$orderId) {
             return;
+        }
+
+        /*
+         * This is usually not necessary because we catch the problem when we perform the patch
+         * but just to cover all scenarios and ensure the user get a valid feedback about the
+         * problem.
+         */
+        if (!$this->paymentIdValidator->isPaymentIdValid($paymentId)) {
+            $this->paymentSessionDestructor->becauseInvalidPaymentId();
+            wp_safe_redirect(wc_get_cart_url());
+            exit;
         }
 
         $order = $this->orderFactory->createById($orderId);

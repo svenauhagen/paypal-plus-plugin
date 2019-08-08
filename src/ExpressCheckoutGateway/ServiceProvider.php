@@ -14,7 +14,9 @@ use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\WpNonce;
 use WCPayPalPlus\Nonce;
 use WCPayPalPlus\Payment\PaymentCreatorFactory;
+use WCPayPalPlus\Payment\PaymentIdValidator;
 use WCPayPalPlus\Payment\PaymentPatchFactory;
+use WCPayPalPlus\Payment\PaymentSessionDestructor;
 use WCPayPalPlus\Session\Session;
 use WCPayPalPlus\Session\SessionCleaner;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
@@ -64,7 +66,9 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[PaymentPatchFactory::class],
                 $container[Logger::class],
                 $container[ApiErrorExtractor::class],
-                $container[SessionCleaner::class]
+                $container[SessionCleaner::class],
+                $container[PaymentIdValidator::class],
+                $container[PaymentSessionDestructor::class]
             );
         };
         $container[CheckoutGatewayOverride::class] = function (Container $container) {

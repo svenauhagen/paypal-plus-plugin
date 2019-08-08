@@ -8,6 +8,8 @@ namespace WCPayPalPlus\WC;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\ErrorData\ApiErrorExtractor;
 use WCPayPalPlus\Order\OrderFactory;
+use WCPayPalPlus\Payment\PaymentIdValidator;
+use WCPayPalPlus\Payment\PaymentSessionDestructor;
 use WCPayPalPlus\PlusGateway\Gateway;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\PlusStorable;
@@ -45,7 +47,9 @@ class ServiceProvider implements Service\BootstrappableServiceProvider
                 $container[Session::class],
                 $container[CheckoutDropper::class],
                 $container[Logger::class],
-                $container[ApiErrorExtractor::class]
+                $container[ApiErrorExtractor::class],
+                $container[PaymentIdValidator::class],
+                $container[PaymentSessionDestructor::class]
             );
         };
     }

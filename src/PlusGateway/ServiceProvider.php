@@ -11,6 +11,8 @@ use function WCPayPalPlus\isGatewayDisabled;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Api\CredentialValidator;
 use WCPayPalPlus\Order\OrderFactory;
+use WCPayPalPlus\Payment\PaymentIdValidator;
+use WCPayPalPlus\Payment\PaymentSessionDestructor;
 use WCPayPalPlus\Refund\RefundFactory;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
@@ -70,7 +72,9 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[PaymentExecutionFactory::class],
                 $container[Logger::class],
                 $container[CheckoutDropper::class],
-                $container[ApiErrorExtractor::class]
+                $container[ApiErrorExtractor::class],
+                $container[PaymentIdValidator::class],
+                $container[PaymentSessionDestructor::class]
             );
         };
     }
