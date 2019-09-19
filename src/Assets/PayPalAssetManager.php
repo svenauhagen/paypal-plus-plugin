@@ -60,28 +60,30 @@ class PayPalAssetManager
 
         if (!isGatewayDisabled($this->expressCheckoutGateway)
             && !areAllExpressCheckoutButtonsDisabled()
-            && file_exists($expressCheckoutFilePath)
         ) {
-            wp_enqueue_script(
-                'paypal-express-checkout',
-                "{$uploadUrl}/woo-paypalplus/resources/js/paypal/expressCheckout.min.js",
-                [],
-                filemtime($expressCheckoutFilePath),
-                true
-            );
+            $fileUrl = "{$uploadUrl}/woo-paypalplus/resources/js/paypal/expressCheckout.min.js";
+            $fileVersion = filemtime($expressCheckoutFilePath);
+
+            if (!file_exists($expressCheckoutFilePath)) {
+                $fileUrl = 'https://www.paypalobjects.com/api/checkout.js';
+                $fileVersion = null;
+            }
+
+            wp_enqueue_script('paypal-express-checkout', $fileUrl, [], $fileVersion, true);
         }
 
         if ($this->isCheckout()
             && !isGatewayDisabled($this->plusGateway)
-            && file_exists($paypalPlusFilePath)
         ) {
-            wp_enqueue_script(
-                'ppplus',
-                "{$uploadUrl}/woo-paypalplus/resources/js/paypal/payPalplus.min.js",
-                [],
-                filemtime($paypalPlusFilePath),
-                true
-            );
+            $fileUrl = "{$uploadUrl}/woo-paypalplus/resources/js/paypal/payPalplus.min.js";
+            $fileVersion = filemtime($paypalPlusFilePath);
+
+            if (!file_exists($paypalPlusFilePath)) {
+                $fileUrl = 'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js';
+                $fileVersion = null;
+            }
+
+            wp_enqueue_script('ppplus', $fileUrl, [], $fileVersion, true);
         }
     }
 
