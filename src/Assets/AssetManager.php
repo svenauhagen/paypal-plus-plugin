@@ -99,6 +99,14 @@ class AssetManager
             filemtime("{$assetPath}/public/js/front.min.js"),
             true
         );
+        $this->loadScriptsData(
+            'paypalplus-woocommerce-front',
+            'pageinfo',
+            [
+                'isCheckout' => is_checkout(),
+                'isCheckoutPayPage' => is_checkout_pay_page(),
+            ]
+        );
 
         $this->enqueuePayPalFrontEndScripts();
     }
