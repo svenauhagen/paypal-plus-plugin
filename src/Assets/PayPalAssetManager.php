@@ -61,12 +61,12 @@ class PayPalAssetManager
         if (!isGatewayDisabled($this->expressCheckoutGateway)
             && !areAllExpressCheckoutButtonsDisabled()
         ) {
-            $fileUrl = "{$uploadUrl}/woo-paypalplus/resources/js/paypal/expressCheckout.min.js";
-            $fileVersion = filemtime($expressCheckoutFilePath);
+            $fileUrl = 'https://www.paypalobjects.com/api/checkout.js';
+            $fileVersion = null;
 
-            if (!file_exists($expressCheckoutFilePath)) {
-                $fileUrl = 'https://www.paypalobjects.com/api/checkout.js';
-                $fileVersion = null;
+            if (file_exists($expressCheckoutFilePath)) {
+                $fileUrl = "{$uploadUrl}/woo-paypalplus/resources/js/paypal/expressCheckout.min.js";
+                $fileVersion = filemtime($expressCheckoutFilePath);
             }
 
             wp_enqueue_script('paypal-express-checkout', $fileUrl, [], $fileVersion, true);
@@ -75,12 +75,12 @@ class PayPalAssetManager
         if ($this->isCheckout()
             && !isGatewayDisabled($this->plusGateway)
         ) {
-            $fileUrl = "{$uploadUrl}/woo-paypalplus/resources/js/paypal/payPalplus.min.js";
-            $fileVersion = filemtime($paypalPlusFilePath);
+            $fileUrl = 'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js';
+            $fileVersion = null;
 
-            if (!file_exists($paypalPlusFilePath)) {
-                $fileUrl = 'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js';
-                $fileVersion = null;
+            if (file_exists($paypalPlusFilePath)) {
+                $fileUrl = "{$uploadUrl}/woo-paypalplus/resources/js/paypal/payPalplus.min.js";
+                $fileVersion = filemtime($paypalPlusFilePath);
             }
 
             wp_enqueue_script('ppplus', $fileUrl, [], $fileVersion, true);
