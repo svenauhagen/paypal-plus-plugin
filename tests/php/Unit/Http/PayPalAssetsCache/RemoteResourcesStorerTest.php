@@ -435,7 +435,7 @@ class RemoteResourcesStorerTest extends TestCase
          */
         expect('mkdir')
             ->once()
-            ->with($path, FS_CHMOD_FILE, true);
+            ->with($path, FS_CHMOD_DIR, true);
 
         /*
          * Execute Test

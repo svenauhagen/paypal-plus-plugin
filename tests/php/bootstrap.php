@@ -26,6 +26,10 @@ if (!defined('FS_CHMOD_FILE')) {
     define('FS_CHMOD_FILE', 0777 | 0644);
 }
 
+if (!defined('FS_CHMOD_DIR')) {
+    define('FS_CHMOD_DIR', 0777 | 0755);
+}
+
 if (!defined('DAY_IN_SECONDS')) {
     define('MINUTE_IN_SECONDS', 60);
     define('HOUR_IN_SECONDS', 60 * MINUTE_IN_SECONDS);
