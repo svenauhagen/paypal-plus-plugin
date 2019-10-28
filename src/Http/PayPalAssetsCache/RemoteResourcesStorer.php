@@ -105,6 +105,6 @@ class RemoteResourcesStorer
 
         $path = untrailingslashit($path);
 
-        @mkdir($path, FS_CHMOD_FILE, true);
+        @mkdir($path, FS_CHMOD_DIR, true);
     }
 }
