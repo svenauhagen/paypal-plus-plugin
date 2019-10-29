@@ -10,7 +10,9 @@
 
 namespace WCPayPalPlus\Tests\Unit\Http;
 
+use Monkey\Hook\HookStorage;
 use function Brain\Monkey\Actions\expectAdded as expectActionAdded;
+use function Brain\Monkey\Filters\expectAdded as expectFilterAdded;
 use function Brain\Monkey\Functions\expect;
 use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler;
@@ -89,10 +91,21 @@ class ServiceProviderTest extends TestCase
         expect('add_filter')
             ->once()
             ->andReturnUsing(
-                function ($string, $callback) use (&$filterCallbackHolder) {
-                    $filterCallbackHolder = $callback;
+                static function ($filter, ...$args) use (&$filterCallbackHolder) {
+                    $container = \Brain\Monkey\Container::instance();
+                    $container->hookStorage()->pushToAdded(
+                        \Brain\Monkey\Hook\HookStorage::FILTERS,
+                        $filter,
+                        $args
+                    );
+                    $container->hookExpectationExecutor()->executeAddFilter($filter, $args);
+
+                    $filterCallbackHolder = $args[0];
+
+                    return true;
                 }
             );
+        expectFilterAdded('cron_schedules')->once();
 
         /*
          * Expects actions
