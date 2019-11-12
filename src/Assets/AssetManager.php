@@ -197,11 +197,9 @@ class AssetManager
         ];
 
         /**
-         * Filter Payment Button Render Events
+         * Filter Express Checkout Data
          *
-         * The client events for which the button has to be re rendered
-         *
-         * @param array $paymentButtonRenderEvents The list of the events
+         * @param array $data List of the data to consume client side
          */
         $data = apply_filters(self::FILTER_EXPRESS_CHECKOUT_JS_DATA, $data);
 
