@@ -17,6 +17,8 @@ class AssetManager
 {
     use AssetManagerTrait;
 
+    const FILTER_EXPRESS_CHECKOUT_JS_DATA = 'paypalplus.express_checkout_data';
+
     /**
      * @var PluginProperties
      */
@@ -185,7 +187,23 @@ class AssetManager
                 'action' => AjaxHandler::ACTION,
                 'ajaxUrl' => home_url('/wp-admin/admin-ajax.php'),
             ],
+            'paymentButtonRenderEvents' => [
+                'wc_fragments_refreshed',
+                'wc_fragments_loaded',
+                'removed_from_cart',
+                'added_to_cart',
+                'updated_shipping_method',
+            ],
         ];
+
+        /**
+         * Filter Payment Button Render Events
+         *
+         * The client events for which the button has to be re rendered
+         *
+         * @param array $paymentButtonRenderEvents The list of the events
+         */
+        $data = apply_filters(self::FILTER_EXPRESS_CHECKOUT_JS_DATA, $data);
 
         /** @noinspection AdditionOperationOnArraysInspection */
         return $data + $this->smartButtonArguments->toArray();
