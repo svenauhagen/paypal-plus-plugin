@@ -38,12 +38,18 @@ import { SmartPaymentButtonRendererFactory } from './expressCheckout/smartPaymen
       request,
     )
 
+    const paymentButtonRenderEvents = expressCheckoutData.paymentButtonRenderEvents || []
+
     smartPaymentButton.singleProductButtonRender()
     smartPaymentButton.cartButtonRender()
+
     jQuery(document.body).on(
-      'wc_fragments_refreshed wc_fragments_loaded removed_from_cart added_to_cart', () => {
+      paymentButtonRenderEvents.join(' '),
+      () =>
+      {
         smartPaymentButton.cartButtonRender()
-      })
+      }
+    )
   }
 
   window.addEventListener('load', () => {
