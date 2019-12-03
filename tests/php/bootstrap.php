@@ -16,6 +16,7 @@ if (!file_exists($vendor . 'autoload.php')) {
 require_once $vendor . 'brain/monkey/inc/patchwork-loader.php';
 require_once $vendor . 'autoload.php';
 require_once __DIR__ . '/stubs/wp-hooks.php';
+require_once __DIR__ . '/stubs/woocommerce.php';
 unset($vendor);
 
 putenv('PROJECT_DIR=' . dirname(__DIR__, 2));

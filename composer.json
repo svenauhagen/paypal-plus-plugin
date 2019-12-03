@@ -50,7 +50,8 @@
         "psr-4": {
             "WCPayPalPlus\\Tests\\": "tests/php",
             "WCPayPalPlus\\Tests\\Unit\\": "tests/php/Unit",
-            "WCPayPalPlus\\Tests\\Integration\\": "tests/php/Integration"
+            "WCPayPalPlus\\Tests\\Integration\\": "tests/php/Integration",
+            "WCPayPalPlus\\Tests\\Functional\\": "tests/php/Functional"
         }
     },
     "extra": {

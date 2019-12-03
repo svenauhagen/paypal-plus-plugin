@@ -20,6 +20,8 @@ class PatchProvider
     use PriceFormatterTrait;
     use ItemsProviderTrait;
 
+    const FILTER_USE_LEGACY_CUSTOM_PATCH_DATA = 'paypalplus.use_legacy_custom_patch_data';
+
     const RECEIPT_NAME = 'recipient_name';
     const LINE_ONE = 'line1';
     const LINE_TWO = 'line2';
@@ -27,6 +29,12 @@ class PatchProvider
     const STATE = 'state';
     const POSTAL_CODE = 'postal_code';
     const COUNTRY_CODE = 'country_code';
+
+    const CUSTOM_OPERATION = 'add';
+    const CUSTOM_PATH = '/transactions/0/custom';
+
+    const WOOCOMMERCE_ORDER_ID_NAME = 'order_id';
+    const WOOCOMMERCE_ORDER_KEY_NAME = 'order_key';
 
     /**
      * WooCommerce Order object.
@@ -78,13 +86,35 @@ class PatchProvider
      */
     public function custom()
     {
-        $custom_patch = new Patch();
-        $custom_patch
-            ->setOp('add')
-            ->setPath('/transactions/0/custom')
-            ->setValue($this->order->get_order_key());
+        $patch = new Patch();
+        $orderId = $this->order->get_id();
+        $value = $orderKey = $this->order->get_order_key();
 
-        return $custom_patch;
+        $patch
+            ->setOp(self::CUSTOM_OPERATION)
+            ->setPath(self::CUSTOM_PATH);
+
+        /**
+         * Use Legacy Custom Patch Data
+         *
+         * Use the solution provided in version 1.x
+         *
+         * @param bool $false True must be returned in order to use the old approach
+         */
+        $useLegacyCustomPatchData = apply_filters(self::FILTER_USE_LEGACY_CUSTOM_PATCH_DATA, false);
+
+        if ($useLegacyCustomPatchData) {
+            $value = wp_json_encode(
+                [
+                    self::WOOCOMMERCE_ORDER_ID_NAME => $orderId,
+                    self::WOOCOMMERCE_ORDER_KEY_NAME => $orderKey,
+                ]
+            );
+        }
+
+        $patch->setValue($value);
+
+        return $patch;
     }
 
     /**

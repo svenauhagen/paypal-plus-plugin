@@ -26,6 +26,7 @@ class OrderFactory
     {
         assert(is_string($orderKey));
 
+        // Legacy version from branch 1.x
         $orderKey = $this->orderKeyByJson($orderKey);
         // Cast to int because the function return a int as string.
         $orderId = (int)wc_get_order_id_by_order_key($orderKey);
@@ -69,7 +70,6 @@ class OrderFactory
      *
      * @param $customData
      * @return string
-     * @deprecated since 2.0.0 This will be removed in a future version
      */
     private function orderKeyByJson($customData)
     {

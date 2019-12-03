@@ -9,12 +9,22 @@
  */
 
 if (!function_exists('apply_filters')) {
-    /**
-     * @param $string
-     * @param $callback
-     */
-    function apply_filters($string, $callback)
+    function apply_filters($filter, ...$args)
     {
-        $string and $callback();
+        $container = \Brain\Monkey\Container::instance();
+        $container->hookStorage()->pushToDone(
+            \Brain\Monkey\Hook\HookStorage::FILTERS,
+            $filter,
+            $args
+        );
+
+        $return = $container->hookExpectationExecutor()->executeApplyFilters($filter, $args);
+
+        $isCallbackArgument = is_callable(isset($args[0]) ? $args[0] : false);
+        $arguments = array_slice($args, 1);
+
+        $isCallbackArgument and $return = $args[0](...$arguments);
+
+        return $return;
     }
 }
