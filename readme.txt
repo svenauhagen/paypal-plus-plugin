@@ -3,7 +3,7 @@ Contributors: inpsyde, biont, cocreation
 Tags: paypal, paypal plus, express checkout, woocommerce, payment, zahlungsarten, rechnung, lastschrift, kreditkarte
 Requires at least: 4.4
 Tested up to: 5.2
-Stable tag: 2.0.4
+Stable tag: 2.1.0
 Requires PHP: 5.6
 License: GPLv2+
 License URI: https://www.gnu.org/licenses/gpl-2.0.txt
@@ -154,6 +154,15 @@ If you don’t want to have Express Checkout Gateway enabled just disable it fro
 6. The PayPal Plus form when paying upon invoice.
 
 == Changelog ==
+
+= 2.1.0 =
+- Fix: Invalid PaymentId when executing the payment
+- Fix: PayPalObjects.com not allowed because of CSP rules
+- Fix: PayPal Plus is loading for a customer when an order was created by the merchant
+- Fix: Express Checkout disappears after switching shipping methods
+- Add: Cancel Url and WooCommerce Germanized Integration
+- Add: Introduce filter `paypalplus.use_legacy_custom_patch_data` to allow third party developers to get back the custom data object which include order_key and order_id
+
 = 2.0.4 =
 - Fix: Compatibility with WooCommerce Admin plugin
 
