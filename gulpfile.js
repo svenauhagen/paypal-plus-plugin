@@ -90,7 +90,6 @@ function copyPackageFiles (done) {
         './src/**/*',
         './LICENSE',
         './paypalplus-woocommerce.php',
-        './readme.txt',
         './uninstall.php',
         './composer.json'
       ], {
