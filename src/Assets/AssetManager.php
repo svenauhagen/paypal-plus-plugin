@@ -103,10 +103,18 @@ class AssetManager
         );
         $this->loadScriptsData(
             'paypalplus-woocommerce-front',
-            'pageinfo',
+            'frontpagedata',
             [
-                'isCheckout' => is_checkout(),
-                'isCheckoutPayPage' => is_checkout_pay_page(),
+                'pageinfo',
+                [
+                    'isCheckout' => is_checkout(),
+                    'isCheckoutPayPage' => is_checkout_pay_page(),
+                ],
+                'isConflictVersion' => version_compare(
+                    wc()->version,
+                    '3.9',
+                    '>='
+                ),
             ]
         );
 
