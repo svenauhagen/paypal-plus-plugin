@@ -1,7 +1,7 @@
 import { bootstrapPayPalApp } from './plusFrameView'
 
-(function (jQuery, _, pageinfo) {
-  if (typeof pageinfo === 'undefined') {
+(function (jQuery, _, frontpagedata) {
+  if (typeof frontpagedata === 'undefined') {
     return
   }
 
