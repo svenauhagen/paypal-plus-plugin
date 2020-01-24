@@ -1,23 +1,20 @@
 import { bootstrapPayPalApp } from './plusFrameView'
 
 (function (jQuery, _, frontpagedata) {
-  if (typeof frontpagedata === 'undefined') {
+  if (!frontpagedata) {
     return
   }
 
   function isCheckoutPayPage () {
-    // eslint-disable-next-line no-undef
-    return frontpagedata.pageinfo.isCheckoutPayPage
+    return Boolean(frontpagedata.pageinfo) && Boolean(frontpagedata.pageinfo.isCheckoutPayPage)
   }
 
   function isCheckoutPage () {
-    // eslint-disable-next-line no-undef
-    return frontpagedata.pageinfo.isCheckout
+    return Boolean(frontpagedata.pageinfo) && Boolean(frontpagedata.pageinfo.isCheckout)
   }
 
   function isConflictiveWC () {
-    // eslint-disable-next-line no-undef
-    return frontpagedata.isConflictVersion
+    return Boolean(frontpagedata) && Boolean(frontpagedata.isConflictVersion)
   }
 
   window.addEventListener('load', () => {
