@@ -105,7 +105,7 @@ class AssetManager
             'paypalplus-woocommerce-front',
             'pluginpagedata',
             [
-                'pageinfo',
+                'pageinfo'=>
                 [
                     'isCheckout' => is_checkout(),
                     'isCheckoutPayPage' => is_checkout_pay_page(),

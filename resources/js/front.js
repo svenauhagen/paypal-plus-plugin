@@ -31,4 +31,4 @@ import { bootstrapPayPalApp } from './plusFrameView'
       })
     }
   })
-})(jQuery, _, window.frontpagedata)
+})(jQuery, _, window.pluginpagedata)
