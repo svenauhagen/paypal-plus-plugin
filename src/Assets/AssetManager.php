@@ -103,7 +103,7 @@ class AssetManager
         );
         $this->loadScriptsData(
             'paypalplus-woocommerce-front',
-            'pluginpagedata',
+            'pppFrontDataCollection',
             [
                 'pageinfo'=>
                 [

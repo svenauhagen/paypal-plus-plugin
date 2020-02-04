@@ -1,20 +1,20 @@
 import { bootstrapPayPalApp } from './plusFrameView'
 
-(function (jQuery, _, pluginpagedata) {
-  if (!pluginpagedata) {
+(function (jQuery, _, pppFrontDataCollection) {
+  if (!pppFrontDataCollection) {
     return
   }
 
   function isCheckoutPayPage () {
-    return (Boolean)((pluginpagedata.pageinfo) && (pluginpagedata.pageinfo.isCheckoutPayPage))
+    return (Boolean)(pppFrontDataCollection.pageinfo && pppFrontDataCollection.pageinfo.isCheckoutPayPage)
   }
 
   function isCheckoutPage () {
-    return (Boolean)((pluginpagedata.pageinfo) && (pluginpagedata.pageinfo.isCheckout))
+    return (Boolean)(pppFrontDataCollection.pageinfo && pppFrontDataCollection.pageinfo.isCheckout)
   }
 
   function isConflictiveWC () {
-    return (Boolean)((pluginpagedata) && (pluginpagedata.isConflictVersion))
+    return (Boolean)(pppFrontDataCollection && pppFrontDataCollection.isConflictVersion)
   }
 
   // isConfliveWC checks for WC versions that do not call updated_checkout on load
@@ -31,4 +31,4 @@ import { bootstrapPayPalApp } from './plusFrameView'
       })
     }
   })
-})(jQuery, _, window.pluginpagedata)
+})(jQuery, _, window.pppFrontDataCollection)
