@@ -118,6 +118,8 @@ interface LoggerInterface
      * @param array  $context
      *
      * @return void
+     *
+     * @throws \Inpsyde\Lib\Psr\Log\InvalidArgumentException
      */
     public function log($level, $message, array $context = array());
 }
