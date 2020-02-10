@@ -57,6 +57,7 @@
         }
     },
     "extra": {
+        "installer-disable": true,
         "mozart": {
             "dep_namespace": "Inpsyde\\Lib\\",
             "dep_directory": "/lib/",
@@ -81,8 +82,5 @@
         "platform": {
             "php": "7.0.33"
         }
-    },
-    "extra" : {
-        "installer-disable": true
     }
 }
