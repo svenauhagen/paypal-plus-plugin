@@ -39,7 +39,8 @@
         "barryvdh/composer-cleanup-plugin": "^0.2.0",
         "brain/monkey": "^2.2",
         "phpunit/phpunit": "^6.5",
-        "johnpbloch/wordpress-core": "^5.3"
+        "johnpbloch/wordpress-core": "^5.3",
+        "woocommerce/woocommerce": "^3.9"
     },
     "autoload": {
         "psr-4": {
@@ -80,5 +81,8 @@
         "platform": {
             "php": "7.0.33"
         }
+    },
+    "extra" : {
+        "installer-disable": true
     }
 }
