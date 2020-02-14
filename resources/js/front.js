@@ -22,7 +22,6 @@ import { bootstrapPayPalApp } from './plusFrameView'
     // Isn't possible to listen on a jQuery event by using `addEventListener`
     if (isCheckoutPayPage() || (isCheckoutPage() && isConflictiveWC())) {
       bootstrapPayPalApp()
-      return
     }
 
     if (isCheckoutPage()) {
