@@ -3,7 +3,6 @@
 
 namespace WCPayPalPlus\Banner;
 
-
 use WC_Admin_Settings;
 use WC_Settings_Page;
 
@@ -41,7 +40,7 @@ class BannerSettings extends WC_Settings_Page
                     'banner_settings',
                     'woo-paypalplus'
                 ),
-                'type' => 'title'
+                'type' => 'title',
             ],
             'enableBanner' => [
                 'title' => esc_html_x(
@@ -256,7 +255,7 @@ class BannerSettings extends WC_Settings_Page
             'sectionend' => [
                 'type' => 'sectionend',
                 'id' => 'banner_settings',
-            ]
+            ],
         ];
     }
 }

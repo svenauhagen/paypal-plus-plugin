@@ -5,7 +5,6 @@
 
 namespace WCPayPalPlus\Banner;
 
-
 use WCPayPalPlus\Admin\Notice\AjaxDismisser;
 use WCPayPalPlus\Admin\Notice\Notice;
 use WCPayPalPlus\Admin\Notice\Controller;
@@ -77,10 +76,13 @@ class ServiceProvider implements BootstrappableServiceProvider
             }
         );
 
-        add_action('wp_ajax_enable_banner', function () use ($controller){
-            update_option('banner_settings_enableBanner', 'yes');
-            $controller->dismiss('WCPayPalPlus\Admin\Notice\BannerNotice');
-        });
+        add_action(
+            'wp_ajax_enable_banner',
+            function () use ($controller) {
+                update_option('banner_settings_enableBanner', 'yes');
+                $controller->dismiss('WCPayPalPlus\Admin\Notice\BannerNotice');
+            }
+        );
 
         add_filter(
             'woocommerce_get_settings_pages',

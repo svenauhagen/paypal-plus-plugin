@@ -83,7 +83,7 @@ class AssetManager
                 'ajaxUrl' => admin_url('admin-ajax.php'),
                 'urlBannerSettings' => admin_url(
                     'admin.php?page=wc-settings&tab=paypalplus-banner'
-                )
+                ),
             ]
         );
     }

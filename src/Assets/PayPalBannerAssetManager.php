@@ -85,7 +85,7 @@ class PayPalBannerAssetManager
     {
         $settings = $this->bannerSettings();
         ?>
-        <script src=<?php echo $settings['script_url'] ?> async="true"
+        <script src=<?php echo esc_html($settings['script_url']) ?> async="true"
                 onload="javascript:showPayPalCreditBanners();"
                 rel="preload"></script>
         <script>
@@ -119,7 +119,6 @@ class PayPalBannerAssetManager
           }
         </script>
         <?php
-
     }
 
     private function isOfRequiredPages()
@@ -160,7 +159,6 @@ class PayPalBannerAssetManager
                 ?>
                 <div id="paypal-credit-banner"></div>
                 <?php
-
             }
         );
     }
