@@ -2,7 +2,6 @@
 
 namespace WCPayPalPlus\Assets;
 
-use WCPayPalPlus\Setting\Storable;
 use WooCommerce;
 
 class PayPalBannerAssetManager
@@ -144,14 +143,12 @@ class PayPalBannerAssetManager
         return $amount;
     }
 
-    private function paypalScriptUrl()
+    public function paypalScriptUrl()
     {
-        //$clientId = get_option(Storable::OPTION_CLIENT_ID, '');
-        //$clientId = 'ARLDAAmoOiUbCYNp7jOJBtwQygc8N84RlET3mfeg7ZhgXp3T292Eg6FxvYMgYL4A6JxZvvt-EtKdXLI4';
-        $clientId
-            = 'Abjo5rvqdr44pXYgDRah68H60yGpkTJ_ooWmNAtrzPCro7besceVPiBRonN5rQ5Vby1z1g1kChdYF0KW';
+        $shared = get_option('paypalplus_shared_options');
+        $clientId = $shared['rest_client_id'];
+        //$clientId = 'Abjo5rvqdr44pXYgDRah68H60yGpkTJ_ooWmNAtrzPCro7besceVPiBRonN5rQ5Vby1z1g1kChdYF0KW';
         return "https://www.paypal.com/sdk/js?client-id={$clientId}&components=messages&currency=EUR";
-        //return "https://www.paypal.com/sdk/js?client-id=sb&components=messages&currency=EUR";
     }
 
     private function placeBannerOnPage()
@@ -182,7 +179,7 @@ class PayPalBannerAssetManager
         if (is_product()) {
             return 'woocommerce_before_single_product_summary';
         }
-        if (is_shop()) {
+        if (is_shop() || is_category()) {
             return 'woocommerce_before_shop_loop';
         }
     }

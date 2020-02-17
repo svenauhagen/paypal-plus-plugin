@@ -69,6 +69,23 @@ class AssetManager
                 ],
             ]
         );
+        wp_enqueue_script(
+            'paypalplus-woocommerce-payPalBanner',
+            "{$assetUrl}/public/js/payPalBanner.min.js",
+            ['jquery'],
+            filemtime("{$assetPath}/public/js/payPalBanner.min.js"),
+            true
+        );
+        $this->loadScriptsData(
+            'paypalplus-woocommerce-payPalBanner',
+            'infoToAjax',
+            [
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'urlBannerSettings' => admin_url(
+                    'admin.php?page=wc-settings&tab=paypalplus-banner'
+                )
+            ]
+        );
     }
 
     /**

@@ -37,7 +37,7 @@ class ServiceProvider implements BootstrappableServiceProvider
         $container['banner_notice'] = function () use ($urlBannerSettings) {
             return new Notice(
                 Noticeable::WARNING,
-                "<p>Check out the new Paypal Banner feature. <a href={$urlBannerSettings}>To enable it click here</a></p>",
+                "<p>Check out the new Paypal Banner feature. <a id='bannerLink' href={$urlBannerSettings}>To enable it click here</a></p>",
                 true,
                 'WCPayPalPlus\Admin\Notice\BannerNotice'
             );
@@ -76,10 +76,11 @@ class ServiceProvider implements BootstrappableServiceProvider
                 }
             }
         );
-        add_action(
-            'wp_ajax_' . AjaxDismisser::AJAX_NONCE_ACTION,
-            [$container[AjaxDismisser::class], 'handle']
-        );
+
+        add_action('wp_ajax_enable_banner', function () use ($controller){
+            update_option('banner_settings_enableBanner', 'yes');
+            $controller->dismiss('WCPayPalPlus\Admin\Notice\BannerNotice');
+        });
 
         add_filter(
             'woocommerce_get_settings_pages',
