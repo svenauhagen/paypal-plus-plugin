@@ -33,7 +33,8 @@ class ServiceProvider implements BootstrappableServiceProvider
         };
         $container[PayPalBannerAssetManager::class] = function (Container $container) {
             return new PayPalBannerAssetManager(
-                $container[PluginProperties::class]
+                $container[PluginProperties::class],
+                $container[SharedRepository::class]
             );
         };
         $container[PayPalAssetManager::class] = function (Container $container) {

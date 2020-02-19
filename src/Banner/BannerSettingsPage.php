@@ -6,7 +6,7 @@ namespace WCPayPalPlus\Banner;
 use WC_Admin_Settings;
 use WC_Settings_Page;
 
-class BannerSettings extends WC_Settings_Page
+class BannerSettingsPage extends WC_Settings_Page
 {
     public function __construct()
     {
@@ -37,7 +37,7 @@ class BannerSettings extends WC_Settings_Page
             'title' => [
                 'title' => esc_html_x(
                     'Paypal Banner Settings',
-                    'banner_settings',
+                    'Paypal Banner Settings',
                     'woo-paypalplus'
                 ),
                 'type' => 'title',

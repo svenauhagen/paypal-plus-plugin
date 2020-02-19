@@ -12,13 +12,38 @@ namespace WCPayPalPlus\Admin\Notice;
  */
 class Notice implements Noticeable
 {
+    /**
+     * @var
+     */
     private $type;
+    /**
+     * @var
+     */
     private $message;
+    /**
+     * @var
+     */
     private $isDismissable;
+    /**
+     * @var
+     */
     private $id;
 
+    /**
+     * Notice constructor.
+     *
+     * @param $type
+     * @param $message
+     * @param $isDismissable
+     * @param $id
+     */
     public function __construct($type, $message, $isDismissable, $id)
     {
+        assert(is_string($type));
+        assert(is_string($message));
+        assert(is_bool($isDismissable));
+        assert(is_string($id));
+
         $this->type = $type;
         $this->message = $message;
         $this->isDismissable = $isDismissable;

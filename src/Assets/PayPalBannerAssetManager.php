@@ -2,78 +2,109 @@
 
 namespace WCPayPalPlus\Assets;
 
-use WooCommerce;
+use WCPayPalPlus\PluginProperties;
+use WCPayPalPlus\Setting\SharedRepository;
+
 
 class PayPalBannerAssetManager
 {
-    public function enqueuePPBannerFrontEndScripts()
-    {
-        if ($this->conditionMeet($this->bannerSettings())) {
-            $this->conditionallyEnqueueScript();
-        }
+    use AssetManagerTrait;
+    /**
+     * @var PluginProperties
+     */
+    private $pluginProperties;
+    /**
+     * @var SharedRepository
+     */
+    private $sharedRepository;
+
+    /**
+     * AssetManager constructor.
+     *
+     * @param PluginProperties $pluginProperties
+     * @param SharedRepository $sharedRepository
+     */
+    public function __construct(
+        PluginProperties $pluginProperties,
+        SharedRepository $sharedRepository
+    ) {
+        /** @noinspection UnusedConstructorDependenciesInspection */
+        $this->pluginProperties = $pluginProperties;
+        $this->sharedRepository = $sharedRepository;
     }
 
-    private function conditionMeet($settings)
+    public function enqueuePPBannerFrontEndScripts()
+    {
+        list($assetPath, $assetUrl) = $this->assetUrlPath();
+        wp_register_script(
+            'paypalplus-woocommerce-paypalBanner',
+            "{$assetUrl}/public/js/paypalBanner.min.js",
+            ['jquery'],
+            filemtime("{$assetPath}/public/js/paypalBanner.min.js"),
+            true
+        );
+
+
+        if (!$this->isAllowedContext($this->bannerSettings())) {
+            return;
+        }
+        $this->conditionallyEnqueueScript();
+    }
+
+    protected function isAllowedContext(array $settings)
     {
         if (!$settings['enabled_banner']) {
             return false;
         }
-        if ($this->isOfRequiredPages()
-            || $this->checkEnabledOptionalPages($settings['optional_pages'])
-        ) {
-            return true;
-        }
 
-        return false;
+        return $this->isWooCommerceRequiredContext()
+            || $this->isBannerEnabledWCContext($settings['optional_pages']);
     }
 
-    private function bannerSettings()
+    protected function bannerSettings()
     {
+        $scriptUrl = $this->paypalScriptUrl();
+        $enabledBanner = wc_string_to_bool(
+            get_option('banner_settings_enableBanner', 'no')
+        );
+        $showHome = wc_string_to_bool(
+            get_option('banner_settings_home', 'no')
+        );
+        $showCategoryProducts = wc_string_to_bool(
+            get_option('banner_settings_products', 'no')
+        );
+        $showSearchResults = wc_string_to_bool(
+            get_option('banner_settings_search', 'no')
+        );
+        $amount = $this->calculateAmount();
+
         $settings = [
-            'enabled_banner' => false,
+            'amount' => $amount,
+            'script_url' => $scriptUrl,
+            'enabled_banner' => $enabledBanner,
+            'optional_pages' => [
+                'show_home' => $showHome,
+                'show_category' => $showCategoryProducts,
+                'show_search' => $showSearchResults,
+            ],
+            'style' => [
+                'layout' => get_option('banner_settings_layout'),
+                'logo' => [
+                    'type' => get_option('banner_settings_textSize'),
+                    'color' => get_option('banner_settings_textColor'),
+                ],
+                'color' => get_option('banner_settings_flexColor'),
+                'ratio' => get_option('banner_settings_flexSize'),
+            ],
         ];
-        if (get_option('banner_settings_enableBanner') === 'yes') {
-            $scriptUrl = $this->paypalScriptUrl();
-            $showHome = wc_string_to_bool(
-                get_option('banner_settings_home', 'no')
-            );
-            $showCategoryProducts = wc_string_to_bool(
-                get_option('banner_settings_products', 'no')
-            );
-            $showSearchResults = wc_string_to_bool(
-                get_option('banner_settings_search', 'no')
-            );
-            $amount = $this->calculateAmount();
-
-            $settings = [
-                'amount' => $amount,
-                'script_url' => $scriptUrl,
-                'enabled_banner' => true,
-                'optional_pages' => [
-                    'show_home' => $showHome,
-                    'show_category' => $showCategoryProducts,
-                    'show_search' => $showSearchResults,
-                ],
-                'style' => [
-                    'layout' => get_option('banner_settings_layout'),
-                    'logo' => [
-                        'type' => get_option('banner_settings_textSize'),
-                        'color' => get_option('banner_settings_textColor'),
-                    ],
-                    'color' => get_option('banner_settings_flexColor'),
-                    'ratio' => get_option('banner_settings_flexSize'),
-                ],
-            ];
-        }
-
 
         return $settings;
     }
 
-    private function conditionallyEnqueueScript()
+    protected function conditionallyEnqueueScript()
     {
         add_action(
-            'wp_head',
+            'wp_footer',
             function () {
                 $this->showBanner();
             }
@@ -81,28 +112,42 @@ class PayPalBannerAssetManager
         $this->placeBannerOnPage();
     }
 
-    private function showBanner()
+    protected function showBanner()
     {
         $settings = $this->bannerSettings();
+        list($assetPath, $assetUrl) = $this->assetUrlPath();
+        wp_enqueue_script(
+            'paypalplus-woocommerce-paypalBanner',
+            "{$assetUrl}/public/js/paypalBanner.min.js",
+            ['jquery'],
+            filemtime("{$assetPath}/public/js/paypalBanner.min.js"),
+            true
+        );
+        $this->loadScriptsData(
+            'paypalplus-woocommerce-paypalBanner',
+            'paypalBannerFrontData',
+            [
+                'settings' => $settings,
+            ]
+        );
         ?>
-        <script src=<?php echo esc_html($settings['script_url']) ?> async="true"
+        <!--<script src=<?php /*echo esc_url($settings['script_url']) */ ?> async="true"
                 onload="javascript:showPayPalCreditBanners();"
-                rel="preload"></script>
-        <script>
+                rel="preload"></script>-->
+        <!-- <script>
           const showPayPalCreditBanners = _ => {
-            let settings = <?php echo json_encode($settings) ?>;
-            if (settings && settings.style.layout === 'flex') {
-              paypal.Messages({
-                amount: settings.amount,
-                currency: 'EUR',
-                style: {
-                  layout: settings.style.layout,
-                  color: settings.style.color,
-                  ratio: settings.style.ratio
-                },
-              }).render('#paypal-credit-banner')
-            } else {
-              paypal.Messages({
+            let settings = <?php /*echo json_encode($settings) */ ?>;
+            let options = {
+              amount: settings.amount,
+              currency: 'EUR',
+              style: {
+                layout: settings.style.layout,
+                color: settings.style.color,
+                ratio: settings.style.ratio
+              },
+            };
+            if (settings && settings.style.layout !== 'flex') {
+              options = {
                 amount: settings.amount,
                 currency: 'EUR',
                 style: {
@@ -114,60 +159,78 @@ class PayPalBannerAssetManager
                     color: settings.style.logo.color
                   }
                 }
-              }).render('#paypal-credit-banner')
+              };
             }
+
+            paypal.Messages(options).render('#paypal-credit-banner')
           }
-        </script>
+        </script>-->
         <?php
+
     }
 
-    private function isOfRequiredPages()
+    protected function isWooCommerceRequiredContext()
     {
         return is_cart() || is_checkout() || is_product();
     }
 
-    private function checkEnabledOptionalPages($settings)
+    protected function isBannerEnabledWCContext($settings)
     {
-        return is_home() && $settings['show_home']
-            || is_shop() && $settings['show_category']
-            || is_search() && $settings['show_search'];
+        return (is_home() && isset($settings['show_home'])
+                ? $settings['show_home'] : false)
+            || (is_shop() && isset($settings['show_category'])
+                ? $settings['show_category'] : false)
+            || (is_search() && isset($settings['show_search'])
+                ? $settings['show_search'] : false);
     }
 
-    public function calculateAmount()
+    protected function calculateAmount()
     {
-        $amount = WC()->cart->total;
+        wc_load_cart();
+
+        $amount = WC()->cart->get_total('edit');
         if (is_product()) {
-            return $amount + wc_get_product()->get_price();
+            return $amount + wc_get_product()->get_price('edit');
         }
+
         return $amount;
     }
 
-    public function paypalScriptUrl()
+    protected function paypalScriptUrl()
     {
-        $shared = get_option('paypalplus_shared_options');
-        $clientId = $shared['rest_client_id'];
-        //$clientId = 'Abjo5rvqdr44pXYgDRah68H60yGpkTJ_ooWmNAtrzPCro7besceVPiBRonN5rQ5Vby1z1g1kChdYF0KW';
+        $clientId = $this->sharedRepository->clientIdProduction();
+        if (!isset($clientId)) {
+            return '';
+        }
+
         return "https://www.paypal.com/sdk/js?client-id={$clientId}&components=messages&currency=EUR";
     }
 
-    private function placeBannerOnPage()
+    protected function placeBannerOnPage()
     {
         $hook = $this->hookForCurrentPage();
-        return add_action(
+        add_action(
             $hook,
             function () {
                 ?>
                 <div id="paypal-credit-banner"></div>
                 <?php
+
             }
         );
+
+        if (is_home()) {
+            add_filter(
+                'the_content',
+                function ($content) {
+                    return '<div id="paypal-credit-banner"></div>' . $content;
+                }
+            );
+        }
     }
 
-    private function hookForCurrentPage()
+    protected function hookForCurrentPage()
     {
-        if (is_home() || is_search()) {
-            return 'the_content';
-        }
         if (is_cart()) {
             return 'woocommerce_before_cart';
         }

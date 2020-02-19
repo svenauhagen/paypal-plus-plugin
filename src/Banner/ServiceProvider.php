@@ -5,15 +5,18 @@
 
 namespace WCPayPalPlus\Banner;
 
+use Brain\Nonces\NonceContextInterface;
+use Brain\Nonces\WpNonce;
 use WCPayPalPlus\Admin\Notice\AjaxDismisser;
 use WCPayPalPlus\Admin\Notice\Notice;
 use WCPayPalPlus\Admin\Notice\Controller;
 use WCPayPalPlus\Admin\Notice\Noticeable;
 use WCPayPalPlus\Admin\Notice\NoticeRender;
+use WCPayPalPlus\Nonce;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
-use WCPayPalPlus\Setting\SharedSettingsModel;
+use WooCommerce;
 
 /**
  * Class ServiceProvider
@@ -30,20 +33,42 @@ class ServiceProvider implements BootstrappableServiceProvider
         $urlBannerSettings = admin_url(
             'admin.php?page=wc-settings&tab=paypalplus-banner'
         );
+        $ajaxNonce = new Nonce(
+            new WpNonce(BannerAjaxHandler::ACTION . '_nonce'),
+            $container[WooCommerce::class]
+        );
         $container[NoticeRender::class] = function () {
             return new NoticeRender();
         };
-        $container['banner_notice'] = function () use ($urlBannerSettings) {
-            return new Notice(
-                Noticeable::WARNING,
-                "<p>Check out the new Paypal Banner feature. <a id='bannerLink' href={$urlBannerSettings}>To enable it click here</a></p>",
-                true,
-                'WCPayPalPlus\Admin\Notice\BannerNotice'
-            );
-        };
-        $container[Controller::class] = function (Container $container) {
-            return new Controller(
-                $container[NoticeRender::class]
+        $container->share(
+            'banner_notice',
+            function (Container $container) use (
+                $urlBannerSettings,
+                $ajaxNonce
+            ) {
+                return new Notice(
+                    Noticeable::WARNING,
+                    "<p>Check out the new Paypal Banner feature. <a data-nonce='$ajaxNonce' id='enable_pp_banner_feature' href={$urlBannerSettings}>To enable it click here</a></p>",
+                    true,
+                    'WCPayPalPlus\Admin\Notice\BannerNotice'
+                );
+            }
+        );
+        $container->share(
+            Controller::class,
+            function (Container $container) {
+                return new Controller(
+                    $container[NoticeRender::class]
+                );
+            }
+        );
+        $container[BannerAjaxHandler::class] = function (
+            Container $container
+        ) use ($ajaxNonce) {
+            return new BannerAjaxHandler(
+                $ajaxNonce,
+                $container[NonceContextInterface::class],
+                $container[Controller::class]
             );
         };
         $container[AjaxDismisser::class] = function (Container $container) {
@@ -59,35 +84,30 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function bootstrap(Container $container)
     {
-        $bannerNotice = $container['banner_notice'];
-        $controller = $container[Controller::class];
         add_action(
             'admin_notices',
             function () use (
-                $controller,
-                $bannerNotice
+                $container
             ) {
                 global $pagenow;
-                if ($pagenow == 'plugins.php' || $pagenow == 'index.php'
-                    || $pagenow == 'admin.php'
-                ) {
-                    $controller->maybeRender($bannerNotice);
+                $allowedPages = ['plugins.php', 'index.php', 'admin.php'];
+                if (in_array($pagenow, $allowedPages, true)) {
+                    $container[Controller::class]->maybeRender(
+                        $container['banner_notice']
+                    );
                 }
             }
         );
 
         add_action(
-            'wp_ajax_enable_banner',
-            function () use ($controller) {
-                update_option('banner_settings_enableBanner', 'yes');
-                $controller->dismiss('WCPayPalPlus\Admin\Notice\BannerNotice');
-            }
+            'wp_ajax_' . BannerAjaxHandler::ACTION,
+            [$container[BannerAjaxHandler::class], 'handle']
         );
 
         add_filter(
             'woocommerce_get_settings_pages',
             function ($settings) {
-                $settings[] = new BannerSettings();
+                $settings[] = new BannerSettingsPage();
 
                 return $settings;
             }
