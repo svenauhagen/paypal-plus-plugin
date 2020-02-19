@@ -38,7 +38,9 @@
         "inpsyde/php-coding-standards": "^0.13.3",
         "barryvdh/composer-cleanup-plugin": "^0.2.0",
         "brain/monkey": "^2.2",
-        "phpunit/phpunit": "^6.5"
+        "phpunit/phpunit": "^6.5",
+        "johnpbloch/wordpress-core": "^5.3",
+        "woocommerce/woocommerce": "^3.9"
     },
     "autoload": {
         "psr-4": {
@@ -55,6 +57,7 @@
         }
     },
     "extra": {
+        "installer-disable": true,
         "mozart": {
             "dep_namespace": "Inpsyde\\Lib\\",
             "dep_directory": "/lib/",
