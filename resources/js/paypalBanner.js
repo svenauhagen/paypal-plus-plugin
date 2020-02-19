@@ -19,7 +19,6 @@
         const settings = paypalBannerFrontData.settings
         let options = {
           amount: settings.amount,
-          currency: 'EUR',
           style: {
             layout: settings.style.layout,
             color: settings.style.color,
@@ -29,7 +28,6 @@
         if (settings && settings.style.layout !== 'flex') {
           options = {
             amount: settings.amount,
-            currency: 'EUR',
             style: {
               layout: settings.style.layout,
               logo: {
