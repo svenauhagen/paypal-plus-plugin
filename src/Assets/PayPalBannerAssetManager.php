@@ -160,11 +160,12 @@ class PayPalBannerAssetManager
     protected function paypalScriptUrl()
     {
         $clientId = $this->sharedRepository->clientIdProduction();
-        if (!isset($clientId)) {
+        $currency = get_woocommerce_currency();
+        if (!isset($clientId) || !isset($currency)) {
             return '';
         }
 
-        return "https://www.paypal.com/sdk/js?client-id={$clientId}&components=messages&currency=EUR";
+        return "https://www.paypal.com/sdk/js?client-id={$clientId}&components=messages&currency={$currency}";
     }
 
     protected function placeBannerOnPage()

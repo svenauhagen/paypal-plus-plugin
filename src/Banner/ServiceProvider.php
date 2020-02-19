@@ -48,7 +48,21 @@ class ServiceProvider implements BootstrappableServiceProvider
             ) {
                 return new Notice(
                     Noticeable::WARNING,
-                    "<p>Check out the new Paypal Banner feature. <a data-nonce='$ajaxNonce' id='enable_pp_banner_feature' href={$urlBannerSettings}>To enable it click here</a></p>",
+                    sprintf(
+                        '<p>%$1s <a data-nonce="%$2s" id="enable_pp_banner_feature" href="%$3s">%$4s</a></p>',
+                        _x(
+                            'Check out the new Paypal Banner feature.',
+                            'Admin Notice Banner',
+                            'woo-paypalplus'
+                        ),
+                        (string)$ajaxNonce,
+                        esc_url($urlBannerSettings),
+                        _x(
+                            'To enable it click here.',
+                            'Admin Notice Banner',
+                            'woo-paypalplus'
+                        )
+                    ),
                     true,
                     'WCPayPalPlus\Admin\Notice\BannerNotice'
                 );
