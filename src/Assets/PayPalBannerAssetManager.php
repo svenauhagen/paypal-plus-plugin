@@ -5,7 +5,6 @@ namespace WCPayPalPlus\Assets;
 use WCPayPalPlus\PluginProperties;
 use WCPayPalPlus\Setting\SharedRepository;
 
-
 class PayPalBannerAssetManager
 {
     use AssetManagerTrait;
@@ -43,7 +42,6 @@ class PayPalBannerAssetManager
             filemtime("{$assetPath}/public/js/paypalBanner.min.js"),
             true
         );
-
 
         if (!$this->isAllowedContext($this->bannerSettings())) {
             return;
@@ -130,43 +128,6 @@ class PayPalBannerAssetManager
                 'settings' => $settings,
             ]
         );
-        ?>
-        <!--<script src=<?php /*echo esc_url($settings['script_url']) */ ?> async="true"
-                onload="javascript:showPayPalCreditBanners();"
-                rel="preload"></script>-->
-        <!-- <script>
-          const showPayPalCreditBanners = _ => {
-            let settings = <?php /*echo json_encode($settings) */ ?>;
-            let options = {
-              amount: settings.amount,
-              currency: 'EUR',
-              style: {
-                layout: settings.style.layout,
-                color: settings.style.color,
-                ratio: settings.style.ratio
-              },
-            };
-            if (settings && settings.style.layout !== 'flex') {
-              options = {
-                amount: settings.amount,
-                currency: 'EUR',
-                style: {
-                  layout: settings.style.layout,
-                  logo: {
-                    type: settings.style.logo.type
-                  },
-                  text: {
-                    color: settings.style.logo.color
-                  }
-                }
-              };
-            }
-
-            paypal.Messages(options).render('#paypal-credit-banner')
-          }
-        </script>-->
-        <?php
-
     }
 
     protected function isWooCommerceRequiredContext()
@@ -215,7 +176,6 @@ class PayPalBannerAssetManager
                 ?>
                 <div id="paypal-credit-banner"></div>
                 <?php
-
             }
         );
 
