@@ -49,7 +49,7 @@ class ServiceProvider implements BootstrappableServiceProvider
                 return new Notice(
                     Noticeable::WARNING,
                     sprintf(
-                        '<p>%$1s <a data-nonce="%$2s" id="enable_pp_banner_feature" href="%$3s">%$4s</a></p>',
+                        '<p>%1$s <a data-nonce="%2$s" id="enable_pp_banner_feature" href="%3$s">%4$s</a></p>',
                         _x(
                             'Check out the new Paypal Banner feature.',
                             'Admin Notice Banner',
