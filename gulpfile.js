@@ -8,6 +8,8 @@ const pump = require('pump')
 const usage = require('gulp-help-doc')
 const { exec } = require('child_process')
 const semver = require('semver')
+const webpack = require('webpack')
+const webpackConfig = require('./webpack.config.js')
 
 const PACKAGE_NAME = 'paypalplus-woocommerce'
 const PACKAGE_DESTINATION = './dist'
@@ -17,31 +19,44 @@ const options = minimist(process.argv.slice(2), {
   string: [
     'packageVersion',
     'compressPath',
-    'compressedName',
+    'compressedName'
   ],
   default: {
     compressPath: process.compressPath || '.',
     packageVersion: process.packageVersion || '',
-    compressedName: process.compressedName || '',
-  },
+    compressedName: process.compressedName || ''
+  }
 })
+
+function buildAssets (done) {
+  return new Promise((resolve, reject) => {
+    webpack(webpackConfig, (err, stats) => {
+      if (err) {
+        return reject(err)
+      }
+      if (stats.hasErrors()) {
+        return reject(new Error(stats.compilation.errors.join('\n')))
+      }
+      resolve()
+    })
+  })
+}
 
 /**
  * Check the Package Version value is passed to the script
  * @param done
  * @throws Error if the package version option isn't found
  */
-async function validatePackageVersion (done)
-{
+async function validatePackageVersion (done) {
   await 1
 
-  if (!'packageVersion' in options || '' === options.packageVersion) {
+  if (!('packageVersion' in options) || options.packageVersion === '') {
     done()
   }
 
   if (semver.valid(options.packageVersion) === null) {
     throw new Error(
-      'Invalid package version, please follow MAJOR.MINOR.PATCH semver convention.',
+      'Invalid package version, please follow MAJOR.MINOR.PATCH semver convention.'
     )
   }
 
@@ -105,8 +120,7 @@ function copyPackageFiles (done) {
  * Compress the package
  * @returns {*}
  */
-function compressPackage (done)
-{
+function compressPackage (done) {
   const { packageVersion, compressPath } = options
   const timeStamp = new Date().getTime()
 
@@ -140,8 +154,8 @@ function compressPackage (done)
       `${PACKAGE_DESTINATION}/**/bin`,
       `${PACKAGE_DESTINATION}/vendor/**/readme.txt`,
       `${PACKAGE_DESTINATION}/vendor/**/CONTRIBUTING.md`,
-      `${PACKAGE_DESTINATION}/vendor/**/CONTRIBUTING`,
-    ],
+      `${PACKAGE_DESTINATION}/vendor/**/CONTRIBUTING`
+    ]
   )
 
   return new Promise(() => {
@@ -155,19 +169,19 @@ function compressPackage (done)
 
         pump(
           gulp.src(`${PACKAGE_DESTINATION}/**/*`, {
-            base: PACKAGE_DESTINATION,
+            base: PACKAGE_DESTINATION
           }),
           gulpZip(`${compressedName}.zip`),
           gulp.dest(
             compressPath,
             {
               base: PACKAGE_DESTINATION,
-              cwd: './',
-            },
+              cwd: './'
+            }
           ),
-          done,
+          done
         )
-      },
+      }
     )
   })
 }
@@ -206,6 +220,7 @@ exports.tests = gulp.series(
  * @arg {compressedName} The name to give to the package instead of the default one.
  */
 exports.dist = gulp.series(
+  buildAssets,
   validatePackageVersion,
   cleanDist,
   copyPackageFiles,
