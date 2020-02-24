@@ -51,7 +51,7 @@ class ServiceProvider implements BootstrappableServiceProvider
                     sprintf(
                         '<p>%1$s <a data-nonce="%2$s" id="enable_pp_banner_feature" href="%3$s">%4$s</a></p>',
                         _x(
-                            'Check out the new PayPal Banner feature.',
+                            'Activate the PayPal banner to offer your buyers payment by instalments. With PayPal Installment Payment customers like to buy higher priced products. This gives them a good chance to fill their shopping baskets.',
                             'Admin Notice Banner',
                             'woo-paypalplus'
                         ),
