@@ -231,3 +231,10 @@ exports.dist = gulp.series(
 
 exports.help = help
 exports.default = help
+
+/**
+ * Build the assets for development
+ *
+ * @task {buildAssets}
+ */
+exports.buildAssets = buildAssets
