@@ -60,7 +60,7 @@ class BannerSettingsPage extends WC_Settings_Page
                 ),
                 'id' => 'banner_settings_clientID',
                 'type' => 'password',
-                'default' => 'no',
+                'default' => null,
             ],
             'enableHome' => [
                 'title' => esc_html_x(

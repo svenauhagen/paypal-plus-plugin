@@ -165,6 +165,10 @@ class PayPalBannerAssetManager
     protected function paypalScriptUrl()
     {
         $clientId = get_option('banner_settings_clientID');
+        if (empty($clientId)) {
+            $clientId = $this->sharedRepository->clientIdProduction();
+            update_option('banner_settings_clientID', $clientId);
+        }
         $currency = get_woocommerce_currency();
         if (!isset($clientId) || !isset($currency)) {
             return '';
