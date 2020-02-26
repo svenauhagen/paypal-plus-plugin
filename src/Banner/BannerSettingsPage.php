@@ -11,7 +11,7 @@ class BannerSettingsPage extends WC_Settings_Page
     public function __construct()
     {
         $this->id = 'paypalplus-banner';
-        $this->label = __('Paypal Banner', 'woo-paypalplus');
+        $this->label = __('PayPal Banner', 'woo-paypalplus');
 
         parent::__construct();
     }
@@ -36,20 +36,30 @@ class BannerSettingsPage extends WC_Settings_Page
         return [
             'title' => [
                 'title' => esc_html_x(
-                    'Paypal Banner Settings',
-                    'Paypal Banner Settings',
+                    'PayPal Banner Settings',
+                    'PayPal Banner Settings',
                     'woo-paypalplus'
                 ),
                 'type' => 'title',
             ],
             'enableBanner' => [
                 'title' => esc_html_x(
-                    'Enable/disable Paypal Banner',
+                    'Enable/disable PayPal Banner',
                     'banner_settings',
                     'woo-paypalplus'
                 ),
                 'id' => 'banner_settings_enableBanner',
                 'type' => 'checkbox',
+                'default' => 'no',
+            ],
+            'bannerClientID' => [
+                'title' => esc_html_x(
+                    'PayPal Banner ClientID',
+                    'banner_settings',
+                    'woo-paypalplus'
+                ),
+                'id' => 'banner_settings_clientID',
+                'type' => 'password',
                 'default' => 'no',
             ],
             'enableHome' => [
@@ -72,6 +82,16 @@ class BannerSettingsPage extends WC_Settings_Page
                 'type' => 'checkbox',
                 'default' => 'no',
             ],
+            'enableProductDetail' => [
+                'title' => esc_html_x(
+                    'Show in Product Detail Page',
+                    'banner_settings',
+                    'woo-paypalplus'
+                ),
+                'id' => 'banner_settings_product_detail',
+                'type' => 'checkbox',
+                'default' => 'no',
+            ],
             'enableSearch' => [
                 'title' => esc_html_x(
                     'Show in Search Page',
@@ -79,6 +99,26 @@ class BannerSettingsPage extends WC_Settings_Page
                     'woo-paypalplus'
                 ),
                 'id' => 'banner_settings_search',
+                'type' => 'checkbox',
+                'default' => 'no',
+            ],
+            'enableCart' => [
+                'title' => esc_html_x(
+                    'Show in Cart',
+                    'banner_settings',
+                    'woo-paypalplus'
+                ),
+                'id' => 'banner_settings_cart',
+                'type' => 'checkbox',
+                'default' => 'no',
+            ],
+            'enableCheckout' => [
+                'title' => esc_html_x(
+                    'Show in Checkout',
+                    'banner_settings',
+                    'woo-paypalplus'
+                ),
+                'id' => 'banner_settings_checkout',
                 'type' => 'checkbox',
                 'default' => 'no',
             ],
