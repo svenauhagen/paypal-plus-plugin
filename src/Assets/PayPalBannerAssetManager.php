@@ -55,35 +55,39 @@ class PayPalBannerAssetManager
             return false;
         }
 
-        return $this->isWooCommerceRequiredContext()
-            || $this->isBannerEnabledWCContext($settings['optional_pages']);
+        return $this->isBannerEnabledWCContext($settings['optional_pages']);
     }
 
     protected function bannerSettings()
     {
         $scriptUrl = $this->paypalScriptUrl();
-        $enabledBanner = wc_string_to_bool(
-            get_option('banner_settings_enableBanner', 'no')
-        );
-        $showHome = wc_string_to_bool(
-            get_option('banner_settings_home', 'no')
-        );
-        $showCategoryProducts = wc_string_to_bool(
-            get_option('banner_settings_products', 'no')
-        );
-        $showSearchResults = wc_string_to_bool(
-            get_option('banner_settings_search', 'no')
-        );
         $amount = $this->calculateAmount();
 
         $settings = [
             'amount' => $amount,
             'script_url' => $scriptUrl,
-            'enabled_banner' => $enabledBanner,
+            'enabled_banner' => $this->isEnabledShowBannerInPage(
+                'banner_settings_enableBanner'
+            ),
             'optional_pages' => [
-                'show_home' => $showHome,
-                'show_category' => $showCategoryProducts,
-                'show_search' => $showSearchResults,
+                'show_home' => $this->isEnabledShowBannerInPage(
+                    'banner_settings_home'
+                ),
+                'show_category' => $this->isEnabledShowBannerInPage(
+                    'banner_settings_products'
+                ),
+                'show_search' => $this->isEnabledShowBannerInPage(
+                    'banner_settings_search'
+                ),
+                'show_product' => $this->isEnabledShowBannerInPage(
+                    'banner_settings_product_detail'
+                ),
+                'show_cart' => $this->isEnabledShowBannerInPage(
+                    'banner_settings_cart'
+                ),
+                'show_checkout' => $this->isEnabledShowBannerInPage(
+                    'banner_settings_checkout'
+                ),
             ],
             'style' => [
                 'layout' => get_option('banner_settings_layout'),
@@ -130,11 +134,6 @@ class PayPalBannerAssetManager
         );
     }
 
-    protected function isWooCommerceRequiredContext()
-    {
-        return is_cart() || is_checkout() || is_product();
-    }
-
     protected function isBannerEnabledWCContext($settings)
     {
         return (is_home() && isset($settings['show_home'])
@@ -142,7 +141,13 @@ class PayPalBannerAssetManager
             || (is_shop() && isset($settings['show_category'])
                 ? $settings['show_category'] : false)
             || (is_search() && isset($settings['show_search'])
-                ? $settings['show_search'] : false);
+                ? $settings['show_search'] : false)
+            || (is_product() && isset($settings['show_product'])
+                ? $settings['show_product'] : false)
+            || (is_cart() && isset($settings['show_cart'])
+                ? $settings['show_cart'] : false)
+            || (is_checkout() && isset($settings['show_checkout'])
+                ? $settings['show_checkout'] : false);
     }
 
     protected function calculateAmount()
@@ -159,7 +164,7 @@ class PayPalBannerAssetManager
 
     protected function paypalScriptUrl()
     {
-        $clientId = $this->sharedRepository->clientIdProduction();
+        $clientId = get_option('banner_settings_clientID');
         $currency = get_woocommerce_currency();
         if (!isset($clientId) || !isset($currency)) {
             return '';
@@ -179,7 +184,6 @@ class PayPalBannerAssetManager
                 <?php
             }
         );
-
         if (is_home()) {
             add_filter(
                 'the_content',
@@ -187,6 +191,9 @@ class PayPalBannerAssetManager
                     return '<div id="paypal-credit-banner"></div>' . $content;
                 }
             );
+        }
+        if (is_search()) {
+            do_action('show_paypal_banner_search');
         }
     }
 
@@ -201,8 +208,20 @@ class PayPalBannerAssetManager
         if (is_product()) {
             return 'woocommerce_before_single_product_summary';
         }
-        if (is_shop() || is_category()) {
+        if (is_shop() || is_category() || is_search()) {
             return 'woocommerce_before_shop_loop';
         }
+    }
+
+    /**
+     * @param $option
+     *
+     * @return bool
+     */
+    protected function isEnabledShowBannerInPage($option)
+    {
+        return wc_string_to_bool(
+            get_option($option, 'no')
+        );
     }
 }
