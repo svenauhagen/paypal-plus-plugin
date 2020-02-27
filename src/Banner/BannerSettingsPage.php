@@ -131,7 +131,7 @@ class BannerSettingsPage extends WC_Settings_Page
                 'id' => 'banner_settings_layout',
                 'type' => 'select',
                 'desc' => esc_html_x(
-                    'This controls the form of the banner: Text or Graphical',
+                    'Text: Default. Lightweight, contextual message. Graphical: Responsive display banner. See below for the supported ratio sizes and colors.',
                     'banner_settings',
                     'woo-paypalplus'
                 ),
