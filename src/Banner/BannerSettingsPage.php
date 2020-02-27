@@ -230,16 +230,6 @@ class BannerSettingsPage extends WC_Settings_Page
                     'woo-paypalplus'
                 ),
                 'options' => [
-                    '8x1' => esc_html_x(
-                        '8x1',
-                        'banner_settings',
-                        'woo-paypalplus'
-                    ),
-                    '20x1' => esc_html_x(
-                        '20x1',
-                        'banner_settings',
-                        'woo-paypalplus'
-                    ),
                     '1x1' => esc_html_x(
                         '1x1',
                         'banner_settings',
@@ -247,6 +237,16 @@ class BannerSettingsPage extends WC_Settings_Page
                     ),
                     '1x4' => esc_html_x(
                         '1x4',
+                        'banner_settings',
+                        'woo-paypalplus'
+                    ),
+                    '8x1' => esc_html_x(
+                        '8x1',
+                        'banner_settings',
+                        'woo-paypalplus'
+                    ),
+                    '20x1' => esc_html_x(
+                        '20x1',
                         'banner_settings',
                         'woo-paypalplus'
                     ),
