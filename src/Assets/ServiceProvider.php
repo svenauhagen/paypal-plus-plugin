@@ -11,6 +11,7 @@ use WCPayPalPlus\PluginProperties;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
+use WCPayPalPlus\Setting\SharedRepository;
 
 class ServiceProvider implements BootstrappableServiceProvider
 {
@@ -28,6 +29,12 @@ class ServiceProvider implements BootstrappableServiceProvider
         $container[SmartButtonArguments::class] = function (Container $container) {
             return new SmartButtonArguments(
                 $container[ExpressCheckoutStorable::class]
+            );
+        };
+        $container[PayPalBannerAssetManager::class] = function (Container $container) {
+            return new PayPalBannerAssetManager(
+                $container[PluginProperties::class],
+                $container[SharedRepository::class]
             );
         };
         $container[PayPalAssetManager::class] = function (Container $container) {
@@ -64,6 +71,10 @@ class ServiceProvider implements BootstrappableServiceProvider
         add_action(
             'wp_enqueue_scripts',
             [$container[AssetManager::class], 'enqueueFrontEndScripts']
+        );
+        add_action(
+            'wp_enqueue_scripts',
+            [$container[PayPalBannerAssetManager::class], 'enqueuePPBannerFrontEndScripts']
         );
         add_action(
             'wp_enqueue_scripts',

@@ -28,7 +28,7 @@ class NoticeRender
         ?>
         <div class="<?= esc_attr($class) ?>" data-id="<?= esc_attr($id) ?>">
             <p>
-                <?= esc_html($message) ?>
+                <?= wp_kses_post($message) ?>
             </p>
         </div>
         <?php

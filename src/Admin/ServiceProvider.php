@@ -7,7 +7,8 @@ namespace WCPayPalPlus\Admin;
 
 use WCPayPalPlus\Admin\Notice\AjaxDismisser;
 use WCPayPalPlus\Admin\Notice\Controller;
-use WCPayPalPlus\Admin\Notice\GatewayNotice;
+use WCPayPalPlus\Admin\Notice\Notice;
+use WCPayPalPlus\Admin\Notice\Noticeable;
 use WCPayPalPlus\Admin\Notice\NoticeRender;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
@@ -31,8 +32,17 @@ class ServiceProvider implements BootstrappableServiceProvider
         $container[NoticeRender::class] = function () {
             return new NoticeRender();
         };
-        $container[GatewayNotice::class] = function () {
-            return new GatewayNotice();
+        $container['gateway_notice'] = function () {
+            return new Notice(
+                Noticeable::WARNING,
+                esc_html_x(
+                    'Seems you have more than one PayPal gateway active. We recommend to deactivate all of them except PayPal PLUS to avoid duplicated payment options at checkout.',
+                    'admin-notice',
+                    'woo-paypalplus'
+                ),
+                true,
+                'WCPayPalPlus\Admin\Notice\GatewayNotice'
+            );
         };
         $container[AjaxDismisser::class] = function (Container $container) {
             return new AjaxDismisser(
@@ -52,7 +62,7 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function bootstrap(Container $container)
     {
-        $gatewayNotice = $container[GatewayNotice::class];
+        $gatewayNotice = $container['gateway_notice'];
         $controller = $container[Controller::class];
         $gatewaySubString = 'paypal';
         $gatewaysToNotCheckAgainst = [
