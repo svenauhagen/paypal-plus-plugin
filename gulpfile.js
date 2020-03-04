@@ -8,12 +8,12 @@ const pump = require('pump')
 const usage = require('gulp-help-doc')
 const { exec } = require('child_process')
 const semver = require('semver')
-const webpack = require('webpack')
-const webpackConfig = require('./webpack.config.js')
-
 const PACKAGE_NAME = 'paypalplus-woocommerce'
 const PACKAGE_DESTINATION = './dist'
 const PACKAGE_PATH = `${PACKAGE_DESTINATION}/${PACKAGE_NAME}`
+const ENV_DEVELOPMENT = 'development'
+const ENV_PRODUCTION = 'production'
+const BASE_PATH = './'
 
 const options = minimist(process.argv.slice(2), {
   string: [
@@ -28,18 +28,21 @@ const options = minimist(process.argv.slice(2), {
   }
 })
 
-function buildAssets (done) {
-  return new Promise((resolve, reject) => {
-    webpack(webpackConfig, (err, stats) => {
-      if (err) {
-        return reject(err)
+function setupEncore ({ environment, basePath }) {
+  return function encore (done) {
+    environment = (environment === ENV_DEVELOPMENT) ? 'dev' : environment
+
+    exec(
+      `./node_modules/.bin/encore ${environment} --env.basePath ${basePath}`,
+      (error, stdout, stderr) => {
+        if (error) {
+          throw new Error(error)
+        }
+
+        done()
       }
-      if (stats.hasErrors()) {
-        return reject(new Error(stats.compilation.errors.join('\n')))
-      }
-      resolve()
-    })
-  })
+    )
+  }
 }
 
 /**
@@ -211,6 +214,14 @@ exports.tests = gulp.series(
   phpcs
 )
 
+const buildAssetsTask = gulp.series(
+  setupEncore({
+    ...options,
+    basePath: BASE_PATH,
+    environment: ENV_DEVELOPMENT
+  })
+)
+
 /**
  * Create the plugin package distribution.
  *
@@ -220,21 +231,24 @@ exports.tests = gulp.series(
  * @arg {compressedName} The name to give to the package instead of the default one.
  */
 exports.dist = gulp.series(
-  buildAssets,
   validatePackageVersion,
   cleanDist,
+  setupEncore({
+    ...options,
+    basePath: PACKAGE_PATH,
+    environment: ENV_PRODUCTION
+  }),
   copyPackageFiles,
   composer,
   compressPackage,
   cleanDist
 )
 
-exports.help = help
-exports.default = help
-
 /**
  * Build the assets for development
  *
  * @task {buildAssets}
  */
-exports.buildAssets = buildAssets
+exports.buildAssets = buildAssetsTask
+exports.help = help
+exports.default = help
