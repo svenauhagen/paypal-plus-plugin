@@ -124,6 +124,7 @@ class Bootstrapper
             ->add(new Refund\ServiceProvider())
             ->add(new Payment\ServiceProvider())
             ->add(new ExpressCheckoutGateway\ServiceProvider())
+            ->add(new Banner\ServiceProvider())
             ->add(new PlusGateway\ServiceProvider());
 
         /**

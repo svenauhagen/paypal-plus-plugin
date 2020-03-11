@@ -20,6 +20,8 @@ module.exports = [
       front: './resources/js/front.js',
       expressCheckout: './resources/js/expressCheckout.js',
       payPalRedirect: './resources/js/payPalRedirect.js',
+      adminNoticeBanner: './resources/js/adminNoticeBanner.js',
+      paypalBanner: './resources/js/paypalBanner.js'
     },
     output: {
       path: resolve('public/js'),
