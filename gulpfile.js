@@ -157,7 +157,9 @@ function compressPackage (done) {
       `${PACKAGE_DESTINATION}/**/bin`,
       `${PACKAGE_DESTINATION}/vendor/**/readme.txt`,
       `${PACKAGE_DESTINATION}/vendor/**/CONTRIBUTING.md`,
-      `${PACKAGE_DESTINATION}/vendor/**/CONTRIBUTING`
+      `${PACKAGE_DESTINATION}/vendor/**/CONTRIBUTING`,
+      `${PACKAGE_DESTINATION}/**/public/**/entrypoints.json`,
+      `${PACKAGE_DESTINATION}/**/public/**/manifest.json`
     ]
   )
 
