@@ -36,9 +36,16 @@ class PayPalBannerAssetManager
     {
         list($assetPath, $assetUrl) = $this->assetUrlPath();
         wp_register_script(
+            'paypal-sdk',
+            $this->paypalScriptUrl(),
+            [],
+            null,
+            true
+        );
+        wp_register_script(
             'paypalplus-woocommerce-paypalBanner',
             "{$assetUrl}/public/js/paypalBanner.min.js",
-            ['jquery'],
+            ['jquery', 'paypal-sdk'],
             filemtime("{$assetPath}/public/js/paypalBanner.min.js"),
             true
         );

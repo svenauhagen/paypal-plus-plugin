@@ -6,8 +6,8 @@
 namespace WCPayPalPlus\Assets;
 
 use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
-use WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
 use WCPayPalPlus\PluginProperties;
+use WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
@@ -95,6 +95,20 @@ class ServiceProvider implements BootstrappableServiceProvider
 
                 return $locale;
             }
+        );
+
+        add_filter(
+            'script_loader_tag',
+            function ($tag, $handle, $src) {
+                if ('paypal-sdk' === $handle) {
+                    $tag = '<script type="text/javascript" src="' . esc_url(
+                            $src
+                        )
+                        . '" data-namespace="paypalSdk"></script>';
+                }
+
+                return $tag;
+            }, 10, 3
         );
     }
 }
