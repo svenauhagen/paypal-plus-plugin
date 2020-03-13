@@ -101,14 +101,14 @@ class ServiceProvider implements BootstrappableServiceProvider
             'script_loader_tag',
             function ($tag, $handle, $src) {
                 if ('paypal-sdk' === $handle) {
-                    $tag = '<script type="text/javascript" src="' . esc_url(
-                            $src
-                        )
+                    $tag = '<script type="text/javascript" src="' . esc_url($src)
                         . '" data-namespace="paypalSdk"></script>';
                 }
 
                 return $tag;
-            }, 10, 3
+            },
+            10,
+            3
         );
     }
 }
