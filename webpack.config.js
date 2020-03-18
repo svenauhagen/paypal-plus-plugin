@@ -18,6 +18,8 @@ function configJavaScript ({ basePath }) {
     .addEntry('front.min', './resources/js/front.js')
     .addEntry('expressCheckout.min', './resources/js/expressCheckout.js')
     .addEntry('payPalRedirect.min', './resources/js/payPalRedirect.js')
+    .addEntry('paypalBanner.min', './resources/js/paypalBanner.js')
+    .addEntry('adminNoticeBanner.min', './resources/js/adminNoticeBanner.js')
     .enableSourceMaps(!Encore.isProduction())
 
   return extractEncoreConfig('javascript-configuration')
