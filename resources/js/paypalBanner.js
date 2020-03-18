@@ -31,6 +31,6 @@
         }
       }
     }
-    paypalSdk.Messages(options).render('#paypal-credit-banner')
+    paypalBannerSdk.Messages(options).render('#paypal-credit-banner')
   })
 })(jQuery, window.paypalBannerFrontData)
