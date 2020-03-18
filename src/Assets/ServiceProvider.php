@@ -5,6 +5,7 @@
 
 namespace WCPayPalPlus\Assets;
 
+use WCPayPalPlus\Banner\BannerSdkScriptUrl;
 use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
 use WCPayPalPlus\PluginProperties;
 use WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
@@ -31,10 +32,15 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[ExpressCheckoutStorable::class]
             );
         };
+        $container[BannerSdkScriptUrl::class] = function (Container $container) {
+            return new BannerSdkScriptUrl(
+                $container[SharedRepository::class]
+            );
+        };
         $container[PayPalBannerAssetManager::class] = function (Container $container) {
             return new PayPalBannerAssetManager(
                 $container[PluginProperties::class],
-                $container[SharedRepository::class]
+                $container[BannerSdkScriptUrl::class]
             );
         };
         $container[PayPalAssetManager::class] = function (Container $container) {

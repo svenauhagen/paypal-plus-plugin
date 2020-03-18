@@ -12,12 +12,14 @@ namespace WCPayPalPlus\Http;
 
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use UnexpectedValueException;
+use WCPayPalPlus\Banner\BannerSdkScriptUrl;
 use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler;
 use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorer;
 use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
 use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
+use WCPayPalPlus\Setting\SharedRepository;
 
 /**
  * Class ServiceProvider
@@ -61,12 +63,20 @@ class ServiceProvider implements BootstrappableServiceProvider
         );
 
         $container->addService(
+            BannerSdkScriptUrl::class,
+            function (Container $container) {
+                return new BannerSdkScriptUrl($container[SharedRepository::class]);
+            }
+        );
+
+        $container->addService(
             ResourceDictionary::class,
-            function () use ($uploadDir) {
+            function (Container $container) use ($uploadDir) {
                 return new ResourceDictionary(
                     [
                         "{$uploadDir}/woo-paypalplus/resources/js/paypal/expressCheckout.min.js" => 'https://www.paypalobjects.com/api/checkout.min.js',
                         "{$uploadDir}/woo-paypalplus/resources/js/paypal/payPalplus.min.js" => 'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
+                        "{$uploadDir}/woo-paypalplus/resources/js/paypal/payPalplus.min.js" => $container->get(BannerSdkScriptUrl::class)->paypalScriptUrl(),
                     ]
                 );
             }

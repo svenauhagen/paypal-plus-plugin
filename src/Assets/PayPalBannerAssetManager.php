@@ -2,8 +2,8 @@
 
 namespace WCPayPalPlus\Assets;
 
+use WCPayPalPlus\Banner\BannerSdkScriptUrl;
 use WCPayPalPlus\PluginProperties;
-use WCPayPalPlus\Setting\SharedRepository;
 
 class PayPalBannerAssetManager
 {
@@ -13,23 +13,23 @@ class PayPalBannerAssetManager
      */
     private $pluginProperties;
     /**
-     * @var SharedRepository
+     * @var BannerSdkScriptUrl
      */
-    private $sharedRepository;
+    private $bannerScriptUrl;
 
     /**
      * AssetManager constructor.
      *
-     * @param PluginProperties $pluginProperties
-     * @param SharedRepository $sharedRepository
+     * @param PluginProperties   $pluginProperties
+     * @param BannerSdkScriptUrl $bannerScriptUrl
      */
     public function __construct(
         PluginProperties $pluginProperties,
-        SharedRepository $sharedRepository
+        BannerSdkScriptUrl $bannerScriptUrl
     ) {
         /** @noinspection UnusedConstructorDependenciesInspection */
         $this->pluginProperties = $pluginProperties;
-        $this->sharedRepository = $sharedRepository;
+        $this->bannerScriptUrl = $bannerScriptUrl->paypalScriptUrl();
     }
 
     public function enqueuePPBannerFrontEndScripts()
@@ -37,7 +37,7 @@ class PayPalBannerAssetManager
         list($assetPath, $assetUrl) = $this->assetUrlPath();
         wp_register_script(
             'wooPaypalBanner-sdk',
-            $this->paypalScriptUrl(),
+            $this->bannerScriptUrl,
             [],
             null,
             true
@@ -67,7 +67,7 @@ class PayPalBannerAssetManager
 
     protected function bannerSettings()
     {
-        $scriptUrl = $this->paypalScriptUrl();
+        $scriptUrl = $this->bannerScriptUrl;
         $amount = $this->calculateAmount();
 
         $settings = [
