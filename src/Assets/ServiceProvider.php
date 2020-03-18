@@ -100,9 +100,13 @@ class ServiceProvider implements BootstrappableServiceProvider
         add_filter(
             'script_loader_tag',
             function ($tag, $handle, $src) {
-                if ('paypal-sdk' === $handle) {
-                    $tag = '<script type="text/javascript" src="' . esc_url($src)
-                        . '" data-namespace="paypalSdk"></script>';
+                if ('wooPaypalBanner-sdk' === $handle) {
+                    $tag = substr_replace(
+                        $tag,
+                        ' data-namespace="paypalBannerSdk"',
+                        7,
+                        0
+                    );
                 }
 
                 return $tag;
