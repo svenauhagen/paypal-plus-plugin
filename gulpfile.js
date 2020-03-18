@@ -104,7 +104,6 @@ function copyPackageFiles (done) {
         './languages/**/*',
         './lib/**/*',
         '!./lib/__classes',
-        './public/**/*',
         './src/**/*',
         './LICENSE',
         './paypalplus-woocommerce.php',
