@@ -13,23 +13,23 @@ class PayPalBannerAssetManager
      */
     private $pluginProperties;
     /**
-     * @var BannerSdkScriptUrl
+     * @var string
      */
     private $bannerScriptUrl;
 
     /**
      * AssetManager constructor.
      *
-     * @param PluginProperties   $pluginProperties
-     * @param BannerSdkScriptUrl $bannerScriptUrl
+     * @param PluginProperties $pluginProperties
+     * @param string           $bannerScriptUrl
      */
     public function __construct(
         PluginProperties $pluginProperties,
-        BannerSdkScriptUrl $bannerScriptUrl
+        $bannerScriptUrl
     ) {
         /** @noinspection UnusedConstructorDependenciesInspection */
         $this->pluginProperties = $pluginProperties;
-        $this->bannerScriptUrl = $bannerScriptUrl->paypalScriptUrl();
+        $this->bannerScriptUrl = $bannerScriptUrl;
     }
 
     public function enqueuePPBannerFrontEndScripts()

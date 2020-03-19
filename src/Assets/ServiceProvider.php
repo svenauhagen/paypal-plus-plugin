@@ -32,15 +32,11 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[ExpressCheckoutStorable::class]
             );
         };
-        $container[BannerSdkScriptUrl::class] = function (Container $container) {
-            return new BannerSdkScriptUrl(
-                $container[SharedRepository::class]
-            );
-        };
+
         $container[PayPalBannerAssetManager::class] = function (Container $container) {
             return new PayPalBannerAssetManager(
                 $container[PluginProperties::class],
-                $container[BannerSdkScriptUrl::class]
+                $container['banner_sdk_script_url']
             );
         };
         $container[PayPalAssetManager::class] = function (Container $container) {

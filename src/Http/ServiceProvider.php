@@ -13,10 +13,10 @@ namespace WCPayPalPlus\Http;
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use UnexpectedValueException;
 use WCPayPalPlus\Banner\BannerSdkScriptUrl;
+use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler;
 use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorer;
 use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
-use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\SharedRepository;
@@ -63,9 +63,20 @@ class ServiceProvider implements BootstrappableServiceProvider
         );
 
         $container->addService(
-            BannerSdkScriptUrl::class,
+            'banner_sdk_script_url',
             function (Container $container) {
-                return new BannerSdkScriptUrl($container[SharedRepository::class]);
+                $sharedRepository = $container->get(SharedRepository::class);
+                $clientId = get_option('banner_settings_clientID');
+                if (empty($clientId)) {
+                    $clientId = $sharedRepository->clientIdProduction();
+                    update_option('banner_settings_clientID', $clientId);
+                }
+                $currency = get_woocommerce_currency();
+                if (!isset($clientId) || !isset($currency)) {
+                    return '';
+                }
+
+                return "https://www.paypal.com/sdk/js?client-id={$clientId}&components=messages&currency={$currency}";
             }
         );
 
@@ -76,7 +87,9 @@ class ServiceProvider implements BootstrappableServiceProvider
                     [
                         "{$uploadDir}/woo-paypalplus/resources/js/paypal/expressCheckout.min.js" => 'https://www.paypalobjects.com/api/checkout.min.js',
                         "{$uploadDir}/woo-paypalplus/resources/js/paypal/payPalplus.min.js" => 'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
-                        "{$uploadDir}/woo-paypalplus/resources/js/paypal/payPalplus.min.js" => $container->get(BannerSdkScriptUrl::class)->paypalScriptUrl(),
+                        "{$uploadDir}/woo-paypalplus/resources/js/paypal/paypalBanner.min.js" => $container->get(
+                            'banner_sdk_script_url'
+                        ),
                     ]
                 );
             }
