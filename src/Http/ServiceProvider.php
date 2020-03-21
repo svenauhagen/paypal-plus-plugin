@@ -64,13 +64,8 @@ class ServiceProvider implements BootstrappableServiceProvider
 
         $container->addService(
             'banner_sdk_script_url',
-            function (Container $container) {
-                $sharedRepository = $container->get(SharedRepository::class);
-                $clientId = get_option('banner_settings_clientID');
-                if (empty($clientId)) {
-                    $clientId = $sharedRepository->clientIdProduction();
-                    update_option('banner_settings_clientID', $clientId);
-                }
+            function () {
+                $clientId = get_option('banner_settings_client_id');
                 $currency = get_woocommerce_currency();
                 if (!isset($clientId) || !isset($currency)) {
                     return '';

@@ -8,10 +8,16 @@ use WC_Settings_Page;
 
 class BannerSettingsPage extends WC_Settings_Page
 {
-    public function __construct()
+    /**
+     * @var string
+     */
+    protected $clientId;
+
+    public function __construct($clientId)
     {
         $this->id = 'paypalplus-banner';
         $this->label = __('PayPal Banner', 'woo-paypalplus');
+        $this->clientId = $clientId;
 
         parent::__construct();
     }
@@ -21,7 +27,6 @@ class BannerSettingsPage extends WC_Settings_Page
         $settings = $this->get_settings();
         WC_Admin_Settings::output_fields($settings);
     }
-
 
     public function get_settings()
     {
@@ -58,9 +63,9 @@ class BannerSettingsPage extends WC_Settings_Page
                     'banner_settings',
                     'woo-paypalplus'
                 ),
-                'id' => 'banner_settings_clientID',
+                'id' => 'banner_settings_client_id',
                 'type' => 'password',
-                'default' => null,
+                'default' => $this->clientId,
             ],
             'enableHome' => [
                 'title' => esc_html_x(

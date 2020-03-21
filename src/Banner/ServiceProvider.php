@@ -16,6 +16,7 @@ use WCPayPalPlus\Nonce;
 use WCPayPalPlus\Request\Request;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
+use WCPayPalPlus\Setting\SharedRepository;
 use WooCommerce;
 
 /**
@@ -118,10 +119,15 @@ class ServiceProvider implements BootstrappableServiceProvider
             [$container[BannerAjaxHandler::class], 'handle']
         );
 
+        $sharedRepository = $container->get(SharedRepository::class);
+        $clientId =$sharedRepository->clientIdProduction();
+
         add_filter(
             'woocommerce_get_settings_pages',
-            function ($settings) {
-                $settings[] = new BannerSettingsPage();
+            function ($settings) use (
+                $clientId
+            ) {
+                $settings[] = new BannerSettingsPage($clientId);
 
                 return $settings;
             }
