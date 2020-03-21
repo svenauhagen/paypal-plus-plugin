@@ -8,6 +8,7 @@ use WCPayPalPlus\PluginProperties;
 class PayPalBannerAssetManager
 {
     use AssetManagerTrait;
+    const WOO_PAYPAL_BANNER_SDK = 'woo-paypal-banner-sdk';
     /**
      * @var PluginProperties
      */
@@ -36,7 +37,7 @@ class PayPalBannerAssetManager
     {
         list($assetPath, $assetUrl) = $this->assetUrlPath();
         wp_register_script(
-            'wooPaypalBanner-sdk',
+            self::WOO_PAYPAL_BANNER_SDK,
             $this->bannerScriptUrl,
             [],
             null,
@@ -45,7 +46,7 @@ class PayPalBannerAssetManager
         wp_register_script(
             'paypalplus-woocommerce-paypalBanner',
             "{$assetUrl}/public/js/paypalBanner.min.js",
-            ['jquery', 'wooPaypalBanner-sdk'],
+            ['jquery', self::WOO_PAYPAL_BANNER_SDK],
             filemtime("{$assetPath}/public/js/paypalBanner.min.js"),
             true
         );
@@ -167,21 +168,6 @@ class PayPalBannerAssetManager
         }
 
         return $amount;
-    }
-
-    protected function paypalScriptUrl()
-    {
-        $clientId = get_option('banner_settings_clientID');
-        if (empty($clientId)) {
-            $clientId = $this->sharedRepository->clientIdProduction();
-            update_option('banner_settings_clientID', $clientId);
-        }
-        $currency = get_woocommerce_currency();
-        if (!isset($clientId) || !isset($currency)) {
-            return '';
-        }
-
-        return "https://www.paypal.com/sdk/js?client-id={$clientId}&components=messages&currency={$currency}";
     }
 
     protected function placeBannerOnPage()
