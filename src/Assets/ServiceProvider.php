@@ -103,11 +103,10 @@ class ServiceProvider implements BootstrappableServiceProvider
             'script_loader_tag',
             function ($tag, $handle, $src) {
                 if (PayPalBannerAssetManager::WOO_PAYPAL_BANNER_SDK === $handle) {
-                    $tag = substr_replace(
-                        $tag,
-                        ' data-namespace="paypalBannerSdk"',
-                        7,
-                        0
+                    $tag = preg_replace(
+                        '/(<script [^>]*)(>)/',
+                        '$1 data-namespace="paypalBannerSdk"$2',
+                        $tag
                     );
                 }
 
