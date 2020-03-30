@@ -6,7 +6,7 @@
         "useBuiltIns": "entry",
         "targets": {
           "browsers": [
-            "latest 2 versions",
+            ">0.20%",
             "ie 10"
           ]
         }
