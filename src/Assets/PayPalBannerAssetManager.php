@@ -153,7 +153,8 @@ class PayPalBannerAssetManager
         wc_load_cart();
 
         $amount = WC()->cart->get_total('edit');
-        if (is_product()) {
+
+        if (is_product() && is_numeric(wc_get_product()->get_price('edit'))) {
             return $amount + wc_get_product()->get_price('edit');
         }
 
