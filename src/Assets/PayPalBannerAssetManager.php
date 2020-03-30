@@ -42,7 +42,9 @@ class PayPalBannerAssetManager
             filemtime("{$assetPath}/public/js/paypalBanner.min.js"),
             true
         );
-
+        if (!$this->isEnabledShowBannerInPage('banner_settings_enableBanner')) {
+            return;
+        }
         if (!$this->isAllowedContext($this->bannerSettings())) {
             return;
         }
@@ -51,10 +53,6 @@ class PayPalBannerAssetManager
 
     protected function isAllowedContext(array $settings)
     {
-        if (!$settings['enabled_banner']) {
-            return false;
-        }
-
         return $this->isBannerEnabledWCContext($settings['optional_pages']);
     }
 
