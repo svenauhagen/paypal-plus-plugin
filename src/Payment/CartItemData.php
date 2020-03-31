@@ -70,19 +70,7 @@ class CartItemData implements OrderItemDataProvider
      */
     public function get_name()
     {
-        $product = $this->get_product();
-
-        return $product->get_title();
-    }
-
-    /**
-     * Returns the WC_Product associated with the item.
-     *
-     * @return \WC_Product
-     */
-    protected function get_product()
-    {
-        return wc_get_product($this->data['product_id']);
+        return $this->data['data']->get_name();
     }
 
     /**
@@ -92,7 +80,7 @@ class CartItemData implements OrderItemDataProvider
      */
     public function get_sku()
     {
-        $product = $this->get_product();
+        $product = $this->data['data'];
         $sku = $product->get_sku();
         if ($product instanceof \WC_Product_Variation) {
             $sku = $product->parent->get_sku();
