@@ -67,7 +67,7 @@ class ServiceProvider implements BootstrappableServiceProvider
             function () {
                 $clientId = get_option('banner_settings_client_id');
                 $currency = get_woocommerce_currency();
-                if (!isset($clientId) || !isset($currency)) {
+                if (!is_string($clientId) || !is_string($currency)) {
                     return '';
                 }
 
