@@ -40,7 +40,7 @@ class PayPalBannerAssetManager
             self::WOO_PAYPAL_BANNER_SDK,
             $this->bannerScriptUrl,
             [],
-            false,
+            null,
             true
         );
         wp_register_script(
