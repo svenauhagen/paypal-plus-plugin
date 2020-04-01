@@ -13,11 +13,16 @@ class BannerSettingsPage extends WC_Settings_Page
      */
     protected $clientId;
 
+    /**
+     * BannerSettingsPage constructor.
+     *
+     * @param string $clientId
+     */
     public function __construct($clientId)
     {
         $this->id = 'paypalplus-banner';
         $this->label = __('PayPal Banner', 'woo-paypalplus');
-        $this->clientId = $clientId;
+        $this->defaultClientId($clientId);
 
         parent::__construct();
     }
@@ -302,5 +307,17 @@ class BannerSettingsPage extends WC_Settings_Page
                 'id' => 'banner_settings',
             ],
         ];
+    }
+
+    /**
+     * @param string $clientId
+     */
+    protected function defaultClientId($clientId)
+    {
+        if (!is_string($clientId)) {
+            $this->clientId = '';
+            return;
+        }
+        $this->clientId = $clientId;
     }
 }
