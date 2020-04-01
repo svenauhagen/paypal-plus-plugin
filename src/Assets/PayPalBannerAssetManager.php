@@ -22,7 +22,7 @@ class PayPalBannerAssetManager
      * AssetManager constructor.
      *
      * @param PluginProperties $pluginProperties
-     * @param string           $bannerScriptUrl
+     * @param string $bannerScriptUrl
      */
     public function __construct(
         PluginProperties $pluginProperties,
@@ -40,7 +40,7 @@ class PayPalBannerAssetManager
             self::WOO_PAYPAL_BANNER_SDK,
             $this->bannerScriptUrl,
             [],
-            null,
+            false,
             true
         );
         wp_register_script(
