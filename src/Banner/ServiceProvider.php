@@ -8,8 +8,8 @@ namespace WCPayPalPlus\Banner;
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\WpNonce;
 use WCPayPalPlus\Admin\Notice\AjaxDismisser;
-use WCPayPalPlus\Admin\Notice\Notice;
 use WCPayPalPlus\Admin\Notice\Controller;
+use WCPayPalPlus\Admin\Notice\Notice;
 use WCPayPalPlus\Admin\Notice\Noticeable;
 use WCPayPalPlus\Admin\Notice\NoticeRender;
 use WCPayPalPlus\Nonce;
@@ -120,13 +120,11 @@ class ServiceProvider implements BootstrappableServiceProvider
         );
 
         $sharedRepository = $container->get(SharedRepository::class);
-        $clientId =$sharedRepository->clientIdProduction();
+        $clientId = $sharedRepository->clientIdProduction();
 
         add_filter(
             'woocommerce_get_settings_pages',
-            function ($settings) use (
-                $clientId
-            ) {
+            function ($settings) use ($clientId) {
                 $settings[] = new BannerSettingsPage($clientId);
 
                 return $settings;
