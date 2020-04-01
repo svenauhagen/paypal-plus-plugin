@@ -223,7 +223,7 @@ class BannerSettingsPage extends WC_Settings_Page
                         'woo-paypalplus'
                     ),
                 ],
-                'default' => 'primary',
+                'default' => 'black',
                 'desc_tip' => true,
             ],
             'flexSize' => [
