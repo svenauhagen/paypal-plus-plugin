@@ -59,7 +59,7 @@ class PayPalBannerAssetManager
 
     protected function isAllowedContext(array $settings)
     {
-        if (!$settings['enabled_banner']) {
+        if (!$settings['enabled_banner'] || !$this->bannerScriptUrl) {
             return false;
         }
 
