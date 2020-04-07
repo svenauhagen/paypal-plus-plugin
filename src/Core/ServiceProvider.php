@@ -43,8 +43,17 @@ class ServiceProvider implements PluginServiceProvider
                 if (!function_exists('WP_Filesystem')) {
                     require_once ABSPATH . '/wp-admin/includes/file.php';
                 }
+                $args = [];
+                if (defined('FTP_USER') && defined('FTP_HOST')
+                    && defined('FTP_PASS')) {
+                    $args = [
+                        'hostname' => FTP_HOST,
+                        'username' => FTP_USER,
+                        'password' => FTP_PASS,
+                    ];
+                }
 
-                $initilized = WP_Filesystem();
+                $initilized = WP_Filesystem($args);
 
                 if (!$initilized || !$wp_filesystem instanceof WP_Filesystem_Base) {
                     throw new UnexpectedValueException('There were problem in initializing Wp FileSystem');
