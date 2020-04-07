@@ -68,7 +68,7 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $clientId = get_option('banner_settings_client_id');
                 $currency = get_woocommerce_currency();
                 if (!is_string($clientId) || !is_string($currency)) {
-                    return '';
+                    return false;
                 }
 
                 return "https://www.paypal.com/sdk/js?client-id={$clientId}&components=messages&currency={$currency}";
