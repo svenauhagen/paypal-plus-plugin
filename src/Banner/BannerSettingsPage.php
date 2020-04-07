@@ -19,14 +19,13 @@ class BannerSettingsPage extends WC_Settings_Page
      *
      * @param string $id Id of the settings page
      * @param string $label Label showed in settings tab
-     * @param string $clientId Default clientId
-     * @throws UnexpectedValueException
+     * @param string $clientId Default clientId, can be empty
      */
     public function __construct($id, $label, $clientId)
     {
         $this->id = $id;
         $this->label = $label;
-        $this->defaultClientId($clientId);
+        $this->clientId = $clientId;
 
         parent::__construct();
     }
@@ -311,19 +310,5 @@ class BannerSettingsPage extends WC_Settings_Page
                 'id' => 'banner_settings',
             ],
         ];
-    }
-
-    /**
-     * @param string $clientId
-     * @throws UnexpectedValueException
-     */
-    protected function defaultClientId($clientId)
-    {
-        if (!is_string($clientId) || $clientId === '') {
-            throw new UnexpectedValueException(
-                'Client id must exist and be a string'
-            );
-        }
-        $this->clientId = $clientId;
     }
 }
