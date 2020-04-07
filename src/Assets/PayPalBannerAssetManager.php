@@ -78,16 +78,18 @@ class PayPalBannerAssetManager
     }
 
     /**
-     * Returns false if the banner feature is disabled
+     * Returns false if the banner feature is disabled or the url is not set
      * Returns false if in a page where feature is disabled
      * @return bool
      */
     protected function isEnqueueAllowed()
     {
-        if (!$this->isEnabledOption('banner_settings_enableBanner')) {
+        if (!$this->isEnabledOption('banner_settings_enableBanner')
+            || !$this->bannerScriptUrl
+        ) {
             return false;
         }
-        if (!$this->isAllowedContext($this->optionalPagesSetting())) {
+        if (!$this->isAllowedContext()) {
             return false;
         }
         return true;
@@ -108,12 +110,11 @@ class PayPalBannerAssetManager
     /**
      * Check if in a page where the banner is enabled
      *
-     * @param array $settings The optional pages setting
-     *
      * @return bool True if we are in a page where the settings is enabled
      */
-    protected function isAllowedContext($settings)
+    protected function isAllowedContext()
     {
+        $settings = $this->optionalPagesSetting();
         return (is_home() && isset($settings['show_home'])
                 ? $settings['show_home'] : false)
             || (is_shop() && isset($settings['show_category'])
@@ -202,16 +203,8 @@ class PayPalBannerAssetManager
      */
     protected function bannerSettings()
     {
-        $scriptUrl = $this->paypalScriptUrl();
-        $amount = $this->calculateAmount();
-
         return [
-            'amount' => $amount,
-            'script_url' => $scriptUrl,
-            'enabled_banner' => $this->isEnabledOption(
-                'banner_settings_enableBanner'
-            ),
-            'optional_pages' => $this->optionalPagesSetting(),
+            'amount' => $this->calculateAmount(),
             'style' => [
                 'layout' => get_option('banner_settings_layout'),
                 'logo' => [
@@ -222,24 +215,6 @@ class PayPalBannerAssetManager
                 'ratio' => get_option('banner_settings_flexSize'),
             ],
         ];
-    }
-
-    /**
-     * @return string The script url with clientID and currency
-     */
-    protected function paypalScriptUrl()
-    {
-        $clientId = get_option('banner_settings_clientID');
-        if (empty($clientId)) {
-            $clientId = $this->sharedRepository->clientIdProduction();
-            update_option('banner_settings_clientID', $clientId);
-        }
-        $currency = get_woocommerce_currency();
-        if (!isset($clientId) || !isset($currency)) {
-            return '';
-        }
-
-        return "https://www.paypal.com/sdk/js?client-id={$clientId}&components=messages&currency={$currency}";
     }
 
     /**
