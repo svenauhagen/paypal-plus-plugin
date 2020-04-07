@@ -76,7 +76,13 @@ class ServiceProvider implements BootstrappableServiceProvider
         );
         add_action(
             'wp_enqueue_scripts',
-            [$container[PayPalBannerAssetManager::class], 'enqueuePPBannerFrontEndScripts']
+            [$container[PayPalBannerAssetManager::class], 'registerScripts'],
+            10
+        );
+        add_action(
+            'wp_enqueue_scripts',
+            [$container[PayPalBannerAssetManager::class], 'enqueueFrontEndScripts'],
+            20
         );
         add_action(
             'wp_enqueue_scripts',
