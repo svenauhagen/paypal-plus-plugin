@@ -3,6 +3,7 @@
 
 namespace WCPayPalPlus\Banner;
 
+use UnexpectedValueException;
 use WC_Admin_Settings;
 use WC_Settings_Page;
 
@@ -16,12 +17,15 @@ class BannerSettingsPage extends WC_Settings_Page
     /**
      * BannerSettingsPage constructor.
      *
-     * @param string $clientId
+     * @param string $id Id of the settings page
+     * @param string $label Label showed in settings tab
+     * @param string $clientId Default clientId
+     * @throws UnexpectedValueException
      */
-    public function __construct($clientId)
+    public function __construct($id, $label, $clientId)
     {
-        $this->id = 'paypalplus-banner';
-        $this->label = __('PayPal Banner', 'woo-paypalplus');
+        $this->id = $id;
+        $this->label = $label;
         $this->defaultClientId($clientId);
 
         parent::__construct();
@@ -311,12 +315,14 @@ class BannerSettingsPage extends WC_Settings_Page
 
     /**
      * @param string $clientId
+     * @throws UnexpectedValueException
      */
     protected function defaultClientId($clientId)
     {
-        if (!is_string($clientId)) {
-            $this->clientId = '';
-            return;
+        if (!is_string($clientId) || $clientId === '') {
+            throw new UnexpectedValueException(
+                'Client id must exist and be a string'
+            );
         }
         $this->clientId = $clientId;
     }

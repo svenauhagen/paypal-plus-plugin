@@ -7,6 +7,7 @@ namespace WCPayPalPlus\Banner;
 
 use Brain\Nonces\NonceContextInterface;
 use Brain\Nonces\WpNonce;
+use Exception;
 use WCPayPalPlus\Admin\Notice\AjaxDismisser;
 use WCPayPalPlus\Admin\Notice\Controller;
 use WCPayPalPlus\Admin\Notice\Notice;
@@ -125,9 +126,17 @@ class ServiceProvider implements BootstrappableServiceProvider
         add_filter(
             'woocommerce_get_settings_pages',
             function ($settings) use ($clientId) {
-                $settings[] = new BannerSettingsPage($clientId);
+                try {
+                    $settings[] = new BannerSettingsPage(
+                        'paypalplus-banner',
+                        __('PayPal Banner', 'woo-paypalplus'),
+                        $clientId
+                    );
 
-                return $settings;
+                    return $settings;
+                } catch (Exception $exc) {
+                    return $exc;
+                }
             }
         );
     }
