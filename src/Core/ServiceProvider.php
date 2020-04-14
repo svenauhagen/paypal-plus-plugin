@@ -44,12 +44,13 @@ class ServiceProvider implements PluginServiceProvider
                     require_once ABSPATH . '/wp-admin/includes/file.php';
                 }
                 $args = [];
-                if (get_option('ftp_credentials')) {
-                    $credentials = get_option('ftp_credentials');
+                $ftpCredentials = get_option('ftp_credentials');
+                if ($ftpCredentials) {
                     $args = [
-                        'hostname' => $credentials['hostname'],
-                        'username' => $credentials['username'],
-                        'password' => $credentials['password'],
+                        // TODO Define keys as Constants
+                        'hostname' => array_key_exists('hostname', $ftpCredentials) ? $ftpCredentials['hostname'] : '',
+                        'username' => array_key_exists('username', $ftpCredentials) ? $ftpCredentials['username'] : '',
+                        'password' => array_key_exists('password', $ftpCredentials) ? $ftpCredentials['password'] : '',
                     ];
                 }
 
