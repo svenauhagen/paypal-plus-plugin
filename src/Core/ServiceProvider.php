@@ -16,6 +16,10 @@ use WCPayPalPlus\Service\ServiceProvider as PluginServiceProvider;
 use WP_Filesystem_Base;
 use wpdb;
 
+const HOSTNAME = 'hostname';
+const USERNAME = 'username';
+const PASSWORD = 'password';
+
 /**
  * Class ServiceProvider
  * @package WCPayPalPlus\Core
@@ -47,10 +51,9 @@ class ServiceProvider implements PluginServiceProvider
                 $ftpCredentials = get_option('ftp_credentials');
                 if ($ftpCredentials) {
                     $args = [
-                        // TODO Define keys as Constants
-                        'hostname' => array_key_exists('hostname', $ftpCredentials) ? $ftpCredentials['hostname'] : '',
-                        'username' => array_key_exists('username', $ftpCredentials) ? $ftpCredentials['username'] : '',
-                        'password' => array_key_exists('password', $ftpCredentials) ? $ftpCredentials['password'] : '',
+                        HOSTNAME => array_key_exists(HOSTNAME, $ftpCredentials) ? $ftpCredentials[HOSTNAME] : '',
+                        USERNAME => array_key_exists(USERNAME, $ftpCredentials) ? $ftpCredentials[USERNAME] : '',
+                        PASSWORD => array_key_exists(PASSWORD, $ftpCredentials) ? $ftpCredentials[PASSWORD] : '',
                     ];
                 }
 
