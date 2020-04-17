@@ -1,4 +1,4 @@
-const DEFAULT_SETTINGS = {
+export const DEFAULT_SETTINGS = {
   amount: 0,
   style: {
     layout: 'text',
@@ -10,25 +10,17 @@ const DEFAULT_SETTINGS = {
     }
   }
 }
-
-export function merger (settings) {
-  let merged = DEFAULT_SETTINGS
+/**
+ * @params {Object} settings The object with the selected settings values
+ * @params {Object} defaults The default values to assign to the given target
+ * @return {Object} The target object with assigned default values if needed
+ */
+export function assignDefaults (settings, defaults) {
+  const target = defaults
   for (let key in settings) {
-    if (typeof settings[key] === 'object') {
-      for (let innerKey in settings[key]) {
-        if (typeof settings[key][innerKey] === 'object') {
-          for (let logoKey in settings[key][innerKey]) {
-            merged[key][innerKey][logoKey] = settings[key][innerKey][logoKey]
-          }
-        } else {
-          if (merged[key][innerKey]) {
-            merged[key][innerKey] = settings[key][innerKey]
-          }
-        }
-      }
-    } else {
-      merged[key] = settings[key]
+    if (key in target) {
+      target[key] = (typeof settings[key] === 'object') ? assignDefaults(settings[key], target[key]) : settings[key]
     }
   }
-  return merged
+  return target
 }
