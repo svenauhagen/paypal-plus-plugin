@@ -1,4 +1,4 @@
-import { merger } from './defaultBannerSettings'
+import { assignDefaults, DEFAULT_SETTINGS } from './defaultBannerSettings'
 
 (function (jQuery, paypalBannerFrontData) {
   if (typeof paypalBannerFrontData === 'undefined') {
@@ -10,27 +10,28 @@ import { merger } from './defaultBannerSettings'
   }
 
   window.addEventListener('load', () => {
-    let settings = paypalBannerFrontData.settings
-    settings = merger(settings)
+    let settings = paypalBannerFrontData.settings || {}
+    settings = assignDefaults(settings, DEFAULT_SETTINGS)
+    const { color, ratio, layout, logo } = settings.style
     let options = {
       amount: settings.amount,
       style: {
-        layout: settings.style.layout,
+        layout: layout,
         logo: {
-          type: settings.style.logo.type
+          type: logo.type
         },
         text: {
-          color: settings.style.logo.color
+          color: logo.color
         }
       }
     }
-    if (settings && settings.style.layout !== 'text') {
+    if (settings && layout !== 'text') {
       options = {
         amount: settings.amount,
         style: {
-          layout: settings.style.layout,
-          color: settings.style.color,
-          ratio: settings.style.ratio
+          layout: layout,
+          color: color,
+          ratio: ratio
         }
       }
     }
