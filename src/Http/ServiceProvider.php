@@ -32,7 +32,8 @@ class ServiceProvider implements BootstrappableServiceProvider
     public function register(Container $container)
     {
         $option = get_option('paypalplus_shared_options');
-        $cachePayPalJsFiles = wc_string_to_bool($option['cache_paypal_js_files']);        if ($cachePayPalJsFiles) {
+        $cachePayPalJsFiles = wc_string_to_bool($option['cache_paypal_js_files']);
+        if ($cachePayPalJsFiles) {
             $uploadDir = wp_upload_dir();
             $uploadDir = isset($uploadDir['basedir']) ? $uploadDir['basedir']
                 : '';
