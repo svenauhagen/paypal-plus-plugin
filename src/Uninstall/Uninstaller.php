@@ -41,12 +41,14 @@ class Uninstaller
     /**
      * Uninstaller constructor.
      * @param wpdb $wpdb
-     * @param WP_Filesystem_Base $fileSystem
+     * @param WP_Filesystem_Base | null $fileSystem
      */
-    public function __construct(wpdb $wpdb, WP_Filesystem_Base $fileSystem)
+    public function __construct(wpdb $wpdb, $fileSystem)
     {
         $this->wpdb = $wpdb;
-        $this->fileSystem = $fileSystem;
+        if ($fileSystem) {
+            $this->fileSystem = $fileSystem;
+        }
     }
 
     /**
@@ -69,7 +71,9 @@ class Uninstaller
         $networkState->restore();
 
         $this->cleanUp();
-        $this->deleteCacheAssetsFiles();
+        if ($this->fileSystem) {
+            $this->deleteCacheAssetsFiles();
+        }
     }
 
     /**
@@ -79,7 +83,9 @@ class Uninstaller
     {
         $this->deleteOptions();
         $this->cleanUp();
-        $this->deleteCacheAssetsFiles();
+        if ($this->fileSystem) {
+            $this->deleteCacheAssetsFiles();
+        }
     }
 
     /**

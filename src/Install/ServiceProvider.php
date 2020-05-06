@@ -5,11 +5,11 @@
 
 namespace WCPayPalPlus\Install;
 
-use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
 use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\SharedPersistor;
+use WCPayPalPlus\Setting\Storable;
 
 /**
  * Class ServiceProvider
@@ -22,10 +22,15 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function register(Container $container)
     {
-        $container[Installer::class] = function (Container $container) {
+        $option = get_option('paypalplus_shared_options');
+        $cachePayPalJsFiles = wc_string_to_bool($option['cache_paypal_js_files']);
+        $container[Installer::class] = function (Container $container) use (
+            $cachePayPalJsFiles
+        ) {
             return new Installer(
                 $container[SharedPersistor::class],
-                $container->get(AssetsStoreUpdater::class)
+                $cachePayPalJsFiles ? $container->get(AssetsStoreUpdater::class)
+                    : null
             );
         };
     }

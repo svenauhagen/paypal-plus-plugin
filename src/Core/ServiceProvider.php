@@ -38,33 +38,50 @@ class ServiceProvider implements PluginServiceProvider
                 return $wpdb;
             }
         );
+        $option = get_option('paypalplus_shared_options');
+        $cachePayPalJsFiles = wc_string_to_bool($option['cache_paypal_js_files']);
+        if ($cachePayPalJsFiles) {
+            $container->share(
+                'wp_filesystem',
+                function () {
+                    global $wp_filesystem;
 
-        $container->share(
-            'wp_filesystem',
-            function () {
-                global $wp_filesystem;
+                    if (!function_exists('WP_Filesystem')) {
+                        require_once ABSPATH
+                            . '/wp-admin/includes/file.php';
+                    }
+                    $args = [];
+                    $ftpCredentials = get_option('ftp_credentials');
+                    if ($ftpCredentials) {
+                        $args = [
+                            HOSTNAME => array_key_exists(
+                                HOSTNAME,
+                                $ftpCredentials
+                            ) ? $ftpCredentials[HOSTNAME] : '',
+                            USERNAME => array_key_exists(
+                                USERNAME,
+                                $ftpCredentials
+                            ) ? $ftpCredentials[USERNAME] : '',
+                            PASSWORD => array_key_exists(
+                                PASSWORD,
+                                $ftpCredentials
+                            ) ? $ftpCredentials[PASSWORD] : '',
+                        ];
+                    }
 
-                if (!function_exists('WP_Filesystem')) {
-                    require_once ABSPATH . '/wp-admin/includes/file.php';
+                    $initilized = WP_Filesystem($args);
+
+                    if (!$initilized
+                        || !$wp_filesystem instanceof WP_Filesystem_Base
+                    ) {
+                        throw new UnexpectedValueException(
+                            'There were problem in initializing Wp FileSystem'
+                        );
+                    }
+
+                    return $wp_filesystem;
                 }
-                $args = [];
-                $ftpCredentials = get_option('ftp_credentials');
-                if ($ftpCredentials) {
-                    $args = [
-                        HOSTNAME => array_key_exists(HOSTNAME, $ftpCredentials) ? $ftpCredentials[HOSTNAME] : '',
-                        USERNAME => array_key_exists(USERNAME, $ftpCredentials) ? $ftpCredentials[USERNAME] : '',
-                        PASSWORD => array_key_exists(PASSWORD, $ftpCredentials) ? $ftpCredentials[PASSWORD] : '',
-                    ];
-                }
-
-                $initilized = WP_Filesystem($args);
-
-                if (!$initilized || !$wp_filesystem instanceof WP_Filesystem_Base) {
-                    throw new UnexpectedValueException('There were problem in initializing Wp FileSystem');
-                }
-
-                return $wp_filesystem;
-            }
-        );
+            );
+        }
     }
 }

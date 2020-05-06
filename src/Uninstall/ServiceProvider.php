@@ -10,7 +10,6 @@
 
 namespace WCPayPalPlus\Uninstall;
 
-use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
 use WCPayPalPlus\Service\Container;
 use wpdb;
 
@@ -25,12 +24,15 @@ class ServiceProvider implements \WCPayPalPlus\Service\ServiceProvider
      */
     public function register(Container $container)
     {
+        $option = get_option('paypalplus_shared_options');
+        $cachePayPalJsFiles = wc_string_to_bool($option['cache_paypal_js_files']);
         $container->share(
             Uninstaller::class,
-            function (Container $container) {
+            function (Container $container) use ($cachePayPalJsFiles) {
                 return new Uninstaller(
                     $container->get(wpdb::class),
-                    $container->get('wp_filesystem')
+                    $cachePayPalJsFiles ? $container->get('wp_filesystem')
+                        : null
                 );
             }
         );
