@@ -23,13 +23,14 @@ class ServiceProvider implements BootstrappableServiceProvider
     public function register(Container $container)
     {
         $option = get_option('paypalplus_shared_options');
-        $cachePayPalJsFiles = wc_string_to_bool($option['cache_paypal_js_files']);
+        $cachePayPalJsFiles = isset($option['cache_paypal_js_files']) ? $option['cache_paypal_js_files'] : '';
+        $cachedPayPalJsFiles = wc_string_to_bool($cachePayPalJsFiles);
         $container[Installer::class] = function (Container $container) use (
-            $cachePayPalJsFiles
+            $cachedPayPalJsFiles
         ) {
             return new Installer(
                 $container[SharedPersistor::class],
-                $cachePayPalJsFiles ? $container->get(AssetsStoreUpdater::class)
+                $cachedPayPalJsFiles ? $container->get(AssetsStoreUpdater::class)
                     : null
             );
         };
