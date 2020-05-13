@@ -52,20 +52,16 @@ class ServiceProvider implements PluginServiceProvider
                     }
                     $args = [];
                     $ftpCredentials = get_option('ftp_credentials');
-                    if ($ftpCredentials) {
+                    if (is_array($ftpCredentials)) {
                         $args = [
-                            HOSTNAME => array_key_exists(
-                                HOSTNAME,
-                                $ftpCredentials
-                            ) ? $ftpCredentials[HOSTNAME] : '',
-                            USERNAME => array_key_exists(
-                                USERNAME,
-                                $ftpCredentials
-                            ) ? $ftpCredentials[USERNAME] : '',
-                            PASSWORD => array_key_exists(
-                                PASSWORD,
-                                $ftpCredentials
-                            ) ? $ftpCredentials[PASSWORD] : '',
+                            HOSTNAME => isset($ftpCredentials[HOSTNAME])
+                                ? $ftpCredentials[HOSTNAME] : '',
+
+                            USERNAME => isset($ftpCredentials[USERNAME])
+                                ? $ftpCredentials[USERNAME] : '',
+
+                            PASSWORD => isset($ftpCredentials[PASSWORD])
+                                ? $ftpCredentials[PASSWORD] : '',
                         ];
                     }
 
