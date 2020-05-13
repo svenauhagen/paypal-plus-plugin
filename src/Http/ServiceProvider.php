@@ -12,13 +12,12 @@ namespace WCPayPalPlus\Http;
 
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use UnexpectedValueException;
+use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler;
 use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorer;
 use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
-use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
-use WCPayPalPlus\Setting\Storable;
 
 /**
  * Class ServiceProvider
@@ -95,23 +94,25 @@ class ServiceProvider implements BootstrappableServiceProvider
     public function bootstrap(Container $container)
     {
         $option = get_option('paypalplus_shared_options');
-        $cachePayPalJsFiles = wc_string_to_bool($option['cache_paypal_js_files']);
-        if ($cachePayPalJsFiles) {
-            $cronScheduler = $container->get(CronScheduler::class);
-
-            add_filter(
-                'cron_schedules',
-                function (array $schedules) use ($cronScheduler) {
-                    return $cronScheduler->addWeeklyRecurrence($schedules);
-                }
-            );
-
-            add_action('wp_enqueue_scripts', [$cronScheduler, 'schedule'], 0);
-
-            add_action(
-                CronScheduler::CRON_HOOK_NAME,
-                [$container->get(AssetsStoreUpdater::class), 'update']
-            );
+        $cachePayPalJsFiles = isset($option['cache_paypal_js_files']) ? $option['cache_paypal_js_files'] : false;
+        $cachedPayPalJsFiles = wc_string_to_bool($cachePayPalJsFiles);
+        if (!$cachedPayPalJsFiles) {
+            return;
         }
+        $cronScheduler = $container->get(CronScheduler::class);
+
+        add_filter(
+            'cron_schedules',
+            function (array $schedules) use ($cronScheduler) {
+                return $cronScheduler->addWeeklyRecurrence($schedules);
+            }
+        );
+
+        add_action('wp_enqueue_scripts', [$cronScheduler, 'schedule'], 0);
+
+        add_action(
+            CronScheduler::CRON_HOOK_NAME,
+            [$container->get(AssetsStoreUpdater::class), 'update']
+        );
     }
 }
