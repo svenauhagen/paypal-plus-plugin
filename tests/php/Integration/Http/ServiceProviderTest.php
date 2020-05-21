@@ -34,15 +34,15 @@ class ServiceProviderTest extends TestCase
         /*
          * Stubs
          */
-        expect('get_option')
-            ->andReturn(['cache_paypal_js_files'=>true]);
-        expect('wc_string_to_bool')
-            ->andReturn(true);
         $container = new Container();
 
         $container->addValue(
             'wp_filesystem',
             $this->getMockBuilder('\\WP_Filesystem_Base')->getMock()
+        );
+        $container->addValue(
+            'cache_PayPal_Js_Files',
+            true
         );
 
         /*

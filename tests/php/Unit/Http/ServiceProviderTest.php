@@ -81,10 +81,12 @@ class ServiceProviderTest extends TestCase
             ->expects($this->atLeastOnce())
             ->method('get')
             ->withConsecutive(
+                ['cache_PayPal_Js_Files'],
                 [CronScheduler::class],
                 [AssetsStoreUpdater::class]
             )
             ->willReturnOnConsecutiveCalls(
+                true,
                 $cronScheduler,
                 $storeCron
             );
