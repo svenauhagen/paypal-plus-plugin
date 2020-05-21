@@ -10,6 +10,8 @@
 
 namespace WCPayPalPlus\Uninstall;
 
+use UnexpectedValueException;
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use WCPayPalPlus\Service\Container;
 use wpdb;
 
@@ -24,15 +26,28 @@ class ServiceProvider implements \WCPayPalPlus\Service\ServiceProvider
      */
     public function register(Container $container)
     {
-        $option = get_option('paypalplus_shared_options');
-        $cachePayPalJsFiles = wc_string_to_bool($option['cache_paypal_js_files']);
+        try {
+            $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
+        } catch (\Exception $exception) {
+            $cachedPayPalJsFiles = false;
+        }
         $container->share(
             Uninstaller::class,
-            function (Container $container) use ($cachePayPalJsFiles) {
+            function (Container $container) use ($cachedPayPalJsFiles) {
+                $fileSystem = null;
+                if ($cachedPayPalJsFiles) {
+                    try {
+                        $fileSystem = $container->get('wp_filesystem');
+                    } catch (UnexpectedValueException $exc) {
+                        $container->get(Logger::class)->warning(
+                            $exc->getMessage()
+                        );
+                    }
+                }
+
                 return new Uninstaller(
                     $container->get(wpdb::class),
-                    $cachePayPalJsFiles ? $container->get('wp_filesystem')
-                        : null
+                    $fileSystem
                 );
             }
         );

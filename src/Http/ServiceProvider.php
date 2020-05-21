@@ -30,9 +30,12 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function register(Container $container)
     {
-        $option = get_option('paypalplus_shared_options');
-        $cachePayPalJsFiles = wc_string_to_bool($option['cache_paypal_js_files']);
-        if ($cachePayPalJsFiles) {
+        try {
+            $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
+        } catch (\Exception $exception) {
+            $cachedPayPalJsFiles = false;
+        }
+        if ($cachedPayPalJsFiles) {
             $uploadDir = wp_upload_dir();
             $uploadDir = isset($uploadDir['basedir']) ? $uploadDir['basedir']
                 : '';
@@ -93,9 +96,11 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function bootstrap(Container $container)
     {
-        $option = get_option('paypalplus_shared_options');
-        $cachePayPalJsFiles = isset($option['cache_paypal_js_files']) ? $option['cache_paypal_js_files'] : false;
-        $cachedPayPalJsFiles = wc_string_to_bool($cachePayPalJsFiles);
+        try {
+            $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
+        } catch (\Exception $exception) {
+            $cachedPayPalJsFiles = false;
+        }
         if (!$cachedPayPalJsFiles) {
             return;
         }
@@ -103,7 +108,7 @@ class ServiceProvider implements BootstrappableServiceProvider
 
         add_filter(
             'cron_schedules',
-            function (array $schedules) use ($cronScheduler) {
+            static function (array $schedules) use ($cronScheduler) {
                 return $cronScheduler->addWeeklyRecurrence($schedules);
             }
         );
