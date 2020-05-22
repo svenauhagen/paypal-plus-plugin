@@ -42,14 +42,14 @@ class ServiceProvider implements PluginServiceProvider
             'cache_PayPal_Js_Files',
             function () {
                 $option = get_option('paypalplus_shared_options');
-                $cachePayPalJsFiles = self::findKeyOrDefault($option['cache_paypal_js_files'], $option['cache_paypal_js_files'], false);
+                $cachePayPalJsFiles = self::findKeyOrDefault($option, 'cache_paypal_js_files', false);
                 $cachedPayPalJsFiles = wc_string_to_bool($cachePayPalJsFiles);
                 if ($cachedPayPalJsFiles) {
                     return $cachedPayPalJsFiles;
                 }
                 $uploadDir = wp_upload_dir();
-                $uploadBaseDir = self::findKeyOrDefault($uploadDir['basedir'], $uploadDir['basedir'], '');
-                $uploadUrl = self::findKeyOrDefault($uploadDir['baseurl'], $uploadDir['baseurl'], '');
+                $uploadBaseDir = self::findKeyOrDefault($uploadDir, 'basedir', '');
+                $uploadUrl = self::findKeyOrDefault($uploadDir, 'baseurl', '');
                 $expressCheckoutFilePath = "{$uploadBaseDir}/woo-paypalplus/resources/js/paypal/expressCheckout.min.js";
                 $paypalPlusFilePath = "{$uploadBaseDir}/woo-paypalplus/resources/js/paypal/payPalplus.min.js";
                 if (!$uploadBaseDir || !$uploadUrl
