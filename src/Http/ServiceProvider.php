@@ -30,11 +30,7 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function register(Container $container)
     {
-        try {
-            $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
-        } catch (\Exception $exception) {
-            $cachedPayPalJsFiles = false;
-        }
+        $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
         if ($cachedPayPalJsFiles) {
             $uploadDir = wp_upload_dir();
             $uploadDir = isset($uploadDir['basedir']) ? $uploadDir['basedir']
@@ -96,11 +92,7 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function bootstrap(Container $container)
     {
-        try {
-            $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
-        } catch (\Exception $exception) {
-            $cachedPayPalJsFiles = false;
-        }
+        $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
         if (!$cachedPayPalJsFiles) {
             return;
         }
