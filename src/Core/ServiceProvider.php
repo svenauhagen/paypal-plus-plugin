@@ -10,6 +10,7 @@
 
 namespace WCPayPalPlus\Core;
 
+use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use UnexpectedValueException;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Service\ServiceProvider as PluginServiceProvider;
@@ -41,7 +42,7 @@ class ServiceProvider implements PluginServiceProvider
         $container->share(
             'cache_PayPal_Js_Files',
             function () {
-                $option = get_option('paypalplus_shared_options');
+                $option = get_option('paypalplus_shared_options') ?: [];
                 $cachePayPalJsFiles = self::findKeyOrDefault($option, 'cache_paypal_js_files', false);
                 $cachedPayPalJsFiles = wc_string_to_bool($cachePayPalJsFiles);
                 if ($cachedPayPalJsFiles) {
@@ -68,13 +69,13 @@ class ServiceProvider implements PluginServiceProvider
                 return $cachedPayPalJsFiles;
             }
         );
-        $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
-        if (!$cachedPayPalJsFiles) {
-            return;
-        }
         $container->share(
             'wp_filesystem',
-            function () {
+            function (Container $container) {
+                $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
+                if (!$cachedPayPalJsFiles) {
+                    return null;
+                }
                 global $wp_filesystem;
 
                 if (!function_exists('WP_Filesystem')) {
@@ -94,14 +95,13 @@ class ServiceProvider implements PluginServiceProvider
                 $initilized = WP_Filesystem($args);
 
                 if (!$initilized || !$wp_filesystem instanceof WP_Filesystem_Base) {
-                    throw new UnexpectedValueException('Wp_FileSystem cannot be initialized');
+                    $container->get(Logger::class)->warning('Wp_FileSystem cannot be initialized');
+                    return null;
                 }
 
                 if ($wp_filesystem->errors->has_errors()) {
-                    throw new WPFilesystemException(
-                        $wp_filesystem->errors,
-                        "There where problems in setup the filesystem {$wp_filesystem->method}"
-                    );
+                    $container->get(Logger::class)->warning("There where problems in setup the filesystem {$wp_filesystem->method}: {$wp_filesystem->errors}");
+                    return null;
                 }
 
                 return $wp_filesystem;
