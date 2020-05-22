@@ -26,14 +26,10 @@ class ServiceProvider implements \WCPayPalPlus\Service\ServiceProvider
      */
     public function register(Container $container)
     {
-        try {
-            $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
-        } catch (\Exception $exception) {
-            $cachedPayPalJsFiles = false;
-        }
         $container->share(
             Uninstaller::class,
-            function (Container $container) use ($cachedPayPalJsFiles) {
+            function (Container $container) {
+                $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
                 $fileSystem = null;
                 if ($cachedPayPalJsFiles) {
                     try {
