@@ -10,11 +10,11 @@
 
 namespace WCPayPalPlus\Http;
 
-use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
-use UnexpectedValueException;
 use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler;
 use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorer;
+use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorerFactory;
+use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorerInterface;
 use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
@@ -30,61 +30,56 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function register(Container $container)
     {
-        $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
-        if ($cachedPayPalJsFiles) {
-            $uploadDir = wp_upload_dir();
-            $uploadDir = isset($uploadDir['basedir']) ? $uploadDir['basedir']
-                : '';
+        $uploadDir = wp_upload_dir();
+        $uploadDir = isset($uploadDir['basedir']) ? $uploadDir['basedir']
+            : '';
 
-            if (!$uploadDir) {
-                return;
-            }
-
-            try {
-                $fileSystem = $container->get('wp_filesystem');
-            } catch (UnexpectedValueException $exc) {
-                $container->get(Logger::class)->warning($exc->getMessage());
-                return;
-            }
-
-            $container->addService(
-                CronScheduler::class,
-                function (Container $container) {
-                    return new CronScheduler(
-                        $container[AssetsStoreUpdater::class]
-                    );
-                }
-            );
-
-            $container->addService(
-                RemoteResourcesStorer::class,
-                function () use ($fileSystem) {
-                    return new RemoteResourcesStorer($fileSystem);
-                }
-            );
-
-            $container->addService(
-                ResourceDictionary::class,
-                function () use ($uploadDir) {
-                    return new ResourceDictionary(
-                        [
-                            "{$uploadDir}/woo-paypalplus/resources/js/paypal/expressCheckout.min.js" => 'https://www.paypalobjects.com/api/checkout.min.js',
-                            "{$uploadDir}/woo-paypalplus/resources/js/paypal/payPalplus.min.js" => 'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
-                        ]
-                    );
-                }
-            );
-
-            $container->addService(
-                AssetsStoreUpdater::class,
-                function (Container $container) {
-                    return new AssetsStoreUpdater(
-                        $container->get(RemoteResourcesStorer::class),
-                        $container->get(ResourceDictionary::class)
-                    );
-                }
-            );
+        if (!$uploadDir) {
+            return;
         }
+
+        $container->addService(
+            CronScheduler::class,
+            function (Container $container) {
+                return new CronScheduler(
+                    $container[AssetsStoreUpdater::class]
+                );
+            }
+        );
+
+        $container->addService(
+            RemoteResourcesStorer::class,
+            function (Container $container) {
+                $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
+                $fileSystem = $container->get('wp_filesystem');
+                return RemoteResourcesStorerFactory::create(
+                    $fileSystem,
+                    $cachedPayPalJsFiles
+                );
+            }
+        );
+
+        $container->addService(
+            ResourceDictionary::class,
+            function () use ($uploadDir) {
+                return new ResourceDictionary(
+                    [
+                        "{$uploadDir}/woo-paypalplus/resources/js/paypal/expressCheckout.min.js" => 'https://www.paypalobjects.com/api/checkout.min.js',
+                        "{$uploadDir}/woo-paypalplus/resources/js/paypal/payPalplus.min.js" => 'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
+                    ]
+                );
+            }
+        );
+
+        $container->addService(
+            AssetsStoreUpdater::class,
+            function (Container $container) {
+                return new AssetsStoreUpdater(
+                    $container->get(RemoteResourcesStorer::class),
+                    $container->get(ResourceDictionary::class)
+                );
+            }
+        );
     }
 
     /**

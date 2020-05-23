@@ -23,11 +23,9 @@ class ServiceProvider implements BootstrappableServiceProvider
     public function register(Container $container)
     {
         $container[Installer::class] = function (Container $container) {
-            $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
             return new Installer(
                 $container[SharedPersistor::class],
-                $cachedPayPalJsFiles ? $container->get(AssetsStoreUpdater::class)
-                    : null
+                $container->get(AssetsStoreUpdater::class)
             );
         };
     }

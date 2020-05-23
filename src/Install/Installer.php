@@ -29,17 +29,15 @@ class Installer
     /**
      * Installer constructor.
      * @param SharedPersistor $sharedPersistor
-     * @param AssetsStoreUpdater|null  $assetsStoreUpdater
+     * @param AssetsStoreUpdater  $assetsStoreUpdater
      */
     public function __construct(
         SharedPersistor $sharedPersistor,
-        $assetsStoreUpdater
+        AssetsStoreUpdater $assetsStoreUpdater
     ) {
 
         $this->sharedPersistor = $sharedPersistor;
-        if ($assetsStoreUpdater) {
-            $this->assetsStoreUpdater = $assetsStoreUpdater;
-        }
+        $this->assetsStoreUpdater = $assetsStoreUpdater;
     }
 
     /**
@@ -48,9 +46,7 @@ class Installer
     public function afterInstall()
     {
         $this->migrateSharedOptions();
-        if ($this->assetsStoreUpdater) {
-            $this->assetsStoreUpdater->update();
-        }
+        $this->assetsStoreUpdater->update();
     }
 
     /**
