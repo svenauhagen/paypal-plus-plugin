@@ -12,12 +12,14 @@ namespace WCPayPalPlus\Http;
 
 use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
 use UnexpectedValueException;
+use WCPayPalPlus\Banner\BannerSdkScriptUrl;
+use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler;
 use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorer;
 use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
-use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
+use WCPayPalPlus\Setting\SharedRepository;
 
 /**
  * Class ServiceProvider
@@ -61,12 +63,28 @@ class ServiceProvider implements BootstrappableServiceProvider
         );
 
         $container->addService(
+            'banner_sdk_script_url',
+            function () {
+                $clientId = get_option('banner_settings_client_id');
+                $currency = get_woocommerce_currency();
+                if (!is_string($clientId) || !is_string($currency)) {
+                    return false;
+                }
+
+                return "https://www.paypal.com/sdk/js?client-id={$clientId}&components=messages&currency={$currency}";
+            }
+        );
+
+        $container->addService(
             ResourceDictionary::class,
-            function () use ($uploadDir) {
+            function (Container $container) use ($uploadDir) {
                 return new ResourceDictionary(
                     [
                         "{$uploadDir}/woo-paypalplus/resources/js/paypal/expressCheckout.min.js" => 'https://www.paypalobjects.com/api/checkout.min.js',
                         "{$uploadDir}/woo-paypalplus/resources/js/paypal/payPalplus.min.js" => 'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
+                        "{$uploadDir}/woo-paypalplus/resources/js/paypal/paypalBanner.min.js" => $container->get(
+                            'banner_sdk_script_url'
+                        ),
                     ]
                 );
             }

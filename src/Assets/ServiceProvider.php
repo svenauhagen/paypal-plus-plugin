@@ -5,9 +5,10 @@
 
 namespace WCPayPalPlus\Assets;
 
+use WCPayPalPlus\Banner\BannerSdkScriptUrl;
 use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
-use WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
 use WCPayPalPlus\PluginProperties;
+use WCPayPalPlus\PlusGateway\Gateway as PlusGateway;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\ExpressCheckoutStorable;
@@ -31,10 +32,11 @@ class ServiceProvider implements BootstrappableServiceProvider
                 $container[ExpressCheckoutStorable::class]
             );
         };
+
         $container[PayPalBannerAssetManager::class] = function (Container $container) {
             return new PayPalBannerAssetManager(
                 $container[PluginProperties::class],
-                $container[SharedRepository::class]
+                $container['banner_sdk_script_url']
             );
         };
         $container[PayPalAssetManager::class] = function (Container $container) {
@@ -101,6 +103,23 @@ class ServiceProvider implements BootstrappableServiceProvider
 
                 return $locale;
             }
+        );
+
+        add_filter(
+            'script_loader_tag',
+            function ($tag, $handle, $src) {
+                if (PayPalBannerAssetManager::WOO_PAYPAL_BANNER_SDK === $handle) {
+                    $tag = preg_replace(
+                        '/(<script [^>]*)(>)/',
+                        '$1 data-namespace="paypalBannerSdk"$2',
+                        $tag
+                    );
+                }
+
+                return $tag;
+            },
+            10,
+            3
         );
     }
 }
