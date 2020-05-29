@@ -65,6 +65,12 @@ class ServiceProviderTest extends TestCase
                     'basedir' => uniqid(),
                 ]
             );
+        expect('get_option')
+            ->once()
+            ->andReturn(uniqid());
+        expect('get_woocommerce_currency')
+            ->once()
+            ->andReturn('EUR');
 
         /*
          * Execute Test
