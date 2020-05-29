@@ -10,19 +10,13 @@
 
 namespace WCPayPalPlus\Http;
 
-use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
-use UnexpectedValueException;
-use WCPayPalPlus\Banner\BannerSdkScriptUrl;
-use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler;
 use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorer;
 use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorerFactory;
-use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorerInterface;
 use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
-use WCPayPalPlus\Setting\SharedRepository;
 
 /**
  * Class ServiceProvider
