@@ -191,10 +191,10 @@ class Bootstrapper
             return false;
         }
 
-        if (version_compare(wc()->version, '3.2.0', '<')) {
+        if (version_compare(wc()->version, '3.6.4', '<')) {
             $this->adminNotice(
                 __(
-                    'PayPal PLUS requires WooCommerce version 3.2 or higher.',
+                    'PayPal PLUS requires WooCommerce version 3.6.4 or higher.',
                     'woo-paypalplus'
                 )
             );
