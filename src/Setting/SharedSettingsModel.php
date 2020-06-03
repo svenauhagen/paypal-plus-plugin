@@ -29,6 +29,7 @@ class SharedSettingsModel
         Storable::OPTION_INVOICE_PREFIX => FILTER_SANITIZE_STRING,
         Storable::OPTION_CANCEL_URL_NAME => FILTER_SANITIZE_STRING,
         Storable::OPTION_CANCEL_CUSTOM_URL_NAME => FILTER_SANITIZE_STRING,
+        Storable::OPTION_CACHE_PAYPAL_JS_FILES => FILTER_DEFAULT,
         self::OPTION_DOWNLOAD_LOG => FILTER_DEFAULT,
     ];
 
@@ -247,6 +248,26 @@ class SharedSettingsModel
                     'woo-paypalplus'
                 ),
                 'default' => $this->defaultInvoicePrefix(),
+                'desc_tip' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function cachePaypalJsFiles()
+    {
+        return [
+            Storable::OPTION_CACHE_PAYPAL_JS_FILES => [
+                'title' => esc_html_x('Cache PayPal Scripts', 'shared-setting', 'woo-paypalplus'),
+                'type' => 'checkbox',
+                'description' => esc_html_x(
+                    'Allow caching of PayPal scripts and improve performance. This setting requires a correct Filesystem configuration.',
+                    'gateway-setting',
+                    'woo-paypalplus'
+                ),
+                'default' => Storable::OPTION_OFF,
                 'desc_tip' => true,
             ],
         ];

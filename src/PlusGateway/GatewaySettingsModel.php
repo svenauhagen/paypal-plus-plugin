@@ -99,6 +99,7 @@ final class GatewaySettingsModel implements SettingsGatewayModel
     private function gatewaySettings()
     {
         $invoicePrefix = $this->sharedSettingsModel->invoicePrefix();
+        $cachePaypalJs = $this->sharedSettingsModel->cachePaypalJsFiles();
         $options = [
             'cancel_url' => [
                 'title' => esc_html_x('Cancel Page', 'gateway-setting', 'woo-paypalplus'),
@@ -186,6 +187,7 @@ final class GatewaySettingsModel implements SettingsGatewayModel
                 ],
             ],
             $invoicePrefix,
+            $cachePaypalJs,
             $options
         );
     }

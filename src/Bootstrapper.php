@@ -103,6 +103,7 @@ class Bootstrapper
         $providers = new ServiceProvidersCollection();
         $providers
             ->add(new Core\ServiceProvider())
+            ->add(new Log\ServiceProvider())
             ->add(new Install\ServiceProvider())
             ->add(new Uninstall\ServiceProvider())
             ->add(new Deactivate\ServiceProvider())
@@ -118,7 +119,6 @@ class Bootstrapper
             ->add(new WC\ServiceProvider())
             ->add(new Ipn\ServiceProvider())
             ->add(new Pui\ServiceProvider())
-            ->add(new Log\ServiceProvider())
             ->add(new Api\ServiceProvider())
             ->add(new Order\ServiceProvider())
             ->add(new Refund\ServiceProvider())
