@@ -10,12 +10,11 @@
 
 namespace WCPayPalPlus\Http;
 
-use Inpsyde\Lib\Psr\Log\LoggerInterface as Logger;
-use UnexpectedValueException;
+use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Http\PayPalAssetsCache\CronScheduler;
 use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorer;
+use WCPayPalPlus\Http\PayPalAssetsCache\RemoteResourcesStorerFactory;
 use WCPayPalPlus\Http\PayPalAssetsCache\ResourceDictionary;
-use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 
@@ -31,16 +30,10 @@ class ServiceProvider implements BootstrappableServiceProvider
     public function register(Container $container)
     {
         $uploadDir = wp_upload_dir();
-        $uploadDir = isset($uploadDir['basedir']) ? $uploadDir['basedir'] : '';
+        $uploadDir = isset($uploadDir['basedir']) ? $uploadDir['basedir']
+            : '';
 
         if (!$uploadDir) {
-            return;
-        }
-
-        try {
-            $fileSystem = $container->get('wp_filesystem');
-        } catch (UnexpectedValueException $exc) {
-            $container->get(Logger::class)->warning($exc->getMessage());
             return;
         }
 
@@ -55,18 +48,39 @@ class ServiceProvider implements BootstrappableServiceProvider
 
         $container->addService(
             RemoteResourcesStorer::class,
-            function () use ($fileSystem) {
-                return new RemoteResourcesStorer($fileSystem);
+            function (Container $container) {
+                $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
+                $fileSystem = $container->get('wp_filesystem');
+                return RemoteResourcesStorerFactory::create(
+                    $fileSystem,
+                    $cachedPayPalJsFiles
+                );
+            }
+        );
+
+        $container->addService(
+            'banner_sdk_script_url',
+            function () {
+                $clientId = get_option('banner_settings_client_id');
+                $currency = get_woocommerce_currency();
+                if (!is_string($clientId) || !is_string($currency)) {
+                    return false;
+                }
+
+                return "https://www.paypal.com/sdk/js?client-id={$clientId}&components=messages&currency={$currency}";
             }
         );
 
         $container->addService(
             ResourceDictionary::class,
-            function () use ($uploadDir) {
+            function (Container $container) use ($uploadDir) {
                 return new ResourceDictionary(
                     [
                         "{$uploadDir}/woo-paypalplus/resources/js/paypal/expressCheckout.min.js" => 'https://www.paypalobjects.com/api/checkout.min.js',
                         "{$uploadDir}/woo-paypalplus/resources/js/paypal/payPalplus.min.js" => 'https://www.paypalobjects.com/webstatic/ppplus/ppplus.min.js',
+                        "{$uploadDir}/woo-paypalplus/resources/js/paypal/paypalBanner.min.js" => $container->get(
+                            'banner_sdk_script_url'
+                        ),
                     ]
                 );
             }
@@ -88,11 +102,15 @@ class ServiceProvider implements BootstrappableServiceProvider
      */
     public function bootstrap(Container $container)
     {
+        $cachedPayPalJsFiles = $container->get('cache_PayPal_Js_Files');
+        if (!$cachedPayPalJsFiles) {
+            return;
+        }
         $cronScheduler = $container->get(CronScheduler::class);
 
         add_filter(
             'cron_schedules',
-            function (array $schedules) use ($cronScheduler) {
+            static function (array $schedules) use ($cronScheduler) {
                 return $cronScheduler->addWeeklyRecurrence($schedules);
             }
         );

@@ -29,7 +29,7 @@ class Installer
     /**
      * Installer constructor.
      * @param SharedPersistor $sharedPersistor
-     * @param AssetsStoreUpdater $assetsStoreUpdater
+     * @param AssetsStoreUpdater  $assetsStoreUpdater
      */
     public function __construct(
         SharedPersistor $sharedPersistor,

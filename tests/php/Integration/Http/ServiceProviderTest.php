@@ -40,6 +40,10 @@ class ServiceProviderTest extends TestCase
             'wp_filesystem',
             $this->getMockBuilder('\\WP_Filesystem_Base')->getMock()
         );
+        $container->addValue(
+            'cache_PayPal_Js_Files',
+            true
+        );
 
         /*
          * Setup Testee
@@ -61,6 +65,12 @@ class ServiceProviderTest extends TestCase
                     'basedir' => uniqid(),
                 ]
             );
+        expect('get_option')
+            ->once()
+            ->andReturn(uniqid());
+        expect('get_woocommerce_currency')
+            ->once()
+            ->andReturn('EUR');
 
         /*
          * Execute Test

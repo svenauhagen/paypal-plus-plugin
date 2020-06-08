@@ -5,11 +5,11 @@
 
 namespace WCPayPalPlus\Install;
 
-use WCPayPalPlus\ExpressCheckoutGateway\Gateway as ExpressCheckoutGateway;
 use WCPayPalPlus\Http\PayPalAssetsCache\AssetsStoreUpdater;
 use WCPayPalPlus\Service\BootstrappableServiceProvider;
 use WCPayPalPlus\Service\Container;
 use WCPayPalPlus\Setting\SharedPersistor;
+use WCPayPalPlus\Setting\Storable;
 
 /**
  * Class ServiceProvider

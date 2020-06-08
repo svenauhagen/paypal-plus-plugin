@@ -16,7 +16,7 @@ use WP_Filesystem_Base;
  * Class RemoteResourcesStorer
  * @package WCPayPalPlus\Http\PayPalAssetsCache
  */
-class RemoteResourcesStorer
+class RemoteResourcesStorer implements RemoteResourcesStorerInterface
 {
     /**
      * @var WP_Filesystem_Base

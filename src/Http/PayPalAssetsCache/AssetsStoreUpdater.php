@@ -22,17 +22,17 @@ class AssetsStoreUpdater
     private $resourceDictionary;
 
     /**
-     * @var RemoteResourcesStorer
+     * @var RemoteResourcesStorerInterface
      */
     private $remoteResourcesStorer;
 
     /**
      * StorerCron constructor.
-     * @param RemoteResourcesStorer $remoteResourcesStorer
+     * @param RemoteResourcesStorerInterface $remoteResourcesStorer
      * @param ResourceDictionary $resourceDictionary
      */
     public function __construct(
-        RemoteResourcesStorer $remoteResourcesStorer,
+        RemoteResourcesStorerInterface $remoteResourcesStorer,
         ResourceDictionary $resourceDictionary
     ) {
 

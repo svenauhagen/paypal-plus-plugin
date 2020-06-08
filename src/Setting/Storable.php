@@ -36,6 +36,7 @@ interface Storable
     const OPTION_SECRET_ID_SANDBOX = 'rest_secret_id_sandbox';
 
     const OPTION_INVOICE_PREFIX = 'invoice_prefix';
+    const OPTION_CACHE_PAYPAL_JS_FILES = 'cache_paypal_js_files';
 
     const ACTION_AFTER_SETTINGS_UPDATE = 'paypalplus.after_settings_update';
 
