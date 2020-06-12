@@ -134,8 +134,109 @@ Your PayPal vendor account needs to be activated by PayPal in order to offer the
 ## Changelog
 
 
-### 1.0
-Initial Release
+### 2.2.1 
+- Fix: Paypal Banner error with third party Smart Coupons plugin
+- Fix: PayPal Plus error on ftpext filesystem method
+- Fix: Error on cart when deactivating caching mechanism
+- Fix: Update WC version check to 3.6.4
+- Fix: Paypal Banner error with third party Smart Coupons plugin
+
+### 2.2.0 
+- Add: PayPal Financing Banner
+
+### 2.1.2 
+- Fix: PayPal PLUS payments iframe does not load on checkout update
+
+### 2.1.1 
+- Fix: compatibility for WooCommerce 3.9.x where payment methods for paypal plus does not appear on checkout page load
+
+### 2.1.0 
+- Fix: Invalid PaymentId when executing the payment
+- Fix: PayPalObjects.com not allowed because of CSP rules
+- Fix: PayPal Plus is loading for a customer when an order was created by the merchant
+- Fix: Express Checkout disappears after switching shipping methods
+- Add: Cancel Url and WooCommerce Germanized Integration
+- Add: Introduce filter `paypalplus.use_legacy_custom_patch_data` to allow third party developers to get back the custom data object which include order_key and order_id
+
+### 2.0.4 
+- Fix: Compatibility with WooCommerce Admin plugin
+
+### 2.0.3 
+- Fix: Non numeric value encountered when validate Refund Payment
+- Fix: Ipn Order Note not added because order transition already changed by WooCommerce
+- Fix: Support for IE 11 because of es6 transpilation and unavailable features
+- Fix: Billing and shipping address fields are editable for express checkout
+
+### 2.0.2 
+ - Fix: Admin Notice and `file_get_contents` unable to retrieve content from Url
+ - Fix: Fatal Error in WooCommerce 3.6 because of WooCommerceSession methods are accessed too early
+
+### 2.0.1 
+ - Fix: PayPal Express Checkout doesn't support formal and informal locales
+ - Fix: Do not execute Frontend actions/filters in Admin context because WooCommerce Session isn't allowed in admin
+ - Fix: Do not activate PayPal Express Checkout automatically on plugin installation or update
+ - Fix: Use WooCommerce Logs instead of system temporary directory
+
+### 2.0.0 
+ - Fix: IPN return 500 because of custom patch is not set correctly on PayPal
+ - Fix: Do not send shipping address for digital goods
+ - Add: Introduce Express Checkout feature
+
+### 1.1.1 
+ - Fix: Decimal format for shipping details when order data are patched
+
+### 1.1.0 
+ - Fix: When PayPal is activated the WooCommerce PayPal Gateway is now deactivated by default
+ - Fix: Limit characters for logo URL to 127 characters
+ - Fix: Show PayPal Plus availability on the settings page
+ - Fix: Show PayPal payment data on invoice
+ - Fix: Php error when running PHP 7.2
+ - Fix: Settings are not deleted, when plugin is uninstalled
+ - Fix: Error processing checkout - with Germanized and gateway fee
+ - Add: BN-Codes
+ - Add: Change the PayPalPlus description on payment overview page
+
+### 1.0.8 
+ - Fix: compatibility with WooCommerce 3.4.0
+
+### 1.0.7 
+ - Fix gateway description hidden on checkout page
+ - Fix compatibility with WooCommerce 3.3.5
+
+### 1.0.6 
+ - Fix incompatibility with plugins changing the order number
+ - Fix -1 for error during checkout
+ - Fix legal note text not displaying on thank you page
+ - Fix Internal Server Error with Germanized Pro
+ - Fix redirecting to blank page when credit card is not accepted
+ - Fix incompatibility with jQuery 3.x
+ - Fix legal note is shown with paragraph tag in email
+
+### 1.0.5 
+ - Fix checkout error when adding or removing coupons on checkout page
+ - Fix download of log file
+ - Add WC compatibility headers
+
+### 1.0.4 
+ - Make PayPal frame always visible
+ - Allow cancelation URL to be set to custom a page
+ - Fix handling of coupons
+
+### 1.0.3 
+ - Allow user to download log
+ - Fix to allow working with prices inclusive of tax
+ - Allow changing the display title of the gateway
+ - Another fix for price decimals
+ - Move PayPal SDK in dedicated namespace to avoid collisions
+ - Fix a possible shutdown if session data was cleared unexpectedly while performing the payment
+
+### 1.0.2 
+ - Fix address patch request not always being included
+ - Fix an error with price decimals
+ - Improve session data handling
+
+### 1.0 
+ - Initial Release
 
 
 ## Upgrade Notice
