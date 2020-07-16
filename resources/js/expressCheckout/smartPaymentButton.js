@@ -69,7 +69,19 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
   singleProductButtonRender ()
   {
     const element = document.querySelector(`#${SINGLE_PRODUCT_BUTTON}`)
-    element && this.render(element)
+    const variation = document.querySelector('.variations_form')
+    const self = this
+    if (variation && variation.length) {
+      jQuery('.single_variation_wrap').on('show_variation', function () {
+        element && self.render(element)
+      })
+      jQuery('.single_variation_wrap').on('hide_variation', function (event, variation) {
+        const scriptButton = document.querySelector('#paypalplus_ecs_single_product_button')
+        scriptButton.parentNode.removeChild(scriptButton)
+      })
+    } else {
+      element && this.render(element)
+    }
   }
 
   /**
