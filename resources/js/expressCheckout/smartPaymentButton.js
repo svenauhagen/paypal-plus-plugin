@@ -69,18 +69,23 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
   singleProductButtonRender ()
   {
     const element = document.querySelector(`#${SINGLE_PRODUCT_BUTTON}`)
-    const variation = document.querySelector('.variations_form')
-    const self = this
-    if (variation && variation.length) {
-      jQuery('.single_variation_wrap').on('show_variation', function () {
-        element && self.render(element)
+    const variationsForm = document.querySelector('.variations_form')
+    const hasVariations = variationsForm && variationsForm.length
+    if (!element) {
+      console.warn('PayPal Checkout Button not found')
+      return
+    }
+    if (hasVariations) {
+      const selectedVariationContainer = jQuery('.single_variation_wrap')
+      selectedVariationContainer.on('show_variation', () => {
+        this.render(element)
       })
-      jQuery('.single_variation_wrap').on('hide_variation', function (event, variation) {
+      selectedVariationContainer.on('hide_variation', function () {
         const scriptButton = document.querySelector('#paypalplus_ecs_single_product_button')
         scriptButton.parentNode.removeChild(scriptButton)
       })
     } else {
-      element && this.render(element)
+      this.render(element)
     }
   }
 
