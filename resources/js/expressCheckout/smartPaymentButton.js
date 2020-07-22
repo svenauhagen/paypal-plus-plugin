@@ -72,7 +72,6 @@ const SmartPaymentButtonRenderer = class SmartPaymentButtonRenderer
     const variationsForm = document.querySelector('.variations_form')
     const hasVariations = variationsForm && variationsForm.length
     if (!element) {
-      console.warn('PayPal Checkout Button not found')
       return
     }
     if (hasVariations) {
