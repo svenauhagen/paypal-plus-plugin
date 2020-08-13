@@ -39,10 +39,10 @@
     "url": "git+ssh://git@bitbucket.org/inpsyde/paypal_plus_plugin_git"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.4",
+    "@babel/core": "^7.11.1",
     "@babel/polyfill": "^7.10.4",
-    "@babel/preset-env": "^7.10.4",
-    "@symfony/webpack-encore": "^0.28.2",
+    "@babel/preset-env": "^7.11.0",
+    "@symfony/webpack-encore": "^0.30.2",
     "babel-loader": "^8.0.5",
     "del": "^5.1.0",
     "gulp": "^4.0.0",
