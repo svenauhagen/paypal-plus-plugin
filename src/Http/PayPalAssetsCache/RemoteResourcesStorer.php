@@ -83,8 +83,12 @@ class RemoteResourcesStorer implements RemoteResourcesStorerInterface
         }
 
         $this->maybeMkdir($dir);
-
-        $this->fileSystem->put_contents($filePath, $fileContent, FS_CHMOD_FILE);
+        $fileContent = $this->stripSourceMappingFrom($fileContent);
+        $fileContent and $this->fileSystem->put_contents(
+            $filePath,
+            $fileContent,
+            FS_CHMOD_FILE
+        );
     }
 
     /**
@@ -106,5 +110,13 @@ class RemoteResourcesStorer implements RemoteResourcesStorerInterface
         $path = untrailingslashit($path);
 
         @mkdir($path, FS_CHMOD_DIR, true);
+    }
+
+    protected function stripSourceMappingFrom($fileContent)
+    {
+        //'//# sourceMappingURL=checkout.*.*.*.min.js.map'
+        $regex = "~//# sourceMappingURL=checkout(\.[0-9a-f]+)+\.min\.(js|css).map~";
+
+        return preg_replace($regex, '', $fileContent);
     }
 }
