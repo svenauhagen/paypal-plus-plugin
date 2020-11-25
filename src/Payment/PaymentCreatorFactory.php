@@ -41,7 +41,15 @@ class PaymentCreatorFactory
         assert(is_string($notifyUrl));
 
         $orderData = $this->orderDataFactory->create();
-        $cancelUrl = $settings->cancelUrl();
+
+        $cancelUrl = add_query_arg(
+            [
+                'cancel_order' => 'true',
+                'nonce' => wp_create_nonce('cancel-order'),
+            ],
+            $settings->cancelUrl()
+        );
+
         $experienceProfile = $settings->experienceProfileId();
 
         $paymentData = new PaymentData(
