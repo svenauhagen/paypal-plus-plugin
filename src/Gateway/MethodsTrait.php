@@ -10,7 +10,6 @@ use WC_Order_Refund;
 use WCPayPalPlus\Api\ApiContextFactory;
 use RuntimeException;
 use WCPayPalPlus\Api\CredentialValidator;
-use WCPayPalPlus\Notice\Admin as AdminNotice;
 use WCPayPalPlus\Order\OrderFactory;
 use WCPayPalPlus\Refund\RefundFactory;
 
@@ -74,7 +73,6 @@ trait MethodsTrait
     {
         ob_start();
         $this->display_errors();
-        do_action(AdminNotice::ACTION_ADMIN_MESSAGES);
         $output = ob_get_clean();
 
         $credentialValidationResponse = $this->credentialValidator->ensureCredential(
