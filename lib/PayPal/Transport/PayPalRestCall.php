@@ -42,15 +42,15 @@ class PayPalRestCall
     }
 
     /**
-     * @param array  $handlers Array of handlers
      * @param string $path     Resource path relative to base service endpoint
      * @param string $method   HTTP method - one of GET, POST, PUT, DELETE, PATCH etc
      * @param string $data     Request payload
      * @param array  $headers  HTTP headers
+     * @param array  $handlers Array of handlers
      * @return mixed
      * @throws \Inpsyde\Lib\PayPal\Exception\PayPalConnectionException
      */
-    public function execute($handlers = array(), $path, $method, $data = '', $headers = array())
+    public function execute($path, $method, $data = '', $headers = array(), $handlers = array())
     {
         $config = $this->apiContext->getConfig();
         $httpConfig = new PayPalHttpConfig(null, $method, $config);

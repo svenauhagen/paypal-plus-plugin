@@ -101,7 +101,7 @@ class PayPalResourceModel extends PayPalModel implements IResource
         $restCall = $restCall ? $restCall : new PayPalRestCall($apiContext);
 
         //Make the execution call
-        $json = $restCall->execute($handlers, $url, $method, $payLoad, $headers);
+        $json = $restCall->execute($url, $method, $payLoad, $headers, $handlers);
         return $json;
     }
 
