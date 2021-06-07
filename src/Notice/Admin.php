@@ -10,7 +10,6 @@ class Admin
     const ACTION_ADMIN_MESSAGES = 'ppplus_admin_messages';
     const SITE_TRANSIENT_MESSAGE_ID = 'ppplus_message_id';
     const SITE_TRANSIENT_MESSAGE_CONTENT = 'ppplus_message_content';
-    const NOTICE_URL = 'http://paypalnotice.inpsyde.com/';
 
     /**
      * @var bool
@@ -44,9 +43,7 @@ class Admin
 
         if ($this->id === false || $this->content === false) {
             $this->id = uniqid();
-
-            $apiResponse = wp_remote_get(self::NOTICE_URL, ['timeout' => 3]);
-            $this->content = wp_remote_retrieve_body($apiResponse);
+            $this->content = '';
 
             set_site_transient(
                 self::SITE_TRANSIENT_MESSAGE_ID,
