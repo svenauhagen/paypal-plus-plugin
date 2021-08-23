@@ -8,7 +8,7 @@
  * Author URI: https://inpsyde.com/
  * Version: 2.2.1
  * WC requires at least: 3.6.4
- * WC tested up to: 4.1
+ * WC tested up to: 5.6
  * License: GPLv2+
  * Text Domain: woo-paypalplus
  * Domain Path: /languages/
