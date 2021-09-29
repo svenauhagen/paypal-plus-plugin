@@ -70,12 +70,15 @@ class PatchProvider
     public function invoice($invoice_prefix)
     {
         $invoice_number = preg_replace('/[^[:print:]]/', '', $this->order->get_order_number());
+        $invoice_value = $invoice_prefix . $invoice_number;
+        
+        $invoice_value = apply_filters('paypalplus.invoice_number', $invoice_value, $this->order);
 
         $invoice_patch = new Patch();
         $invoice_patch
             ->setOp('add')
             ->setPath('/transactions/0/invoice_number')
-            ->setValue($invoice_prefix . $invoice_number);
+            ->setValue($invoice_value);
 
         return $invoice_patch;
     }
@@ -113,6 +116,8 @@ class PatchProvider
         }
 
         $patch->setValue($value);
+
+        $patch = apply_filters('paypalplus.custom_patch_data', $patch, $this->order);
 
         return $patch;
     }
